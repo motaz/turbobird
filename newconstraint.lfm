@@ -1,0 +1,184 @@
+object fmNewConstraint: TfmNewConstraint
+  Left = 622
+  Height = 600
+  Top = 256
+  Width = 390
+  ActiveControl = edNewName
+  Caption = 'fmNewConstraint'
+  ClientHeight = 600
+  ClientWidth = 390
+  Position = poScreenCenter
+  LCLVersion = '0.9.31'
+  object Label1: TLabel
+    Left = 8
+    Height = 18
+    Top = 15
+    Width = 158
+    Caption = 'New Constraint on table'
+    ParentColor = False
+  end
+  object laTable: TLabel
+    Left = 184
+    Height = 18
+    Top = 15
+    Width = 55
+    Caption = 'laTable'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label6: TLabel
+    Left = 8
+    Height = 18
+    Top = 464
+    Width = 92
+    Caption = 'Update action'
+    ParentColor = False
+  end
+  object Label7: TLabel
+    Left = 8
+    Height = 18
+    Top = 503
+    Width = 88
+    Caption = 'Delete action'
+    ParentColor = False
+  end
+  object GroupBox1: TGroupBox
+    Left = 16
+    Height = 170
+    Top = 40
+    Width = 353
+    Anchors = [akTop, akLeft, akRight]
+    Caption = 'Current table'
+    ClientHeight = 151
+    ClientWidth = 349
+    TabOrder = 0
+    object Label2: TLabel
+      Left = 10
+      Height = 18
+      Top = 15
+      Width = 140
+      Caption = 'New constraint name'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 10
+      Height = 18
+      Top = 47
+      Width = 58
+      Caption = 'On fields'
+      ParentColor = False
+    end
+    object edNewName: TEdit
+      Left = 166
+      Height = 27
+      Top = 7
+      Width = 137
+      TabOrder = 0
+      Text = 'edNewName'
+    end
+    object clxOnFields: TCheckListBox
+      Left = 166
+      Height = 104
+      Top = 39
+      Width = 160
+      ItemHeight = 0
+      TabOrder = 1
+      TopIndex = -1
+    end
+  end
+  object GroupBox2: TGroupBox
+    Left = 16
+    Height = 200
+    Top = 224
+    Width = 351
+    Anchors = [akTop, akLeft, akRight]
+    Caption = 'Foriegn Table'
+    ClientHeight = 181
+    ClientWidth = 347
+    TabOrder = 1
+    object Label4: TLabel
+      Left = 11
+      Height = 18
+      Top = 12
+      Width = 76
+      Caption = 'Table name'
+      ParentColor = False
+    end
+    object Label5: TLabel
+      Left = 11
+      Height = 18
+      Top = 52
+      Width = 58
+      Caption = 'On fields'
+      ParentColor = False
+    end
+    object cbTables: TComboBox
+      Left = 108
+      Height = 31
+      Top = 7
+      Width = 138
+      ItemHeight = 0
+      OnChange = cbTablesChange
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object clxForFields: TCheckListBox
+      Left = 108
+      Height = 125
+      Top = 47
+      Width = 159
+      ItemHeight = 0
+      TabOrder = 1
+      TopIndex = -1
+    end
+  end
+  object cbUpdateAction: TComboBox
+    Left = 128
+    Height = 31
+    Top = 456
+    Width = 121
+    ItemHeight = 0
+    ItemIndex = 0
+    Items.Strings = (
+      'Restrict'
+      'No Action'
+      'Cascade'
+      'Set Default'
+      'Set null'
+    )
+    Style = csDropDownList
+    TabOrder = 2
+    Text = 'Restrict'
+  end
+  object bbScript: TBitBtn
+    Left = 8
+    Height = 30
+    Top = 560
+    Width = 92
+    Caption = 'Script'
+    Color = 16249563
+    Kind = bkAll
+    ModalResult = 1
+    OnClick = bbScriptClick
+    TabOrder = 3
+  end
+  object cbDeleteAction: TComboBox
+    Left = 128
+    Height = 31
+    Top = 496
+    Width = 121
+    ItemHeight = 0
+    ItemIndex = 0
+    Items.Strings = (
+      'Restrict'
+      'No Action'
+      'Cascade'
+      'Set Default'
+      'Set null'
+    )
+    Style = csDropDownList
+    TabOrder = 4
+    Text = 'Restrict'
+  end
+end

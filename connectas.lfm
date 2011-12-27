@@ -1,0 +1,8 @@
+object fmConnectAs: TfmConnectAs
+  Left = 578
+  Height = 300
+  Top = 203
+  Width = 400
+  Caption = 'fmConnectAs'
+  LCLVersion = '0.9.28.2'
+end

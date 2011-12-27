@@ -1,0 +1,40 @@
+object fmUserPermissions: TfmUserPermissions
+  Left = 578
+  Height = 363
+  Top = 203
+  Width = 500
+  ActiveControl = StringGrid1
+  Caption = 'fmUserPermissions'
+  ClientHeight = 363
+  ClientWidth = 500
+  OnClose = FormClose
+  Position = poScreenCenter
+  LCLVersion = '0.9.31'
+  object StringGrid1: TStringGrid
+    Left = 0
+    Height = 368
+    Top = 1
+    Width = 501
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ColCount = 3
+    Columns = <    
+      item
+        Title.Caption = 'Obj Type'
+        Width = 100
+      end    
+      item
+        Title.Caption = 'Object'
+        Width = 200
+      end    
+      item
+        Title.Caption = 'Permission'
+        Width = 200
+      end>
+    FixedColor = 14539471
+    FixedCols = 0
+    Flat = True
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goSmoothScroll]
+    TabOrder = 0
+    UseXORFeatures = True
+  end
+end

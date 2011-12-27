@@ -1,0 +1,14 @@
+object dmSysTables: TdmSysTables
+  OldCreateOrder = False
+  Height = 300
+  HorizontalOffset = 810
+  VerticalOffset = 383
+  Width = 400
+  object sqQuery: TSQLQuery
+    AutoCalcFields = False
+    ReadOnly = False
+    Params = <>
+    left = 216
+    top = 32
+  end
+end

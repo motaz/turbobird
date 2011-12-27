@@ -1,0 +1,67 @@
+{***************************************************************************}
+{  TurboBird: FireBird database administration and management tool          }
+{  Developed by: Motaz Abdel Azeem http://code.sd/                          }
+{  Start development:  5.Dec.2009                                           }
+{  Last updated     : 13.Sep.2011                                           }
+{  License          : GPL for GUI, LGPL for Units                           }
+{***************************************************************************}
+
+program TurboBird;
+
+{$mode objfpc}{$H+}
+
+uses
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}{$ENDIF}
+  Interfaces, // this includes the LCL widgetset
+  Forms, Controls, memdslaz, main, createdb, Reg, QueryWindow,
+  ViewView, ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen, EnterPass, About,
+  CreateTrigger, EditTable, CallProc, EditDataFullRec,
+  UDFInfo, ViewDomain, NewDomain, SysTables, NewConstraint, NewEditField, Calen, Scriptdb,
+  UserPermissions, TableManage, BackupRestore, CreateUser, ChangePass,
+  PermissionManage, SQLHistory, CopyTable;
+
+const
+  Version = '0.8.5';
+  VersionDate = '2010 - Sept 2011';
+
+{$R *.res}
+
+var
+  SAbout: TfmAbout;
+begin
+  Application.Initialize;
+
+  SAbout:= TfmAbout.Create(nil);
+  SAbout.BorderStyle:= bsNone;
+  SAbout.BitBtn1.Visible:= False;
+  SAbout.Show;
+  Application.ProcessMessages;
+  SAbout.Update;
+
+  Application.CreateForm(TfmMain, fmMain);
+  Application.CreateForm(TfmCreateDB, fmCreateDB);
+  Application.CreateForm(TfmReg, fmReg);
+  Application.CreateForm(TfmNewTable, fmNewTable);
+  Application.CreateForm(TfmNewGen, fmNewGen);
+  Application.CreateForm(TfmEnterPass, fmEnterPass);
+  Application.CreateForm(TfmCreateTrigger, fmCreateTrigger);
+  Application.CreateForm(TfmEditTable, fmEditTable);
+  Application.CreateForm(TfmCallProc, fmCallProc);
+  Application.CreateForm(TfmEditDataFullRec, fmEditDataFullRec);
+  Application.CreateForm(TfmNewDomain, fmNewDomain);
+  Application.CreateForm(TdmSysTables, dmSysTables);
+  Application.CreateForm(TfmNewConstraint, fmNewConstraint);
+  Application.CreateForm(TfmCalen, fmCalen);
+  Application.CreateForm(TfmBackupRestore, fmBackupRestore);
+  Application.CreateForm(TfmCreateUser, fmCreateUser);
+  Application.CreateForm(TfmChangePass, fmChangePass);
+  Application.CreateForm(TfmSQLHistory, fmSQLHistory);
+  Application.CreateForm(TfmCopyTable, fmCopyTable);
+  fmMain.Version:= Version;
+  fmMain.VersionDate:= VersionDate;
+  SAbout.Free;
+  Application.Run;
+end.
+

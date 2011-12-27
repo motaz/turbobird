@@ -1,0 +1,29 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TfmNewDomain','FORMDATA',[
+  'TPF0'#12'TfmNewDomain'#11'fmNewDomain'#4'Left'#3'J'#1#6'Height'#3#241#0#3'To'
+  +'p'#3#216#0#5'Width'#3'z'#1#13'ActiveControl'#7#6'edName'#11'BorderIcons'#11
+  +#12'biSystemMenu'#0#11'BorderStyle'#7#8'bsDialog'#7'Caption'#6#17'Create New'
+  +' domain'#12'ClientHeight'#3#241#0#11'ClientWidth'#3'z'#1#8'Position'#7#14'p'
+  +'oScreenCenter'#10'LCLVersion'#6#6'0.9.31'#0#6'TLabel'#6'Label1'#4'Left'#2#14
+  +#6'Height'#2#18#3'Top'#2#22#5'Width'#2'~'#7'Caption'#6#15'New Domain name'#11
+  +'ParentColor'#8#0#0#6'TLabel'#6'Label2'#4'Left'#2#16#6'Height'#2#18#3'Top'#2
+  +'9'#5'Width'#2#31#7'Caption'#6#4'Type'#11'ParentColor'#8#0#0#6'TLabel'#6'Lab'
+  +'el3'#4'Left'#2#18#6'Height'#2#18#3'Top'#2'`'#5'Width'#2#28#7'Caption'#6#4'S'
+  +'ize'#11'ParentColor'#8#0#0#6'TLabel'#6'Label4'#4'Left'#2#18#6'Height'#2#18#3
+  +'Top'#3#136#0#5'Width'#2'Y'#7'Caption'#6#13'Default value'#11'ParentColor'#8
+  +#0#0#5'TEdit'#6'edName'#4'Left'#3#156#0#6'Height'#2#27#3'Top'#2#22#5'Width'#3
+  +#148#0#8'TabOrder'#2#0#0#0#9'TComboBox'#6'cbType'#4'Left'#3#156#0#6'Height'#2
+  +#29#3'Top'#2'9'#5'Width'#3#148#0#10'ItemHeight'#2#0#13'Items.Strings'#1#6#8
+  +'SMALLINT'#6#7'INTEGER'#6#7'VARCHAR'#6#6'DOUBLE'#6#5'FLOAT'#6#4'CHAR'#6#4'DA'
+  +'TE'#6#4'TIME'#6#9'TIMESTAMP'#6#7'CSTRING'#6#7'D_FLOAT'#6#5'INT64'#6#4'QUAD'
+  +#6#4'BLOB'#0#8'TabOrder'#2#1#0#0#9'TSpinEdit'#6'seSize'#4'Left'#3#156#0#6'He'
+  +'ight'#2#27#3'Top'#2'`'#5'Width'#2'2'#8'TabOrder'#2#2#0#0#7'TBitBtn'#7'BitBt'
+  +'n1'#4'Left'#2#16#6'Height'#2#30#3'Top'#3#192#0#5'Width'#2'X'#7'Caption'#6#6
+  +'Script'#5'Color'#4#219#242#247#0#7'Default'#9#4'Kind'#7#4'bkOK'#11'ModalRes'
+  +'ult'#2#1#8'TabOrder'#2#3#0#0#7'TBitBtn'#7'BitBtn2'#4'Left'#2'o'#6'Height'#2
+  +#30#3'Top'#3#192#0#5'Width'#2'Z'#6'Cancel'#9#7'Caption'#6#6'Cancel'#5'Color'
+  +#4#219#242#247#0#4'Kind'#7#8'bkCancel'#11'ModalResult'#2#2#8'TabOrder'#2#4#0
+  +#0#5'TEdit'#9'edDefault'#4'Left'#3#155#0#6'Height'#2#27#3'Top'#3#136#0#5'Wid'
+  +'th'#3#205#0#8'TabOrder'#2#5#0#0#0
+]);

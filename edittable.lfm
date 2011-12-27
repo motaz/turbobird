@@ -1,0 +1,99 @@
+object fmEditTable: TfmEditTable
+  Left = 602
+  Height = 300
+  Top = 404
+  Width = 568
+  ActiveControl = Panel1
+  Caption = 'fmEditTable'
+  ClientHeight = 300
+  ClientWidth = 568
+  OnClose = FormClose
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '0.9.30'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 568
+    Align = alTop
+    ClientHeight = 50
+    ClientWidth = 568
+    ParentColor = False
+    TabOrder = 0
+    OnClick = Panel1Click
+    object Label1: TLabel
+      Left = 258
+      Height = 18
+      Top = 27
+      Width = 60
+      Caption = 'Record #'
+      ParentColor = False
+    end
+    object laPos: TLabel
+      Left = 326
+      Height = 18
+      Top = 27
+      Width = 9
+      Caption = '0'
+      Font.Color = 11610912
+      ParentColor = False
+      ParentFont = False
+    end
+    object DBNavigator1: TDBNavigator
+      Left = 8
+      Height = 25
+      Top = 21
+      Width = 241
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.EnlargeVertical = crsScaleChilds
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 100
+      ClientHeight = 25
+      ClientWidth = 241
+      Color = 14539471
+      DataSource = Datasource1
+      ParentColor = False
+      TabOrder = 0
+    end
+    object bbSave: TBitBtn
+      Left = 480
+      Height = 30
+      Top = 15
+      Width = 75
+      Caption = 'Save'
+      OnClick = bbSaveClick
+      TabOrder = 1
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Height = 250
+    Top = 50
+    Width = 568
+    Align = alClient
+    Color = clWindow
+    Columns = <>
+    DataSource = Datasource1
+    FixedColor = 14539471
+    Scrollbars = ssAutoBoth
+    TabOrder = 1
+  end
+  object Datasource1: TDatasource
+    DataSet = sqEditTable
+    left = 472
+    top = 48
+  end
+  object sqEditTable: TSQLQuery
+    IndexName = 'DEFAULT_ORDER'
+    AutoCalcFields = False
+    AfterScroll = sqEditTableAfterScroll
+    ReadOnly = False
+    Params = <>
+    left = 357
+    top = 20
+  end
+end

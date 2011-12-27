@@ -1,0 +1,373 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="7"/>
+    <General>
+      <MainUnit Value="0"/>
+      <TargetFileExt Value=""/>
+      <Icon Value="0"/>
+      <UseXPManifest Value="True"/>
+      <ActiveEditorIndexAtStart Value="10"/>
+    </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <CurrentMajorRevNr Value="5"/>
+      <CurrentBuildNr Value="1"/>
+      <ProjectVersion Value="0.5.0.1"/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="3">
+      <Item1>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="SQLDBLaz"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="LCL"/>
+      </Item3>
+    </RequiredPackages>
+    <Units Count="16">
+      <Unit0>
+        <Filename Value="FreeBird.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FreeBird"/>
+        <CursorPos X="25" Y="5"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="13"/>
+        <UsageCount Value="57"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmMain"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="main"/>
+        <CursorPos X="3" Y="145"/>
+        <TopLine Value="141"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="57"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="createdb.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCreateDB"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="createdb"/>
+        <CursorPos X="24" Y="29"/>
+        <TopLine Value="26"/>
+        <EditorIndex Value="12"/>
+        <UsageCount Value="57"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="reg.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmReg"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Reg"/>
+        <CursorPos X="8" Y="166"/>
+        <TopLine Value="148"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="57"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../../../../usr/lib/lazarus/0.9.28.2/lcl/buttons.pp"/>
+        <UnitName Value="Buttons"/>
+        <CursorPos X="25" Y="141"/>
+        <TopLine Value="141"/>
+        <EditorIndex Value="11"/>
+        <UsageCount Value="28"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="querywindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmQueryWindow"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="QueryWindow"/>
+        <CursorPos X="42" Y="122"/>
+        <TopLine Value="98"/>
+        <EditorIndex Value="8"/>
+        <UsageCount Value="51"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="../../../../usr/lib/lazarus/0.9.28.2/lcl/dialogs.pp"/>
+        <UnitName Value="Dialogs"/>
+        <CursorPos X="10" Y="489"/>
+        <TopLine Value="530"/>
+        <UsageCount Value="12"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="../../../../usr/lib/lazarus/0.9.28.2/lcl/include/messagedialogs.inc"/>
+        <CursorPos X="6" Y="159"/>
+        <TopLine Value="152"/>
+        <UsageCount Value="12"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="tableinfo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmTableInfo"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="TableInfo"/>
+        <CursorPos X="18" Y="16"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="9"/>
+        <UsageCount Value="35"/>
+        <Loaded Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="viewview.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmViewView"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewView"/>
+        <CursorPos X="25" Y="10"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="35"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="viewtrigger.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmViewTrigger"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewTrigger"/>
+        <CursorPos X="11" Y="3"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="34"/>
+        <Loaded Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="viewsproc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmViewSProc"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewSProc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="33"/>
+        <Loaded Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="viewgen.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmViewGen"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewGen"/>
+        <CursorPos X="20" Y="16"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="32"/>
+        <Loaded Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="newtable.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmNewTable"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="NewTable"/>
+        <CursorPos X="39" Y="78"/>
+        <TopLine Value="54"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="31"/>
+        <Loaded Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="newgen.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmNewGen"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="NewGen"/>
+        <CursorPos X="65" Y="64"/>
+        <TopLine Value="54"/>
+        <EditorIndex Value="10"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="enterpass.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmEnterPass"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="EnterPass"/>
+        <CursorPos X="13" Y="36"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="7"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit15>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="newgen.pas"/>
+        <Caret Line="75" Column="69" TopLine="52"/>
+      </Position1>
+      <Position2>
+        <Filename Value="newgen.pas"/>
+        <Caret Line="72" Column="70" TopLine="60"/>
+      </Position2>
+      <Position3>
+        <Filename Value="newgen.pas"/>
+        <Caret Line="79" Column="86" TopLine="71"/>
+      </Position3>
+      <Position4>
+        <Filename Value="newgen.pas"/>
+        <Caret Line="41" Column="20" TopLine="1"/>
+      </Position4>
+      <Position5>
+        <Filename Value="newgen.pas"/>
+        <Caret Line="123" Column="15" TopLine="81"/>
+      </Position5>
+      <Position6>
+        <Filename Value="main.pas"/>
+        <Caret Line="124" Column="1" TopLine="90"/>
+      </Position6>
+      <Position7>
+        <Filename Value="main.pas"/>
+        <Caret Line="131" Column="1" TopLine="90"/>
+      </Position7>
+      <Position8>
+        <Filename Value="main.pas"/>
+        <Caret Line="134" Column="15" TopLine="112"/>
+      </Position8>
+      <Position9>
+        <Filename Value="newgen.pas"/>
+        <Caret Line="123" Column="18" TopLine="58"/>
+      </Position9>
+      <Position10>
+        <Filename Value="main.pas"/>
+        <Caret Line="134" Column="15" TopLine="112"/>
+      </Position10>
+      <Position11>
+        <Filename Value="reg.pas"/>
+        <Caret Line="21" Column="40" TopLine="1"/>
+      </Position11>
+      <Position12>
+        <Filename Value="reg.pas"/>
+        <Caret Line="74" Column="19" TopLine="66"/>
+      </Position12>
+      <Position13>
+        <Filename Value="reg.pas"/>
+        <Caret Line="55" Column="7" TopLine="29"/>
+      </Position13>
+      <Position14>
+        <Filename Value="reg.pas"/>
+        <Caret Line="49" Column="14" TopLine="30"/>
+      </Position14>
+      <Position15>
+        <Filename Value="enterpass.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position15>
+      <Position16>
+        <Filename Value="reg.pas"/>
+        <Caret Line="165" Column="36" TopLine="143"/>
+      </Position16>
+      <Position17>
+        <Filename Value="reg.pas"/>
+        <Caret Line="76" Column="15" TopLine="53"/>
+      </Position17>
+      <Position18>
+        <Filename Value="reg.pas"/>
+        <Caret Line="55" Column="28" TopLine="30"/>
+      </Position18>
+      <Position19>
+        <Filename Value="reg.pas"/>
+        <Caret Line="54" Column="14" TopLine="30"/>
+      </Position19>
+      <Position20>
+        <Filename Value="reg.pas"/>
+        <Caret Line="81" Column="21" TopLine="58"/>
+      </Position20>
+      <Position21>
+        <Filename Value="reg.pas"/>
+        <Caret Line="49" Column="28" TopLine="24"/>
+      </Position21>
+      <Position22>
+        <Filename Value="main.pas"/>
+        <Caret Line="88" Column="12" TopLine="66"/>
+      </Position22>
+      <Position23>
+        <Filename Value="main.pas"/>
+        <Caret Line="671" Column="77" TopLine="642"/>
+      </Position23>
+      <Position24>
+        <Filename Value="enterpass.pas"/>
+        <Caret Line="18" Column="33" TopLine="1"/>
+      </Position24>
+      <Position25>
+        <Filename Value="reg.pas"/>
+        <Caret Line="46" Column="23" TopLine="28"/>
+      </Position25>
+      <Position26>
+        <Filename Value="reg.pas"/>
+        <Caret Line="76" Column="19" TopLine="68"/>
+      </Position26>
+      <Position27>
+        <Filename Value="reg.pas"/>
+        <Caret Line="130" Column="25" TopLine="99"/>
+      </Position27>
+      <Position28>
+        <Filename Value="reg.pas"/>
+        <Caret Line="76" Column="21" TopLine="68"/>
+      </Position28>
+      <Position29>
+        <Filename Value="main.pas"/>
+        <Caret Line="671" Column="29" TopLine="621"/>
+      </Position29>
+      <Position30>
+        <Filename Value="newgen.pas"/>
+        <Caret Line="82" Column="20" TopLine="67"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)/"/>
+    </SearchPaths>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

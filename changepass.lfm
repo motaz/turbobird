@@ -1,0 +1,81 @@
+object fmChangePass: TfmChangePass
+  Left = 383
+  Height = 182
+  Top = 204
+  Width = 320
+  BorderStyle = bsDialog
+  Caption = 'fmChangePass'
+  ClientHeight = 182
+  ClientWidth = 320
+  Position = poScreenCenter
+  LCLVersion = '0.9.31'
+  object Label1: TLabel
+    Left = 14
+    Height = 18
+    Top = 40
+    Width = 95
+    Caption = 'New Password'
+    ParentColor = False
+  end
+  object edPassword: TEdit
+    Left = 126
+    Height = 27
+    Top = 34
+    Width = 154
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 0
+  end
+  object Label2: TLabel
+    Left = 16
+    Height = 18
+    Top = 72
+    Width = 52
+    Caption = 'Confirm'
+    ParentColor = False
+  end
+  object edConfirm: TEdit
+    Left = 126
+    Height = 27
+    Top = 66
+    Width = 154
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 1
+  end
+  object bbCreate: TBitBtn
+    Left = 18
+    Height = 30
+    Top = 120
+    Width = 86
+    Caption = 'Set'
+    Color = 16249563
+    Default = True
+    Kind = bkOK
+    OnClick = bbCreateClick
+    TabOrder = 2
+  end
+  object bbCanel: TBitBtn
+    Left = 176
+    Height = 30
+    Top = 120
+    Width = 91
+    Cancel = True
+    Caption = 'Cancel'
+    Color = 16249563
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 3
+  end
+  object Label3: TLabel
+    Left = 13
+    Height = 18
+    Top = 5
+    Width = 262
+    Caption = 'Requires FireBird version 2.5.0 or above'
+    Font.Color = clGray
+    Font.Style = [fsItalic]
+    ParentColor = False
+    ParentFont = False
+  end
+end

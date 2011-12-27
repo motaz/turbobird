@@ -1,0 +1,115 @@
+object fmNewDomain: TfmNewDomain
+  Left = 330
+  Height = 241
+  Top = 216
+  Width = 378
+  ActiveControl = edName
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Create New domain'
+  ClientHeight = 241
+  ClientWidth = 378
+  Position = poScreenCenter
+  LCLVersion = '0.9.31'
+  object Label1: TLabel
+    Left = 14
+    Height = 18
+    Top = 22
+    Width = 126
+    Caption = 'New Domain name'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 16
+    Height = 18
+    Top = 57
+    Width = 31
+    Caption = 'Type'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 18
+    Height = 18
+    Top = 96
+    Width = 28
+    Caption = 'Size'
+    ParentColor = False
+  end
+  object Label4: TLabel
+    Left = 18
+    Height = 18
+    Top = 136
+    Width = 89
+    Caption = 'Default value'
+    ParentColor = False
+  end
+  object edName: TEdit
+    Left = 156
+    Height = 27
+    Top = 22
+    Width = 148
+    TabOrder = 0
+  end
+  object cbType: TComboBox
+    Left = 156
+    Height = 29
+    Top = 57
+    Width = 148
+    ItemHeight = 0
+    Items.Strings = (
+      'SMALLINT'
+      'INTEGER'
+      'VARCHAR'
+      'DOUBLE'
+      'FLOAT'
+      'CHAR'
+      'DATE'
+      'TIME'
+      'TIMESTAMP'
+      'CSTRING'
+      'D_FLOAT'
+      'INT64'
+      'QUAD'
+      'BLOB'
+    )
+    TabOrder = 1
+  end
+  object seSize: TSpinEdit
+    Left = 156
+    Height = 27
+    Top = 96
+    Width = 50
+    TabOrder = 2
+  end
+  object BitBtn1: TBitBtn
+    Left = 16
+    Height = 30
+    Top = 192
+    Width = 88
+    Caption = 'Script'
+    Color = 16249563
+    Default = True
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 3
+  end
+  object BitBtn2: TBitBtn
+    Left = 111
+    Height = 30
+    Top = 192
+    Width = 90
+    Cancel = True
+    Caption = 'Cancel'
+    Color = 16249563
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 4
+  end
+  object edDefault: TEdit
+    Left = 155
+    Height = 27
+    Top = 136
+    Width = 205
+    TabOrder = 5
+  end
+end

@@ -1,0 +1,26 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TfmViewDomain','FORMDATA',[
+  'TPF0'#13'TfmViewDomain'#12'fmViewDomain'#4'Left'#3'J'#1#6'Height'#3#164#0#3
+  +'Top'#3#216#0#5'Width'#3'i'#2#7'Caption'#6#12'fmViewDomain'#12'ClientHeight'
+  +#3#164#0#11'ClientWidth'#3'i'#2#7'OnClose'#7#9'FormClose'#8'Position'#7#14'p'
+  +'oScreenCenter'#10'LCLVersion'#6#6'0.9.31'#0#6'TLabel'#6'Label1'#4'Left'#2#11
+  +#6'Height'#2#18#3'Top'#2#15#5'Width'#2']'#7'Caption'#6#11'Domain name'#11'Pa'
+  +'rentColor'#8#0#0#6'TLabel'#6'Label3'#4'Left'#2#11#6'Height'#2#18#3'Top'#2'0'
+  +#5'Width'#2'B'#7'Caption'#6#9'Data type'#11'ParentColor'#8#0#0#6'TLabel'#6'l'
+  +'aType'#4'Left'#2'x'#6'Height'#2#18#3'Top'#2'0'#5'Width'#2'4'#7'Caption'#6#6
+  +'laName'#10'Font.Color'#4'))'#156#0#9'Font.Name'#6#28'courier 10 pitch [bits'
+  +'tream]'#11'ParentColor'#8#10'ParentFont'#8#0#0#6'TLabel'#6'Label4'#4'Left'#2
+  +#11#6'Height'#2#18#3'Top'#2'P'#5'Width'#2#28#7'Caption'#6#4'Size'#11'ParentC'
+  +'olor'#8#0#0#6'TLabel'#6'laSize'#4'Left'#2'x'#6'Height'#2#18#3'Top'#2'P'#5'W'
+  +'idth'#2'4'#7'Caption'#6#6'laName'#10'Font.Color'#4'))'#156#0#9'Font.Name'#6
+  +#28'courier 10 pitch [bitstream]'#11'ParentColor'#8#10'ParentFont'#8#0#0#6'T'
+  +'Label'#6'Label5'#4'Left'#2#11#6'Height'#2#18#3'Top'#2'p'#5'Width'#2'\'#7'Ca'
+  +'ption'#6#13'Default Value'#11'ParentColor'#8#0#0#6'TLabel'#9'laDefault'#4'L'
+  +'eft'#2'x'#6'Height'#2#18#3'Top'#2'p'#5'Width'#2'4'#7'Caption'#6#6'laName'#10
+  +'Font.Color'#4'))'#156#0#9'Font.Name'#6#28'courier 10 pitch [bitstream]'#11
+  +'ParentColor'#8#10'ParentFont'#8#0#0#5'TEdit'#6'edName'#4'Left'#2'x'#6'Heigh'
+  +'t'#2#21#3'Top'#2#16#5'Width'#3'2'#1#10'AutoSelect'#8#11'BorderStyle'#7#6'bs'
+  +'None'#10'Font.Color'#7#6'clNavy'#10'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'
+  +#2#0#4'Text'#6#9'edGenName'#0#0#0
+]);

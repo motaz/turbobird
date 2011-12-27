@@ -1,0 +1,29 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TfmCreateTrigger','FORMDATA',[
+  'TPF0'#16'TfmCreateTrigger'#15'fmCreateTrigger'#4'Left'#3#174#1#6'Height'#3','
+  +#1#3'Top'#3#201#0#5'Width'#3#144#1#13'ActiveControl'#7#13'edTriggerName'#7'C'
+  +'aption'#6#18'Create new Trigger'#12'ClientHeight'#3','#1#11'ClientWidth'#3
+  +#144#1#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6#6'0.9.31'#0#6'TLabe'
+  +'l'#6'Label1'#4'Left'#2#7#6'Height'#2#18#3'Top'#2#22#5'Width'#2'X'#7'Caption'
+  +#6#12'Trigger Name'#11'ParentColor'#8#0#0#6'TLabel'#6'Label2'#4'Left'#2#7#6
+  +'Height'#2#18#3'Top'#2'@'#5'Width'#2'9'#7'Caption'#6#8'On Table'#11'ParentCo'
+  +'lor'#8#0#0#5'TEdit'#13'edTriggerName'#4'Left'#2'k'#6'Height'#2#27#3'Top'#2
+  +#16#5'Width'#3#149#0#8'TabOrder'#2#0#0#0#9'TComboBox'#8'cbTables'#4'Left'#2
+  +'k'#6'Height'#2#31#3'Top'#2'8'#5'Width'#3#152#0#10'ItemHeight'#2#0#5'Style'#7
+  +#14'csDropDownList'#8'TabOrder'#2#1#0#0#12'TRadioButton'#7'rbBefor'#4'Left'#2
+  +#7#6'Height'#2#22#3'Top'#2'o'#5'Width'#2'C'#7'Caption'#6#6'Before'#7'Checked'
+  +#9#8'TabOrder'#2#2#7'TabStop'#9#0#0#12'TRadioButton'#7'rbAfter'#4'Left'#2#7#6
+  +'Height'#2#22#3'Top'#3#142#0#5'Width'#2'8'#7'Caption'#6#5'After'#8'TabOrder'
+  +#2#3#0#0#9'TCheckBox'#8'cxInsert'#4'Left'#3#135#0#6'Height'#2#22#3'Top'#2'o'
+  +#5'Width'#2'='#7'Caption'#6#6'Insert'#8'TabOrder'#2#4#0#0#9'TCheckBox'#8'cxU'
+  +'pdate'#4'Left'#3#135#0#6'Height'#2#22#3'Top'#3#146#0#5'Width'#2'G'#7'Captio'
+  +'n'#6#6'Update'#8'TabOrder'#2#5#0#0#9'TCheckBox'#8'cxDelete'#4'Left'#3#135#0
+  +#6'Height'#2#22#3'Top'#3#182#0#5'Width'#2'C'#7'Caption'#6#6'Delete'#8'TabOrd'
+  +'er'#2#6#0#0#7'TBitBtn'#7'BitBtn1'#4'Left'#2#11#6'Height'#2#30#3'Top'#3#252#0
+  +#5'Width'#2'U'#7'Caption'#6#6'Script'#5'Color'#4#219#242#247#0#7'Default'#9#4
+  +'Kind'#7#5'bkYes'#7'OnClick'#7#12'BitBtn1Click'#8'TabOrder'#2#7#0#0#7'TBitBt'
+  +'n'#7'BitBtn2'#4'Left'#2'q'#6'Height'#2#30#3'Top'#3#252#0#5'Width'#2'W'#6'Ca'
+  +'ncel'#9#7'Caption'#6#6'Cancel'#5'Color'#4#219#242#247#0#4'Kind'#7#8'bkCance'
+  +'l'#11'ModalResult'#2#2#8'TabOrder'#2#8#0#0#0
+]);

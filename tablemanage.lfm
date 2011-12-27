@@ -1,0 +1,779 @@
+object fmTableManage: TfmTableManage
+  Left = 214
+  Height = 411
+  Top = 386
+  Width = 780
+  ActiveControl = PageControl1
+  Anchors = [akTop, akLeft, akRight]
+  Caption = 'Table Management'
+  ClientHeight = 411
+  ClientWidth = 780
+  OnClose = FormClose
+  Position = poScreenCenter
+  LCLVersion = '0.9.31'
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 411
+    Top = 0
+    Width = 780
+    ActivePage = tsFields
+    Align = alClient
+    Images = ImageList1
+    TabIndex = 0
+    TabOrder = 0
+    object tsFields: TTabSheet
+      Caption = 'Fields'
+      ClientHeight = 380
+      ClientWidth = 776
+      object sgFields: TStringGrid
+        Left = 0
+        Height = 337
+        Top = 0
+        Width = 776
+        Align = alTop
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        ColCount = 7
+        Columns = <        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Color = 14408682
+            MaxSize = 50
+            ReadOnly = True
+            Title.Caption = 'P-Key'
+            Title.Font.Color = 5526757
+            Title.Font.Height = -11
+            Title.Font.Style = [fsBold]
+            Title.PrefixOption = poNone
+            Width = 50
+          end        
+          item
+            Title.Caption = 'Field Name'
+            Title.PrefixOption = poNone
+            Width = 130
+          end        
+          item
+            Title.Caption = 'Data Type'
+            Title.PrefixOption = poNone
+            Width = 120
+          end        
+          item
+            Title.Caption = 'Size'
+            Title.Font.Color = 16657685
+            Title.Font.Style = [fsBold]
+            Title.PrefixOption = poNone
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Allow Null'
+            Title.PrefixOption = poNone
+            Width = 90
+          end        
+          item
+            Title.Caption = 'Default Value'
+            Title.PrefixOption = poNone
+            Width = 120
+          end        
+          item
+            Title.Caption = 'Description'
+            Title.PrefixOption = poNone
+            Width = 200
+          end>
+        FixedColor = 14539471
+        FixedCols = 0
+        Flat = True
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goColMoving, goRowSelect, goSmoothScroll]
+        RowCount = 4
+        TabOrder = 0
+        TitleFont.Style = [fsBold]
+        UseXORFeatures = True
+      end
+      object bbEdit: TBitBtn
+        Left = 14
+        Height = 30
+        Top = 342
+        Width = 75
+        Anchors = [akLeft, akBottom]
+        Caption = 'Edit'
+        Color = 16249563
+        OnClick = bbEditClick
+        TabOrder = 1
+      end
+      object bbNew: TBitBtn
+        Left = 104
+        Height = 30
+        Top = 342
+        Width = 75
+        Anchors = [akLeft, akBottom]
+        Caption = 'New'
+        Color = 16249563
+        OnClick = bbNewClick
+        TabOrder = 2
+      end
+      object edDrop: TBitBtn
+        Left = 240
+        Height = 30
+        Top = 342
+        Width = 75
+        Anchors = [akLeft, akBottom]
+        Caption = 'Drop'
+        Color = 16249563
+        Kind = bkIgnore
+        OnClick = edDropClick
+        TabOrder = 3
+      end
+      object bbRefresh: TBitBtn
+        Left = 672
+        Height = 30
+        Top = 342
+        Width = 94
+        Anchors = [akRight, akBottom]
+        Caption = 'Refresh'
+        Color = 16249563
+        Kind = bkRetry
+        OnClick = bbRefreshClick
+        TabOrder = 4
+      end
+    end
+    object tsIndices: TTabSheet
+      Caption = 'Indices'
+      ClientHeight = 380
+      ClientWidth = 776
+      ImageIndex = 2
+      object bbRefreshIndices: TBitBtn
+        Left = 646
+        Height = 30
+        Top = 3
+        Width = 88
+        Anchors = [akTop, akRight]
+        Caption = 'Refresh'
+        Color = 16249563
+        Kind = bkRetry
+        OnClick = bbRefreshIndicesClick
+        TabOrder = 0
+      end
+      object sgIndices: TStringGrid
+        Left = -1
+        Height = 142
+        Top = -2
+        Width = 637
+        Anchors = [akTop, akLeft, akRight]
+        Columns = <        
+          item
+            Title.Caption = 'Index Name'
+            Title.PrefixOption = poNone
+            Width = 140
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Unique'
+            Title.PrefixOption = poNone
+          end        
+          item
+            ButtonStyle = cbsPickList
+            PickList.Strings = (
+              'Asc'
+              'Desc'
+            )
+            Title.Caption = 'Sort'
+            Title.PrefixOption = poNone
+          end        
+          item
+            Title.Caption = 'On Fields'
+            Title.PrefixOption = poNone
+            Width = 140
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            ReadOnly = True
+            Title.Caption = 'Primary Key'
+            Title.Color = 12514548
+            Title.PrefixOption = poNone
+            Width = 90
+          end>
+        FixedColor = 14539471
+        FixedCols = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll]
+        TabOrder = 1
+      end
+      object bbDrop: TBitBtn
+        Left = 646
+        Height = 30
+        Top = 51
+        Width = 88
+        Anchors = [akTop, akRight]
+        Caption = 'Drop'
+        Color = 16249563
+        OnClick = bbDropClick
+        TabOrder = 2
+      end
+      object GroupBox1: TGroupBox
+        Left = -2
+        Height = 236
+        Top = 139
+        Width = 570
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Caption = 'Manage'
+        ClientHeight = 217
+        ClientWidth = 566
+        TabOrder = 3
+        object Label2: TLabel
+          Left = 6
+          Height = 18
+          Top = 14
+          Width = 174
+          Caption = 'Create new index on fields'
+          ParentColor = False
+        end
+        object Label3: TLabel
+          Left = 254
+          Height = 18
+          Top = 39
+          Width = 111
+          Caption = 'New index name'
+          ParentColor = False
+        end
+        object clbFields: TCheckListBox
+          Left = 6
+          Height = 152
+          Top = 47
+          Width = 232
+          ItemHeight = 0
+          TabOrder = 0
+          TopIndex = -1
+        end
+        object cxUnique: TCheckBox
+          Left = 254
+          Height = 22
+          Top = 95
+          Width = 70
+          Caption = 'Unique'
+          TabOrder = 1
+        end
+        object bbCreateIndex: TBitBtn
+          Left = 254
+          Height = 30
+          Top = 167
+          Width = 124
+          Caption = 'Create Index'
+          Color = 16249563
+          Default = True
+          Kind = bkOK
+          ModalResult = 1
+          OnClick = bbCreateIndexClick
+          TabOrder = 2
+        end
+        object edIndexName: TEdit
+          Left = 254
+          Height = 27
+          Top = 63
+          Width = 120
+          TabOrder = 3
+        end
+        object cbSortType: TComboBox
+          Left = 254
+          Height = 31
+          Top = 127
+          Width = 120
+          AutoDropDown = True
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            'Ascending'
+            'Descending'
+          )
+          ParentColor = True
+          Style = csDropDownList
+          TabOrder = 4
+          Text = 'Ascending'
+        end
+        object cbIndexType: TComboBox
+          Left = 254
+          Height = 31
+          Top = 1
+          Width = 148
+          Color = 16249563
+          ItemHeight = 0
+          ItemIndex = 1
+          Items.Strings = (
+            'Primary Key'
+            'Secondary Index'
+          )
+          OnChange = cbIndexTypeChange
+          Style = csDropDownList
+          TabOrder = 5
+          Text = 'Secondary Index'
+        end
+      end
+    end
+    object tsConstraints: TTabSheet
+      Caption = 'Constraints'
+      ClientHeight = 380
+      ClientWidth = 776
+      ImageIndex = 3
+      object bbRefreshConstraint: TBitBtn
+        Left = 648
+        Height = 30
+        Top = 343
+        Width = 99
+        Anchors = [akRight, akBottom]
+        Caption = 'Refresh'
+        Color = 16249563
+        Kind = bkRetry
+        OnClick = bbRefreshConstraintClick
+        TabOrder = 0
+      end
+      object sgConstraints: TStringGrid
+        Left = -1
+        Height = 333
+        Top = -1
+        Width = 760
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        ColCount = 7
+        Columns = <        
+          item
+            Title.Caption = 'Constraint Name'
+            Title.PrefixOption = poNone
+            Width = 120
+          end        
+          item
+            Title.Caption = 'Key name'
+            Title.PrefixOption = poNone
+            Width = 100
+          end        
+          item
+            Title.Caption = 'On Fields'
+            Title.PrefixOption = poNone
+            Width = 120
+          end        
+          item
+            Title.Caption = 'Foreign Table'
+            Title.PrefixOption = poNone
+            Width = 100
+          end        
+          item
+            Title.Caption = 'Foriegn Key'
+            Title.PrefixOption = poNone
+            Width = 100
+          end        
+          item
+            Title.Caption = 'Update Rule'
+            Title.PrefixOption = poNone
+            Width = 100
+          end        
+          item
+            Title.Caption = 'Delete Rule'
+            Title.PrefixOption = poNone
+            Width = 100
+          end>
+        FixedColor = 14539471
+        FixedCols = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll]
+        RowCount = 2
+        TabOrder = 1
+      end
+      object bbNewConstraint: TBitBtn
+        Left = 6
+        Height = 30
+        Top = 343
+        Width = 119
+        Anchors = [akLeft, akBottom]
+        Caption = 'New Constraint'
+        Color = 16249563
+        OnClick = bbNewConstraintClick
+        TabOrder = 2
+      end
+      object bbDropConstraint: TBitBtn
+        Left = 144
+        Height = 30
+        Top = 343
+        Width = 75
+        Anchors = [akLeft, akBottom]
+        Caption = 'Drop'
+        Color = 16249563
+        Kind = bkIgnore
+        OnClick = bbDropConstraintClick
+        TabOrder = 3
+      end
+    end
+    object tsTriggers: TTabSheet
+      Caption = 'Triggers'
+      ClientHeight = 380
+      ClientWidth = 776
+      ImageIndex = 1
+      object sgTriggers: TStringGrid
+        Left = 0
+        Height = 324
+        Top = -1
+        Width = 758
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        ColCount = 2
+        Columns = <        
+          item
+            Title.Caption = 'Trigger Name'
+            Title.PrefixOption = poNone
+            Width = 160
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Active'
+            Title.PrefixOption = poNone
+            Width = 100
+          end>
+        FixedColor = 14539471
+        FixedCols = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll]
+        RowCount = 2
+        TabOrder = 0
+      end
+      object bbRefreshTriggers: TBitBtn
+        Left = 662
+        Height = 30
+        Top = 337
+        Width = 87
+        Anchors = [akRight, akBottom]
+        Caption = 'Refresh'
+        Color = 16249563
+        Kind = bkRetry
+        OnClick = bbRefreshTriggersClick
+        TabOrder = 1
+      end
+      object bbNewTrigger: TBitBtn
+        Left = 7
+        Height = 30
+        Top = 335
+        Width = 87
+        Anchors = [akLeft, akBottom]
+        Caption = 'Add New'
+        Color = 16249563
+        OnClick = bbNewTriggerClick
+        TabOrder = 2
+      end
+      object bbEditTrigger: TBitBtn
+        Left = 110
+        Height = 30
+        Top = 335
+        Width = 75
+        Anchors = [akLeft, akBottom]
+        Caption = 'Edit'
+        Color = 16249563
+        OnClick = bbEditTriggerClick
+        TabOrder = 3
+      end
+      object bbDropTrigger: TBitBtn
+        Left = 200
+        Height = 30
+        Top = 335
+        Width = 75
+        Anchors = [akLeft, akBottom]
+        Caption = 'Drop'
+        Color = 16249563
+        Kind = bkIgnore
+        OnClick = bbDropTriggerClick
+        TabOrder = 4
+      end
+    end
+    object tsPermissions: TTabSheet
+      Caption = 'Permissions'
+      ClientHeight = 380
+      ClientWidth = 776
+      ImageIndex = 4
+      object sgPermissions: TStringGrid
+        Left = 0
+        Height = 324
+        Top = 0
+        Width = 758
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        ColCount = 12
+        Columns = <        
+          item
+            Title.Caption = 'User/Role'
+            Title.PrefixOption = poNone
+            Width = 160
+          end        
+          item
+            Title.Caption = 'Type'
+            Title.PrefixOption = poNone
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            ReadOnly = True
+            Title.Caption = 'Select'
+            Title.PrefixOption = poNone
+            Width = 100
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Insert'
+            Title.PrefixOption = poNone
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Update'
+            Title.PrefixOption = poNone
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Delete'
+            Title.PrefixOption = poNone
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'References'
+            Title.PrefixOption = poNone
+            Width = 80
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Grant Select'
+            Title.PrefixOption = poNone
+            Width = 90
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Grant Insert'
+            Title.PrefixOption = poNone
+            Width = 90
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Grant Update'
+            Title.PrefixOption = poNone
+            Width = 100
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Grant Delete'
+            Title.PrefixOption = poNone
+            Width = 90
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Title.Caption = 'Grant References'
+            Title.PrefixOption = poNone
+            Width = 110
+          end>
+        FixedColor = 14539471
+        FixedCols = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll]
+        RowCount = 2
+        TabOrder = 0
+      end
+      object edEditPermission: TBitBtn
+        Left = 6
+        Height = 30
+        Top = 339
+        Width = 75
+        Anchors = [akLeft, akBottom]
+        Caption = 'Edit'
+        Color = 16249563
+        OnClick = edEditPermissionClick
+        TabOrder = 1
+      end
+      object bbRefreshPermissions: TBitBtn
+        Left = 662
+        Height = 30
+        Top = 339
+        Width = 87
+        Anchors = [akRight, akBottom]
+        Caption = 'Refresh'
+        Color = 16249563
+        Kind = bkRetry
+        OnClick = bbRefreshPermissionsClick
+        TabOrder = 2
+      end
+      object bbAddUser: TBitBtn
+        Left = 90
+        Height = 30
+        Top = 339
+        Width = 125
+        Anchors = [akLeft, akBottom]
+        Caption = 'Add User / Role'
+        Color = 16249563
+        OnClick = bbAddUserClick
+        TabOrder = 3
+      end
+    end
+  end
+  object ImageList1: TImageList
+    DrawingStyle = dsFocus
+    left = 464
+    top = 240
+    Bitmap = {
+      4C69050000001000000010000000EFFCFEFFF4FEFEFFFFFDFCFFFFFDFCFFFFFA
+      FFFFFFF7FEFFFFFCFFFFFFFDFDFFFFFDF8FFFFFEF4FFF9FEF5FFFCFEFEFFFFF8
+      FFFFFFF6FFFFF9F1FCFFFFFBFFFFF4FFFFFFF8FFFFFFEFF3EEFFFFFFFCFFFFFA
+      FCFFF9F3F8FFFFFDFFFFFFFFFFFFFAFDF4FFFDFFF7FFF8FFF6FFFDFFFEFFF7F3
+      FFFFFBF4FFFFFFF8FFFFFCF6FBFFF5FAFDFFEFF7F6FFF3FFF5FFF8FFF7FFFBFF
+      FCFFFFFFFFFFFBF7FDFFF6F6F6FFF7FFF6FFEDFDEBFFF8FFF8FFF4FBF6FFF3F8
+      F9FFFBFEFFFFFDF9FFFFFEF6FDFFF9FDFEFFF6FFFBFFECFFF1FFDCFEE0FFEAFF
+      EDFFECFAEFFFFFFEFFFFF9FFFAFFE7FFECFFDCFFE2FFEEFFF2FFEEFFF2FFEDFF
+      F3FFECFEF1FFFCFEFEFFFDF9FFFFF2F9F4FFE8FEEBFF90C69BFF8CCB99FF90BF
+      98FFA0BEA5FFEAF5EDFFEEFFF3FF89BF94FF9AD8A8FF91B79BFFB8D8BFFFBEEB
+      C4FFD0F8D5FFF4FFF8FFEEF3F2FFFDFFFBFFE2FCE4FF8ACE97FFBBFFCAFFC1FE
+      CCFFE0FFE7FFF0FBF3FFEEFFF4FF80C592FFBBFFCEFFCAF7D6FFCEF7D7FFA2DF
+      A7FFB7EFBCFFE3F9E7FFFBFFFFFFFFFBF8FFE9FEE8FF80C78EFFB3FFC5FFC5FF
+      D1FFDDFFE2FFFBFFFCFFE5F7EAFF76C18BFFBAFFD1FFDFFFEEFFD6FFDFFFC4FF
+      C9FFA0DBA1FFEBFEEDFFFDFCFFFFFFF6FAFFF8FFF5FF0D511AFF005511FF0C4C
+      18FF1E4022FFFFFEFFFFF3FDF7FF0E5523FFA9FAC1FFE0FFEEFFE2FFE8FFC8FF
+      CBFF185218FFEFFBEFFFFFFAFFFFFFEFFEFFFFFFFBFF074013FFBBFFCDFFDCFF
+      E6FFE2F8E5FFFFF8FFFFFEFDFFFF07431AFFC5FFDAFFE4FFEFFFE3FCE8FFC8FE
+      C9FF1B491AFFFFFFFEFFFFEEFFFFFFF4FFFFFFFFFBFF1E5528FFBFFFCEFFD1FF
+      DBFFE6FCE9FFFFF5FFFFFFFEFFFF1C562DFFB9FECCFFE5FFEFFFE1FBE4FF154B
+      16FF1C4A1BFFFCFFFBFFFFF9FFFFFFFFFEFFEBFBE9FF0D4815FFC4FFD0FFD6FF
+      DDFFECFFEEFFFBFFFAFFE9FAEDFF064815FF105A20FF194423FF1D4522FF68A5
+      6BFFD2FFD3FFF3FFF4FFF8FBF9FFF3FFF2FFEDFFF0FFC5FFCBFFC5FFCDFFD0FF
+      D6FFE5FFE8FFF4FFF5FFEFFFF1FFCBFFD5FFC2FFCDFFD4FFDBFFDAFFE0FFD6FF
+      DBFFD1FFD4FFE6FFE8FFF0FFF0FFECFFF0FFDBFFDEFFD1FFD6FFD1FFD6FFCDFE
+      D0FFE0FFE4FFD8F3D9FFDCFEDFFFCEFFD1FFC6FFCBFFD1FFD6FFD1FFD6FFCDFF
+      D3FFD1FFD8FFD6FCD8FFE6FFE7FF0A2511FF1F3E23FF0D320CFF082D05FF1837
+      18FF122D13FF3A4F39FF0D290CFF083104FF0C3B0AFF002800FF032C06FF123A
+      17FF002305FF426144FF123013FFF8FFFEFFF4FBF6FFEFF3E8FFFFFFF8FFF8F5
+      F1FFFFFFFEFFF1F2F0FFFCFFF8FFF4FDE9FFF1FFE5FFF8FFF0FFF6FFF4FFECF3
+      EEFFF0F6F5FFF7FFF6FFF6FFF4FFF9F9FF00FFFDFFFFFFFCFEFFFFFAFDFFFFF4
+      FFFFFFFAFFFFFFFBFFFFFFFCFDFFFFFFF8FFFCFBEDFFFFFFF4FFF8FAF4FFFFF7
+      FFFFFFFBFFFFF7F2F4FFFFFEFAFFF3FFFBFFF4FFFBFFF9FFFDFFFFFDFDFFFFFA
+      FEFFFFFAFFFFF1FFFFFFECFFFFFFF8FBFFFFF5F6FFFFF6FCFFFFE5F3FFFFECFE
+      FFFFEFFDFFFFFBFBFFFFFFFAFFFFF6FFFCFFF5FFF9FFFAFFFDFFFFFFFEFFFFFC
+      FFFFFFFBFFFFF7FCFFFFF3FFFFFFFBFEFFFFF7F6FFFFF9FCFFFFFAFEFFFFF3FE
+      FFFFEFF8FCFFF5F5FBFFFFFDFFFFFFFFFEFFFDFEFCFFFFFFFEFFFFFEFEFFFFFB
+      FCFFFFFBFCFFFFFCFAFFFFFFFBFFFBFBF5FFFFFFFBFFFFFEF7FFFFFAF4FFFFFF
+      F9FFFFFFF9FFFFFFF9FFFBFFF8FFFFF8FAFFFFFAFCFFFFFAFBFFFFF4F4FFFFF1
+      F3FFFFF6F7FFFFF9F5FFFFFBF3FFFFFFF5FFFDFFF3FFFFFFF4FFFFFFF7FFFFF5
+      EDFFFEF6EFFFFFFFFBFFF8FCF6FF901E25FF89151AFF8D181BFF9A1D1FFFA81C
+      1DFFA61615FF9B1613FF7D261CFFFFFFEEFFF1FFF4FFFDFFF5FFF7F4EFFFFFFE
+      FFFFFFFCFFFFFFF9FF00FFF3FFFF8C1A1AFFFFE7E9FFFFEDF1FFAB0E12FFAF0D
+      12FFFFEDEEFFFFE7E5FF7E1E18FFFFFEF2FFFFFCF0FFFFFCF8FFFFF7F8FFFFFC
+      FFFFFFF9FF00FEF4FFFFFFFAFFFFFFDECFFFFFFAF0FFFFEAEAFFA41419FF9D15
+      1BFFFFEAEEFFFFF7F7FFFFD7D7FF771A21FF86151FFF9B1724FFFFA4AEFF5E28
+      28FFFFFFF8FFFFFFF8FFF5FDF2FFFFFFF4FFFFFAF1FFFFF1F5FF9E1721FF8E19
+      22FFFFF5F8FFFFF9F6FFFFFAFBFFFFEFFBFFA70D20FFBE1427FFFF94A1FFFFD3
+      D2FFFFFEF2FFFFFFF4FFF9FFF3FFFFFFFEFFFFFAFEFFFFEFFCFF8E0D1CFF831E
+      26FFFFF8F8FFFFFEF6FFFFFEF7FFFFF3F7FF99141EFFA81120FFFFE1ECFFFFFB
+      F9FFFEFEF8FFFFFFFCFFFDFEFAFFF6F8F8FFFFFAFEFFFFECF8FF9E1321FF891A
+      1EFFFFF4EDFFFFFFF0FFFFFFF1FFFFEFEBFFA41B1FFFA20E18FFFFEEF7FFFFFB
+      FBFFFCFDFBFFFFFEFFFFFCFBFDFFFFFFF5FFFFFBF1FFFFF0F2FFBB191EFFAB13
+      12FFFFF6EBFFFFFFE7FFFFFFE7FFFFF3EBFFB31012FFB5171EFFFFF0F5FFFFF1
+      F4FFFFFEFEFFFFFEFFFFFDFEFFFFFAFFF8FFFFFDF7FF7A1A20FF981520FF910E
+      19FF741119FFFFFAF7FFFFFBFBFF7C101DFF9A1022FF99162AFF791725FFFFF8
+      FFFFFFF2F4FFFFFEFFFFF5F5F5FFEDFEFFFFF7F8FFFFFFE9FFFF9D6D91FF965F
+      8CFF895B8FFF796298FF6D548CFF86548EFF9F5E95FF975683FFFFF0FFFFFFF2
+      FFFFFBFFFFFFFFFFFBFFFFFFF8FFE7F1FFFFF1FAFFFF515572FF504F76FF5950
+      82FF645892FF5D4F8FFF5C5092FF605796FF584B83FF665281FF5E5373FFF1FC
+      FFFFEFFEFFFFEFF3EDFFFFFFF8FFFFFAFFFF383544FF383F50FF313B4DFF3034
+      4DFF373854FF272242FF373656FF1E2947FF283751FF323D53FF243343FF2743
+      4AFFE7FEFFFFFAFCFDFFFFFDFFFFFFF9FF00F9F1FCFFF4FDFFFFEFFEFFFFEDF9
+      FFFFF6FCFFFFFBFAFFFFF6FBFFFFE8FEFFFFE1FFFFFFE4FDFFFFE4FFFFFFDDFF
+      FFFFE6FFFFFFFDFDFFFFFFF8FFFFF8FFFFFFF8FEFFFFF6F7FFFFFAF7FFFFF4EC
+      FFFFF8F3FFFFF3F2FFFFF6FAFFFFF4FBFFFFF0F6FFFFF4F9FFFFF0F4FFFFF4F7
+      FFFFF3F6FFFFEEEEFFFFF1F3FFFFECF3F0FFFAFFFFFFF4F7FFFFE0DFFFFFA39D
+      CEFFADA7D8FFF8F6FFFFF6FAFFFFB5B9CBFFA4A9BEFFA3A6C5FFF1F6FFFFE5EB
+      FFFFF1F6FFFFC7C4F6FFA7A1DAFFFFFFF7FFF5FAF8FFF4FAFFFFBCBDE9FF9E96
+      DDFFA49AE0FFF8F2FFFFF4F2FFFFF0F0FFFFADB1C9FFA1A2D4FFA1A5D8FFEAF8
+      FFFFCED6FBFFA79CE4FFA694EDFFFFFFF4FFFDFFFCFFE7EEFFFF8C90C3FF9B94
+      E9FF7D74C4FFF8F4FFFFFBFBFFFFFBFBFFFFA6A8C7FF6968B0FF6266B5FFCEDC
+      FFFF747DAFFF7369B5FF7561BAFFF9F7ECFFFCFEFEFFEFFAFFFF5E699BFF6B69
+      C2FFB0ACF7FFF1F4FFFFFDFFF9FFF8F8FEFFF4F3FFFF6462C2FF6A6ADCFF5E66
+      C4FF6B71BEFF6A67A5FFF2EAFFFFFFFFFCFFFAF9FFFFDEE6FFFF6974AEFF6367
+      B6FFCED1FFFFF8FEFFFFFBFFF6FFFBFCFFFFEFEBFFFF948CFFFF5A54E1FF5554
+      D2FF6366C8FFD7D9FFFFE7E9FFFFFCF5FCFFFBF6FFFFD8D6FFFF212371FF222D
+      67FFEAF6FFFFF6FDFFFFF3F7FCFFF8F8FFFFEAE3FFFF382AB1FF1004A4FF120B
+      9CFF0F0E7CFFDFE4FFFFF1FBFFFFFFFAFFFFF4ECFFFFB3A7FFFF18106DFF535B
+      90FFEAF7FFFFEEF5FFFFF6F7FFFFE9E3FFFF5E53A9FF1C118DFF241BA7FF413A
+      C1FF171481FF7B7FBAFFEAF3FFFFFAFAFFFFF4EFFFFF8A75DBFF1F0D78FF7C7A
+      B6FFEFF6FFFFF3F7FFFFF1EEFFFF6959B7FF261682FF28247DFFCBCDFFFFB6B4
+      FFFF1A1878FF28257AFFDCD9FFFFEEF4FFFFF4F3FFFF6A56B5FF2A147AFFB1AB
+      E4FFEFF1FFFFF0F4FFFF7875ADFF27177CFF201277FFC2C5FCFFEAF4FFFFEAEE
+      FFFF4A4C93FF1A146BFF8E88E7FFF4FFFCFFEAF0FFFF45377FFF2A1A68FFD2CE
+      F7FFF4F8FFFF8485ABFF252357FF231F61FFC0BEF9FFEFF8FFFFEEFCFFFFEDFA
+      FFFFC5CEF0FF16145AFF29237CFFF1FFF2FFF6FFFFFFE4E0FFFFF4EDFFFFF8F6
+      FFFFF6F9FFFFF0F2FFFFF4F4FFFFF3F5FFFFF3F7FFFFF2FEFFFFF3FFFFFFF1FF
+      FFFFE5EFFFFFF1F1FFFFEFECFFFFF9FFF5FFF6FDF8FFF6FCFFFFF4FAFFFFF6F8
+      FFFFEFF3FFFFFAFCFFFFF4F7FFFFF6F9FFFFF8FFFFFFF4FFFFFFEEFCFBFFF3FD
+      FFFFF3FBFFFFF6FAFFFFF5F6FFFFFFFFFBFFF4F8F3FFF2FDFBFFEFFAFFFFECF3
+      FFFFF6F9FFFFFDFCFFFFFFFDFFFFFFFFFEFFFDFFFEFFF0FCFEFFE9F6FEFFF1FA
+      FFFFF4F9FFFFF4F4FFFFFFFDFFFFFFFCFFFFF9F5FBFF4B545DFF323F4FFF3943
+      5BFF353854FF3E344BFF4F4153FF3F313CFF4E4853FF383E51FF414A65FF353C
+      5DFF363555FF453A54FF503E55FFFFF7FF00FFFAFFFFF3FAFFFFECFAFFFFEBF6
+      FFFFF4F6FFFFFFF4FFFFFFF1FFFFFFF8FFFFFFF9FFFFF4F7FFFFE5EEFFFFEFF4
+      FFFFF6F3FFFFFFF1FFFFFFF3FFFFFFFBFFFFFDF4FEFFFFFBFFFFFFFBFFFFFFFA
+      FFFFFFF5FDFFFFFCFFFFFFFDFFFFFDFBFFFFFDFDFFFFFBFEFFFFF7FAFFFFFFFE
+      FFFFFFFDFFFFFDF7FCFFFFFBFFFFFBF7FDFFFFFDFFFFFEF9FBFFFBF5F6FFFFFF
+      FCFFFFFFFBFFFFFFF6FFFFFFF5FFFFFFF7FFFFFFF3FFFFFFF4FFFFFFF5FFFFFF
+      F1FFFFFFF5FFFFFFF7FFFFFFF5FFF8FFFFFFF6FDF8FFFDFFF9FFFFFFF4FFFFFF
+      EEFFFFFFE4FFFFFFE3FFFFFFD9FFFFFFDCFFFFFFD6FFFFFFDAFFFFFFDBFFFFFF
+      D8FFFFFFD6FFFFFFDFFFFFFFE0FFF8FFFEFFF6FEF7FFFDFFF5FFFFFFEFFFFFFF
+      E5FF686B3DFF5E632CFF666E2FFF616A27FF656F29FF646B28FF646729FF7271
+      39FF726B3AFF695E32FF6D5F35FFF7F4F6FFFFFFFEFFFFFFF8FFFEFFEBFFFFFF
+      E4FF5C6A3AFFFFFFD9FFFBFFD3FFF9FFD2FFFBFFD5FFF5FFD3FFFFFFE2FFFFFF
+      E7FFFFFFE9FFFFFFF4FFFFFFF7FFFFFDFFFFFFFEFFFFF6F3EBFFFFFFF1FFFFFF
+      E9FF566133FFFFFFDAFF465D1FFF3E5719FF455E26FF485D30FFEEFFDDFFFFFF
+      F1FFFDFEF5FFFFFDFEFFFCF2F8FFF6F4FAFFFFFEFFFFFFFBF6FFFFFFF2FFFFFF
+      E9FF5D5B33FFFFFFDDFFFFFFDBFFFFFFDBFFFFFFD9FF4B562EFFFAFFE8FFFBFF
+      F4FFF6FEF7FFFBFFFFFFFAFEFFFFF6FFF9FFF4FFF3FFFBFFF2FFFDFFEBFFFFFF
+      E7FF626B40FF5D6536FF5A6533FF586734FFFDFFE2FF3E4E2CFFF8FFEEFFF6FF
+      F3FFF3FFF9FFF6FFFFFFF5FEFFFFE5FFE1FFE8FFE3FFE6FFDCFFEAFFDFFFECFF
+      DDFFE5FFD8FFE8FFDDFFE2FFDBFFE2FFDEFFE2FFE2FF315636FFECFFF2FFECFF
+      F4FFF6FFFEFFF7FCFFFFFBFDFFFF2E612FFF225523FF2D5E2CFF2A5928FF2B5A
+      29FF2F602EFF245424FF2B5C2EFF2C5C32FF35633FFF21492DFFE1FFEBFFEFFF
+      F7FFEDFDF2FFF8FFFBFFF5FCF7FFDBFFEEFFE1FFF2FFCEF2DCFFEBFFF1FFEFFF
+      F2FFE5FAE4FFF3FFF1FFF1FFEEFFF3FFF0FFE2FBE1FFEFFFEEFFE8FFE7FFD2EE
+      D0FFF0FFECFFF1FFEBFFEAFFE4FFE6FFF7FFDFFBEEFFE0F8ECFFE8FCF0FFF2FF
+      F5FFF6FFF6FFF5FFF4FFF8FFF4FFEBFEE9FFEFFFEDFFE8FFE7FFE1FFE1FFDDFD
+      DAFFD9FBD6FFE2FFDCFFE0FFDAFFECFCEBFFE9F9E8FFE7F4E4FFE1EFDDFFE2F2
+      E0FFE7FAE7FFE1F8E2FFD9F5DEFFE1FFE8FFC7ECD2FFD0F8DCFFD0F9DAFFD8FE
+      E0FFD8FDDDFFD6F8D9FFE7FFEAFF1F2919FF303A2AFF192312FF1F2B19FF222E
+      1AFF192A15FF2B402AFF112B14FF04210AFF0D2F17FF082A12FF062810FF0D29
+      15FF0A2511FF445D49FF132916FFEFFCF4FFEAF8EDFFF7FFF5FFEEF7EAFFF3FA
+      EBFFFDFFF4FFF8FFEFFFFBFFF4FFFAFFF4FFEBF8E8FFF8FFF7FFEEFAEEFFEFF7
+      F0FFEDF3EEFFFDFFFEFFF8F9F7FFF1FFFC00F4FFFCFFEEF9F1FFF9FFF6FFFDFF
+      F5FFF6F9EAFFFFFFF4FFFDFEEEFFFCFFF0FFFDFFF3FFF8FCF1FFF8FAF4FFFFFF
+      FEFFFFFAFCFFF0E6ECFFFFFBFFFFFAFFFF00FAFFFF00F2F7F6FFFBFFFEFFF3F6
+      F4FFFDFFFBFFFDFFFBFFF6FBF2FFFDFFF9FFF4F9F0FFFDFFFCFFFDFFFCFFFBFF
+      FFFFFBFFFFFFF5FAFBFFFAFFFF00F1F3FDFFFAFDFFFFFBFDFFFFEEF1F6FFFDFE
+      FFFFF5F7F8FFFDFFFFFFFDFFFFFFF8FAFAFFFDFFFFFFECEEEFFFFCFDFFFFF8FB
+      FFFFF6F8FFFFFAFCFFFFF9FBFFFFFAF7FFFFFAF7FFFFF9F5FFFFFBF8FFFFFBF6
+      FFFFFDF9FFFFFCF9FFFFF8F5FFFFFBF8FFFFF9F6FFFFFDF9FFFFF9F4FFFFFBF8
+      FFFFFBF8FFFFFAF7FFFFF9F6FFFF918DAAFF8A87A1FF8D88A3FF9692ABFF8C86
+      9DFF938EA3FF8D889DFF9893A8FF9590A5FF938EA3FF9690A7FF9690A7FF8C88
+      A1FF8B86A1FF8985A2FF8C88A5FF8D8D9FFFFAFAFFFFF9F7FFFFF5F4FFFFFAF7
+      FFFFFDFBFFFFFDFBFFFFF8F7FFFFF8F7FFFFFCFBFFFFFCFAFFFFF8F5FFFFFBFA
+      FFFFFBFAFFFF9393A5FF8B8B9DFF8D8E9CFFFAFBFFFFFBFBFFFFFBFCFFFFFCFB
+      FFFFFDFCFFFFFDFDFFFFF9F9FFFFFDFDFFFFFDFDFFFFF9F8FFFFFDFCFFFFFBFB
+      FFFFF2F2FEFFFAFBFFFF898A98FF90919FFFFAFBFFFF5C5C68FFF6F7FFFF7776
+      80FF62616AFF707076FF76767CFF6C6C72FF6D6D73FF6E6D76FF6C6B74FFF8F8
+      FFFFFBFBFFFFFAFBFFFF8B8C9AFF8B8C9AFFFAFBFFFFFBFBFFFFF9FAFFFFFDFC
+      FFFFFDFCFFFFF6F6FCFFFDFDFFFFFDFDFFFFFAFAFFFFFDFCFFFFFBFAFFFFFBFB
+      FFFFF9F9FFFFF8F9FFFF9192A0FF9697A5FFF2F3FFFF6E6E7AFFFBFCFFFF706F
+      79FF6A6972FF717177FF6E6E74FF707076FF65656BFF73727BFF717079FFFAFA
+      FFFFF7F7FFFFFAFBFFFF8A8B99FF838492FFFAFBFFFFFBFBFFFFF4F5FFFFFDFC
+      FFFFFDFCFFFFFBFBFFFFFDFDFFFFFCFCFFFFFDFDFFFFFDFCFFFFEFEEF7FFFBFB
+      FFFFFBFBFFFFF8F9FFFF9495A3FF8D8E9CFFFAFBFFFFFBFBFFFF6A6B75FF6C6B
+      75FFFDFCFFFF65656BFF6C6C72FFF8F8FEFFFDFDFFFFFDFCFFFFFDFCFFFFF7F7
+      FFFFFBFBFFFFF5F6FFFF8F909EFF9393A5FFF3F3FFFFFBF9FFFFF4F3FFFFFDFA
+      FFFFFDFBFFFFFBF9FFFFFDFCFFFFFDFCFFFFF8F7FFFFFBF9FFFFF9F6FFFFFBFA
+      FFFFFAF9FFFFF1F1FFFF9696A8FF8985A2FF9A97B1FF8C87A2FF9A96AFFF8D87
+      9EFF8D889DFF9A95AAFF8D889DFF8F8A9FFF938EA3FF9B95ACFF8F89A0FF9692
+      ABFF8B86A1FF9E9AB7FF837F9CFFFAF7FFFFF2EFFFFFFBF7FFFFF8F5FFFFFDF8
+      FFFFF9F5FFFFFBF8FFFFF9F6FFFFF8F5FFFFFDFAFFFFFAF6FFFFFAF5FFFFFBF8
+      FFFFF5F2FFFFFAF7FFFFFAF7FFFFFAFCFFFFF8FBFFFFFBFDFFFFF8FBFFFFFDFE
+      FFFFFDFFFFFFFBFDFDFFFDFFFFFFFDFFFFFFFDFFFFFFF6F8F9FFFDFEFFFFFBFE
+      FFFFFBFDFFFFF8FAFFFFF4F6FFFFFAFFFF00F6FBFCFFFBFFFFFFFAFFFDFFFDFF
+      FEFFFAFEF8FFF7FBF5FFFDFFF9FFFAFFF6FFFDFFF9FFFDFFFCFFFDFFFCFFF8FD
+      FCFFF4F9F8FFFAFFFF00FAFFFF00
+    }
+  end
+  object SQLQuery1: TSQLQuery
+    AutoCalcFields = False
+    ReadOnly = False
+    Params = <>
+    left = 552
+    top = 264
+  end
+  object SQLQuery2: TSQLQuery
+    AutoCalcFields = False
+    ReadOnly = False
+    Params = <>
+    left = 632
+    top = 280
+  end
+end

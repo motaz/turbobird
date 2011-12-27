@@ -1,0 +1,132 @@
+object fmNewEditField: TfmNewEditField
+  Left = 639
+  Height = 336
+  Top = 391
+  Width = 320
+  ActiveControl = edFieldName
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'fmNewEditField'
+  ClientHeight = 336
+  ClientWidth = 320
+  OnClose = FormClose
+  Position = poScreenCenter
+  LCLVersion = '0.9.31'
+  object Label1: TLabel
+    Left = 10
+    Height = 18
+    Top = 14
+    Width = 77
+    Caption = 'Field Name'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 18
+    Top = 48
+    Width = 69
+    Caption = 'Field Type'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 10
+    Height = 18
+    Top = 81
+    Width = 28
+    Caption = 'Size'
+    ParentColor = False
+  end
+  object Label4: TLabel
+    Left = 10
+    Height = 18
+    Top = 116
+    Width = 77
+    Caption = 'Field Order'
+    ParentColor = False
+  end
+  object Label5: TLabel
+    Left = 8
+    Height = 18
+    Top = 192
+    Width = 92
+    Caption = 'Default Value'
+    ParentColor = False
+  end
+  object edFieldName: TEdit
+    Left = 101
+    Height = 27
+    Top = 12
+    Width = 139
+    TabOrder = 0
+  end
+  object cbType: TComboBox
+    Left = 101
+    Height = 31
+    Top = 40
+    Width = 139
+    Color = 16249563
+    ItemHeight = 0
+    OnChange = cbTypeChange
+    Style = csDropDownList
+    TabOrder = 1
+  end
+  object seSize: TSpinEdit
+    Left = 101
+    Height = 27
+    Top = 77
+    Width = 50
+    MaxValue = 10000
+    TabOrder = 2
+  end
+  object cxAllowNull: TCheckBox
+    Left = 8
+    Height = 22
+    Top = 152
+    Width = 92
+    Caption = 'Allow Null'
+    Checked = True
+    State = cbChecked
+    TabOrder = 4
+  end
+  object bbAdd: TBitBtn
+    Left = 10
+    Height = 30
+    Top = 288
+    Width = 75
+    Caption = 'Add'
+    Color = 16249563
+    OnClick = bbAddClick
+    TabOrder = 5
+  end
+  object seOrder: TSpinEdit
+    Left = 101
+    Height = 27
+    Top = 112
+    Width = 50
+    MaxValue = 10000
+    TabOrder = 3
+    Value = 1
+  end
+  object edDefault: TEdit
+    Left = 112
+    Height = 27
+    Top = 186
+    Width = 116
+    TabOrder = 6
+  end
+  object Label6: TLabel
+    Left = 10
+    Height = 18
+    Top = 232
+    Width = 115
+    Caption = 'Field Description'
+    ParentColor = False
+  end
+  object edDescription: TEdit
+    Left = 10
+    Height = 27
+    Top = 250
+    Width = 294
+    TabOrder = 7
+  end
+end

@@ -1,0 +1,1012 @@
+object fmCopyTable: TfmCopyTable
+  Left = 352
+  Height = 509
+  Top = 207
+  Width = 610
+  Caption = 'Copy Table'
+  ClientHeight = 509
+  ClientWidth = 610
+  Position = poScreenCenter
+  LCLVersion = '0.9.30'
+  object Label1: TLabel
+    Left = 9
+    Height = 18
+    Top = 19
+    Width = 114
+    Caption = 'Source Database'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 9
+    Height = 18
+    Top = 56
+    Width = 86
+    Caption = 'Soruce Table'
+    ParentColor = False
+  end
+  object laSourceDatabase: TLabel
+    Left = 183
+    Height = 18
+    Top = 16
+    Width = 121
+    Caption = 'Source Database'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label3: TLabel
+    Left = 9
+    Height = 18
+    Top = 91
+    Width = 146
+    Caption = 'Destination Database'
+    ParentColor = False
+  end
+  object Label4: TLabel
+    Left = 9
+    Height = 18
+    Top = 152
+    Width = 118
+    Caption = 'Destination Table'
+    ParentColor = False
+  end
+  object cbSourceTable: TComboBox
+    Left = 183
+    Height = 31
+    Top = 46
+    Width = 177
+    ItemHeight = 0
+    OnChange = cbSourceTableChange
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object cbDestDatabase: TComboBox
+    Left = 183
+    Height = 31
+    Top = 84
+    Width = 217
+    ItemHeight = 0
+    OnChange = cbDestDatabaseChange
+    Style = csDropDownList
+    TabOrder = 1
+  end
+  object cbDestTable: TComboBox
+    Left = 183
+    Height = 31
+    Top = 151
+    Width = 177
+    ItemHeight = 0
+    Style = csDropDownList
+    TabOrder = 2
+  end
+  object laDatabase: TLabel
+    Left = 184
+    Height = 15
+    Top = 120
+    Width = 108
+    Caption = 'Destination Database'
+    Font.Height = -11
+    ParentColor = False
+    ParentFont = False
+  end
+  object bbCopy: TBitBtn
+    Left = 12
+    Height = 49
+    Top = 440
+    Width = 115
+    Anchors = [akLeft, akBottom]
+    Caption = 'Copy'
+    Glyph.Data = {
+      36100000424D3610000000000000360000002800000020000000200000000100
+      2000000000000010000064000000640000000000000000000000FFFFFF00FFFF
+      FF00FFFFFF007D7D7E007D7D7E007D7D7E000000000100000001808080028080
+      8002808080025555550340404004666666056666660555555506555555065555
+      5506666666058080800455555503808080028080800280808002000000010000
+      00017D7D7E007D7D7E007D7D7E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF007D7D7E000000000180808002666666054D4D4D0A5B5B5B0E5A5A
+      5A115555551259595914555555185252521C5858581D5555551E5555551E5555
+      551E5858581D5858581A55555515515151135A5A5A115555550F5555550C4949
+      490755555503000000017D7D7E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF007E7E7F00808080026D6D6D0755555512555555215757572F5757
+      57385959593C63636352737373907A7A7BCA7B7B7CDC7D7D7EF57D7D7EF57B7B
+      7CDC7A7A7BCB72727392646465535858583D595959395A5A5A33575757265555
+      55185D5D5D0B4040400400000001FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF007F7F8000555555035D5D5D0B5858581D575757355858584B6767
+      6876777778BD878788FFA4A2A4FFC1BBBFFFCAC4C9FFD8CDD4FFDBCDD5FFCFC2
+      CAFFC8BBC5FFA9A1A7FF898789FF777778BE67676879585858515656563E5757
+      5726555555125555550600000001FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF0081818100808080026D6D6D0755555512555555217B7B7B9D8787
+      87FFB4B3B4FFD4D1D3FFD1CDD0FFCAC4C8FFC5BCC1FFC5B8BFFFCBB9C4FFD0BA
+      C8FFDAC1D0FFE3CBDCFFE5D1DFFFBEB3BBFF888788FF7B7B7B9F575757265555
+      55185D5D5D0B4040400400000001FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00828283000000000180808002666666058181829799999AFFCFCE
+      CFFFCDCACCFFC4C2C4FFC0BEC1FFBEBABFFFBDB7BBFFC0B7BDFFC5B7C0FFCBB7
+      C5FFD1B8CBFFD9BDD3FFD8C2D3FFDCCAD7FFDBCED8FF9D999CFF818182984949
+      4907555555030000000182828300FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF0084848500848485008484850084848593A3A2A3FFD0CED0FFC7C7
+      C8FFC0C0C2FFC0BFC2FFBFBFC2FFBDBEC2FFBDBABEFFBEBAC0FFC2BAC2FFC9B9
+      C6FFD4BDD1FFD4BFD2FFCFBFCEFFCDBFCBFFD1C7D0FFD7CED5FFA5A2A5FF8484
+      85937BE4FE008484850084848500FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF008585860085858600858586879B9A9BFFD1CFD0FFC9C7C9FFC3C2
+      C4FFC1C1C4FFC0C1C4FFBEC1C4FFBEBFC4FFBDBDC2FFBEBCC3FFC2BCC6FFC9BC
+      CBFFD5C0D6FFCFC0D1FFCAC1CCFFC8C1CAFFC7C1C8FFCDC7CCFFD3CFD3FF9C9A
+      9CFF858586878585860085858600FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00878788008787882D8E8E8FFFCECCCDFFCDCACCFFC5C4C6FFC3C3
+      C6FFC1C3C6FFBFC2C6FFBDC2C6FFBDC2C7FFBBBFC5FFBEBEC7FFC3BECBFFCBBF
+      D1FFD0C1D6FFCAC2D0FFC6C2CCFFC4C2CAFFC4C3C8FFC5C3C8FFCDCACDFFCFCC
+      CEFF8F8F90FF8787882D87878800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF0089898A0089898A96B5B3B4FFD1CED0FFC9C6C9FFC7C5C9FFC4C5
+      C8FFC1C4C8FFBFC4C8FFBEC4C8FFBCC3C9FFBCC2CAFFC0C1CDFFC4C0D0FFCBC2
+      D5FFCCC3D6FFC6C3D1FFC3C4CDFFC2C4CAFFC2C4C9FFC4C5C8FFC6C5C8FFCFCE
+      CFFFB4B3B4FF89898A9689898A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF008B8B8C1B939293FFD3CFD1FFD0CBCEFFCBC8CBFFC8C7CBFFC5C7
+      CBFFC2C6CAFFC0C6CAFFBFC8CEFFC5CED6FFCDD6DFFFD2DBE5FFD4DBE8FFD4D6
+      E6FFCDCEDDFFC6C7D4FFC1C5CEFFC1C6CCFFC2C6CAFFC4C7CAFFC5C7CAFFCBCB
+      CDFFD1CFD1FF939293FF8B8B8C1BFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF008D8D8E78AEADAEFFD4CFD2FFCECACDFFCCC9CDFFC9C9CDFFC5C8
+      CDFFC2C8CCFFC2CAD0FFC7D2D8FFBCC7CDFFABAEB2FF969798FF969798FFADAE
+      B4FFC0C6D0FFCAD1DDFFC1C9D2FFC0C7CDFFC1C8CCFFC3C8CCFFC6C9CBFFC9C9
+      CBFFD0CFD0FFADADAEFF8D8D8E78FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00909090BAC2BFC1FFD4CFD2FFD0CCCFFFCDCBCFFFCACBCFFFC6CA
+      CFFFC3C9CEFFC5CFD5FFBAC3C8FF9B9C9EFF909090669090901C9090901C9090
+      90669C9C9EFFBAC2CAFFC4CED7FFBFC9CFFFC2C9CEFFC4CACDFFC7CBCDFFCACB
+      CDFFD0CFD0FFC1BFC0FF909090BAFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00929292E4CFCCCEFFD5D1D3FFD1CFD2FFCFCED2FFCCCED2FFC8CD
+      D1FFC4CCD1FFC7D0D7FFA8ABAEFF929292667BE4FE007BE4FE007BE4FE007BE4
+      FE0092929266A8AAAFFFC4D0D8FFC1CBD1FFC3CCD1FFC7CDD1FFCACED0FFCDCE
+      D0FFD1D1D2FFCECCCDFF929292E4FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00949495F9D5D3D4FFD5D2D4FFD3D2D4FFD1D1D4FFCDD0D4FFCAD0
+      D4FFC7CFD4FFC4CED5FF9A9B9CFF9494951C7BE4FE007BE4FE007BE4FE007BE4
+      FD009494951C9A9B9CFFC2CED5FFC3CED4FFC6CFD4FFCAD0D4FFCDD0D4FFD1D1
+      D4FFD2D2D3FFD4D3D4FF949495F9FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00969697F9D6D4D5FFE5E4E4FFE4E3E4FFE2E2E4FFE0E2E4FFDEE2
+      E4FFDCE1E4FFDCE2E7FFBFBFC0FFEDEDED6BFDFFFF5AFDFFFF5AFFFFFF59FFFF
+      FF59EDEDED6BBFBFC0FFDAE2E7FFDAE0E4FFDBE1E4FFDEE2E4FFE0E2E4FFE2E2
+      E4FFE4E4E5FFD7D4D5FF969697F9FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00989899E4D2D0D1FFE6E5E5FFE5E4E5FFE3E4E5FFE1E4E5FFDFE3
+      E5FFDDE2E6FFDFE4E9FFCBCDCFFFD3D3D39BFDFFFF5AFDFFFF5AFFFFFF59FFFF
+      FF59D3D3D39BCACCCFFFDCE4E8FFDBE2E6FFDDE2E6FFE0E3E6FFE2E4E6FFE4E4
+      E6FFE7E6E7FFD9D6D7FF989899E4FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF009B9B9BBDC9C8C9FFE5E5E5FFE6E6E6FFE5E5E6FFE3E5E6FFE1E4
+      E6FFE0E4E7FFE1E6EAFFD9DEE2FFC4C4C6FFD3D4D49DECEDED6DEEEEEE6BD4D4
+      D49BC4C4C6FFD6DDE0FFDDE5E9FFDDE4E6FFE0E4E7FFE2E4E7FFE4E5E7FFE6E5
+      E7FFE9E8E9FFCFCDCEFF9B9B9BBDFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF009D9D9D78BBBBBBFFE6E5E6FFE8E8E8FFE7E8E8FFE6E7E8FFE4E6
+      E8FFE2E6E9FFE2E6EAFFE5EAEDFFDCE0E5FFCFD0D2FFC3C4C4FFC4C4C5FFCFD1
+      D3FFD9E0E4FFE0E9ECFFDFE6E9FFE0E6E8FFE2E6E8FFE4E6E9FFE6E7E9FFE8E8
+      E9FFEBEAEBFFBDBCBCFF9D9D9D78FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF009F9F9F21A8A8A8FFE3E2E3FFEBEBEBFFEAE9EAFFE8E8EAFFE6E8
+      EAFFE5E8EAFFE5E8EAFFE6E8ECFFE8E9EEFFE8E8EEFFE7EBF0FFE6EDF2FFE5EB
+      EFFFE1E9EDFFE1E8EAFFE1E7EAFFE3E8EAFFE4E8EAFFE7E8EAFFE8E8EAFFECEB
+      EBFFE9E7E8FFA8A8A8FF9F9F9F21FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00A1A1A100A1A1A19FCBCACBFFEDECEDFFEBEAEBFFEAEAEBFFE9EA
+      EBFFE8EAEBFFE8E9EBFFE9E9EDFFEAE6EBFFE7E4E9FFE5E5EAFFE4E8ECFFE3E8
+      EBFFE3E8EBFFE3E8EBFFE4E9EBFFE6E9EBFFE8EAEBFFE9EAEBFFEAEAEBFFEFEE
+      EFFFCFCFCFFFA1A1A19FA1A1A100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00A3A3A300A3A3A336AAAAAAFFE8E6E7FFEFEEEFFFECEBECFFECEB
+      ECFFEBEBECFFEBEBEDFFECEAEDFFEBE6EBFFE9E4E9FFE8E7EAFFE7EAEDFFE6EA
+      ECFFE6EAECFFE6EAECFFE7EAEBFFE8EBEBFFEAEBECFFEBEBECFFEFEEEFFFECEB
+      EBFFAAAAAAFFA3A3A336A3A3A300FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00A4A4A400A4A4A400A4A4A48ABAB9BAFFF1EFEFFFF1EFEFFFEFED
+      EDFFEFEDEEFFEFECEEFFEFEBEEFFEEE6EAFFEAE6E8FFE9E6E9FFEAEBEDFFEAEB
+      EDFFEAEBEDFFEAECEDFFEAECEDFFEBECEDFFECEDEDFFEFEFEFFFF1F1F1FFBDBC
+      BCFFA4A4A48AFFFFFF00A4A4A400FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00A6A6A600A6A6A600FFFFFF00A6A6A696C7C5C5FFF4F1F1FFF3F0
+      F1FFF2EDEFFFF2EDEFFFF1EBEDFFEFE6E8FFEDE6E8FFEBE7EAFFECEBEDFFEBED
+      EEFFECEDEDFFECEDEDFFEDEDEDFFEDEDEDFFF1F0F0FFF3F3F3FFCACACAFFA6A6
+      A696FFFFFF00FFFFFF00A6A6A600FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00A7A7A800A7A7A800FFFFFF00A7A7A806A7A7A896BFBDBEFFF2F0
+      F2FFF6F3F4FFF5EFF1FFF3EAEBFFF1E7E9FFEFE7E9FFEDE7E8FFEFEDEEFFEFEF
+      EFFFEFEFEFFFEFEFEFFFF1F0F0FFF3F3F3FFF2F1F1FFC1C0C1FFA7A7A896A7A7
+      A806FFFFFF00FFFFFF00A7A7A800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00A9A9A900A9A9A900FFFFFF00FFFFFF00FFFFFF00A9A9A98AB1B1
+      B1FFDAD7D8FFF8F3F3FFF9F2F3FFF5EDEFFFF3EAEBFFF1EAEBFFF1EDEEFFF3F1
+      F2FFF4F3F3FFF6F4F4FFF5F4F4FFDADADAFFB1B1B1FFA9A9A98AFFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00A9A9A900FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00AAAAAA00AAAAAA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAA
+      AA33AAAAAA9CB2B2B2FFCBC9CAFFE4E0E1FFEAE6E7FFF7F2F3FFF7F4F5FFEAE9
+      EAFFE3E2E2FFCAC9C9FFB2B2B2FFAAAAAA9CAAAAAA33FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00AAAAAA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00ABABAB00ABABAB00ABABAB00ABABAB00ABABAB00ABABAB00ABAB
+      AB00ABABAB00ABABAB1BABABAB6CABABABB7ABABABCCABABABFCABABABFCABAB
+      ABCCABABABB7ABABAB6CABABAB1BABABAB00ABABAB00ABABAB00ABABAB00ABAB
+      AB00ABABAB00ABABAB00ABABAB00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+    }
+    OnClick = bbCopyClick
+    TabOrder = 3
+  end
+  object bbClose: TBitBtn
+    Left = 160
+    Height = 49
+    Top = 440
+    Width = 114
+    Anchors = [akLeft, akBottom]
+    Caption = '&Close'
+    Kind = bkClose
+    OnClick = bbCloseClick
+    TabOrder = 4
+  end
+  object laDatabase1: TLabel
+    Left = 12
+    Height = 34
+    Top = 174
+    Width = 148
+    AutoSize = False
+    Caption = 'Make sure it is already exist with the same structure'
+    Font.Color = 4605510
+    Font.Height = -11
+    ParentColor = False
+    ParentFont = False
+    WordWrap = True
+  end
+  object Label5: TLabel
+    Left = 9
+    Height = 18
+    Top = 224
+    Width = 239
+    Caption = 'select statement from Source Table'
+    ParentColor = False
+  end
+  inline syScript: TSynEdit
+    Left = 8
+    Height = 161
+    Top = 264
+    Width = 593
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Font.Height = -13
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqNonAntialiased
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 5
+    Gutter.Width = 57
+    Gutter.MouseActions = <    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbLeft
+        ClickCount = ccAny
+        ClickDir = cdDown
+        Command = 13
+        MoveCaret = False
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbRight
+        ClickCount = ccSingle
+        ClickDir = cdUp
+        Command = 12
+        MoveCaret = False
+        Option = 0
+        Priority = 0
+      end>
+    RightGutter.Width = 0
+    RightGutter.MouseActions = <    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbLeft
+        ClickCount = ccAny
+        ClickDir = cdDown
+        Command = 13
+        MoveCaret = False
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbRight
+        ClickCount = ccSingle
+        ClickDir = cdUp
+        Command = 12
+        MoveCaret = False
+        Option = 0
+        Priority = 0
+      end>
+    Highlighter = SynSQLSyn1
+    Keystrokes = <    
+      item
+        Command = ecUp
+        ShortCut = 38
+      end    
+      item
+        Command = ecSelUp
+        ShortCut = 8230
+      end    
+      item
+        Command = ecScrollUp
+        ShortCut = 16422
+      end    
+      item
+        Command = ecDown
+        ShortCut = 40
+      end    
+      item
+        Command = ecSelDown
+        ShortCut = 8232
+      end    
+      item
+        Command = ecScrollDown
+        ShortCut = 16424
+      end    
+      item
+        Command = ecLeft
+        ShortCut = 37
+      end    
+      item
+        Command = ecSelLeft
+        ShortCut = 8229
+      end    
+      item
+        Command = ecWordLeft
+        ShortCut = 16421
+      end    
+      item
+        Command = ecSelWordLeft
+        ShortCut = 24613
+      end    
+      item
+        Command = ecRight
+        ShortCut = 39
+      end    
+      item
+        Command = ecSelRight
+        ShortCut = 8231
+      end    
+      item
+        Command = ecWordRight
+        ShortCut = 16423
+      end    
+      item
+        Command = ecSelWordRight
+        ShortCut = 24615
+      end    
+      item
+        Command = ecPageDown
+        ShortCut = 34
+      end    
+      item
+        Command = ecSelPageDown
+        ShortCut = 8226
+      end    
+      item
+        Command = ecPageBottom
+        ShortCut = 16418
+      end    
+      item
+        Command = ecSelPageBottom
+        ShortCut = 24610
+      end    
+      item
+        Command = ecPageUp
+        ShortCut = 33
+      end    
+      item
+        Command = ecSelPageUp
+        ShortCut = 8225
+      end    
+      item
+        Command = ecPageTop
+        ShortCut = 16417
+      end    
+      item
+        Command = ecSelPageTop
+        ShortCut = 24609
+      end    
+      item
+        Command = ecLineStart
+        ShortCut = 36
+      end    
+      item
+        Command = ecSelLineStart
+        ShortCut = 8228
+      end    
+      item
+        Command = ecEditorTop
+        ShortCut = 16420
+      end    
+      item
+        Command = ecSelEditorTop
+        ShortCut = 24612
+      end    
+      item
+        Command = ecLineEnd
+        ShortCut = 35
+      end    
+      item
+        Command = ecSelLineEnd
+        ShortCut = 8227
+      end    
+      item
+        Command = ecEditorBottom
+        ShortCut = 16419
+      end    
+      item
+        Command = ecSelEditorBottom
+        ShortCut = 24611
+      end    
+      item
+        Command = ecToggleMode
+        ShortCut = 45
+      end    
+      item
+        Command = ecCopy
+        ShortCut = 16429
+      end    
+      item
+        Command = ecPaste
+        ShortCut = 8237
+      end    
+      item
+        Command = ecDeleteChar
+        ShortCut = 46
+      end    
+      item
+        Command = ecCut
+        ShortCut = 8238
+      end    
+      item
+        Command = ecDeleteLastChar
+        ShortCut = 8
+      end    
+      item
+        Command = ecDeleteLastChar
+        ShortCut = 8200
+      end    
+      item
+        Command = ecDeleteLastWord
+        ShortCut = 16392
+      end    
+      item
+        Command = ecUndo
+        ShortCut = 32776
+      end    
+      item
+        Command = ecRedo
+        ShortCut = 40968
+      end    
+      item
+        Command = ecLineBreak
+        ShortCut = 13
+      end    
+      item
+        Command = ecSelectAll
+        ShortCut = 16449
+      end    
+      item
+        Command = ecCopy
+        ShortCut = 16451
+      end    
+      item
+        Command = ecBlockIndent
+        ShortCut = 24649
+      end    
+      item
+        Command = ecLineBreak
+        ShortCut = 16461
+      end    
+      item
+        Command = ecInsertLine
+        ShortCut = 16462
+      end    
+      item
+        Command = ecDeleteWord
+        ShortCut = 16468
+      end    
+      item
+        Command = ecBlockUnindent
+        ShortCut = 24661
+      end    
+      item
+        Command = ecPaste
+        ShortCut = 16470
+      end    
+      item
+        Command = ecCut
+        ShortCut = 16472
+      end    
+      item
+        Command = ecDeleteLine
+        ShortCut = 16473
+      end    
+      item
+        Command = ecDeleteEOL
+        ShortCut = 24665
+      end    
+      item
+        Command = ecUndo
+        ShortCut = 16474
+      end    
+      item
+        Command = ecRedo
+        ShortCut = 24666
+      end    
+      item
+        Command = ecGotoMarker0
+        ShortCut = 16432
+      end    
+      item
+        Command = ecGotoMarker1
+        ShortCut = 16433
+      end    
+      item
+        Command = ecGotoMarker2
+        ShortCut = 16434
+      end    
+      item
+        Command = ecGotoMarker3
+        ShortCut = 16435
+      end    
+      item
+        Command = ecGotoMarker4
+        ShortCut = 16436
+      end    
+      item
+        Command = ecGotoMarker5
+        ShortCut = 16437
+      end    
+      item
+        Command = ecGotoMarker6
+        ShortCut = 16438
+      end    
+      item
+        Command = ecGotoMarker7
+        ShortCut = 16439
+      end    
+      item
+        Command = ecGotoMarker8
+        ShortCut = 16440
+      end    
+      item
+        Command = ecGotoMarker9
+        ShortCut = 16441
+      end    
+      item
+        Command = ecSetMarker0
+        ShortCut = 24624
+      end    
+      item
+        Command = ecSetMarker1
+        ShortCut = 24625
+      end    
+      item
+        Command = ecSetMarker2
+        ShortCut = 24626
+      end    
+      item
+        Command = ecSetMarker3
+        ShortCut = 24627
+      end    
+      item
+        Command = ecSetMarker4
+        ShortCut = 24628
+      end    
+      item
+        Command = ecSetMarker5
+        ShortCut = 24629
+      end    
+      item
+        Command = ecSetMarker6
+        ShortCut = 24630
+      end    
+      item
+        Command = ecSetMarker7
+        ShortCut = 24631
+      end    
+      item
+        Command = ecSetMarker8
+        ShortCut = 24632
+      end    
+      item
+        Command = ecSetMarker9
+        ShortCut = 24633
+      end    
+      item
+        Command = EcFoldLevel1
+        ShortCut = 41009
+      end    
+      item
+        Command = EcFoldLevel2
+        ShortCut = 41010
+      end    
+      item
+        Command = EcFoldLevel1
+        ShortCut = 41011
+      end    
+      item
+        Command = EcFoldLevel1
+        ShortCut = 41012
+      end    
+      item
+        Command = EcFoldLevel1
+        ShortCut = 41013
+      end    
+      item
+        Command = EcFoldLevel6
+        ShortCut = 41014
+      end    
+      item
+        Command = EcFoldLevel7
+        ShortCut = 41015
+      end    
+      item
+        Command = EcFoldLevel8
+        ShortCut = 41016
+      end    
+      item
+        Command = EcFoldLevel9
+        ShortCut = 41017
+      end    
+      item
+        Command = EcFoldLevel0
+        ShortCut = 41008
+      end    
+      item
+        Command = EcFoldCurrent
+        ShortCut = 41005
+      end    
+      item
+        Command = EcUnFoldCurrent
+        ShortCut = 41003
+      end    
+      item
+        Command = EcToggleMarkupWord
+        ShortCut = 32845
+      end    
+      item
+        Command = ecNormalSelect
+        ShortCut = 24654
+      end    
+      item
+        Command = ecColumnSelect
+        ShortCut = 24643
+      end    
+      item
+        Command = ecLineSelect
+        ShortCut = 24652
+      end    
+      item
+        Command = ecTab
+        ShortCut = 9
+      end    
+      item
+        Command = ecShiftTab
+        ShortCut = 8201
+      end    
+      item
+        Command = ecMatchBracket
+        ShortCut = 24642
+      end    
+      item
+        Command = ecColSelUp
+        ShortCut = 40998
+      end    
+      item
+        Command = ecColSelDown
+        ShortCut = 41000
+      end    
+      item
+        Command = ecColSelLeft
+        ShortCut = 40997
+      end    
+      item
+        Command = ecColSelRight
+        ShortCut = 40999
+      end    
+      item
+        Command = ecColSelPageDown
+        ShortCut = 40994
+      end    
+      item
+        Command = ecColSelPageBottom
+        ShortCut = 57378
+      end    
+      item
+        Command = ecColSelPageUp
+        ShortCut = 40993
+      end    
+      item
+        Command = ecColSelPageTop
+        ShortCut = 57377
+      end    
+      item
+        Command = ecColSelLineStart
+        ShortCut = 40996
+      end    
+      item
+        Command = ecColSelLineEnd
+        ShortCut = 40995
+      end    
+      item
+        Command = ecColSelEditorTop
+        ShortCut = 57380
+      end    
+      item
+        Command = ecColSelEditorBottom
+        ShortCut = 57379
+      end>
+    MouseActions = <    
+      item
+        Shift = []
+        ShiftMask = [ssShift, ssAlt]
+        Button = mbLeft
+        ClickCount = ccSingle
+        ClickDir = cdDown
+        Command = 1
+        MoveCaret = True
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = [ssShift]
+        ShiftMask = [ssShift, ssAlt]
+        Button = mbLeft
+        ClickCount = ccSingle
+        ClickDir = cdDown
+        Command = 1
+        MoveCaret = True
+        Option = 1
+        Priority = 0
+      end    
+      item
+        Shift = [ssAlt]
+        ShiftMask = [ssShift, ssAlt]
+        Button = mbLeft
+        ClickCount = ccSingle
+        ClickDir = cdDown
+        Command = 3
+        MoveCaret = True
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = [ssShift, ssAlt]
+        ShiftMask = [ssShift, ssAlt]
+        Button = mbLeft
+        ClickCount = ccSingle
+        ClickDir = cdDown
+        Command = 3
+        MoveCaret = True
+        Option = 1
+        Priority = 0
+      end    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbRight
+        ClickCount = ccSingle
+        ClickDir = cdUp
+        Command = 12
+        MoveCaret = False
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbLeft
+        ClickCount = ccDouble
+        ClickDir = cdDown
+        Command = 6
+        MoveCaret = True
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbLeft
+        ClickCount = ccTriple
+        ClickDir = cdDown
+        Command = 7
+        MoveCaret = True
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbLeft
+        ClickCount = ccQuad
+        ClickDir = cdDown
+        Command = 8
+        MoveCaret = True
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbMiddle
+        ClickCount = ccSingle
+        ClickDir = cdDown
+        Command = 10
+        MoveCaret = True
+        Option = 0
+        Priority = 0
+      end    
+      item
+        Shift = [ssCtrl]
+        ShiftMask = [ssShift, ssAlt, ssCtrl]
+        Button = mbLeft
+        ClickCount = ccSingle
+        ClickDir = cdUp
+        Command = 11
+        MoveCaret = False
+        Option = 0
+        Priority = 0
+      end>
+    MouseSelActions = <    
+      item
+        Shift = []
+        ShiftMask = []
+        Button = mbLeft
+        ClickCount = ccSingle
+        ClickDir = cdDown
+        Command = 9
+        MoveCaret = False
+        Option = 0
+        Priority = 0
+      end>
+    RightEdge = 65
+    ScrollBars = ssAutoBoth
+    BracketHighlightStyle = sbhsBoth
+    inline TSynGutterPartList
+      object TSynGutterMarks
+        Width = 24
+      end
+      object TSynGutterLineNumber
+        Width = 17
+        MouseActions = <>
+        MarkupInfo.Background = clBtnFace
+        MarkupInfo.Foreground = clNone
+        DigitCount = 2
+        ShowOnlyLineNumbersMultiplesOf = 1
+        ZeroStart = False
+        LeadingZeros = False
+      end
+      object TSynGutterChanges
+        Width = 4
+        ModifiedColor = 59900
+        SavedColor = clGreen
+      end
+      object TSynGutterSeparator
+        Width = 2
+      end
+      object TSynGutterCodeFolding
+        MouseActions = <        
+          item
+            Shift = []
+            ShiftMask = []
+            Button = mbRight
+            ClickCount = ccSingle
+            ClickDir = cdUp
+            Command = 16
+            MoveCaret = False
+            Option = 0
+            Priority = 0
+          end        
+          item
+            Shift = []
+            ShiftMask = [ssShift]
+            Button = mbMiddle
+            ClickCount = ccAny
+            ClickDir = cdDown
+            Command = 14
+            MoveCaret = False
+            Option = 0
+            Priority = 0
+          end        
+          item
+            Shift = [ssShift]
+            ShiftMask = [ssShift]
+            Button = mbMiddle
+            ClickCount = ccAny
+            ClickDir = cdDown
+            Command = 14
+            MoveCaret = False
+            Option = 1
+            Priority = 0
+          end        
+          item
+            Shift = []
+            ShiftMask = []
+            Button = mbLeft
+            ClickCount = ccAny
+            ClickDir = cdDown
+            Command = 0
+            MoveCaret = False
+            Option = 0
+            Priority = 0
+          end>
+        MarkupInfo.Background = clNone
+        MarkupInfo.Foreground = clGray
+        MouseActionsExpanded = <        
+          item
+            Shift = []
+            ShiftMask = []
+            Button = mbLeft
+            ClickCount = ccAny
+            ClickDir = cdDown
+            Command = 14
+            MoveCaret = False
+            Option = 0
+            Priority = 0
+          end>
+        MouseActionsCollapsed = <        
+          item
+            Shift = [ssCtrl]
+            ShiftMask = [ssCtrl]
+            Button = mbLeft
+            ClickCount = ccAny
+            ClickDir = cdDown
+            Command = 15
+            MoveCaret = False
+            Option = 0
+            Priority = 0
+          end        
+          item
+            Shift = []
+            ShiftMask = [ssCtrl]
+            Button = mbLeft
+            ClickCount = ccAny
+            ClickDir = cdDown
+            Command = 15
+            MoveCaret = False
+            Option = 1
+            Priority = 0
+          end>
+      end
+    end
+  end
+  object SynSQLSyn1: TSynSQLSyn
+    DefaultFilter = 'SQL Files (*.sql)|*.sql'
+    Enabled = False
+    CommentAttri.Foreground = clTeal
+    CommentAttri.FrameEdges = sfeAround
+    DataTypeAttri.FrameEdges = sfeAround
+    DefaultPackageAttri.FrameEdges = sfeAround
+    ExceptionAttri.FrameEdges = sfeAround
+    FunctionAttri.FrameEdges = sfeAround
+    IdentifierAttri.Foreground = 16718385
+    IdentifierAttri.FrameEdges = sfeAround
+    KeyAttri.FrameEdges = sfeAround
+    NumberAttri.Foreground = 3421238
+    NumberAttri.FrameEdges = sfeAround
+    PLSQLAttri.FrameEdges = sfeAround
+    SpaceAttri.FrameEdges = sfeAround
+    SQLPlusAttri.FrameEdges = sfeAround
+    StringAttri.Foreground = 1052833
+    StringAttri.FrameEdges = sfeAround
+    SymbolAttri.Foreground = 526434
+    SymbolAttri.FrameEdges = sfeAround
+    TableNameAttri.Foreground = clNavy
+    TableNameAttri.FrameEdges = sfeAround
+    TableNameAttri.Style = [fsBold]
+    VariableAttri.FrameEdges = sfeAround
+    SQLDialect = sqlSybase
+    left = 460
+    top = 36
+  end
+end

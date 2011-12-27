@@ -1,0 +1,98 @@
+object fmUDFInfo: TfmUDFInfo
+  Left = 330
+  Height = 277
+  Top = 216
+  Width = 489
+  ActiveControl = meBody
+  Caption = 'fmUDFInfo'
+  ClientHeight = 277
+  ClientWidth = 489
+  OnClose = FormClose
+  Position = poScreenCenter
+  LCLVersion = '0.9.31'
+  object Label1: TLabel
+    Left = 11
+    Height = 18
+    Top = 15
+    Width = 102
+    Caption = 'Function Name'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 11
+    Height = 18
+    Top = 96
+    Width = 35
+    Caption = 'Body'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 11
+    Height = 18
+    Top = 44
+    Width = 52
+    Caption = 'Module'
+    ParentColor = False
+  end
+  object Label7: TLabel
+    Left = 11
+    Height = 18
+    Top = 72
+    Width = 75
+    Caption = 'Entry Point'
+    DragCursor = crAppStart
+    ParentColor = False
+  end
+  object meBody: TMemo
+    Left = 11
+    Height = 160
+    Top = 112
+    Width = 469
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+  end
+  object edName: TEdit
+    Left = 120
+    Height = 21
+    Top = 14
+    Width = 256
+    Anchors = [akTop, akLeft, akRight]
+    AutoSelect = False
+    BorderStyle = bsNone
+    Font.Color = clNavy
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 1
+    Text = 'edName'
+  end
+  object edModule: TEdit
+    Left = 120
+    Height = 21
+    Top = 44
+    Width = 256
+    Anchors = [akTop, akLeft, akRight]
+    AutoSelect = False
+    BorderStyle = bsNone
+    Font.Color = clNavy
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 2
+    Text = 'edModule'
+  end
+  object edEntry: TEdit
+    Left = 120
+    Height = 21
+    Top = 72
+    Width = 256
+    Anchors = [akTop, akLeft, akRight]
+    AutoSelect = False
+    BorderStyle = bsNone
+    Font.Color = clNavy
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 3
+    Text = 'edGenName'
+  end
+end

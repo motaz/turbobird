@@ -1,0 +1,28 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TfmUDFInfo','FORMDATA',[
+  'TPF0'#10'TfmUDFInfo'#9'fmUDFInfo'#4'Left'#3'J'#1#6'Height'#3#21#1#3'Top'#3
+  +#216#0#5'Width'#3#233#1#13'ActiveControl'#7#6'meBody'#7'Caption'#6#9'fmUDFIn'
+  +'fo'#12'ClientHeight'#3#21#1#11'ClientWidth'#3#233#1#7'OnClose'#7#9'FormClos'
+  +'e'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6#6'0.9.31'#0#6'TLabel'#6
+  +'Label1'#4'Left'#2#11#6'Height'#2#18#3'Top'#2#15#5'Width'#2'f'#7'Caption'#6
+  +#13'Function Name'#11'ParentColor'#8#0#0#6'TLabel'#6'Label2'#4'Left'#2#11#6
+  +'Height'#2#18#3'Top'#2'`'#5'Width'#2'#'#7'Caption'#6#4'Body'#11'ParentColor'
+  +#8#0#0#6'TLabel'#6'Label3'#4'Left'#2#11#6'Height'#2#18#3'Top'#2','#5'Width'#2
+  +'4'#7'Caption'#6#6'Module'#11'ParentColor'#8#0#0#6'TLabel'#6'Label7'#4'Left'
+  +#2#11#6'Height'#2#18#3'Top'#2'H'#5'Width'#2'K'#7'Caption'#6#11'Entry Point'
+  +#10'DragCursor'#7#10'crAppStart'#11'ParentColor'#8#0#0#5'TMemo'#6'meBody'#4
+  +'Left'#2#11#6'Height'#3#160#0#3'Top'#2'p'#5'Width'#3#213#1#7'Anchors'#11#5'a'
+  +'kTop'#6'akLeft'#7'akRight'#8'akBottom'#0#8'ReadOnly'#9#10'ScrollBars'#7#10
+  +'ssAutoBoth'#8'TabOrder'#2#0#0#0#5'TEdit'#6'edName'#4'Left'#2'x'#6'Height'#2
+  +#21#3'Top'#2#14#5'Width'#3#0#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0
+  +#10'AutoSelect'#8#11'BorderStyle'#7#6'bsNone'#10'Font.Color'#7#6'clNavy'#10
+  +'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'#2#1#4'Text'#6#6'edName'#0#0#5'TEdit'
+  +#8'edModule'#4'Left'#2'x'#6'Height'#2#21#3'Top'#2','#5'Width'#3#0#1#7'Anchor'
+  +'s'#11#5'akTop'#6'akLeft'#7'akRight'#0#10'AutoSelect'#8#11'BorderStyle'#7#6
+  +'bsNone'#10'Font.Color'#7#6'clNavy'#10'ParentFont'#8#8'ReadOnly'#9#8'TabOrde'
+  +'r'#2#2#4'Text'#6#8'edModule'#0#0#5'TEdit'#7'edEntry'#4'Left'#2'x'#6'Height'
+  +#2#21#3'Top'#2'H'#5'Width'#3#0#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'
+  +#0#10'AutoSelect'#8#11'BorderStyle'#7#6'bsNone'#10'Font.Color'#7#6'clNavy'#10
+  +'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'#2#3#4'Text'#6#9'edGenName'#0#0#0
+]);
