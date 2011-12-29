@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, IBConnection, sqldb, db, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg, sqlscript,
-  SynEditTypes, Clipbrd;
+  SynEditTypes, Clipbrd,grids;
 
 type
 
@@ -71,6 +71,7 @@ type
     ToolButton6: TToolButton;
     procedure bbRunClick(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
+    procedure DBGridTitleClick(column: TColumn);
     procedure FindDialog1Find(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormShow(Sender: TObject);
@@ -345,9 +346,11 @@ begin
     DBGrid.OnDblClick:= @DBGrid1DblClick;
     DBGrid.ReadOnly:= False;
     DBGrid.AutoEdit:= False;
-    DBGrid.FixedColor:= $00DDDACF;
+//    DBGrid.FixedColor:= $00DDDACF;   // delete
     DBGrid.PopupMenu:= pmGrid;
-    DBGrid.Options:= DBGrid.Options + [dgAutoSizeColumns];
+    DBGrid.TitleStyle:=tsNative; // add
+    DBGrid.Options:= DBGrid.Options + [dgAutoSizeColumns,dgHeaderHotTracking, dgHeaderPushedLook];  // edit
+    DBGrid.OnTitleClick:=@DBGridTitleClick;  //  add
     AddResultControl(ATab, DBGrid);
   end
   else
@@ -767,6 +770,21 @@ begin
     ShowMessage((Sender as TDBGrid).SelectedField.AsString);
 end;
 
+procedure TfmQueryWindow.DBGridTitleClick(column: TColumn);
+var   SqlQuery: TSQLQuery;
+//    indexoption : TIndexOptions;
+begin
+SqlQuery:= FindSqlQuery;
+if  SqlQuery <> Nil then
+ if SqlQuery.IndexFieldNames = Column.Field.FieldName then
+  SqlQuery.IndexFieldNames := Column.Field.FieldName //+ 'DESC'
+//   indexoption :=[ixDescending];
+//   SqlQuery.AddIndex('',Column.Field.FieldName,indexoption,'');
+ else
+  SqlQuery.IndexFieldNames := Column.Field.FieldName
+
+end;
+
 procedure TfmQueryWindow.FindDialog1Find(Sender: TObject);
 begin
   fOptions:= [];
@@ -809,8 +827,11 @@ end;
 
 procedure TfmQueryWindow.lmCloseTabClick(Sender: TObject);
 begin
-  Close;
-  Parent.Free;
+  if MessageDlg('Do you want to close this query window?', mtCustom, [mbNo,mbyes], 0) = mryes then
+  begin
+    Close;
+    Parent.Free;
+  end;
 end;
 
 
@@ -824,7 +845,7 @@ begin
   SqlQuery:= FindSqlQuery;
   if SqlQuery = nil then
   begin
-    ShowMessage('There is no record set in result');
+    ShowMessage('There is no recordset in result');
     Exit;
   end;
   if (not SQLQuery.Active) or (SQLQuery.RecordCount = 0) then

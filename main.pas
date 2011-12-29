@@ -83,7 +83,6 @@ type
     lmNewRole: TMenuItem;
     MenuItem7: TMenuItem;
     lmOpenQuery: TMenuItem;
-    lmOpenQuery2: TMenuItem;
     lmNewException: TMenuItem;
     lmRefresh: TMenuItem;
     lmDropException: TMenuItem;
@@ -136,7 +135,6 @@ type
     procedure lmNewGenClick(Sender: TObject);
     procedure lmNewTableClick(Sender: TObject);
     procedure lmNewUDFClick(Sender: TObject);
-    procedure lmOpenQuery2Click(Sender: TObject);
     procedure lmOpenQueryClick(Sender: TObject);
     procedure lmPermissionsClick(Sender: TObject);
     procedure lmRefreshClick(Sender: TObject);
@@ -1450,10 +1448,6 @@ end;
 
 (**********  Open Query 2 Click ************)
 
-procedure TfmMain.lmOpenQuery2Click(Sender: TObject);
-begin
-  lmOpenQueryClick(Sender);
-end;
 
 (**********  Open Query Window from Database  *************)
 

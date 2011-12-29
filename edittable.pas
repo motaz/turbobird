@@ -23,6 +23,7 @@ type
     Panel1: TPanel;
     sqEditTable: TSQLQuery;
     procedure bbSaveClick(Sender: TObject);
+    procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
@@ -79,6 +80,14 @@ begin
     ShowMessage(e.Message);
   end;
   end;
+end;
+
+procedure TfmEditTable.DBGrid1TitleClick(Column: TColumn);
+begin
+ if sqEditTable.IndexFieldNames = Column.Field.FieldName then
+   sqEditTable.IndexFieldNames := Column.Field.FieldName //+ 'DESC'
+ else
+   sqEditTable.IndexFieldNames := Column.Field.FieldName
 end;
 
 procedure TfmEditTable.sqEditTableAfterScroll(DataSet: TDataSet);
