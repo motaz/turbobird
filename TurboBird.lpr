@@ -1,8 +1,9 @@
+
 {***************************************************************************}
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development:  5.Dec.2009                                           }
-{  Last updated     : 14.Dec.2011                                           }
+{  Last updated     : 29.Dec.2011                                           }
 {  License          : GPL for GUI, LGPL for Units                           }
 {***************************************************************************}
 
@@ -23,7 +24,7 @@ uses
   PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo;
 
 const
-  Version = '0.8.9';
+  Version = '0.8.10';
   VersionDate = '2010 - Dec 2011';
 {$IFDEF Unix}
   {$DEFINE extdecl:=cdecl}
