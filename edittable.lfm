@@ -10,15 +10,15 @@ object fmEditTable: TfmEditTable
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '0.9.30'
+  LCLVersion = '0.9.31'
   object Panel1: TPanel
     Left = 0
     Height = 50
     Top = 0
     Width = 568
     Align = alTop
-    ClientHeight = 50
-    ClientWidth = 568
+    ClientHeight = 46
+    ClientWidth = 564
     ParentColor = False
     TabOrder = 0
     OnClick = Panel1Click
@@ -26,7 +26,7 @@ object fmEditTable: TfmEditTable
       Left = 258
       Height = 18
       Top = 27
-      Width = 60
+      Width = 62
       Caption = 'Record #'
       ParentColor = False
     end
@@ -52,8 +52,8 @@ object fmEditTable: TfmEditTable
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 100
-      ClientHeight = 25
-      ClientWidth = 241
+      ClientHeight = 21
+      ClientWidth = 237
       Color = 14539471
       DataSource = Datasource1
       ParentColor = False
@@ -79,8 +79,11 @@ object fmEditTable: TfmEditTable
     Columns = <>
     DataSource = Datasource1
     FixedColor = 14539471
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgHeaderHotTracking, dgHeaderPushedLook, dgAutoSizeColumns]
     Scrollbars = ssAutoBoth
     TabOrder = 1
+    TitleStyle = tsNative
+    OnTitleClick = DBGrid1TitleClick
   end
   object Datasource1: TDatasource
     DataSet = sqEditTable
@@ -88,7 +91,6 @@ object fmEditTable: TfmEditTable
     top = 48
   end
   object sqEditTable: TSQLQuery
-    IndexName = 'DEFAULT_ORDER'
     AutoCalcFields = False
     AfterScroll = sqEditTableAfterScroll
     ReadOnly = False

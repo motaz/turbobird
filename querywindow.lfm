@@ -1,7 +1,7 @@
 object fmQueryWindow: TfmQueryWindow
-  Left = 801
+  Left = 611
   Height = 601
-  Top = 166
+  Top = 110
   Width = 720
   ActiveControl = Panel1
   Caption = 'fmQueryWindow'
@@ -24,14 +24,16 @@ object fmQueryWindow: TfmQueryWindow
     ClientWidth = 716
     TabOrder = 1
     object bbClose: TBitBtn
-      Left = 687
-      Height = 22
-      Top = 1
+      Left = 684
+      Height = 24
+      Top = 4
       Width = 27
       Anchors = [akTop, akRight]
-      Caption = 'x'
+      Caption = ' X  '
       Color = 16249563
+      Font.Style = [fsBold]
       OnClick = lmCloseTabClick
+      ParentFont = False
       TabOrder = 0
     end
     object ToolBar1: TToolBar

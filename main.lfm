@@ -1516,11 +1516,6 @@ object fmMain: TfmMain
       Caption = 'Unregister Database'
       OnClick = lmUnregisterDatabaseClick
     end
-    object lmOpenQuery2: TMenuItem
-      Tag = 30
-      Caption = 'Open Query Window'
-      OnClick = lmOpenQuery2Click
-    end
     object lmViewFirst1000: TMenuItem
       Tag = 1
       Caption = 'View First 1000 records'
