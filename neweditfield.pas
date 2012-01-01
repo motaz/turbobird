@@ -76,9 +76,7 @@ begin
     if Pos('CHAR', Line) > 0 then
       Line:= Line + '(' + IntToStr(seSize.Value) + ')';
 
-    if not cxAllowNull.Checked then
-      Line:= Line + ' not null';
-
+    // Default value
     if Trim(edDefault.Text) <> '' then
     begin
       if (Pos('CHAR', cbType.Text) > 0) and (Pos('''', edDefault.Text) = 0) then
@@ -86,6 +84,11 @@ begin
       else
         Line:= Line + ' default ' + edDefault.Text;
     end;
+
+    // Null/Not null
+    if not cxAllowNull.Checked then
+      Line:= Line + ' not null';
+
     fmMain.ShowCompleteQueryWindow(fdbIndex, 'Add new field on Table: ' + fTableName,
       'ALTER TABLE ' + fTableName + ' ADD ' + edFieldName.Text + ' ' + Line, Clk);
   end
@@ -126,18 +129,18 @@ begin
           fTableName + '''' + #10;
     end;
 
-    // Default value
-    if edDefault.Text <> OldDefault then
-    begin
-      Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$Default_Source = ''' + edDefault.Text +
-        '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
-        ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + #10;
-    end;
-
     // Description
     if edDescription.Text <> OldDesciption then
     begin
       Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$DESCRIPTION = ''' + edDescription.Text +
+        '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
+        ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + #10;
+    end;
+
+    // Default value
+    if edDefault.Text <> OldDefault then
+    begin
+      Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$Default_Source = ''' + edDefault.Text +
         '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
         ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + #10;
     end;
