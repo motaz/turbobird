@@ -63,7 +63,7 @@
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="33" Y="27"/>
+        <CursorPos X="25" Y="5"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -75,8 +75,8 @@
         <UnitName Value="main"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2395"/>
-        <CursorPos X="1" Y="2422"/>
+        <TopLine Value="1880"/>
+        <CursorPos X="104" Y="1886"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -462,8 +462,8 @@
         <UnitName Value="SysTables"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="555"/>
-        <CursorPos X="32" Y="561"/>
+        <TopLine Value="531"/>
+        <CursorPos X="116" Y="556"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -502,10 +502,9 @@
         <ComponentName Value="fmNewEditField"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewEditField"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="62"/>
+        <TopLine Value="110"/>
         <CursorPos X="5" Y="77"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
@@ -540,17 +539,18 @@
         <WindowIndex Value="0"/>
         <TopLine Value="17"/>
         <CursorPos X="37" Y="49"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="199"/>
       </Unit50>
       <Unit51>
         <Filename Value="scriptdb.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Scriptdb"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="327"/>
-        <CursorPos X="53" Y="351"/>
-        <UsageCount Value="185"/>
+        <TopLine Value="144"/>
+        <CursorPos X="3" Y="179"/>
+        <UsageCount Value="186"/>
         <Loaded Value="True"/>
       </Unit51>
       <Unit52>
@@ -571,7 +571,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="58" Y="14"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="162"/>
       </Unit53>
       <Unit54>
         <Filename Value="/usr/lib/lazarus/0.9.29/ide/lazarus.pp"/>
@@ -591,7 +591,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="249"/>
         <CursorPos X="32" Y="253"/>
-        <UsageCount Value="144"/>
+        <UsageCount Value="145"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit55>
@@ -637,7 +637,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="40"/>
         <CursorPos X="14" Y="54"/>
-        <UsageCount Value="130"/>
+        <UsageCount Value="131"/>
         <Loaded Value="True"/>
       </Unit60>
       <Unit61>
@@ -706,7 +706,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="71" Y="7"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="101"/>
       </Unit68>
       <Unit69>
         <Filename Value="changepass.pas"/>
@@ -717,7 +717,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="88" Y="14"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="100"/>
       </Unit69>
       <Unit70>
         <Filename Value="permissionmanage.pas"/>
@@ -728,7 +728,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
         <CursorPos X="21" Y="92"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
       </Unit70>
       <Unit71>
         <Filename Value="sqlhistory.pas"/>
@@ -739,7 +739,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="18" Y="39"/>
-        <UsageCount Value="82"/>
+        <UsageCount Value="83"/>
       </Unit71>
       <Unit72>
         <Filename Value="../../lazarus/lazarus/lcl/include/menuitem.inc"/>
@@ -765,7 +765,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="30"/>
         <CursorPos X="1" Y="151"/>
-        <UsageCount Value="53"/>
+        <UsageCount Value="54"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit74>
@@ -960,131 +960,131 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="12" Y="28"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit98>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="378" Column="12" TopLine="354"/>
       </Position1>
       <Position2>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="8" Column="63" TopLine="1"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="374" Column="27" TopLine="354"/>
       </Position2>
       <Position3>
         <Filename Value="main.pas"/>
-        <Caret Line="3772" Column="30" TopLine="3731"/>
+        <Caret Line="382" Column="40" TopLine="354"/>
       </Position3>
       <Position4>
         <Filename Value="main.pas"/>
-        <Caret Line="369" Column="5" TopLine="367"/>
+        <Caret Line="374" Column="22" TopLine="355"/>
       </Position4>
       <Position5>
-        <Filename Value="systables.pas"/>
-        <Caret Line="49" Column="14" TopLine="25"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="389" Column="22" TopLine="360"/>
       </Position5>
       <Position6>
         <Filename Value="main.pas"/>
-        <Caret Line="235" Column="62" TopLine="196"/>
+        <Caret Line="403" Column="9" TopLine="379"/>
       </Position6>
       <Position7>
-        <Filename Value="main.pas"/>
-        <Caret Line="378" Column="12" TopLine="354"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="573" Column="23" TopLine="556"/>
       </Position7>
       <Position8>
-        <Filename Value="main.pas"/>
-        <Caret Line="374" Column="27" TopLine="354"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="50" Column="37" TopLine="49"/>
       </Position8>
       <Position9>
         <Filename Value="main.pas"/>
-        <Caret Line="382" Column="40" TopLine="354"/>
+        <Caret Line="376" Column="24" TopLine="358"/>
       </Position9>
       <Position10>
-        <Filename Value="main.pas"/>
-        <Caret Line="374" Column="22" TopLine="355"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="249" Column="50" TopLine="233"/>
       </Position10>
       <Position11>
-        <Filename Value="main.pas"/>
-        <Caret Line="389" Column="22" TopLine="360"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position11>
       <Position12>
-        <Filename Value="main.pas"/>
-        <Caret Line="403" Column="9" TopLine="379"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="886" Column="35" TopLine="838"/>
       </Position12>
       <Position13>
-        <Filename Value="systables.pas"/>
-        <Caret Line="573" Column="23" TopLine="556"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="342" Column="21" TopLine="340"/>
       </Position13>
       <Position14>
-        <Filename Value="systables.pas"/>
-        <Caret Line="50" Column="37" TopLine="49"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1455" Column="3" TopLine="1453"/>
       </Position14>
       <Position15>
         <Filename Value="main.pas"/>
-        <Caret Line="376" Column="24" TopLine="358"/>
+        <Caret Line="1467" Column="3" TopLine="1460"/>
       </Position15>
       <Position16>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="249" Column="50" TopLine="233"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1455" Column="1" TopLine="1453"/>
       </Position16>
       <Position17>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1454" Column="1" TopLine="1452"/>
       </Position17>
       <Position18>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="886" Column="35" TopLine="838"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1452" Column="1" TopLine="1452"/>
       </Position18>
       <Position19>
-        <Filename Value="main.pas"/>
-        <Caret Line="342" Column="21" TopLine="340"/>
+        <Filename Value="edittable.pas"/>
+        <Caret Line="109" Column="33" TopLine="78"/>
       </Position19>
       <Position20>
         <Filename Value="main.pas"/>
-        <Caret Line="1455" Column="3" TopLine="1453"/>
+        <Caret Line="3750" Column="10" TopLine="3714"/>
       </Position20>
       <Position21>
-        <Filename Value="main.pas"/>
-        <Caret Line="1467" Column="3" TopLine="1460"/>
+        <Filename Value="tablemanage.pas"/>
+        <Caret Line="114" Column="22" TopLine="96"/>
       </Position21>
       <Position22>
-        <Filename Value="main.pas"/>
-        <Caret Line="1455" Column="1" TopLine="1453"/>
+        <Filename Value="tablemanage.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position22>
       <Position23>
-        <Filename Value="main.pas"/>
-        <Caret Line="1454" Column="1" TopLine="1452"/>
+        <Filename Value="tablemanage.pas"/>
+        <Caret Line="253" Column="32" TopLine="249"/>
       </Position23>
       <Position24>
         <Filename Value="main.pas"/>
-        <Caret Line="1452" Column="1" TopLine="1452"/>
+        <Caret Line="2422" Column="1" TopLine="2395"/>
       </Position24>
       <Position25>
-        <Filename Value="edittable.pas"/>
-        <Caret Line="109" Column="33" TopLine="78"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position25>
       <Position26>
         <Filename Value="main.pas"/>
-        <Caret Line="3750" Column="10" TopLine="3714"/>
+        <Caret Line="1678" Column="31" TopLine="1643"/>
       </Position26>
       <Position27>
-        <Filename Value="tablemanage.pas"/>
-        <Caret Line="114" Column="22" TopLine="96"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1700" Column="54" TopLine="1665"/>
       </Position27>
       <Position28>
-        <Filename Value="tablemanage.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1794" Column="14" TopLine="1790"/>
       </Position28>
       <Position29>
-        <Filename Value="tablemanage.pas"/>
-        <Caret Line="253" Column="32" TopLine="249"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1823" Column="1" TopLine="1802"/>
       </Position29>
       <Position30>
-        <Filename Value="neweditfield.pas"/>
-        <Caret Line="16" Column="3" TopLine="37"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1786" Column="1" TopLine="1784"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

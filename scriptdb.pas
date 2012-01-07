@@ -138,6 +138,7 @@ var
   Skipped: Boolean;
   ConstraintName: string;
   CalculatedList: TStringList;
+  DefaultValue: string;
 begin
   fmMain.GetFields(dbIndex, ATableName, nil);
   ScriptList.Clear;
@@ -169,7 +170,14 @@ begin
         FieldLine:= FieldLine + '(' + FieldByName('Field_Length').AsString + ') ';
 
       // Default value
-      FieldLine:= FieldLine + ' ' + FieldByName('Field_Default_Value').AsString;
+      DefaultValue:= Trim(FieldByName('Field_Default_Value').AsString);
+      if DefaultValue <> '' then
+      begin
+        if pos('default', DefaultValue) <> 1 then
+          DefaultValue:= ' default ''' + DefaultValue + '''';
+
+        FieldLine:= FieldLine + ' ' + DefaultValue;
+      end;
 
       // Null/Not null
       if FieldByName('field_not_null_constraint').AsString = '1' then

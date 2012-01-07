@@ -1781,7 +1781,6 @@ var
   ConstraintName: string;
   List: TStringList;
   i: Integer;
-  GenList: TStringList;
   UserName: string;
   ObjType: Integer;
 begin
@@ -1820,7 +1819,6 @@ begin
     // Script Secondary indices
     PKName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
     List:= TStringList.Create;
-    GenList:= TStringList.Create;
 
     with dmSysTables do
     if GetIndices(ATableName, sqQuery) then
@@ -1858,26 +1856,29 @@ begin
     begin
       List.Clear;
       dmSysTables.ScriptTrigger(dbIndex, Trim(SQLQuery1.Fields[0].AsString), List, True);
-      QWindow.meQuery.Lines.AddStrings(List);
       // Search for generators
+      Line:= '';
       for i:= 0 to List.Count - 1 do
         if Pos('gen_id', LowerCase(List[i])) > 0 then
         begin
-          //  NEW.CITYID = GEN_ID(CItyIDGen, 1);
           Line:= Copy(List[i], Pos('gen_id', LowerCase(List[i])), Length(List[i]));
           System.Delete(Line, 1, Pos('(', Line));
           Line:= Trim(Copy(Line, 1, Pos(', ', Line) - 1));
-          GenList.Add(Line);
         end;
+
+       // Script Generator
+       if Trim(Line) <> '' then
+       begin
+         QWindow.meQuery.Lines.Add('Create Generator ' +Line + ';');
+         QWindow.meQuery.Lines.Add('');
+       end;
+
+      QWindow.meQuery.Lines.AddStrings(List);
+
 
       Next;
     end;
     SQLQuery1.Close;
-    QWindow.meQuery.Lines.Add('');
-
-    // Script Generators
-    for i:= 0 to GenList.Count - 1 do
-      QWindow.meQuery.Lines.Add('Create Generator ' + GenList[i] + ';');
 
     QWindow.meQuery.Lines.Add('');
 
@@ -1897,7 +1898,6 @@ begin
 
     ScriptList.Free;
     List.Free;
-    GenList.Free;
     QWindow.Show;
   end;
 end;
