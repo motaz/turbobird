@@ -3298,26 +3298,28 @@ begin
       Filter:= 30
     else
       Filter:= -1;
+
+    // Table Fields
+    if (SelNode.Level = 4) then
+    begin
+      ParentNodeText:= SelNode.Parent.Parent.Text;
+      if Pos('(', ParentNodeText) > 0 then
+        ParentNodeText:= Trim(Copy(ParentNodeText, 1, Pos('(', ParentNodeText) - 1));
+      if (ParentNodeText = 'Tables') then
+        Filter:= 112;
+    end;
+
+
   end
   else
     Filter:= -1;
-
-
-  // Table Fields
-  if (SelNode.Level = 4) then
-  begin
-    ParentNodeText:= SelNode.Parent.Parent.Text;
-    if Pos('(', ParentNodeText) > 0 then
-      ParentNodeText:= Trim(Copy(ParentNodeText, 1, Pos('(', ParentNodeText) - 1));
-    if (ParentNodeText = 'Tables') then
-      Filter:= 112;
-  end;
 
   // Show menu for specific filter
   for i:= 0 to pmDatabase.Items.Count - 1 do
     pmDatabase.Items[i].Visible:= (pmDatabase.Items[i].Tag = Filter) or
       ((pmDatabase.Items[i].Tag = 100) and (SelNode <> nil) and (SelNode.Parent <> nil) and
       (SelNode.Parent.Parent <> nil) and (SelNode.Parent.Parent.Parent = nil));
+
 
   SelNode:= nil;
 end;
@@ -3407,6 +3409,7 @@ var
   Rec: TRegisteredDatabase;
   Count: Integer;
 begin
+  if (Node <> nil) then
   if (Node.Parent <> nil) and (Node.Parent.Parent = nil) then   // Expand database
   begin
     Rec:= RegisteredDatabases[Node.OverlayIndex].RegRec;
