@@ -253,7 +253,7 @@ begin
   fmNewEditField:= TfmNewEditField.Create(nil);
   with fmNewEditField do
   begin
-    Init(fdbIndex, fTableName, foNew, '', '', '', '', 0, 0, False, bbRefresh);
+    Init(fdbIndex, fTableName, foNew, '', '', '', '', 0, 0, True, bbRefresh);
     Caption:= 'Add new field on Table: ' + fTableName;
     Show;
   end;
