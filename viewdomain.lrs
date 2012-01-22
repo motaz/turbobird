@@ -22,5 +22,8 @@ LazarusResources.Add('TfmViewDomain','FORMDATA',[
   +'ParentColor'#8#10'ParentFont'#8#0#0#5'TEdit'#6'edName'#4'Left'#2'x'#6'Heigh'
   +'t'#2#21#3'Top'#2#16#5'Width'#3'2'#1#10'AutoSelect'#8#11'BorderStyle'#7#6'bs'
   +'None'#10'Font.Color'#7#6'clNavy'#10'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'
-  +#2#0#4'Text'#6#9'edGenName'#0#0#0
+  +#2#0#4'Text'#6#9'edGenName'#0#0#7'TBitBtn'#7'bbClose'#4'Left'#3'N'#2#6'Heigh'
+  +'t'#2#24#3'Top'#2#0#5'Width'#2#27#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Capt'
+  +'ion'#6#4' X  '#5'Color'#4#219#242#247#0#10'Font.Style'#11#6'fsBold'#0#7'OnC'
+  +'lick'#7#12'bbCloseClick'#10'ParentFont'#8#8'TabOrder'#2#1#0#0#0
 ]);

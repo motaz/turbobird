@@ -1492,14 +1492,24 @@ var
   ObjType: Integer;
   ObjTypeName: string;
   ObjName: string;
+  ATab: TTabSheet;
 begin
   dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
   UserName:= tvMain.Selected.Text;
   List:= TStringList.Create;
   List.CommaText:= dmSysTables.GetUserObjects(dbIndex, UserName);
+  ATab:= TTabSheet.Create(nil);
+  ATab.Parent:= PageControl1;
   Form:= TfmUserPermissions.Create(nil);
+  Form.Parent:= ATab;
   Form.Caption:= 'Permissions for: ' + UserName;
+  ATab.Caption:= Form.Caption;
+  PageControl1.ActivePage:= ATab;
+  Form.Left:= 0;
+  Form.Top:= 0;
+  Form.Align:= alClient;
   Form.StringGrid1.RowCount:= 1;
+  Form.laObject.Caption:= UserName;
   with Form do
   for i:= 0 to List.Count - 1 do
   begin
@@ -2143,14 +2153,24 @@ var
   DomainSize: Integer;
   ADomainForm: TFmViewDomain;
   DefaultValue: string;
+  ATab: TTabSheet;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ADomainName:= SelNode.Text;
-    ADomainForm:= TfmViewDomain(FindCusomForm('Domain : ' + ADomainName, TfmViewDomain));
-    if ADomainForm  = nil then
+    //ADomainForm:= TfmViewDomain(FindCusomForm('Domain : ' + ADomainName, TfmViewDomain));
+    //if ADomainForm  = nil then
+    begin
       ADomainForm:= TfmViewDomain.Create(Application);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      ADomainForm.Parent:= ATab;
+      ADomainForm.Left:= 0;
+      ADomainForm.Top:= 0;
+      ADomainForm.Align:= alClient;
+      PageControl1.ActivePage:= ATab;
+    end;
 
     dmSysTables.GetDomainInfo(SelNode.Parent.Parent.OverlayIndex, ADomainName, DomainType, DomainSize, DefaultValue);
     if Pos('default', LowerCase(DefaultValue)) = 1 then
@@ -2162,6 +2182,7 @@ begin
     with ADomainForm do
     begin
       Caption:= 'Domain : ' + ADomainName;
+      ATab.Caption:= Caption;
       edName.Caption:= ADomainName;
       laType.Caption:= DomainType;
       laSize.Caption:= IntToStr(DomainSize);
@@ -2826,6 +2847,7 @@ var
   AViewName: string;
   ViewBody, Columns: string;
   dbIndex: Integer;
+  ATab: TTabSheet;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -2835,13 +2857,21 @@ begin
     AViewName:= SelNode.Text;
 
     // Fill ViewView grid
+    ATab:= TTabSheet.Create(nil);
+    ATab.Parent:= PageControl1;
     fmViewView:= TfmViewView.Create(nil);
+    fmViewView.Parent:= ATab;
+    fmViewView.Left:= 0;
+    fmViewView.Top:= 0;
+    fmViewView.Align:= alClient;
     fmViewView.SynSQLSyn1.TableNames.CommaText:= GetTableNames(dbIndex);
-    fmViewView.Caption:= 'Display View: ' + AViewName;
+    fmViewView.Caption:= 'View DDL: ' + AViewName;
+    ATab.Caption:= fmViewView.Caption;
     fmViewView.edName.Caption:= AViewName;
     GetViewInfo(SelNode.Parent.Parent.OverlayIndex, AViewName, Columns, ViewBody);
     fmViewView.seScript.Lines.Clear;
     fmViewView.seScript.Lines.Text:= 'create view "' + AviewName + '" (' + Columns + ')' + #13#10 + ViewBody;
+    PageControl1.ActivePage:= ATab;
     fmViewView.Show;
   end;
 
@@ -2924,6 +2954,7 @@ var
   Rec: TDatabaseRec;
   AGenName: string;
   dbIndex: Integer;
+  ATab: TTabSheet;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -2940,12 +2971,22 @@ begin
 
     // Fill ViewGen form
     fmViewGen:= TfmViewGen.Create(nil);
+    ATab:= TTabSheet.Create(nil);
+    ATab.Parent:= PageControl1;
+    fmViewGen.Parent:= ATab;
+    fmViewGen.Left:= 0;
+    fmViewGen.Top:= 0;
+    fmViewGen.Align:= alClient;
+    PageControl1.ActivePage:= ATab;
+
     with fmViewGen do
     begin
       Caption:= 'Generator : ' + AGenName;
+      ATab.Caption:= Caption;
       edGenName.Caption:= AGenName;
       edValue.Caption:= SQLQuery1.Fields[0].AsString;
     end;
+    ATab.Caption:= fmViewGen.Caption;
     fmViewGen.Show;
   end;
 
@@ -2960,6 +3001,7 @@ var
   SPOwner: string;
   spBody: string;
   dbIndex: Integer;
+  ATab: TTabSheet;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -2969,10 +3011,18 @@ begin
     SPBody:= GetStoredProcBody(dbIndex, AProcName, SPOwner);
     // Fill SProc Parameters
     fmViewSProc:= TfmViewSProc.Create(nil);
+    ATab:= TTabSheet.Create(nil);
+    ATab.Parent:= PageControl1;
+    fmViewSProc.Parent:= ATab;
+    fmViewSProc.Left:= 0;
+    fmViewSProc.Top:= 0;
+    fmViewSProc.Align:= alClient;
+    PageControl1.ActivePage:= ATab;
     with fmViewSProc do
     begin
       SynSQLSyn1.TableNames.CommaText:= GetTableNames(dbIndex);
       Caption:= 'StoredProcedure : ' + AProcName;
+      ATab.Caption:= Caption;
       edName.Caption:= AProcName;
       seScript.Lines.Clear;
       seScript.Lines.Add('create procedure ' + AProcName + '(');
@@ -3000,6 +3050,7 @@ var
   BeforeAfter: string;
   OnTable: string;
   TriggerPosition: Integer;
+  ATab: TTabSheet;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -3010,9 +3061,17 @@ begin
 
     // Fill ViewTrigger form
     fmViewTrigger:= TfmViewTrigger.Create(nil);
+    ATab:= TTabSheet.Create(nil);
+    ATab.Parent:= PageControl1;
+    fmViewTrigger.Parent:= ATab;
+    fmViewTrigger.Left:= 0;
+    fmViewTrigger.Top:= 0;
+    fmViewTrigger.Align:= alClient;
+    PageControl1.ActivePage:= ATab;
     with fmViewTrigger do
     begin
       Caption:= 'Trigger : ' + ATriggerName;
+      ATab.Caption:= Caption;
       edName.Caption:= ATriggerName;
       edOnTable.Caption:= OnTable;
       laEvent.Caption:= Event;
@@ -3043,6 +3102,7 @@ var
   AFuncName: string;
   ModuleName, EntryPoint: string;
   Params: string;
+  ATab: TTabSheet;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -3052,7 +3112,15 @@ begin
     with fmUDFINfo do
     begin
       fmUDFInfo:= TfmUDFInfo.Create(nil);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      fmUDFInfo.Parent:= ATab;
+      fmUDFInfo.Left:= 0;
+      fmUDFInfo.Top:= 0;
+      fmUDFInfo.Align:= alClient;
+      PageControl1.ActivePage:= ATab;
       Caption:= 'Function : ' + AFuncName;
+      ATab.Caption:= Caption;
       edName.Caption:= AFuncName;
       edModule.Caption:= ModuleName;
       edEntry.Caption:= EntryPoint;

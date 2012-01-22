@@ -2,13 +2,13 @@
 
 LazarusResources.Add('TfmViewView','FORMDATA',[
   'TPF0'#11'TfmViewView'#10'fmViewView'#4'Left'#3'j'#1#6'Height'#3','#1#3'Top'#3
-  +#201#0#5'Width'#3#144#1#10'AlphaBlend'#9#7'Caption'#6#10'fmViewView'#12'Clie'
-  +'ntHeight'#3','#1#11'ClientWidth'#3#144#1#7'OnClose'#7#9'FormClose'#8'Positi'
+  +#201#0#5'Width'#3#245#1#10'AlphaBlend'#9#7'Caption'#6#10'fmViewView'#12'Clie'
+  +'ntHeight'#3','#1#11'ClientWidth'#3#245#1#7'OnClose'#7#9'FormClose'#8'Positi'
   +'on'#7#14'poScreenCenter'#10'LCLVersion'#6#6'0.9.31'#0#6'TLabel'#6'Label1'#4
   +'Left'#2#11#6'Height'#2#18#3'Top'#2#15#5'Width'#2'M'#7'Caption'#6#9'View Nam'
   +'e'#11'ParentColor'#8#0#0#6'TLabel'#6'Label2'#4'Left'#2#11#6'Height'#2#18#3
   +'Top'#2'0'#5'Width'#2'#'#7'Caption'#6#4'Body'#11'ParentColor'#8#0#0#244#8'TS'
-  +'ynEdit'#8'seScript'#4'Left'#2#8#6'Height'#3#215#0#3'Top'#2'L'#5'Width'#3'|'
+  +'ynEdit'#8'seScript'#4'Left'#2#8#6'Height'#3#215#0#3'Top'#2'L'#5'Width'#3#225
   +#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#11'Font.Height'
   +#2#243#9'Font.Name'#6#11'Courier New'#10'Font.Pitch'#7#7'fpFixed'#12'Font.Qu'
   +'ality'#7#16'fqNonAntialiased'#11'ParentColor'#8#10'ParentFont'#8#8'TabOrder'
@@ -133,19 +133,23 @@ LazarusResources.Add('TfmViewView','FORMDATA',[
   +'ingZeros'#8#0#0#0#0#5'TEdit'#6'edName'#4'Left'#2'h'#6'Height'#2#21#3'Top'#2
   +#12#5'Width'#3#24#1#10'AutoSelect'#8#11'BorderStyle'#7#6'bsNone'#10'Font.Col'
   +'or'#7#6'clNavy'#10'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'#2#1#4'Text'#6#9
-  +'edGenName'#0#0#10'TSynSQLSyn'#10'SynSQLSyn1'#13'DefaultFilter'#6#23'SQL Fil'
-  +'es (*.sql)|*.sql'#7'Enabled'#8#23'CommentAttri.Foreground'#7#6'clTeal'#23'C'
-  +'ommentAttri.FrameEdges'#7#9'sfeAround'#24'DataTypeAttri.FrameEdges'#7#9'sfe'
-  +'Around'#30'DefaultPackageAttri.FrameEdges'#7#9'sfeAround'#25'ExceptionAttri'
-  +'.FrameEdges'#7#9'sfeAround'#24'FunctionAttri.FrameEdges'#7#9'sfeAround'#26
-  +'IdentifierAttri.Foreground'#4'1'#26#255#0#26'IdentifierAttri.FrameEdges'#7#9
-  +'sfeAround'#19'KeyAttri.FrameEdges'#7#9'sfeAround'#22'NumberAttri.Foreground'
-  +#7#9'clMedGray'#22'NumberAttri.FrameEdges'#7#9'sfeAround'#21'PLSQLAttri.Fram'
-  +'eEdges'#7#9'sfeAround'#21'SpaceAttri.FrameEdges'#7#9'sfeAround'#23'SQLPlusA'
-  +'ttri.FrameEdges'#7#9'sfeAround'#22'StringAttri.Foreground'#4#161#16#16#0#22
-  +'StringAttri.FrameEdges'#7#9'sfeAround'#22'SymbolAttri.Foreground'#4'b'#8#8#0
-  +#22'SymbolAttri.FrameEdges'#7#9'sfeAround'#25'TableNameAttri.Foreground'#7#6
-  +'clNavy'#25'TableNameAttri.FrameEdges'#7#9'sfeAround'#20'TableNameAttri.Styl'
-  +'e'#11#6'fsBold'#0#24'VariableAttri.FrameEdges'#7#9'sfeAround'#10'SQLDialect'
-  +#7#9'sqlSybase'#4'left'#3#253#0#3'top'#3#152#0#0#0#0
+  +'edGenName'#0#0#7'TBitBtn'#7'bbClose'#4'Left'#3#218#1#6'Height'#2#24#3'Top'#2
+  +#4#5'Width'#2#27#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#4' X  '#5
+  +'Color'#4#219#242#247#0#10'Font.Style'#11#6'fsBold'#0#7'OnClick'#7#12'bbClos'
+  +'eClick'#10'ParentFont'#8#8'TabOrder'#2#2#0#0#10'TSynSQLSyn'#10'SynSQLSyn1'
+  +#13'DefaultFilter'#6#23'SQL Files (*.sql)|*.sql'#7'Enabled'#8#23'CommentAttr'
+  +'i.Foreground'#7#6'clTeal'#23'CommentAttri.FrameEdges'#7#9'sfeAround'#24'Dat'
+  +'aTypeAttri.FrameEdges'#7#9'sfeAround'#30'DefaultPackageAttri.FrameEdges'#7#9
+  +'sfeAround'#25'ExceptionAttri.FrameEdges'#7#9'sfeAround'#24'FunctionAttri.Fr'
+  +'ameEdges'#7#9'sfeAround'#26'IdentifierAttri.Foreground'#4'1'#26#255#0#26'Id'
+  +'entifierAttri.FrameEdges'#7#9'sfeAround'#19'KeyAttri.FrameEdges'#7#9'sfeAro'
+  +'und'#22'NumberAttri.Foreground'#7#9'clMedGray'#22'NumberAttri.FrameEdges'#7
+  +#9'sfeAround'#21'PLSQLAttri.FrameEdges'#7#9'sfeAround'#21'SpaceAttri.FrameEd'
+  +'ges'#7#9'sfeAround'#23'SQLPlusAttri.FrameEdges'#7#9'sfeAround'#22'StringAtt'
+  +'ri.Foreground'#4#161#16#16#0#22'StringAttri.FrameEdges'#7#9'sfeAround'#22'S'
+  +'ymbolAttri.Foreground'#4'b'#8#8#0#22'SymbolAttri.FrameEdges'#7#9'sfeAround'
+  +#25'TableNameAttri.Foreground'#7#6'clNavy'#25'TableNameAttri.FrameEdges'#7#9
+  +'sfeAround'#20'TableNameAttri.Style'#11#6'fsBold'#0#24'VariableAttri.FrameEd'
+  +'ges'#7#9'sfeAround'#10'SQLDialect'#7#9'sqlSybase'#4'left'#3#253#0#3'top'#3
+  +#152#0#0#0#0
 ]);

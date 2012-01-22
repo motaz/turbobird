@@ -2,10 +2,10 @@ object fmViewTrigger: TfmViewTrigger
   Left = 362
   Height = 300
   Top = 201
-  Width = 601
+  Width = 667
   Caption = 'fmViewTrigger'
   ClientHeight = 300
-  ClientWidth = 601
+  ClientWidth = 667
   OnClose = FormClose
   Position = poScreenCenter
   LCLVersion = '0.9.31'
@@ -110,7 +110,7 @@ object fmViewTrigger: TfmViewTrigger
     Left = 11
     Height = 168
     Top = 120
-    Width = 569
+    Width = 635
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Height = -13
     Font.Name = 'Courier New'
@@ -755,6 +755,19 @@ object fmViewTrigger: TfmViewTrigger
     ReadOnly = True
     TabOrder = 2
     Text = 'edGenName'
+  end
+  object bbClose: TBitBtn
+    Left = 638
+    Height = 24
+    Top = 3
+    Width = 27
+    Anchors = [akTop, akRight]
+    Caption = ' X  '
+    Color = 16249563
+    Font.Style = [fsBold]
+    OnClick = bbCloseClick
+    ParentFont = False
+    TabOrder = 3
   end
   object SynSQLSyn1: TSynSQLSyn
     DefaultFilter = 'SQL Files (*.sql)|*.sql'

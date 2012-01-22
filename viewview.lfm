@@ -2,11 +2,11 @@ object fmViewView: TfmViewView
   Left = 362
   Height = 300
   Top = 201
-  Width = 400
+  Width = 501
   AlphaBlend = True
   Caption = 'fmViewView'
   ClientHeight = 300
-  ClientWidth = 400
+  ClientWidth = 501
   OnClose = FormClose
   Position = poScreenCenter
   LCLVersion = '0.9.31'
@@ -30,7 +30,7 @@ object fmViewView: TfmViewView
     Left = 8
     Height = 215
     Top = 76
-    Width = 380
+    Width = 481
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Height = -13
     Font.Name = 'Courier New'
@@ -662,6 +662,19 @@ object fmViewView: TfmViewView
     ReadOnly = True
     TabOrder = 1
     Text = 'edGenName'
+  end
+  object bbClose: TBitBtn
+    Left = 474
+    Height = 24
+    Top = 4
+    Width = 27
+    Anchors = [akTop, akRight]
+    Caption = ' X  '
+    Color = 16249563
+    Font.Style = [fsBold]
+    OnClick = bbCloseClick
+    ParentFont = False
+    TabOrder = 2
   end
   object SynSQLSyn1: TSynSQLSyn
     DefaultFilter = 'SQL Files (*.sql)|*.sql'

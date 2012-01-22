@@ -1,7 +1,7 @@
 object fmUserPermissions: TfmUserPermissions
-  Left = 578
+  Left = 580
   Height = 363
-  Top = 203
+  Top = 205
   Width = 500
   ActiveControl = StringGrid1
   Caption = 'fmUserPermissions'
@@ -12,22 +12,25 @@ object fmUserPermissions: TfmUserPermissions
   LCLVersion = '0.9.31'
   object StringGrid1: TStringGrid
     Left = 0
-    Height = 368
-    Top = 1
-    Width = 501
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Height = 331
+    Top = 31
+    Width = 477
+    Anchors = [akTop, akLeft, akBottom]
     ColCount = 3
     Columns = <    
       item
         Title.Caption = 'Obj Type'
+        Title.PrefixOption = poNone
         Width = 100
       end    
       item
         Title.Caption = 'Object'
+        Title.PrefixOption = poNone
         Width = 200
       end    
       item
         Title.Caption = 'Permission'
+        Title.PrefixOption = poNone
         Width = 200
       end>
     FixedColor = 14539471
@@ -36,5 +39,36 @@ object fmUserPermissions: TfmUserPermissions
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goSmoothScroll]
     TabOrder = 0
     UseXORFeatures = True
+  end
+  object bbClose: TBitBtn
+    Left = 474
+    Height = 24
+    Top = 1
+    Width = 27
+    Anchors = [akTop, akRight]
+    Caption = ' X  '
+    Color = 16249563
+    Font.Style = [fsBold]
+    OnClick = bbCloseClick
+    ParentFont = False
+    TabOrder = 1
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 18
+    Top = 12
+    Width = 46
+    Caption = 'Object'
+    ParentColor = False
+  end
+  object laObject: TLabel
+    Left = 62
+    Height = 18
+    Top = 11
+    Width = 62
+    Caption = 'laObject'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
   end
 end

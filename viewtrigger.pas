@@ -6,13 +6,14 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, SynEdit, SynHighlighterSQL;
+  StdCtrls, Buttons, SynEdit, SynHighlighterSQL;
 
 type
 
   { TfmViewTrigger }
 
   TfmViewTrigger = class(TForm)
+    bbClose: TBitBtn;
     edName: TEdit;
     edOnTable: TEdit;
     Label1: TLabel;
@@ -28,6 +29,7 @@ type
     laEnabled: TLabel;
     seScript: TSynEdit;
     SynSQLSyn1: TSynSQLSyn;
+    procedure bbCloseClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
     { private declarations }
@@ -45,6 +47,12 @@ implementation
 procedure TfmViewTrigger.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
+end;
+
+procedure TfmViewTrigger.bbCloseClick(Sender: TObject);
+begin
+  Close;
+  Parent.Free;
 end;
 
 initialization

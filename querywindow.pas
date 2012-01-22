@@ -827,7 +827,8 @@ end;
 
 procedure TfmQueryWindow.lmCloseTabClick(Sender: TObject);
 begin
-  if MessageDlg('Do you want to close this query window?', mtCustom, [mbNo,mbyes], 0) = mryes then
+  if (Trim(meQuery.Lines.Text) = '') or
+    (MessageDlg('Do you want to close this query window?', mtConfirmation, [mbNo, mbYes], 0) = mrYes) then
   begin
     Close;
     Parent.Free;

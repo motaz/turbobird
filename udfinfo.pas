@@ -6,13 +6,14 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls;
+  StdCtrls, Buttons;
 
 type
 
   { TfmUDFInfo }
 
   TfmUDFInfo = class(TForm)
+    bbClose: TBitBtn;
     edModule: TEdit;
     edEntry: TEdit;
     edName: TEdit;
@@ -21,6 +22,7 @@ type
     Label3: TLabel;
     Label7: TLabel;
     meBody: TMemo;
+    procedure bbCloseClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
     { private declarations }
@@ -38,6 +40,12 @@ implementation
 procedure TfmUDFInfo.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
+end;
+
+procedure TfmUDFInfo.bbCloseClick(Sender: TObject);
+begin
+  Close;
+  Parent.Free;
 end;
 
 initialization

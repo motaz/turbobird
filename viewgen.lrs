@@ -2,17 +2,20 @@
 
 LazarusResources.Add('TfmViewGen','FORMDATA',[
   'TPF0'#10'TfmViewGen'#9'fmViewGen'#4'Left'#3'j'#1#6'Height'#2'U'#3'Top'#3#201
-  +#0#5'Width'#3#144#1#7'Caption'#6#9'fmViewGen'#12'ClientHeight'#2'U'#11'Clien'
-  +'tWidth'#3#144#1#7'OnClose'#7#9'FormClose'#8'Position'#7#14'poScreenCenter'
-  +#10'LCLVersion'#6#6'0.9.31'#0#6'TLabel'#6'Label1'#4'Left'#2#11#6'Height'#2#18
-  +#3'Top'#2#15#5'Width'#2'F'#7'Caption'#6#9'Generator'#11'ParentColor'#8#0#0#6
-  +'TLabel'#6'Label3'#4'Left'#2#11#6'Height'#2#18#3'Top'#2'0'#5'Width'#2']'#7'C'
-  +'aption'#6#13'Current Value'#11'ParentColor'#8#0#0#5'TEdit'#9'edGenName'#4'L'
-  +'eft'#2'x'#6'Height'#2#27#3'Top'#2#8#5'Width'#3#0#1#7'Anchors'#11#5'akTop'#6
+  +#0#5'Width'#3'g'#2#7'Caption'#6#9'fmViewGen'#12'ClientHeight'#2'U'#11'Client'
+  +'Width'#3'g'#2#7'OnClose'#7#9'FormClose'#8'Position'#7#14'poScreenCenter'#10
+  +'LCLVersion'#6#6'0.9.31'#0#6'TLabel'#6'Label1'#4'Left'#2#11#6'Height'#2#18#3
+  +'Top'#2#15#5'Width'#2'F'#7'Caption'#6#9'Generator'#11'ParentColor'#8#0#0#6'T'
+  +'Label'#6'Label3'#4'Left'#2#11#6'Height'#2#18#3'Top'#2'0'#5'Width'#2']'#7'Ca'
+  +'ption'#6#13'Current Value'#11'ParentColor'#8#0#0#5'TEdit'#9'edGenName'#4'Le'
+  +'ft'#2'x'#6'Height'#2#21#3'Top'#2#8#5'Width'#3#207#0#7'Anchors'#11#5'akTop'#6
   +'akLeft'#7'akRight'#0#10'AutoSelect'#8#11'BorderStyle'#7#6'bsNone'#10'Font.C'
   +'olor'#7#6'clNavy'#10'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'#2#0#4'Text'#6#9
-  +'edGenName'#0#0#5'TEdit'#7'edValue'#4'Left'#2'x'#6'Height'#2#27#3'Top'#2'('#5
+  +'edGenName'#0#0#5'TEdit'#7'edValue'#4'Left'#2'x'#6'Height'#2#21#3'Top'#2'('#5
   +'Width'#3#144#0#10'AutoSelect'#8#11'BorderStyle'#7#6'bsNone'#10'Font.Color'#7
   +#6'clNavy'#10'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'#2#1#4'Text'#6#9'edGenN'
-  +'ame'#0#0#0
+  +'ame'#0#0#7'TBitBtn'#7'bbClose'#4'Left'#3'L'#2#6'Height'#2#24#3'Top'#2#4#5'W'
+  +'idth'#2#27#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#4' X  '#5'Color'
+  +#4#219#242#247#0#10'Font.Style'#11#6'fsBold'#0#7'OnClick'#7#12'bbCloseClick'
+  +#10'ParentFont'#8#8'TabOrder'#2#2#0#0#0
 ]);

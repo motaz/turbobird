@@ -683,6 +683,19 @@ object fmViewSProc: TfmViewSProc
     TabOrder = 2
     Text = 'edGenName'
   end
+  object bbClose: TBitBtn
+    Left = 503
+    Height = 24
+    Top = 3
+    Width = 27
+    Anchors = [akTop, akRight]
+    Caption = ' X  '
+    Color = 16249563
+    Font.Style = [fsBold]
+    OnClick = bbCloseClick
+    ParentFont = False
+    TabOrder = 3
+  end
   object SynSQLSyn1: TSynSQLSyn
     DefaultFilter = 'SQL Files (*.sql)|*.sql'
     Enabled = False

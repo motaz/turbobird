@@ -95,4 +95,17 @@ object fmUDFInfo: TfmUDFInfo
     TabOrder = 3
     Text = 'edGenName'
   end
+  object bbClose: TBitBtn
+    Left = 462
+    Height = 24
+    Top = 4
+    Width = 27
+    Anchors = [akTop, akRight]
+    Caption = ' X  '
+    Color = 16249563
+    Font.Style = [fsBold]
+    OnClick = bbCloseClick
+    ParentFont = False
+    TabOrder = 4
+  end
 end

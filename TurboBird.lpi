@@ -60,10 +60,10 @@
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TurboBird"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="20" Y="26"/>
+        <CursorPos X="25" Y="18"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -76,8 +76,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="3288"/>
-        <CursorPos X="5" Y="3302"/>
+        <TopLine Value="2951"/>
+        <CursorPos X="31" Y="2979"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -99,7 +99,7 @@
         <ComponentName Value="fmReg"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Reg"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="228"/>
         <CursorPos X="22" Y="269"/>
@@ -119,10 +119,10 @@
         <ComponentName Value="fmQueryWindow"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="QueryWindow"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="828"/>
+        <CursorPos X="41" Y="831"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -157,8 +157,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewView"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="23" Y="37"/>
+        <TopLine Value="9"/>
+        <CursorPos X="19" Y="21"/>
         <UsageCount Value="200"/>
       </Unit9>
       <Unit10>
@@ -167,10 +167,13 @@
         <ComponentName Value="fmViewTrigger"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewTrigger"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="6"/>
-        <CursorPos X="23" Y="14"/>
+        <TopLine Value="19"/>
+        <CursorPos X="72" Y="27"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="viewsproc.pas"/>
@@ -178,10 +181,13 @@
         <ComponentName Value="fmViewSProc"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewSProc"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="80" Y="37"/>
+        <TopLine Value="11"/>
+        <CursorPos X="11" Y="17"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="viewgen.pas"/>
@@ -190,8 +196,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewGen"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="37" Y="17"/>
+        <TopLine Value="8"/>
+        <CursorPos X="60" Y="22"/>
         <UsageCount Value="201"/>
       </Unit12>
       <Unit13>
@@ -375,7 +381,7 @@
         <ComponentName Value="fmEditTable"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EditTable"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="78"/>
         <CursorPos X="33" Y="109"/>
@@ -418,10 +424,10 @@
         <ComponentName Value="fmUDFInfo"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UDFInfo"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="20" Y="6"/>
+        <TopLine Value="12"/>
+        <CursorPos X="29" Y="29"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -432,10 +438,13 @@
         <ComponentName Value="fmViewDomain"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewDomain"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="36" Y="21"/>
+        <TopLine Value="12"/>
+        <CursorPos X="24" Y="17"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit39>
       <Unit40>
         <Filename Value="newdomain.pas"/>
@@ -461,7 +470,7 @@
         <ComponentName Value="dmSysTables"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="SysTables"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="531"/>
         <CursorPos X="116" Y="556"/>
@@ -503,13 +512,10 @@
         <ComponentName Value="fmNewEditField"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewEditField"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="165"/>
         <CursorPos X="3" Y="169"/>
         <UsageCount Value="202"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit46>
       <Unit47>
         <Filename Value="/usr/lib/lazarus/0.9.28.2/lcl/dbgrids.pas"/>
@@ -540,18 +546,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="17"/>
         <CursorPos X="37" Y="49"/>
-        <UsageCount Value="199"/>
+        <UsageCount Value="200"/>
       </Unit50>
       <Unit51>
         <Filename Value="scriptdb.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Scriptdb"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="144"/>
         <CursorPos X="3" Y="179"/>
-        <UsageCount Value="186"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="188"/>
       </Unit51>
       <Unit52>
         <Filename Value="connectas.pas"/>
@@ -569,9 +573,9 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UserPermissions"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="58" Y="14"/>
-        <UsageCount Value="162"/>
+        <TopLine Value="6"/>
+        <CursorPos X="38" Y="12"/>
+        <UsageCount Value="164"/>
       </Unit53>
       <Unit54>
         <Filename Value="/usr/lib/lazarus/0.9.29/ide/lazarus.pp"/>
@@ -587,13 +591,10 @@
         <ComponentName Value="fmTableManage"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="TableManage"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="249"/>
         <CursorPos X="65" Y="256"/>
-        <UsageCount Value="145"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="147"/>
       </Unit55>
       <Unit56>
         <Filename Value="/usr/lib/lazarus/0.9.29/lcl/grids.pas"/>
@@ -633,17 +634,17 @@
         <ComponentName Value="fmBackupRestore"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BackupRestore"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="40"/>
         <CursorPos X="14" Y="54"/>
-        <UsageCount Value="131"/>
+        <UsageCount Value="133"/>
         <Loaded Value="True"/>
       </Unit60>
       <Unit61>
         <Filename Value="unitfirebirdservices.pas"/>
         <UnitName Value="UnitFirebirdServices"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="321"/>
         <CursorPos X="1" Y="367"/>
@@ -706,7 +707,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="71" Y="7"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="103"/>
       </Unit68>
       <Unit69>
         <Filename Value="changepass.pas"/>
@@ -717,7 +718,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="88" Y="14"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="102"/>
       </Unit69>
       <Unit70>
         <Filename Value="permissionmanage.pas"/>
@@ -728,7 +729,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
         <CursorPos X="21" Y="92"/>
-        <UsageCount Value="98"/>
+        <UsageCount Value="100"/>
       </Unit70>
       <Unit71>
         <Filename Value="sqlhistory.pas"/>
@@ -739,7 +740,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="18" Y="39"/>
-        <UsageCount Value="83"/>
+        <UsageCount Value="85"/>
       </Unit71>
       <Unit72>
         <Filename Value="../../lazarus/lazarus/lcl/include/menuitem.inc"/>
@@ -761,11 +762,11 @@
         <ComponentName Value="fmCopyTable"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CopyTable"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="30"/>
         <CursorPos X="1" Y="151"/>
-        <UsageCount Value="54"/>
+        <UsageCount Value="56"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit74>
@@ -956,135 +957,132 @@
         <ComponentName Value="fmDBInfo"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="dbInfo"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="12" Y="28"/>
-        <UsageCount Value="22"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="24"/>
       </Unit98>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="main.pas"/>
-        <Caret Line="374" Column="22" TopLine="355"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position1>
       <Position2>
         <Filename Value="main.pas"/>
-        <Caret Line="389" Column="22" TopLine="360"/>
+        <Caret Line="1678" Column="31" TopLine="1643"/>
       </Position2>
       <Position3>
         <Filename Value="main.pas"/>
-        <Caret Line="403" Column="9" TopLine="379"/>
+        <Caret Line="1700" Column="54" TopLine="1665"/>
       </Position3>
       <Position4>
-        <Filename Value="systables.pas"/>
-        <Caret Line="573" Column="23" TopLine="556"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1794" Column="14" TopLine="1790"/>
       </Position4>
       <Position5>
-        <Filename Value="systables.pas"/>
-        <Caret Line="50" Column="37" TopLine="49"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1823" Column="1" TopLine="1802"/>
       </Position5>
       <Position6>
         <Filename Value="main.pas"/>
-        <Caret Line="376" Column="24" TopLine="358"/>
+        <Caret Line="1786" Column="1" TopLine="1784"/>
       </Position6>
       <Position7>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="249" Column="50" TopLine="233"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1886" Column="104" TopLine="1880"/>
       </Position7>
       <Position8>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3410" Column="24" TopLine="3393"/>
       </Position8>
       <Position9>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="886" Column="35" TopLine="838"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3302" Column="5" TopLine="3288"/>
       </Position9>
       <Position10>
         <Filename Value="main.pas"/>
-        <Caret Line="342" Column="21" TopLine="340"/>
+        <Caret Line="1461" Column="3" TopLine="1454"/>
       </Position10>
       <Position11>
         <Filename Value="main.pas"/>
-        <Caret Line="1455" Column="3" TopLine="1453"/>
+        <Caret Line="2503" Column="1" TopLine="2487"/>
       </Position11>
       <Position12>
         <Filename Value="main.pas"/>
-        <Caret Line="1467" Column="3" TopLine="1460"/>
+        <Caret Line="2947" Column="14" TopLine="2914"/>
       </Position12>
       <Position13>
         <Filename Value="main.pas"/>
-        <Caret Line="1455" Column="1" TopLine="1453"/>
+        <Caret Line="2949" Column="33" TopLine="2923"/>
       </Position13>
       <Position14>
-        <Filename Value="main.pas"/>
-        <Caret Line="1454" Column="1" TopLine="1452"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position14>
       <Position15>
         <Filename Value="main.pas"/>
-        <Caret Line="1452" Column="1" TopLine="1452"/>
+        <Caret Line="2946" Column="1" TopLine="2928"/>
       </Position15>
       <Position16>
-        <Filename Value="edittable.pas"/>
-        <Caret Line="109" Column="33" TopLine="78"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="2841" Column="1" TopLine="2821"/>
       </Position16>
       <Position17>
         <Filename Value="main.pas"/>
-        <Caret Line="3750" Column="10" TopLine="3714"/>
+        <Caret Line="1562" Column="12" TopLine="1560"/>
       </Position17>
       <Position18>
-        <Filename Value="tablemanage.pas"/>
-        <Caret Line="114" Column="22" TopLine="96"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1503" Column="22" TopLine="1492"/>
       </Position18>
       <Position19>
-        <Filename Value="tablemanage.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1503" Column="22" TopLine="1492"/>
       </Position19>
       <Position20>
-        <Filename Value="tablemanage.pas"/>
-        <Caret Line="253" Column="32" TopLine="249"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="1503" Column="1" TopLine="1497"/>
       </Position20>
       <Position21>
-        <Filename Value="main.pas"/>
-        <Caret Line="2422" Column="1" TopLine="2395"/>
+        <Filename Value="viewtrigger.pas"/>
+        <Caret Line="14" Column="23" TopLine="6"/>
       </Position21>
       <Position22>
         <Filename Value="main.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="3049" Column="1" TopLine="3032"/>
       </Position22>
       <Position23>
-        <Filename Value="main.pas"/>
-        <Caret Line="1678" Column="31" TopLine="1643"/>
+        <Filename Value="viewsproc.pas"/>
+        <Caret Line="37" Column="80" TopLine="1"/>
       </Position23>
       <Position24>
-        <Filename Value="main.pas"/>
-        <Caret Line="1700" Column="54" TopLine="1665"/>
+        <Filename Value="viewsproc.pas"/>
+        <Caret Line="39" Column="80" TopLine="1"/>
       </Position24>
       <Position25>
         <Filename Value="main.pas"/>
-        <Caret Line="1794" Column="14" TopLine="1790"/>
+        <Caret Line="3008" Column="1" TopLine="2984"/>
       </Position25>
       <Position26>
-        <Filename Value="main.pas"/>
-        <Caret Line="1823" Column="1" TopLine="1802"/>
+        <Filename Value="udfinfo.pas"/>
+        <Caret Line="6" Column="20" TopLine="1"/>
       </Position26>
       <Position27>
         <Filename Value="main.pas"/>
-        <Caret Line="1786" Column="1" TopLine="1784"/>
+        <Caret Line="3109" Column="1" TopLine="3086"/>
       </Position27>
       <Position28>
-        <Filename Value="tablemanage.pas"/>
-        <Caret Line="253" Column="32" TopLine="249"/>
+        <Filename Value="viewdomain.pas"/>
+        <Caret Line="21" Column="36" TopLine="1"/>
       </Position28>
       <Position29>
-        <Filename Value="main.pas"/>
-        <Caret Line="1886" Column="104" TopLine="1880"/>
+        <Filename Value="viewdomain.pas"/>
+        <Caret Line="22" Column="36" TopLine="1"/>
       </Position29>
       <Position30>
         <Filename Value="main.pas"/>
-        <Caret Line="3410" Column="24" TopLine="3393"/>
+        <Caret Line="2163" Column="69" TopLine="2157"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
