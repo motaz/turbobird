@@ -16,6 +16,7 @@ object fmUserPermissions: TfmUserPermissions
     Top = 31
     Width = 477
     Anchors = [akTop, akLeft, akBottom]
+    BorderStyle = bsNone
     ColCount = 3
     Columns = <    
       item
@@ -54,7 +55,7 @@ object fmUserPermissions: TfmUserPermissions
     TabOrder = 1
   end
   object Label1: TLabel
-    Left = 8
+    Left = 3
     Height = 18
     Top = 12
     Width = 46

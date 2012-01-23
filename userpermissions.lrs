@@ -7,19 +7,19 @@ LazarusResources.Add('TfmUserPermissions','FORMDATA',[
   +#244#1#7'OnClose'#7#9'FormClose'#8'Position'#7#14'poScreenCenter'#10'LCLVers'
   +'ion'#6#6'0.9.31'#0#11'TStringGrid'#11'StringGrid1'#4'Left'#2#0#6'Height'#3
   +'K'#1#3'Top'#2#31#5'Width'#3#221#1#7'Anchors'#11#5'akTop'#6'akLeft'#8'akBott'
-  +'om'#0#8'ColCount'#2#3#7'Columns'#14#1#13'Title.Caption'#6#8'Obj Type'#18'Ti'
-  +'tle.PrefixOption'#7#6'poNone'#5'Width'#2'd'#0#1#13'Title.Caption'#6#6'Objec'
-  +'t'#18'Title.PrefixOption'#7#6'poNone'#5'Width'#3#200#0#0#1#13'Title.Caption'
-  +#6#10'Permission'#18'Title.PrefixOption'#7#6'poNone'#5'Width'#3#200#0#0#0#10
-  +'FixedColor'#4#207#218#221#0#9'FixedCols'#2#0#4'Flat'#9#7'Options'#11#15'goF'
-  +'ixedVertLine'#15'goFixedHorzLine'#10'goVertLine'#10'goHorzLine'#11'goColSiz'
-  +'ing'#11'goRowSelect'#14'goSmoothScroll'#0#8'TabOrder'#2#0#14'UseXORFeatures'
-  +#9#0#0#7'TBitBtn'#7'bbClose'#4'Left'#3#218#1#6'Height'#2#24#3'Top'#2#1#5'Wid'
-  +'th'#2#27#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#4' X  '#5'Color'#4
-  +#219#242#247#0#10'Font.Style'#11#6'fsBold'#0#7'OnClick'#7#12'bbCloseClick'#10
-  +'ParentFont'#8#8'TabOrder'#2#1#0#0#6'TLabel'#6'Label1'#4'Left'#2#8#6'Height'
-  +#2#18#3'Top'#2#12#5'Width'#2'.'#7'Caption'#6#6'Object'#11'ParentColor'#8#0#0
-  +#6'TLabel'#8'laObject'#4'Left'#2'>'#6'Height'#2#18#3'Top'#2#11#5'Width'#2'>'
-  +#7'Caption'#6#8'laObject'#10'Font.Style'#11#6'fsBold'#0#11'ParentColor'#8#10
-  +'ParentFont'#8#0#0#0
+  +'om'#0#11'BorderStyle'#7#6'bsNone'#8'ColCount'#2#3#7'Columns'#14#1#13'Title.'
+  +'Caption'#6#8'Obj Type'#18'Title.PrefixOption'#7#6'poNone'#5'Width'#2'd'#0#1
+  +#13'Title.Caption'#6#6'Object'#18'Title.PrefixOption'#7#6'poNone'#5'Width'#3
+  +#200#0#0#1#13'Title.Caption'#6#10'Permission'#18'Title.PrefixOption'#7#6'poN'
+  +'one'#5'Width'#3#200#0#0#0#10'FixedColor'#4#207#218#221#0#9'FixedCols'#2#0#4
+  +'Flat'#9#7'Options'#11#15'goFixedVertLine'#15'goFixedHorzLine'#10'goVertLine'
+  +#10'goHorzLine'#11'goColSizing'#11'goRowSelect'#14'goSmoothScroll'#0#8'TabOr'
+  +'der'#2#0#14'UseXORFeatures'#9#0#0#7'TBitBtn'#7'bbClose'#4'Left'#3#218#1#6'H'
+  +'eight'#2#24#3'Top'#2#1#5'Width'#2#27#7'Anchors'#11#5'akTop'#7'akRight'#0#7
+  +'Caption'#6#4' X  '#5'Color'#4#219#242#247#0#10'Font.Style'#11#6'fsBold'#0#7
+  +'OnClick'#7#12'bbCloseClick'#10'ParentFont'#8#8'TabOrder'#2#1#0#0#6'TLabel'#6
+  +'Label1'#4'Left'#2#3#6'Height'#2#18#3'Top'#2#12#5'Width'#2'.'#7'Caption'#6#6
+  +'Object'#11'ParentColor'#8#0#0#6'TLabel'#8'laObject'#4'Left'#2'>'#6'Height'#2
+  +#18#3'Top'#2#11#5'Width'#2'>'#7'Caption'#6#8'laObject'#10'Font.Style'#11#6'f'
+  +'sBold'#0#11'ParentColor'#8#10'ParentFont'#8#0#0#0
 ]);

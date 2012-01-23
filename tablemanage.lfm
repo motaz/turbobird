@@ -15,21 +15,21 @@ object fmTableManage: TfmTableManage
     Left = 0
     Height = 411
     Top = 0
-    Width = 780
+    Width = 752
     ActivePage = tsFields
-    Align = alClient
+    Anchors = [akTop, akLeft, akRight, akBottom]
     Images = ImageList1
     TabIndex = 0
     TabOrder = 0
     object tsFields: TTabSheet
       Caption = 'Fields'
       ClientHeight = 380
-      ClientWidth = 776
+      ClientWidth = 748
       object sgFields: TStringGrid
         Left = 0
         Height = 337
         Top = 0
-        Width = 776
+        Width = 748
         Align = alTop
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 7
@@ -80,7 +80,6 @@ object fmTableManage: TfmTableManage
           end>
         FixedColor = 14539471
         FixedCols = 0
-        Flat = True
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goColMoving, goRowSelect, goSmoothScroll]
         RowCount = 4
         TabOrder = 0
@@ -122,7 +121,7 @@ object fmTableManage: TfmTableManage
         TabOrder = 3
       end
       object bbRefresh: TBitBtn
-        Left = 672
+        Left = 644
         Height = 30
         Top = 342
         Width = 94
@@ -137,10 +136,10 @@ object fmTableManage: TfmTableManage
     object tsIndices: TTabSheet
       Caption = 'Indices'
       ClientHeight = 380
-      ClientWidth = 776
+      ClientWidth = 748
       ImageIndex = 2
       object bbRefreshIndices: TBitBtn
-        Left = 646
+        Left = 618
         Height = 30
         Top = 3
         Width = 88
@@ -155,7 +154,7 @@ object fmTableManage: TfmTableManage
         Left = -1
         Height = 142
         Top = -2
-        Width = 637
+        Width = 609
         Anchors = [akTop, akLeft, akRight]
         Columns = <        
           item
@@ -196,7 +195,7 @@ object fmTableManage: TfmTableManage
         TabOrder = 1
       end
       object bbDrop: TBitBtn
-        Left = 646
+        Left = 618
         Height = 30
         Top = 51
         Width = 88
@@ -210,17 +209,17 @@ object fmTableManage: TfmTableManage
         Left = -2
         Height = 236
         Top = 139
-        Width = 570
+        Width = 542
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = 'Manage'
         ClientHeight = 217
-        ClientWidth = 566
+        ClientWidth = 538
         TabOrder = 3
         object Label2: TLabel
           Left = 6
           Height = 18
           Top = 14
-          Width = 174
+          Width = 176
           Caption = 'Create new index on fields'
           ParentColor = False
         end
@@ -245,7 +244,7 @@ object fmTableManage: TfmTableManage
           Left = 254
           Height = 22
           Top = 95
-          Width = 70
+          Width = 71
           Caption = 'Unique'
           TabOrder = 1
         end
@@ -271,7 +270,7 @@ object fmTableManage: TfmTableManage
         end
         object cbSortType: TComboBox
           Left = 254
-          Height = 31
+          Height = 27
           Top = 127
           Width = 120
           AutoDropDown = True
@@ -288,7 +287,7 @@ object fmTableManage: TfmTableManage
         end
         object cbIndexType: TComboBox
           Left = 254
-          Height = 31
+          Height = 27
           Top = 1
           Width = 148
           Color = 16249563
@@ -308,10 +307,10 @@ object fmTableManage: TfmTableManage
     object tsConstraints: TTabSheet
       Caption = 'Constraints'
       ClientHeight = 380
-      ClientWidth = 776
+      ClientWidth = 748
       ImageIndex = 3
       object bbRefreshConstraint: TBitBtn
-        Left = 648
+        Left = 620
         Height = 30
         Top = 343
         Width = 99
@@ -326,7 +325,7 @@ object fmTableManage: TfmTableManage
         Left = -1
         Height = 333
         Top = -1
-        Width = 760
+        Width = 732
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 7
         Columns = <        
@@ -398,13 +397,13 @@ object fmTableManage: TfmTableManage
     object tsTriggers: TTabSheet
       Caption = 'Triggers'
       ClientHeight = 380
-      ClientWidth = 776
+      ClientWidth = 748
       ImageIndex = 1
       object sgTriggers: TStringGrid
         Left = 0
         Height = 324
         Top = -1
-        Width = 758
+        Width = 730
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 2
         Columns = <        
@@ -426,7 +425,7 @@ object fmTableManage: TfmTableManage
         TabOrder = 0
       end
       object bbRefreshTriggers: TBitBtn
-        Left = 662
+        Left = 634
         Height = 30
         Top = 337
         Width = 87
@@ -475,13 +474,13 @@ object fmTableManage: TfmTableManage
     object tsPermissions: TTabSheet
       Caption = 'Permissions'
       ClientHeight = 380
-      ClientWidth = 776
+      ClientWidth = 748
       ImageIndex = 4
       object sgPermissions: TStringGrid
         Left = 0
         Height = 324
         Top = 0
-        Width = 758
+        Width = 730
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 12
         Columns = <        
@@ -570,7 +569,7 @@ object fmTableManage: TfmTableManage
         TabOrder = 1
       end
       object bbRefreshPermissions: TBitBtn
-        Left = 662
+        Left = 634
         Height = 30
         Top = 339
         Width = 87
@@ -593,6 +592,19 @@ object fmTableManage: TfmTableManage
         TabOrder = 3
       end
     end
+  end
+  object bbClose: TBitBtn
+    Left = 752
+    Height = 24
+    Top = 0
+    Width = 27
+    Anchors = [akTop, akRight]
+    Caption = ' X  '
+    Color = 16249563
+    Font.Style = [fsBold]
+    OnClick = bbCloseClick
+    ParentFont = False
+    TabOrder = 1
   end
   object ImageList1: TImageList
     DrawingStyle = dsFocus

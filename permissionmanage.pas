@@ -16,6 +16,7 @@ type
     bbApplyRoles: TBitBtn;
     bbApplyTable: TBitBtn;
     bbApplyProc: TBitBtn;
+    bbClose: TBitBtn;
     BitBtn1: TBitBtn;
     cbRolesUser: TComboBox;
     cbTables: TComboBox;
@@ -51,6 +52,7 @@ type
     procedure bbApplyProcClick(Sender: TObject);
     procedure bbApplyRolesClick(Sender: TObject);
     procedure bbApplyTableClick(Sender: TObject);
+    procedure bbCloseClick(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
     procedure cbProcUsersChange(Sender: TObject);
     procedure cbRolesUserChange(Sender: TObject);
@@ -252,9 +254,16 @@ begin
     fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbTables.Text, List.Text, fOnCommitProcedure);
     List.Free;
     Close;
+    Parent.Free;
   end
   else
     ShowMessage('You should enter user/role and a table');
+end;
+
+procedure TfmPermissionManage.bbCloseClick(Sender: TObject);
+begin
+  Close;
+  Parent.Free;
 end;
 
 procedure TfmPermissionManage.BitBtn1Click(Sender: TObject);
@@ -291,6 +300,7 @@ begin
       fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbProcUsers.Text, List.Text, fOnCommitProcedure);
       List.Free;
       Close;
+      Parent.Free;
     end
     else
       ShowMessage('There is no change');
@@ -326,6 +336,7 @@ begin
       fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbRolesUser.Text, List.Text, fOnCommitProcedure);
       List.Free;
       Close;
+      Parent.Free;
     end
     else
       ShowMessage('There is no change');

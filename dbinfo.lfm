@@ -6,6 +6,7 @@ object fmDBInfo: TfmDBInfo
   Caption = 'fmDBInfo'
   ClientHeight = 390
   ClientWidth = 701
+  OnClose = FormClose
   Position = poScreenCenter
   LCLVersion = '0.9.31'
   object Label1: TLabel
@@ -155,5 +156,18 @@ object fmDBInfo: TfmDBInfo
     ReadOnly = True
     ScrollBars = ssAutoBoth
     TabOrder = 6
+  end
+  object bbClose: TBitBtn
+    Left = 672
+    Height = 24
+    Top = 0
+    Width = 27
+    Anchors = [akTop, akRight]
+    Caption = ' X  '
+    Color = 16249563
+    Font.Style = [fsBold]
+    OnClick = bbCloseClick
+    ParentFont = False
+    TabOrder = 7
   end
 end

@@ -13,6 +13,7 @@ type
   { TfmTableManage }
 
   TfmTableManage = class(TForm)
+    bbClose: TBitBtn;
     bbCreateIndex: TBitBtn;
     bbDrop: TBitBtn;
     bbDropConstraint: TBitBtn;
@@ -53,6 +54,7 @@ type
     tsConstraints: TTabSheet;
     tsFields: TTabSheet;
     procedure bbAddUserClick(Sender: TObject);
+    procedure bbCloseClick(Sender: TObject);
     procedure bbCreateIndexClick(Sender: TObject);
     procedure bbDropClick(Sender: TObject);
     procedure bbDropConstraintClick(Sender: TObject);
@@ -246,6 +248,12 @@ begin
   fmPermissions.Show;
 end;
 
+procedure TfmTableManage.bbCloseClick(Sender: TObject);
+begin
+  Close;
+  Parent.Free;
+end;
+
 procedure TfmTableManage.bbNewClick(Sender: TObject);
 var
   fmNewEditField: TfmNewEditField;
@@ -296,6 +304,7 @@ procedure TfmTableManage.bbRefreshClick(Sender: TObject);
 begin
   fmMain.ViewTableFields(fTableName, fdbIndex, sgFields);
   Show;
+  fmMain.PageControl1.ActivePage:= Self.Parent as TTabSheet;
 end;
 
 procedure TfmTableManage.bbRefreshConstraintClick(Sender: TObject);

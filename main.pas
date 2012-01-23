@@ -369,13 +369,33 @@ var
   ProcessList: TStringList;
   dbSize: Double;
   AType: string;
+  ATab: TTabSheet;
+  Title: string;
 begin
   ProcessList:= TStringList.Create;
+  Title:= 'Database information for: ' + tvMain.Selected.Text;
   if dmSysTables.GetDatabaseInfo(tvMain.Selected.OverlayIndex, dbName, ACharSet, CreationDate,
     MajorVer, MinorVer, Pages, PageSize, ProcessList) then
   with fmDBInfo do
   begin
-    Caption:= 'Database information for: ' + tvMain.Selected.Text;
+    fmDBInfo:= FindCusomForm(Title, TfmDBInfo) as TfmDBInfo;
+
+    if fmDBInfo = nil then
+    begin
+      fmDBInfo:= TfmDBInfo.Create(Application);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      fmDBInfo.Parent:= ATab;
+      fmDBInfo.Left:= 0;
+      fmDBInfo.Top:= 0;
+      fmDBInfo.Align:= alClient;
+      Caption:= Title;
+    end
+    else
+      ATab:= fmDBInfo.Parent as TTabSheet;
+
+    PageControl1.ActivePage:= ATab;
+    ATab.Caption:= Title;
     edName.Text:= dbName;
     edODSVer.Text:= IntToStr(MajorVer) + '.' + IntToStr(MinorVer);
     edCharset.Text:= ACharSet;
@@ -384,24 +404,24 @@ begin
     dbSize:= Pages * PageSize;
     if dbSize > 1000000000 then
     begin
-       dbSize:= ((dbSize / 1024) / 1024) / 1024;
-       AType:= 'Giga bytes';
+      dbSize:= ((dbSize / 1024) / 1024) / 1024;
+      AType:= 'Giga bytes';
     end
     else
     if dbSize > 1000000 then
     begin
-       dbSize:= ((dbSize / 1024) / 1024);
-       AType:= 'Mega bytes';
+      dbSize:= ((dbSize / 1024) / 1024);
+      AType:= 'Mega bytes';
     end
     else
     if dbSize > 1000 then
     begin
-       dbSize:= (dbSize / 1024);
-       AType:= 'Kilo bytes';
+      dbSize:= (dbSize / 1024);
+      AType:= 'Kilo bytes';
     end
     else
     begin
-       AType:= 'Bytes';
+      AType:= 'Bytes';
     end;
 
     edDBSize.Text:= Format('%3.1n %s', [dbSize, AType]);
@@ -1493,21 +1513,31 @@ var
   ObjTypeName: string;
   ObjName: string;
   ATab: TTabSheet;
+  Title: string;
 begin
   dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
   UserName:= tvMain.Selected.Text;
   List:= TStringList.Create;
   List.CommaText:= dmSysTables.GetUserObjects(dbIndex, UserName);
-  ATab:= TTabSheet.Create(nil);
-  ATab.Parent:= PageControl1;
-  Form:= TfmUserPermissions.Create(nil);
-  Form.Parent:= ATab;
-  Form.Caption:= 'Permissions for: ' + UserName;
-  ATab.Caption:= Form.Caption;
+  Title:= 'Permissions for: ' + UserName;
+
+  Form:= FindCusomForm(Title, TfmUserPermissions) as TfmUserPermissions;
+  if Form = nil then
+  begin
+    Form:= TfmUserPermissions.Create(Application);
+    ATab:= TTabSheet.Create(nil);
+    ATab.Parent:= PageControl1;
+    Form.Parent:= ATab;
+    Form.Caption:= Title;
+    ATab.Caption:= Form.Caption;
+    Form.Left:= 0;
+    Form.Top:= 0;
+    Form.Align:= alClient;
+  end
+  else
+    ATab:= Form.Parent as TTabSheet;
+
   PageControl1.ActivePage:= ATab;
-  Form.Left:= 0;
-  Form.Top:= 0;
-  Form.Align:= alClient;
   Form.StringGrid1.RowCount:= 1;
   Form.laObject.Caption:= UserName;
   with Form do
@@ -1561,8 +1591,25 @@ end;
 procedure TfmMain.lmRolePerManagementClick(Sender: TObject);
 var
   fmPermissions: TfmPermissionManage;
+  ATab: TTabSheet;
+  Title: string;
 begin
-  fmPermissions:= TfmPermissionManage.Create(nil);
+  Title:= 'Permission management for: ' + tvMain.Selected.Text;
+  fmPermissions:= FindCusomForm(Title, TfmPermissionManage) as TfmPermissionManage;
+  if fmPermissions = nil then
+  begin
+    fmPermissions:= TfmPermissionManage.Create(nil);
+    ATab:= TTabSheet.Create(nil);
+    ATab.Parent:= PageControl1;
+    fmPermissions.Parent:= ATab;
+    fmPermissions.Left:= 0;
+    fmPermissions.Top:= 0;
+    fmPermissions.Align:= alClient;
+    ATab.Caption:= Title;
+  end
+  else
+    ATab:= fmViewGen.Parent as TTabSheet;
+  PageControl1.ActivePage:= ATab;
   fmPermissions.Init(tvMain.Selected.Parent.Parent.OverlayIndex, '', tvMain.Selected.Text, 2);
   fmPermissions.Show;
 end;
@@ -2099,16 +2146,31 @@ var
   SelNode: TTreeNode;
   dbIndex: Integer;
   fmTableManage: TfmTableManage;
+  ATab: TTabSheet;
+  Title: string;
 begin
   try
     SelNode:= tvMain.Selected;
 
+    Title:= 'Management of : ' + SelNode.Text;
     // Fields
-    fmTableManage:= FindCusomForm('Management of : ' + SelNode.Text, TfmTableManage) as TfmTableManage;
+    fmTableManage:= FindCusomForm(Title, TfmTableManage) as TfmTableManage;
     if fmTableManage = nil then
+    begin
       fmTableManage:= TfmTableManage.Create(Application);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      fmTableManage.Parent:= ATab;
+      fmTableManage.Left:= 0;
+      fmTableManage.Top:= 0;
+      fmTableManage.Align:= alClient;
+    end
+    else
+      ATab:= fmTableManage.Parent as TTabSheet;
 
-    fmTableManage.Caption:= 'Management of : ' + SelNode.Text;
+    PageControl1.ActivePage:= ATab;
+    fmTableManage.Caption:= Title;
+    ATab.Caption:= Title;
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     fmTableManage.Init(dbIndex, SelNode.Text);
     fmTableManage.PageControl1.TabIndex:= 0;
@@ -2955,6 +3017,7 @@ var
   AGenName: string;
   dbIndex: Integer;
   ATab: TTabSheet;
+  Title: string;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -2970,23 +3033,30 @@ begin
     SQLQuery1.Open;
 
     // Fill ViewGen form
-    fmViewGen:= TfmViewGen.Create(nil);
-    ATab:= TTabSheet.Create(nil);
-    ATab.Parent:= PageControl1;
-    fmViewGen.Parent:= ATab;
-    fmViewGen.Left:= 0;
-    fmViewGen.Top:= 0;
-    fmViewGen.Align:= alClient;
+    Title:= 'Generator : ' + AGenName;
+    fmViewGen:= FindCusomForm(Title, TfmViewGen) as TfmViewGen;
+    if fmViewGen = nil then
+    begin
+      fmViewGen:= TfmViewGen.Create(Application);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      fmViewGen.Parent:= ATab;
+      fmViewGen.Left:= 0;
+      fmViewGen.Top:= 0;
+      fmViewGen.Align:= alClient;
+    end
+    else
+      ATab:= fmViewGen.Parent as TTabSheet;
     PageControl1.ActivePage:= ATab;
 
     with fmViewGen do
     begin
-      Caption:= 'Generator : ' + AGenName;
+      Caption:= Title;
       ATab.Caption:= Caption;
       edGenName.Caption:= AGenName;
       edValue.Caption:= SQLQuery1.Fields[0].AsString;
     end;
-    ATab.Caption:= fmViewGen.Caption;
+    ATab.Caption:= Title;
     fmViewGen.Show;
   end;
 
@@ -3002,6 +3072,7 @@ var
   spBody: string;
   dbIndex: Integer;
   ATab: TTabSheet;
+  Title: string;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -3009,19 +3080,26 @@ begin
     AProcName:= SelNode.Text;
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     SPBody:= GetStoredProcBody(dbIndex, AProcName, SPOwner);
+    Title:= 'StoredProcedure : ' + AProcName;
     // Fill SProc Parameters
-    fmViewSProc:= TfmViewSProc.Create(nil);
-    ATab:= TTabSheet.Create(nil);
-    ATab.Parent:= PageControl1;
-    fmViewSProc.Parent:= ATab;
-    fmViewSProc.Left:= 0;
-    fmViewSProc.Top:= 0;
-    fmViewSProc.Align:= alClient;
+    fmViewSProc:= FindCusomForm(Title, TfmViewSProc) as TfmViewSProc;
+    if fmViewSProc = nil then
+    begin
+      fmViewSProc:= TfmViewSProc.Create(Application);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      fmViewSProc.Parent:= ATab;
+      fmViewSProc.Left:= 0;
+      fmViewSProc.Top:= 0;
+      fmViewSProc.Align:= alClient;
+    end
+    else
+      ATab:= fmViewSProc.Parent as TTabSheet;
     PageControl1.ActivePage:= ATab;
     with fmViewSProc do
     begin
       SynSQLSyn1.TableNames.CommaText:= GetTableNames(dbIndex);
-      Caption:= 'StoredProcedure : ' + AProcName;
+      Caption:= Title;
       ATab.Caption:= Caption;
       edName.Caption:= AProcName;
       seScript.Lines.Clear;
@@ -3051,26 +3129,35 @@ var
   OnTable: string;
   TriggerPosition: Integer;
   ATab: TTabSheet;
+  Title: string;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ATriggerName:= SelNode.Text;
+    Title:= 'Trigger : ' + ATriggerName;
     dmSysTables.GetTriggerInfo(SelNode.Parent.Parent.OverlayIndex, ATriggerName, BeforeAfter, OnTable,
       Event, Body, TriggerEnabled, TriggerPosition);
 
     // Fill ViewTrigger form
-    fmViewTrigger:= TfmViewTrigger.Create(nil);
-    ATab:= TTabSheet.Create(nil);
-    ATab.Parent:= PageControl1;
-    fmViewTrigger.Parent:= ATab;
-    fmViewTrigger.Left:= 0;
-    fmViewTrigger.Top:= 0;
-    fmViewTrigger.Align:= alClient;
+    fmViewTrigger:= FindCusomForm(Title, TfmViewTrigger) as TfmViewTrigger;
+    if fmViewTrigger = nil then
+    begin
+      fmViewTrigger:= TfmViewTrigger.Create(Application);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      fmViewTrigger.Parent:= ATab;
+      fmViewTrigger.Left:= 0;
+      fmViewTrigger.Top:= 0;
+      fmViewTrigger.Align:= alClient;
+    end
+    else
+      ATab:= fmViewTrigger.Parent as TTabSheet;
+
     PageControl1.ActivePage:= ATab;
     with fmViewTrigger do
     begin
-      Caption:= 'Trigger : ' + ATriggerName;
+      Caption:= Title;
       ATab.Caption:= Caption;
       edName.Caption:= ATriggerName;
       edOnTable.Caption:= OnTable;
