@@ -59,7 +59,6 @@ type
     tbNew: TToolButton;
     tbOpen: TToolButton;
     tbSave: TToolButton;
-    ToolButton1: TToolButton;
     tbRun: TToolButton;
     tbCommit: TToolButton;
     tbRollback: TToolButton;
@@ -68,7 +67,6 @@ type
     tbHistory: TToolButton;
     ToolButton5: TToolButton;
     tbMenu: TToolButton;
-    ToolButton6: TToolButton;
     procedure bbRunClick(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
     procedure DBGridTitleClick(column: TColumn);

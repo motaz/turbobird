@@ -388,6 +388,7 @@ begin
       fmDBInfo.Parent:= ATab;
       fmDBInfo.Left:= 0;
       fmDBInfo.Top:= 0;
+      fmDBInfo.BorderStyle:= bsNone;
       fmDBInfo.Align:= alClient;
       Caption:= Title;
     end
@@ -1532,6 +1533,7 @@ begin
     ATab.Caption:= Form.Caption;
     Form.Left:= 0;
     Form.Top:= 0;
+    Form.BorderStyle:= bsNone;
     Form.Align:= alClient;
   end
   else
@@ -1604,6 +1606,7 @@ begin
     fmPermissions.Parent:= ATab;
     fmPermissions.Left:= 0;
     fmPermissions.Top:= 0;
+    fmPermissions.BorderStyle:= bsNone;
     fmPermissions.Align:= alClient;
     ATab.Caption:= Title;
   end
@@ -2164,6 +2167,7 @@ begin
       fmTableManage.Left:= 0;
       fmTableManage.Top:= 0;
       fmTableManage.Align:= alClient;
+      fmTableManage.BorderStyle:= bsNone;
     end
     else
       ATab:= fmTableManage.Parent as TTabSheet;
@@ -2230,6 +2234,7 @@ begin
       ADomainForm.Parent:= ATab;
       ADomainForm.Left:= 0;
       ADomainForm.Top:= 0;
+      ADomainForm.BorderStyle:= bsNone;
       ADomainForm.Align:= alClient;
       PageControl1.ActivePage:= ATab;
     end;
@@ -2925,6 +2930,7 @@ begin
     fmViewView.Parent:= ATab;
     fmViewView.Left:= 0;
     fmViewView.Top:= 0;
+    fmViewView.BorderStyle:= bsNone;
     fmViewView.Align:= alClient;
     fmViewView.SynSQLSyn1.TableNames.CommaText:= GetTableNames(dbIndex);
     fmViewView.Caption:= 'View DDL: ' + AViewName;
@@ -3043,6 +3049,7 @@ begin
       fmViewGen.Parent:= ATab;
       fmViewGen.Left:= 0;
       fmViewGen.Top:= 0;
+      fmViewGen.BorderStyle:= bsNone;
       fmViewGen.Align:= alClient;
     end
     else
@@ -3091,6 +3098,7 @@ begin
       fmViewSProc.Parent:= ATab;
       fmViewSProc.Left:= 0;
       fmViewSProc.Top:= 0;
+      fmViewSProc.BorderStyle:= bsNone;
       fmViewSProc.Align:= alClient;
     end
     else
@@ -3149,6 +3157,7 @@ begin
       fmViewTrigger.Parent:= ATab;
       fmViewTrigger.Left:= 0;
       fmViewTrigger.Top:= 0;
+      fmViewTrigger.BorderStyle:= bsNone;
       fmViewTrigger.Align:= alClient;
     end
     else
@@ -3204,6 +3213,7 @@ begin
       fmUDFInfo.Parent:= ATab;
       fmUDFInfo.Left:= 0;
       fmUDFInfo.Top:= 0;
+      fmUDFInfo.BorderStyle:= bsNone;
       fmUDFInfo.Align:= alClient;
       PageControl1.ActivePage:= ATab;
       Caption:= 'Function : ' + AFuncName;

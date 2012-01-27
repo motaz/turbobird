@@ -1,20 +1,20 @@
 object fmTableManage: TfmTableManage
   Left = 214
-  Height = 411
+  Height = 448
   Top = 386
   Width = 780
   ActiveControl = PageControl1
   Anchors = [akTop, akLeft, akRight]
   Caption = 'Table Management'
-  ClientHeight = 411
+  ClientHeight = 448
   ClientWidth = 780
   OnClose = FormClose
   Position = poScreenCenter
   LCLVersion = '0.9.31'
   object PageControl1: TPageControl
     Left = 0
-    Height = 411
-    Top = 0
+    Height = 413
+    Top = 29
     Width = 752
     ActivePage = tsFields
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -23,11 +23,11 @@ object fmTableManage: TfmTableManage
     TabOrder = 0
     object tsFields: TTabSheet
       Caption = 'Fields'
-      ClientHeight = 380
+      ClientHeight = 382
       ClientWidth = 748
       object sgFields: TStringGrid
         Left = 0
-        Height = 337
+        Height = 339
         Top = 0
         Width = 748
         Align = alTop
@@ -89,7 +89,7 @@ object fmTableManage: TfmTableManage
       object bbEdit: TBitBtn
         Left = 14
         Height = 30
-        Top = 342
+        Top = 344
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Edit'
@@ -100,7 +100,7 @@ object fmTableManage: TfmTableManage
       object bbNew: TBitBtn
         Left = 104
         Height = 30
-        Top = 342
+        Top = 344
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'New'
@@ -111,7 +111,7 @@ object fmTableManage: TfmTableManage
       object edDrop: TBitBtn
         Left = 240
         Height = 30
-        Top = 342
+        Top = 344
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Drop'
@@ -123,7 +123,7 @@ object fmTableManage: TfmTableManage
       object bbRefresh: TBitBtn
         Left = 644
         Height = 30
-        Top = 342
+        Top = 344
         Width = 94
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -135,7 +135,7 @@ object fmTableManage: TfmTableManage
     end
     object tsIndices: TTabSheet
       Caption = 'Indices'
-      ClientHeight = 380
+      ClientHeight = 382
       ClientWidth = 748
       ImageIndex = 2
       object bbRefreshIndices: TBitBtn
@@ -306,7 +306,7 @@ object fmTableManage: TfmTableManage
     end
     object tsConstraints: TTabSheet
       Caption = 'Constraints'
-      ClientHeight = 380
+      ClientHeight = 382
       ClientWidth = 748
       ImageIndex = 3
       object bbRefreshConstraint: TBitBtn
@@ -396,7 +396,7 @@ object fmTableManage: TfmTableManage
     end
     object tsTriggers: TTabSheet
       Caption = 'Triggers'
-      ClientHeight = 380
+      ClientHeight = 382
       ClientWidth = 748
       ImageIndex = 1
       object sgTriggers: TStringGrid
@@ -473,7 +473,7 @@ object fmTableManage: TfmTableManage
     end
     object tsPermissions: TTabSheet
       Caption = 'Permissions'
-      ClientHeight = 380
+      ClientHeight = 382
       ClientWidth = 748
       ImageIndex = 4
       object sgPermissions: TStringGrid
