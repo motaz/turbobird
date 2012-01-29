@@ -17,8 +17,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="8"/>
-      <RevisionNr Value="11"/>
-      <BuildNr Value="1069"/>
+      <RevisionNr Value="12"/>
+      <BuildNr Value="1070"/>
       <StringTable ProductVersion="0.8"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -55,16 +55,16 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="99">
+    <Units Count="101">
       <Unit0>
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TurboBird"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="25" Y="5"/>
+        <TopLine Value="42"/>
+        <CursorPos X="30" Y="49"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -76,8 +76,8 @@
         <UnitName Value="main"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="365"/>
-        <CursorPos X="61" Y="377"/>
+        <TopLine Value="217"/>
+        <CursorPos X="77" Y="232"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -99,12 +99,13 @@
         <ComponentName Value="fmReg"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Reg"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="228"/>
+        <TopLine Value="1"/>
         <CursorPos X="22" Y="269"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="/usr/lib/lazarus/0.9.28.2/lcl/buttons.pp"/>
@@ -181,13 +182,10 @@
         <ComponentName Value="fmViewSProc"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewSProc"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="11"/>
         <CursorPos X="11" Y="17"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="viewgen.pas"/>
@@ -243,8 +241,8 @@
         <UnitName Value="About"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="50"/>
-        <CursorPos X="9" Y="91"/>
+        <TopLine Value="37"/>
+        <CursorPos X="51" Y="9"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -381,13 +379,10 @@
         <ComponentName Value="fmEditTable"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EditTable"/>
-        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="78"/>
         <CursorPos X="33" Y="109"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit34>
       <Unit35>
         <Filename Value="/usr/share/fpcsrc/2.2.4/packages/fcl-base/src/custapp.pp"/>
@@ -472,8 +467,8 @@
         <UnitName Value="SysTables"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="531"/>
-        <CursorPos X="116" Y="556"/>
+        <TopLine Value="575"/>
+        <CursorPos X="1" Y="615"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -555,7 +550,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="144"/>
         <CursorPos X="3" Y="179"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="192"/>
       </Unit51>
       <Unit52>
         <Filename Value="connectas.pas"/>
@@ -572,11 +567,11 @@
         <ComponentName Value="fmUserPermissions"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UserPermissions"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="6"/>
         <CursorPos X="8" Y="34"/>
-        <UsageCount Value="166"/>
+        <UsageCount Value="168"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit53>
@@ -598,7 +593,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="303"/>
         <CursorPos X="16" Y="311"/>
-        <UsageCount Value="149"/>
+        <UsageCount Value="151"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit55>
@@ -640,21 +635,19 @@
         <ComponentName Value="fmBackupRestore"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BackupRestore"/>
-        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="40"/>
-        <CursorPos X="14" Y="54"/>
-        <UsageCount Value="135"/>
-        <Loaded Value="True"/>
+        <TopLine Value="13"/>
+        <CursorPos X="22" Y="54"/>
+        <UsageCount Value="137"/>
       </Unit60>
       <Unit61>
         <Filename Value="unitfirebirdservices.pas"/>
         <UnitName Value="UnitFirebirdServices"/>
         <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="321"/>
-        <CursorPos X="1" Y="367"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit61>
       <Unit62>
@@ -713,7 +706,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="71" Y="7"/>
-        <UsageCount Value="105"/>
+        <UsageCount Value="107"/>
       </Unit68>
       <Unit69>
         <Filename Value="changepass.pas"/>
@@ -724,7 +717,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="88" Y="14"/>
-        <UsageCount Value="104"/>
+        <UsageCount Value="106"/>
       </Unit69>
       <Unit70>
         <Filename Value="permissionmanage.pas"/>
@@ -735,7 +728,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="310"/>
         <CursorPos X="29" Y="331"/>
-        <UsageCount Value="102"/>
+        <UsageCount Value="104"/>
       </Unit70>
       <Unit71>
         <Filename Value="sqlhistory.pas"/>
@@ -746,7 +739,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="18" Y="39"/>
-        <UsageCount Value="87"/>
+        <UsageCount Value="89"/>
       </Unit71>
       <Unit72>
         <Filename Value="../../lazarus/lazarus/lcl/include/menuitem.inc"/>
@@ -768,13 +761,10 @@
         <ComponentName Value="fmCopyTable"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CopyTable"/>
-        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="30"/>
         <CursorPos X="1" Y="151"/>
-        <UsageCount Value="58"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="60"/>
       </Unit74>
       <Unit75>
         <Filename Value="/usr/lib/lazarus/0.9.30/lcl/comctrls.pp"/>
@@ -965,133 +955,152 @@
         <UnitName Value="dbInfo"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="18"/>
-        <CursorPos X="11" Y="23"/>
-        <UsageCount Value="26"/>
+        <TopLine Value="1"/>
+        <CursorPos X="10" Y="9"/>
+        <UsageCount Value="28"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit98>
+      <Unit99>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60dyn.pp"/>
+        <UnitName Value="ibase60dyn"/>
+        <EditorIndex Value="13"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit99>
+      <Unit100>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <EditorIndex Value="12"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="50" Y="6"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit100>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="28" Column="12" TopLine="1"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1646" Column="74" TopLine="1611"/>
       </Position1>
       <Position2>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="30" Column="12" TopLine="1"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1649" Column="92" TopLine="1614"/>
       </Position2>
       <Position3>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="51" Column="14" TopLine="11"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1652" Column="84" TopLine="1617"/>
       </Position3>
       <Position4>
-        <Filename Value="main.pas"/>
-        <Caret Line="395" Column="36" TopLine="381"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1654" Column="111" TopLine="1619"/>
       </Position4>
       <Position5>
-        <Filename Value="main.pas"/>
-        <Caret Line="3022" Column="43" TopLine="2992"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1657" Column="64" TopLine="1622"/>
       </Position5>
       <Position6>
-        <Filename Value="main.pas"/>
-        <Caret Line="3024" Column="1" TopLine="2989"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1660" Column="64" TopLine="1625"/>
       </Position6>
       <Position7>
-        <Filename Value="main.pas"/>
-        <Caret Line="1599" Column="19" TopLine="1581"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1663" Column="87" TopLine="1628"/>
       </Position7>
       <Position8>
-        <Filename Value="main.pas"/>
-        <Caret Line="3072" Column="41" TopLine="3056"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1666" Column="90" TopLine="1631"/>
       </Position8>
       <Position9>
-        <Filename Value="main.pas"/>
-        <Caret Line="2323" Column="20" TopLine="2311"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1668" Column="109" TopLine="1633"/>
       </Position9>
       <Position10>
-        <Filename Value="main.pas"/>
-        <Caret Line="3081" Column="21" TopLine="3057"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1670" Column="127" TopLine="1635"/>
       </Position10>
       <Position11>
-        <Filename Value="main.pas"/>
-        <Caret Line="3126" Column="24" TopLine="3111"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1672" Column="108" TopLine="1637"/>
       </Position11>
       <Position12>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="164" Column="3" TopLine="157"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1674" Column="112" TopLine="1639"/>
       </Position12>
       <Position13>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="163" Column="3" TopLine="156"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1676" Column="114" TopLine="1641"/>
       </Position13>
       <Position14>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="162" Column="3" TopLine="155"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1678" Column="173" TopLine="1643"/>
       </Position14>
       <Position15>
-        <Filename Value="main.pas"/>
-        <Caret Line="1508" Column="84" TopLine="1501"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1681" Column="81" TopLine="1646"/>
       </Position15>
       <Position16>
-        <Filename Value="main.pas"/>
-        <Caret Line="3022" Column="3" TopLine="3013"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="1684" Column="81" TopLine="1649"/>
       </Position16>
       <Position17>
-        <Filename Value="main.pas"/>
-        <Caret Line="1481" Column="3" TopLine="1474"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="23" Column="6" TopLine="1"/>
       </Position17>
       <Position18>
-        <Filename Value="main.pas"/>
-        <Caret Line="2585" Column="45" TopLine="2570"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="30" Column="11" TopLine="1"/>
       </Position18>
       <Position19>
-        <Filename Value="main.pas"/>
-        <Caret Line="2167" Column="20" TopLine="2153"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="2650" Column="36" TopLine="2615"/>
       </Position19>
       <Position20>
-        <Filename Value="main.pas"/>
-        <Caret Line="3048" Column="1" TopLine="3014"/>
+        <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60.inc"/>
+        <Caret Line="2652" Column="70" TopLine="2617"/>
       </Position20>
       <Position21>
-        <Filename Value="main.pas"/>
-        <Caret Line="2929" Column="15" TopLine="2905"/>
+        <Filename Value="TurboBird.lpr"/>
+        <Caret Line="95" Column="57" TopLine="58"/>
       </Position21>
       <Position22>
-        <Filename Value="main.pas"/>
-        <Caret Line="3097" Column="18" TopLine="3070"/>
+        <Filename Value="TurboBird.lpr"/>
+        <Caret Line="94" Column="20" TopLine="58"/>
       </Position22>
       <Position23>
-        <Filename Value="main.pas"/>
-        <Caret Line="3156" Column="20" TopLine="3125"/>
+        <Filename Value="TurboBird.lpr"/>
+        <Caret Line="23" Column="81" TopLine="10"/>
       </Position23>
       <Position24>
-        <Filename Value="main.pas"/>
-        <Caret Line="3212" Column="16" TopLine="3191"/>
+        <Filename Value="TurboBird.lpr"/>
+        <Caret Line="95" Column="16" TopLine="58"/>
       </Position24>
       <Position25>
-        <Filename Value="main.pas"/>
-        <Caret Line="2234" Column="18" TopLine="2211"/>
+        <Filename Value="TurboBird.lpr"/>
+        <Caret Line="60" Column="5" TopLine="25"/>
       </Position25>
       <Position26>
-        <Filename Value="main.pas"/>
-        <Caret Line="1607" Column="18" TopLine="1591"/>
+        <Filename Value="TurboBird.lpr"/>
+        <Caret Line="95" Column="78" TopLine="58"/>
       </Position26>
       <Position27>
-        <Filename Value="main.pas"/>
-        <Caret Line="1535" Column="3" TopLine="1504"/>
+        <Filename Value="TurboBird.lpr"/>
+        <Caret Line="52" Column="51" TopLine="25"/>
       </Position27>
       <Position28>
-        <Filename Value="main.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="TurboBird.lpr"/>
+        <Caret Line="23" Column="67" TopLine="1"/>
       </Position28>
       <Position29>
-        <Filename Value="main.pas"/>
-        <Caret Line="1535" Column="9" TopLine="1504"/>
+        <Filename Value="dbinfo.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position29>
       <Position30>
-        <Filename Value="main.pas"/>
-        <Caret Line="2206" Column="3" TopLine="2202"/>
+        <Filename Value="dbinfo.pas"/>
+        <Caret Line="62" Column="34" TopLine="23"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
