@@ -24,7 +24,7 @@ uses
 
 const
   Version = '0.8.12';
-  VersionDate = '2010 - Jan 2012';
+  VersionDate = '2010 - Feb 2012';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
     fbclib = 'libfbclient.' + sharedsuffix;

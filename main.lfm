@@ -1482,7 +1482,7 @@ object fmMain: TfmMain
       OnClick = lmConnectAsClick
     end
     object lmDisconnect: TMenuItem
-      Caption = 'Disconnect'
+      Caption = 'Disconnect and Close all windows'
       OnClick = lmDisconnectClick
     end
     object lmOpenQuery: TMenuItem

@@ -371,10 +371,12 @@ var
   AType: string;
   ATab: TTabSheet;
   Title: string;
+  dbIndex: Integer;
 begin
   ProcessList:= TStringList.Create;
+  dbIndex:= tvMain.Selected.OverlayIndex;
   Title:= 'Database information for: ' + tvMain.Selected.Text;
-  if dmSysTables.GetDatabaseInfo(tvMain.Selected.OverlayIndex, dbName, ACharSet, CreationDate,
+  if dmSysTables.GetDatabaseInfo(dbIndex, dbName, ACharSet, CreationDate,
     MajorVer, MinorVer, Pages, PageSize, ProcessList) then
   with fmDBInfo do
   begin
@@ -396,6 +398,7 @@ begin
       ATab:= fmDBInfo.Parent as TTabSheet;
 
     PageControl1.ActivePage:= ATab;
+    ATab.Tag:= dbIndex;
     ATab.Caption:= Title;
     edName.Text:= dbName;
     edODSVer.Text:= IntToStr(MajorVer) + '.' + IntToStr(MinorVer);
@@ -435,8 +438,28 @@ begin
 end;
 
 procedure TfmMain.lmDisconnectClick(Sender: TObject);
+var
+  dbIndex: Integer;
+  i: Integer;
+  Form: TForm;
+  j: Integer;
+  TabSheet: TTabSheet;
 begin
-  RegisteredDatabases[tvMain.Selected.OverlayIndex].IBConnection.Close;
+  dbIndex:= tvMain.Selected.OverlayIndex;
+  RegisteredDatabases[dbIndex].IBConnection.Close;
+  for i:= PageControl1.PageCount - 1 downto 0 do
+    if (PageControl1.Pages[i] as TComponent).Tag = dbIndex then
+    begin
+      TabSheet:= PageControl1.Page[i] as TTabSheet;
+      for j:= 0 to TabSheet.ControlCount - 1 do
+      if TabSheet.Controls[j] is TForm then
+      begin
+        (TabSheet.Controls[j] as TForm).Close;
+        TabSheet.Free;
+        Break;
+      end;
+    end;
+  tvMain.Selected.Collapse(True);
 end;
 
 procedure TfmMain.lmEditFieldClick(Sender: TObject);
@@ -1539,6 +1562,7 @@ begin
   else
     ATab:= Form.Parent as TTabSheet;
 
+  ATab.Tag:= dbIndex;
   PageControl1.ActivePage:= ATab;
   Form.StringGrid1.RowCount:= 1;
   Form.laObject.Caption:= UserName;
@@ -1595,6 +1619,7 @@ var
   fmPermissions: TfmPermissionManage;
   ATab: TTabSheet;
   Title: string;
+  dbIndex: Integer;
 begin
   Title:= 'Permission management for: ' + tvMain.Selected.Text;
   fmPermissions:= FindCusomForm(Title, TfmPermissionManage) as TfmPermissionManage;
@@ -1613,7 +1638,9 @@ begin
   else
     ATab:= fmViewGen.Parent as TTabSheet;
   PageControl1.ActivePage:= ATab;
-  fmPermissions.Init(tvMain.Selected.Parent.Parent.OverlayIndex, '', tvMain.Selected.Text, 2);
+  dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
+  ATab.Tag:= dbIndex;
+  fmPermissions.Init(dbIndex, '', tvMain.Selected.Text, 2);
   fmPermissions.Show;
 end;
 
@@ -2176,6 +2203,7 @@ begin
     fmTableManage.Caption:= Title;
     ATab.Caption:= Title;
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    ATab.Tag:= dbIndex;
     fmTableManage.Init(dbIndex, SelNode.Text);
     fmTableManage.PageControl1.TabIndex:= 0;
     ViewTableFields(SelNode.Text, dbIndex, fmTableManage.sgFields);
@@ -2220,6 +2248,7 @@ var
   ADomainForm: TFmViewDomain;
   DefaultValue: string;
   ATab: TTabSheet;
+  dbIndex: Integer;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -2239,7 +2268,9 @@ begin
       PageControl1.ActivePage:= ATab;
     end;
 
-    dmSysTables.GetDomainInfo(SelNode.Parent.Parent.OverlayIndex, ADomainName, DomainType, DomainSize, DefaultValue);
+    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue);
+    ATab.Tag:= dbIndex;
     if Pos('default', LowerCase(DefaultValue)) = 1 then
       DefaultValue:= Trim(Copy(DefaultValue, 8, Length(DefaultValue)));
     if Pos('CHAR', DomainType) > 0 then
@@ -2593,6 +2624,7 @@ begin
     Result.Align:= alClient;
   end;
   Result.Init(DatabaseIndex);
+  ATab.Tag:= DatabaseIndex;
   Result.Caption:= ACaption;
   Result.Parent.Show;
   Result.BorderStyle:= bsNone;
@@ -2936,7 +2968,9 @@ begin
     fmViewView.Caption:= 'View DDL: ' + AViewName;
     ATab.Caption:= fmViewView.Caption;
     fmViewView.edName.Caption:= AViewName;
-    GetViewInfo(SelNode.Parent.Parent.OverlayIndex, AViewName, Columns, ViewBody);
+    ATab.Tag:= dbIndex;
+
+    GetViewInfo(dbIndex, AViewName, Columns, ViewBody);
     fmViewView.seScript.Lines.Clear;
     fmViewView.seScript.Lines.Text:= 'create view "' + AviewName + '" (' + Columns + ')' + #13#10 + ViewBody;
     PageControl1.ActivePage:= ATab;
@@ -3055,6 +3089,7 @@ begin
     else
       ATab:= fmViewGen.Parent as TTabSheet;
     PageControl1.ActivePage:= ATab;
+    ATab.Tag:= dbIndex;
 
     with fmViewGen do
     begin
@@ -3109,6 +3144,7 @@ begin
       SynSQLSyn1.TableNames.CommaText:= GetTableNames(dbIndex);
       Caption:= Title;
       ATab.Caption:= Caption;
+      ATab.Tag:= dbIndex;
       edName.Caption:= AProcName;
       seScript.Lines.Clear;
       seScript.Lines.Add('create procedure ' + AProcName + '(');
@@ -3138,13 +3174,15 @@ var
   TriggerPosition: Integer;
   ATab: TTabSheet;
   Title: string;
+  dbIndex: Integer;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ATriggerName:= SelNode.Text;
     Title:= 'Trigger : ' + ATriggerName;
-    dmSysTables.GetTriggerInfo(SelNode.Parent.Parent.OverlayIndex, ATriggerName, BeforeAfter, OnTable,
+    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dmSysTables.GetTriggerInfo(dbIndex, ATriggerName, BeforeAfter, OnTable,
       Event, Body, TriggerEnabled, TriggerPosition);
 
     // Fill ViewTrigger form
@@ -3164,6 +3202,7 @@ begin
       ATab:= fmViewTrigger.Parent as TTabSheet;
 
     PageControl1.ActivePage:= ATab;
+    ATab.Tag:= dbIndex;
     with fmViewTrigger do
     begin
       Caption:= Title;
@@ -3199,18 +3238,21 @@ var
   ModuleName, EntryPoint: string;
   Params: string;
   ATab: TTabSheet;
+  dbIndex: Integer;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     AFuncName:= SelNode.Text;
-    if GetUDFInfo(SelNode.Parent.Parent.OverlayIndex, AFuncName, ModuleName, EntryPoint, Params) then
+    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    if GetUDFInfo(dbIndex, AFuncName, ModuleName, EntryPoint, Params) then
     with fmUDFINfo do
     begin
       fmUDFInfo:= TfmUDFInfo.Create(nil);
       ATab:= TTabSheet.Create(nil);
       ATab.Parent:= PageControl1;
       fmUDFInfo.Parent:= ATab;
+      ATab.Tag:= dbIndex;
       fmUDFInfo.Left:= 0;
       fmUDFInfo.Top:= 0;
       fmUDFInfo.BorderStyle:= bsNone;
