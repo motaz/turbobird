@@ -2622,7 +2622,10 @@ begin
     Result.Left:= 0;
     Result.Top:= 0;
     Result.Align:= alClient;
-  end;
+  end
+  else
+    ATab:= Result.Parent as TTabSheet;
+
   Result.Init(DatabaseIndex);
   ATab.Tag:= DatabaseIndex;
   Result.Caption:= ACaption;

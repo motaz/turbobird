@@ -6,8 +6,8 @@ LazarusResources.Add('TfmPermissionManage','FORMDATA',[
   +'ent'#12'ClientHeight'#3'i'#1#11'ClientWidth'#3#11#2#7'OnClose'#7#9'FormClos'
   +'e'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6#6'0.9.31'#0#12'TPageCo'
   +'ntrol'#12'PageControl1'#4'Left'#2#0#6'Height'#3'i'#1#3'Top'#2#0#5'Width'#3
-  +#245#1#10'ActivePage'#7#7'tsRoles'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRigh'
-  +'t'#8'akBottom'#0#8'TabIndex'#2#2#8'TabOrder'#2#0#0#9'TTabSheet'#8'tsTables'
+  +#245#1#10'ActivePage'#7#8'tsTables'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRig'
+  +'ht'#8'akBottom'#0#8'TabIndex'#2#0#8'TabOrder'#2#0#0#9'TTabSheet'#8'tsTables'
   +#7'Caption'#6#6'Tables'#12'ClientHeight'#3'J'#1#11'ClientWidth'#3#241#1#0#6
   +'TLabel'#6'Label1'#4'Left'#2#12#6'Height'#2#18#3'Top'#2#10#5'Width'#2'C'#7'C'
   +'aption'#6#9'User/Role'#11'ParentColor'#8#0#0#6'TLabel'#6'Label2'#4'Left'#2

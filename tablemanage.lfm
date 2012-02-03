@@ -121,7 +121,7 @@ object fmTableManage: TfmTableManage
         TabOrder = 3
       end
       object bbRefresh: TBitBtn
-        Left = 644
+        Left = 654
         Height = 30
         Top = 344
         Width = 94
@@ -310,7 +310,7 @@ object fmTableManage: TfmTableManage
       ClientWidth = 748
       ImageIndex = 3
       object bbRefreshConstraint: TBitBtn
-        Left = 620
+        Left = 632
         Height = 30
         Top = 343
         Width = 99

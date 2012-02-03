@@ -303,26 +303,30 @@ end;
 procedure TfmTableManage.bbRefreshClick(Sender: TObject);
 begin
   fmMain.ViewTableFields(fTableName, fdbIndex, sgFields);
+  Parent.Show;
   Show;
-  fmMain.PageControl1.ActivePage:= Self.Parent as TTabSheet;
+  //fmMain.PageControl1.ActivePage:= Self.Parent as TTabSheet;
 end;
 
 procedure TfmTableManage.bbRefreshConstraintClick(Sender: TObject);
 begin
   SQLTrans.Commit;
   fmMain.FillAndShowConstraintsForm(Self, fTableName, fdbIndex);
+  Parent.Show;
   Show;
 end;
 
 procedure TfmTableManage.bbRefreshIndicesClick(Sender: TObject);
 begin
   fmMain.ShowIndicesManagement(Self, fdbIndex, fTableName);
+  Parent.Show;
   Show;
 end;
 
 procedure TfmTableManage.bbRefreshPermissionsClick(Sender: TObject);
 begin
   FillPermissions;
+  Parent.Show;
   Show;
 end;
 
@@ -330,6 +334,7 @@ procedure TfmTableManage.bbRefreshTriggersClick(Sender: TObject);
 begin
   SQLTrans.Commit;
   ViewTriggers;
+  Parent.Show;
   Show;
 end;
 
@@ -363,7 +368,7 @@ begin
     else
       UserType:= 2;
     fmPermissions:= TfmPermissionManage.Create(nil);
-    fmPermissions.Init(fdbIndex, fTableName, sgPermissions.Cells[0, sgPermissions.Row], UserType);
+    fmPermissions.Init(fdbIndex, fTableName, sgPermissions.Cells[0, sgPermissions.Row], UserType, @bbRefreshPermissionsClick);
     fmPermissions.Show;
   end
   else
