@@ -44,6 +44,7 @@ type
     laWebSite: TLabel;
     Label6: TLabel;
     laVersionDate: TLabel;
+    Shape1: TShape;
     procedure BitBtn1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure Label6Click(Sender: TObject);

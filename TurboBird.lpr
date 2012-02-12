@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development:  5.Dec.2009                                           }
-{  Last updated     :  3.Feb.2012                                           }
+{  Last updated     :  8.Feb.2012                                           }
 {  License          : GPL for GUI, LGPL for Units                           }
 {***************************************************************************}
 
@@ -23,7 +23,7 @@ uses
   PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo, sysutils;
 
 const
-  Version = '0.8.12';
+  Version = '0.9.0';
   VersionDate = '2010 - Feb 2012';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
@@ -32,6 +32,7 @@ const
 {$IFDEF Windows}
   {$DEFINE extdecl:=stdcall}
    fbclib = 'fbclient.dll';
+   seclib = 'gds32.dll';
 {$ENDIF}
 
 {$R *.res}
@@ -42,13 +43,16 @@ var
 begin
   Application.Initialize;
   IBaseLibraryHandle:= LoadLibrary(fbclib);
+{$IFDEF Windows}
+  if IBaseLibraryHandle = NilHandle then
+    IBaseLibraryHandle:= LoadLibrary(seclib);
+{$ENDIF}
+
 
   // Check Firebird library existance
   if (IBaseLibraryHandle = nilhandle) then
-  begin
-    Application.MessageBox('Can not load library: ' + fbclib, 'Error', 0);
-    Exit;
-  end;
+    Application.MessageBox('Unable to load Firebird library: ' + fbclib, 'Warning', 0);
+
   SAbout:= TfmAbout.Create(nil);
   SAbout.BorderStyle:= bsNone;
   SAbout.BitBtn1.Visible:= False;
