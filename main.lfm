@@ -22,7 +22,6 @@ object fmMain: TfmMain
     Align = alLeft
     BackgroundColor = clWhite
     Color = clCream
-    DefaultItemHeight = 19
     HideSelection = False
     Images = ImageList1
     Indent = 25
@@ -1458,8 +1457,8 @@ object fmMain: TfmMain
     }
   end
   object SQLQuery1: TSQLQuery
+    FieldDefs = <>
     AutoCalcFields = False
-    ReadOnly = False
     Params = <>
     left = 178
     top = 172

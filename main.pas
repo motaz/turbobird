@@ -2181,8 +2181,9 @@ var
 begin
   try
     SelNode:= tvMain.Selected;
+    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
 
-    Title:= 'Management of : ' + SelNode.Text;
+    Title:= RegisteredDatabases[dbIndex].RegRec.Title +  ': Management of : ' + SelNode.Text;
     // Fields
     fmTableManage:= FindCusomForm(Title, TfmTableManage) as TfmTableManage;
     if fmTableManage = nil then
@@ -2202,7 +2203,6 @@ begin
     PageControl1.ActivePage:= ATab;
     fmTableManage.Caption:= Title;
     ATab.Caption:= Title;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     ATab.Tag:= dbIndex;
     fmTableManage.Init(dbIndex, SelNode.Text);
     fmTableManage.PageControl1.TabIndex:= 0;
