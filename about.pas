@@ -10,23 +10,27 @@ uses
 
 const
   {$IFDEF LINUX}
-  Target = 'Linux';
+   Target = 'Linux';
   {$ENDIF}
 
-  {$IFDEF WIN32}
-  Target = 'Win32';
-  {$ENDIF}
-
-  {$IFDEF Win64}
-  Target = 'Win64';
+  {$IFDEF WINDOWS}
+   Target = 'Win';
   {$ENDIF}
 
   {$IFDEF MAC}
-  Target = 'Mac';
+   Target = 'Mac';
   {$ENDIF}
 
   {$IFDEF BSD}
-  Target = 'BSD';
+   Target = 'BSD';
+  {$ENDIF}
+
+  {$ifDEF CPU32}
+   Arch = '32';
+  {$ENDIF}
+
+  {$ifDEF CPU64}
+   Arch = '64';
   {$ENDIF}
 
 type
@@ -74,7 +78,7 @@ procedure TfmAbout.Init;
 begin
   laVersion.Caption:= 'Beta Version ' + fmMain.Version;
   laVersionDate.Caption:= fmMain.VersionDate;
-  laTarget.Caption:= 'Target : ' + Target;
+  laTarget.Caption:= 'Target : ' + Target + '-' + Arch;
 end;
 
 procedure TfmAbout.Label6Click(Sender: TObject);
