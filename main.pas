@@ -42,10 +42,11 @@ type
     lmSetGen: TMenuItem;
     lmDisconnect: TMenuItem;
     lmCopyTable: TMenuItem;
-    lmCopyPermission: TMenuItem;
+    lmCopyUserPermission: TMenuItem;
     lmViewFields: TMenuItem;
     lmEditField: TMenuItem;
     lmDBIndo: TMenuItem;
+    lmCopyRolePermission: TMenuItem;
     mnExit: TMenuItem;
     mnCreateDB: TMenuItem;
     mnRegDB: TMenuItem;
@@ -108,7 +109,8 @@ type
     procedure lmBackupClick(Sender: TObject);
     procedure lmChangePasswordClick(Sender: TObject);
     procedure lmCloseTabClick(Sender: TObject);
-    procedure lmCopyPermissionClick(Sender: TObject);
+    procedure lmCopyRolePermissionClick(Sender: TObject);
+    procedure lmCopyUserPermissionClick(Sender: TObject);
     procedure lmCopyTableClick(Sender: TObject);
     procedure lmCreateDBClick(Sender: TObject);
     procedure lmDBIndoClick(Sender: TObject);
@@ -331,14 +333,19 @@ procedure TfmMain.lmCloseTabClick(Sender: TObject);
 begin
 end;
 
-procedure TfmMain.lmCopyPermissionClick(Sender: TObject);
+procedure TfmMain.lmCopyRolePermissionClick(Sender: TObject);
+begin
+  lmCopyUserPermissionClick(nil);
+end;
+
+procedure TfmMain.lmCopyUserPermissionClick(Sender: TObject);
 var
   List: TStringList;
   dbIndex: Integer;
   UserName: string;
   NewUser: string;
 begin
-  if InputQuery('Permission', 'Please type a user name to copy perissions to', NewUser) then
+  if InputQuery('Permission', 'Please type a User/Role name to copy perissions to', NewUser) then
   begin
     UserName:= tvMain.Selected.Text;
     dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
@@ -346,7 +353,6 @@ begin
     Scriptdb.ScriptUserAllPermissions(dbIndex, UserName, List, NewUser);
     ShowCompleteQueryWindow(dbIndex, 'Script permissions for : ' + UserName, List.Text);
     List.Free;
-
   end;
 end;
 

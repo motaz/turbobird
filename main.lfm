@@ -1798,6 +1798,11 @@ object fmMain: TfmMain
       }
       OnClick = lmRolePerManagementClick
     end
+    object lmCopyRolePermission: TMenuItem
+      Tag = 9
+      Caption = 'Copy Role permission to'
+      OnClick = lmCopyRolePermissionClick
+    end
     object lmNewException: TMenuItem
       Tag = 20
       Caption = 'Add New Exception'
@@ -1861,10 +1866,10 @@ object fmMain: TfmMain
       }
       OnClick = lmUserPermManagementClick
     end
-    object lmCopyPermission: TMenuItem
+    object lmCopyUserPermission: TMenuItem
       Tag = 111
-      Caption = 'Copy Permission To'
-      OnClick = lmCopyPermissionClick
+      Caption = 'Copy User Permission To'
+      OnClick = lmCopyUserPermissionClick
     end
     object lmEditField: TMenuItem
       Tag = 112
