@@ -444,10 +444,16 @@ begin
         PermissionList.Clear;
         if Pos('S', Permissions) > 0 then
           PermissionList.Add('Select');
+
         if Pos('U', Permissions) > 0 then
           PermissionList.Add('Update');
+
         if Pos('I', Permissions) > 0 then
           PermissionList.Add('Insert');
+
+        if Pos('D', Permissions) > 0 then
+          PermissionList.Add('Delete');
+
         if Pos('R', Permissions) > 0 then
           PermissionList.Add('References');
         Line:= 'Grant ' + PermissionList.CommaText + ' on ' + ObjName + ' to ' + NewUser;
