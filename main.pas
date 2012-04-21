@@ -1190,10 +1190,6 @@ var
 begin
   Rec:= RegisteredDatabases[DatabaseIndex];
 
-  TableNames:= dmSysTables.GetDBObjectNames(DatabaseIndex, 1, Count);
-  fmNewGen.DatabaseIndex:= DatabaseIndex;
-
-  fmNewGen.cbTables.Items.CommaText:= TableNames;
   fmNewGen.Init(DatabaseIndex);
 end;
 
@@ -1451,11 +1447,12 @@ begin
   Rec:= RegisteredDatabases[dbIndex];
 
   fmNewTable.Init(dbIndex);
-  if fmNewTable.ShowModal = mrOK then
+  fmNewTable.ShowModal;
+  {= mrOK then
     if fmNewTable.cxCreateGen.Checked then // Create Auto Inc generator
     begin
       InitNewGen(dbIndex);
-      fmNewGen.edGenName.Text:= fmNewTable.GeneratorName;
+      fmNewGen.edGenName.Text:= GeneratorName;
       fmNewGen.edGenName.Enabled:= True;
       fmNewGen.cxTrigger.Checked:= True;
 
@@ -1465,7 +1462,7 @@ begin
       fmNewGen.gbTrigger.Enabled:= False;
       fmNewGen.cxTrigger.Enabled:= False;
       fmNewGen.Show;
-    end;
+    end;}
 end;
 
 (*************  Create new function  ******************)
@@ -2628,6 +2625,7 @@ begin
     Result.Left:= 0;
     Result.Top:= 0;
     Result.Align:= alClient;
+    Result.Font.Name:= 'Arial';
   end
   else
     ATab:= Result.Parent as TTabSheet;

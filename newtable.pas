@@ -14,19 +14,14 @@ type
   { TfmNewTable }
 
   TfmNewTable = class(TForm)
-    bbCreate: TBitBtn;
     bbScript: TBitBtn;
     BitBtn2: TBitBtn;
     cxCreateGen: TCheckBox;
     edNewTable: TEdit;
     Label1: TLabel;
-    SQLQuery1: TSQLQuery;
     StringGrid1: TStringGrid;
-    SynAutoComplete1: TSynAutoComplete;
-    syScript: TSynEdit;
-    SynSQLSyn1: TSynSQLSyn;
-    procedure bbCreateClick(Sender: TObject);
     procedure bbScriptClick(Sender: TObject);
+    procedure cxCreateGenClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure StringGrid1ChangeBounds(Sender: TObject);
     procedure StringGrid1EditingDone(Sender: TObject);
@@ -34,14 +29,13 @@ type
       Shift: TShiftState);
     procedure StringGrid1MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    function GenerateCreateSQL: string;
+    function GenerateCreateSQL(var KeyField, GeneratorName: string): string;
     procedure Init(dbIndex: Integer);
     procedure StringGrid1PickListSelect(Sender: TObject);
   private
     fdbIndex: Integer;
     { private declarations }
   public
-    GeneratorName: string;
     { public declarations }
   end; 
 
@@ -55,7 +49,7 @@ implementation
 uses SysTables, Main;
 
 
-function TfmNewTable.GenerateCreateSQL: string;
+function TfmNewTable.GenerateCreateSQL(var KeyField, GeneratorName: string): string;
 var
   i: Integer;
   FieldLine: string;
@@ -85,6 +79,7 @@ begin
       begin
         PKey:= PKey + StringGrid1.Cells[0, i] + ',';
         GeneratorName:= Trim(edNewTable.Text) + '_' + StringGrid1.Cells[0, i] + '_Gen';
+        KeyField:= StringGrid1.Cells[0, i]; // Generator should work if there is only one Key field
       end;
       // Default value
       if Trim(StringGrid1.Cells[5, i]) <> '' then
@@ -115,11 +110,8 @@ var
 begin
   fdbIndex:= dbIndex;
   edNewTable.Clear;
-  bbCreate.Enabled:= False;
   cxCreateGen.Checked:= False;
   StringGrid1.RowCount:= 3;
-  syScript.Lines.Clear;
-  SQLQuery1.DataBase:= fmMain.RegisteredDatabases[dbIndex].IBConnection;
 
   StringGrid1.Columns[1].PickList.Clear;
   // Add Basic types
@@ -160,27 +152,38 @@ begin
 
 end;
 
-procedure TfmNewTable.bbCreateClick(Sender: TObject);
+procedure TfmNewTable.bbScriptClick(Sender: TObject);
+var
+  List: TStringList;
+  KeyField: string;
+  GeneratorName: string;
 begin
-  StringGrid1.Row:= 1;
-  if (Trim(edNewTable.Text) <> '') then
-  begin
-    SQLQuery1.Close;
-    SQLQuery1.SQL.Text:= syScript.Lines.Text;
-    SQLQuery1.ExecSQL;
-    fmMain.RegisteredDatabases[fdbIndex].SQLTrans.Commit;
-    fmMain.AddToSQLHistory(fmMain.RegisteredDatabases[fdbIndex].RegRec.Title, 'DDL', syScript.Lines.Text);
-    MessageDlg('Table ' + edNewTable.Text + ' has been created successfully', mtInformation, [mbOk], 0);
-    ModalResult:= mrOK;
-  end
-  else
-    MessageDlg('You should enter new table name', mtError, [mbOK], 0);
+  List:= TStringList.Create;
+  List.Text:= GenerateCreateSQL(KeyField, GeneratorName);
+  if cxCreateGen.Checked then
+  begin;
+    List.Add('');
+    List.Add('-- Generator');
+    List.Add('create generator ' + GeneratorName + ';');
+
+    List.Add('-- Trigger');
+    List.Add('CREATE TRIGGER ' + GeneratorName + ' FOR ' + edNewTable.Text);
+    List.Add('ACTIVE BEFORE INSERT POSITION 0 ');
+    List.Add('AS BEGIN ');
+    List.Add('IF (NEW.' + KeyField + ' IS NULL OR NEW.' + KeyField + ' = 0) THEN ');
+    List.Add('  NEW.' + KeyField + ' = GEN_ID(' + GeneratorName + ', 1);');
+    List.Add('END;');
+  end;
+
+  fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create New Table: ' + edNewTable.Text, List.Text);
+  List.Free;
+  Close;
 end;
 
-procedure TfmNewTable.bbScriptClick(Sender: TObject);
+procedure TfmNewTable.cxCreateGenClick(Sender: TObject);
 begin
-  syScript.Lines.Text:= GenerateCreateSQL;
-  bbCreate.Enabled:= True;
+  if cxCreateGen.Checked and (StringGrid1.RowCount > 1) then
+    StringGrid1.Cells[3, 1]:= '1';
 end;
 
 procedure TfmNewTable.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -223,7 +226,8 @@ begin
   // Primary Key checked
   if (StringGrid1.Col = 4) and (StringGrid1.Cells[4, StringGrid1.Row] = '0') then
   begin
-    StringGrid1.Cells[3, StringGrid1.Row]:= '0'; // Uncheck Allow null
+    if not cxCreateGen.Checked then
+      StringGrid1.Cells[3, StringGrid1.Row]:= '0'; // Uncheck Allow null
     StringGrid1.Cells[5, StringGrid1.Row]:= ''; // Remove default value
   end;
 

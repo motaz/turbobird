@@ -8,6 +8,7 @@ object fmMain: TfmMain
   ClientHeight = 615
   ClientWidth = 1024
   Color = clWhite
+  Font.Name = 'Sans'
   Menu = MainMenu1
   OnActivate = FormActivate
   OnClose = FormClose
@@ -54,6 +55,8 @@ object fmMain: TfmMain
     BorderSpacing.Bottom = 2
     BorderSpacing.Around = 2
     BorderSpacing.InnerBorder = 1
+    Font.Name = 'Sans'
+    ParentFont = False
     TabIndex = 0
     TabOrder = 2
     OnCloseTabClicked = PageControl1CloseTabClicked
@@ -61,8 +64,11 @@ object fmMain: TfmMain
     object TabSheet1: TTabSheet
       BorderWidth = 1
       Caption = 'Main'
-      ClientHeight = 577
+      ClientHeight = 578
       ClientWidth = 640
+      Font.Color = clNavy
+      Font.Name = 'Arial'
+      ParentFont = False
       object bbRestoreDB: TBitBtn
         Left = 3
         Height = 93
@@ -70,6 +76,7 @@ object fmMain: TfmMain
         Width = 208
         Caption = 'Restore Database'
         Color = clCream
+        Font.Name = 'Sans'
         Glyph.Data = {
           36100000424D3610000000000000360000002800000020000000200000000100
           2000000000000010000064000000640000000000000000000000FFFFFF00FFFF
@@ -203,6 +210,7 @@ object fmMain: TfmMain
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
         }
         OnClick = mnRestoreClick
+        ParentFont = False
         TabOrder = 0
       end
       object bbRegisterDB: TBitBtn
@@ -212,6 +220,7 @@ object fmMain: TfmMain
         Width = 208
         Caption = 'Register Database'
         Color = clCream
+        Font.Name = 'Sans'
         Glyph.Data = {
           36100000424D3610000000000000360000002800000020000000200000000100
           2000000000000010000064000000640000000000000000000000FFFFFF00FFFF
@@ -345,6 +354,7 @@ object fmMain: TfmMain
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
         }
         OnClick = mnRegDBClick
+        ParentFont = False
         TabOrder = 1
       end
       object bbCreateNewDB: TBitBtn
@@ -354,6 +364,7 @@ object fmMain: TfmMain
         Width = 208
         Caption = 'Create new Database'
         Color = clCream
+        Font.Name = 'Asans'
         Glyph.Data = {
           36100000424D3610000000000000360000002800000020000000200000000100
           2000000000000010000064000000640000000000000000000000FFFFFF00FFFF
@@ -487,6 +498,7 @@ object fmMain: TfmMain
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
         }
         OnClick = mnCreateDBClick
+        ParentFont = False
         TabOrder = 2
       end
     end
