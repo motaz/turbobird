@@ -2,12 +2,12 @@ object fmTableManage: TfmTableManage
   Left = 214
   Height = 448
   Top = 386
-  Width = 780
+  Width = 819
   ActiveControl = PageControl1
   Anchors = [akTop, akLeft, akRight]
   Caption = 'Table Management'
   ClientHeight = 448
-  ClientWidth = 780
+  ClientWidth = 819
   OnClose = FormClose
   Position = poScreenCenter
   LCLVersion = '0.9.31'
@@ -15,7 +15,7 @@ object fmTableManage: TfmTableManage
     Left = 0
     Height = 413
     Top = 29
-    Width = 752
+    Width = 817
     ActivePage = tsFields
     Anchors = [akTop, akLeft, akRight, akBottom]
     Images = ImageList1
@@ -23,13 +23,13 @@ object fmTableManage: TfmTableManage
     TabOrder = 0
     object tsFields: TTabSheet
       Caption = 'Fields'
-      ClientHeight = 382
-      ClientWidth = 748
+      ClientHeight = 378
+      ClientWidth = 811
       object sgFields: TStringGrid
         Left = 0
-        Height = 339
+        Height = 335
         Top = 0
-        Width = 748
+        Width = 811
         Align = alTop
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 7
@@ -43,39 +43,32 @@ object fmTableManage: TfmTableManage
             Title.Font.Color = 5526757
             Title.Font.Height = -11
             Title.Font.Style = [fsBold]
-            Title.PrefixOption = poNone
             Width = 50
           end        
           item
             Title.Caption = 'Field Name'
-            Title.PrefixOption = poNone
             Width = 130
           end        
           item
             Title.Caption = 'Data Type'
-            Title.PrefixOption = poNone
             Width = 120
           end        
           item
             Title.Caption = 'Size'
             Title.Font.Color = 16657685
             Title.Font.Style = [fsBold]
-            Title.PrefixOption = poNone
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Allow Null'
-            Title.PrefixOption = poNone
             Width = 90
           end        
           item
             Title.Caption = 'Default Value'
-            Title.PrefixOption = poNone
             Width = 120
           end        
           item
             Title.Caption = 'Description'
-            Title.PrefixOption = poNone
             Width = 200
           end>
         FixedColor = 14539471
@@ -89,7 +82,7 @@ object fmTableManage: TfmTableManage
       object bbEdit: TBitBtn
         Left = 14
         Height = 30
-        Top = 344
+        Top = 340
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Edit'
@@ -100,7 +93,7 @@ object fmTableManage: TfmTableManage
       object bbNew: TBitBtn
         Left = 104
         Height = 30
-        Top = 344
+        Top = 340
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'New'
@@ -111,7 +104,7 @@ object fmTableManage: TfmTableManage
       object edDrop: TBitBtn
         Left = 240
         Height = 30
-        Top = 344
+        Top = 340
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Drop'
@@ -121,9 +114,9 @@ object fmTableManage: TfmTableManage
         TabOrder = 3
       end
       object bbRefresh: TBitBtn
-        Left = 654
+        Left = 717
         Height = 30
-        Top = 344
+        Top = 340
         Width = 94
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -135,13 +128,13 @@ object fmTableManage: TfmTableManage
     end
     object tsIndices: TTabSheet
       Caption = 'Indices'
-      ClientHeight = 382
-      ClientWidth = 748
+      ClientHeight = 378
+      ClientWidth = 811
       ImageIndex = 2
       object bbRefreshIndices: TBitBtn
-        Left = 618
+        Left = 614
         Height = 30
-        Top = 3
+        Top = 11
         Width = 88
         Anchors = [akTop, akRight]
         Caption = 'Refresh'
@@ -152,20 +145,18 @@ object fmTableManage: TfmTableManage
       end
       object sgIndices: TStringGrid
         Left = -1
-        Height = 142
+        Height = 139
         Top = -2
-        Width = 609
+        Width = 604
         Anchors = [akTop, akLeft, akRight]
         Columns = <        
           item
             Title.Caption = 'Index Name'
-            Title.PrefixOption = poNone
             Width = 140
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Unique'
-            Title.PrefixOption = poNone
           end        
           item
             ButtonStyle = cbsPickList
@@ -174,11 +165,9 @@ object fmTableManage: TfmTableManage
               'Desc'
             )
             Title.Caption = 'Sort'
-            Title.PrefixOption = poNone
           end        
           item
             Title.Caption = 'On Fields'
-            Title.PrefixOption = poNone
             Width = 140
           end        
           item
@@ -186,7 +175,6 @@ object fmTableManage: TfmTableManage
             ReadOnly = True
             Title.Caption = 'Primary Key'
             Title.Color = 12514548
-            Title.PrefixOption = poNone
             Width = 90
           end>
         FixedColor = 14539471
@@ -195,7 +183,7 @@ object fmTableManage: TfmTableManage
         TabOrder = 1
       end
       object bbDrop: TBitBtn
-        Left = 618
+        Left = 614
         Height = 30
         Top = 51
         Width = 88
@@ -207,13 +195,13 @@ object fmTableManage: TfmTableManage
       end
       object GroupBox1: TGroupBox
         Left = -2
-        Height = 236
+        Height = 232
         Top = 139
-        Width = 542
+        Width = 605
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = 'Manage'
-        ClientHeight = 217
-        ClientWidth = 538
+        ClientHeight = 213
+        ClientWidth = 601
         TabOrder = 3
         object Label2: TLabel
           Left = 6
@@ -306,13 +294,13 @@ object fmTableManage: TfmTableManage
     end
     object tsConstraints: TTabSheet
       Caption = 'Constraints'
-      ClientHeight = 382
-      ClientWidth = 748
+      ClientHeight = 378
+      ClientWidth = 811
       ImageIndex = 3
       object bbRefreshConstraint: TBitBtn
-        Left = 632
+        Left = 695
         Height = 30
-        Top = 343
+        Top = 339
         Width = 99
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -323,45 +311,38 @@ object fmTableManage: TfmTableManage
       end
       object sgConstraints: TStringGrid
         Left = -1
-        Height = 333
+        Height = 329
         Top = -1
-        Width = 732
+        Width = 813
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 7
         Columns = <        
           item
             Title.Caption = 'Constraint Name'
-            Title.PrefixOption = poNone
             Width = 120
           end        
           item
             Title.Caption = 'Key name'
-            Title.PrefixOption = poNone
             Width = 100
           end        
           item
             Title.Caption = 'On Fields'
-            Title.PrefixOption = poNone
             Width = 120
           end        
           item
             Title.Caption = 'Foreign Table'
-            Title.PrefixOption = poNone
             Width = 100
           end        
           item
             Title.Caption = 'Foriegn Key'
-            Title.PrefixOption = poNone
             Width = 100
           end        
           item
             Title.Caption = 'Update Rule'
-            Title.PrefixOption = poNone
             Width = 100
           end        
           item
             Title.Caption = 'Delete Rule'
-            Title.PrefixOption = poNone
             Width = 100
           end>
         FixedColor = 14539471
@@ -373,7 +354,7 @@ object fmTableManage: TfmTableManage
       object bbNewConstraint: TBitBtn
         Left = 6
         Height = 30
-        Top = 343
+        Top = 339
         Width = 119
         Anchors = [akLeft, akBottom]
         Caption = 'New Constraint'
@@ -384,7 +365,7 @@ object fmTableManage: TfmTableManage
       object bbDropConstraint: TBitBtn
         Left = 144
         Height = 30
-        Top = 343
+        Top = 339
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Drop'
@@ -396,26 +377,24 @@ object fmTableManage: TfmTableManage
     end
     object tsTriggers: TTabSheet
       Caption = 'Triggers'
-      ClientHeight = 382
-      ClientWidth = 748
+      ClientHeight = 378
+      ClientWidth = 811
       ImageIndex = 1
       object sgTriggers: TStringGrid
         Left = 0
-        Height = 324
+        Height = 320
         Top = -1
-        Width = 730
+        Width = 793
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 2
         Columns = <        
           item
             Title.Caption = 'Trigger Name'
-            Title.PrefixOption = poNone
             Width = 160
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Active'
-            Title.PrefixOption = poNone
             Width = 100
           end>
         FixedColor = 14539471
@@ -425,9 +404,9 @@ object fmTableManage: TfmTableManage
         TabOrder = 0
       end
       object bbRefreshTriggers: TBitBtn
-        Left = 634
+        Left = 697
         Height = 30
-        Top = 337
+        Top = 333
         Width = 87
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -439,7 +418,7 @@ object fmTableManage: TfmTableManage
       object bbNewTrigger: TBitBtn
         Left = 7
         Height = 30
-        Top = 335
+        Top = 331
         Width = 87
         Anchors = [akLeft, akBottom]
         Caption = 'Add New'
@@ -450,7 +429,7 @@ object fmTableManage: TfmTableManage
       object bbEditTrigger: TBitBtn
         Left = 110
         Height = 30
-        Top = 335
+        Top = 331
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Edit'
@@ -461,7 +440,7 @@ object fmTableManage: TfmTableManage
       object bbDropTrigger: TBitBtn
         Left = 200
         Height = 30
-        Top = 335
+        Top = 331
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Drop'
@@ -473,82 +452,70 @@ object fmTableManage: TfmTableManage
     end
     object tsPermissions: TTabSheet
       Caption = 'Permissions'
-      ClientHeight = 382
-      ClientWidth = 748
+      ClientHeight = 378
+      ClientWidth = 811
       ImageIndex = 4
       object sgPermissions: TStringGrid
         Left = 0
-        Height = 324
-        Top = 0
-        Width = 730
+        Height = 320
+        Top = -3
+        Width = 810
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 12
         Columns = <        
           item
             Title.Caption = 'User/Role'
-            Title.PrefixOption = poNone
             Width = 160
           end        
           item
             Title.Caption = 'Type'
-            Title.PrefixOption = poNone
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             ReadOnly = True
             Title.Caption = 'Select'
-            Title.PrefixOption = poNone
             Width = 100
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Insert'
-            Title.PrefixOption = poNone
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Update'
-            Title.PrefixOption = poNone
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Delete'
-            Title.PrefixOption = poNone
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'References'
-            Title.PrefixOption = poNone
             Width = 80
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Grant Select'
-            Title.PrefixOption = poNone
             Width = 90
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Grant Insert'
-            Title.PrefixOption = poNone
             Width = 90
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Grant Update'
-            Title.PrefixOption = poNone
             Width = 100
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Grant Delete'
-            Title.PrefixOption = poNone
             Width = 90
           end        
           item
             ButtonStyle = cbsCheckboxColumn
             Title.Caption = 'Grant References'
-            Title.PrefixOption = poNone
             Width = 110
           end>
         FixedColor = 14539471
@@ -560,7 +527,7 @@ object fmTableManage: TfmTableManage
       object edEditPermission: TBitBtn
         Left = 6
         Height = 30
-        Top = 339
+        Top = 335
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Edit'
@@ -569,9 +536,9 @@ object fmTableManage: TfmTableManage
         TabOrder = 1
       end
       object bbRefreshPermissions: TBitBtn
-        Left = 634
+        Left = 697
         Height = 30
-        Top = 339
+        Top = 335
         Width = 87
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -583,7 +550,7 @@ object fmTableManage: TfmTableManage
       object bbAddUser: TBitBtn
         Left = 90
         Height = 30
-        Top = 339
+        Top = 335
         Width = 125
         Anchors = [akLeft, akBottom]
         Caption = 'Add User / Role'
@@ -594,7 +561,7 @@ object fmTableManage: TfmTableManage
     end
   end
   object bbClose: TBitBtn
-    Left = 752
+    Left = 791
     Height = 24
     Top = 0
     Width = 27
@@ -775,15 +742,15 @@ object fmTableManage: TfmTableManage
     }
   end
   object SQLQuery1: TSQLQuery
+    FieldDefs = <>
     AutoCalcFields = False
-    ReadOnly = False
     Params = <>
     left = 552
     top = 264
   end
   object SQLQuery2: TSQLQuery
+    FieldDefs = <>
     AutoCalcFields = False
-    ReadOnly = False
     Params = <>
     left = 632
     top = 280
