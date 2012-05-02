@@ -288,12 +288,16 @@ begin
   fmNewConstraint.laTable.Caption:= fTableName;
   fmNewConstraint.Caption:= 'New Constraint for : ' + fTableName;
   if fmNewConstraint.ShowModal = mrOK then
+  begin
+    Hide;
     fmNewConstraint.QWindow.OnCommit:= bbRefreshConstraint.OnClick;
+  end;
 end;
 
 procedure TfmTableManage.bbNewTriggerClick(Sender: TObject);
 begin
-  fmMain.CreateNewTrigger(fdbIndex, fTableName, bbRefreshTriggers.OnClick);
+  if fmMain.CreateNewTrigger(fdbIndex, fTableName, bbRefreshTriggers.OnClick) then
+    Hide;
 end;
 
 procedure TfmTableManage.bbRefreshClick(Sender: TObject);
