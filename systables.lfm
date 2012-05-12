@@ -5,8 +5,8 @@ object dmSysTables: TdmSysTables
   VerticalOffset = 383
   Width = 400
   object sqQuery: TSQLQuery
+    FieldDefs = <>
     AutoCalcFields = False
-    ReadOnly = False
     Params = <>
     left = 216
     top = 32

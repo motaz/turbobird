@@ -47,6 +47,7 @@ type
     lmEditField: TMenuItem;
     lmDBIndo: TMenuItem;
     lmCopyRolePermission: TMenuItem;
+    lmCompare: TMenuItem;
     mnExit: TMenuItem;
     mnCreateDB: TMenuItem;
     mnRegDB: TMenuItem;
@@ -109,6 +110,7 @@ type
     procedure lmBackupClick(Sender: TObject);
     procedure lmChangePasswordClick(Sender: TObject);
     procedure lmCloseTabClick(Sender: TObject);
+    procedure lmCompareClick(Sender: TObject);
     procedure lmCopyRolePermissionClick(Sender: TObject);
     procedure lmCopyUserPermissionClick(Sender: TObject);
     procedure lmCopyTableClick(Sender: TObject);
@@ -180,7 +182,6 @@ type
     fActivated: Boolean;
     function FindCusomForm(ATitle: string; AClass: TClass): TComponent;
     procedure InitNewGen(DatabaseIndex: Integer);
-    function GetServerName(DBName: string): string;
     function GetServerNameNode(ServerName: string): TTreeNode;
     function RemoveSpecialChars(AText: string): string;
     procedure ReleaseRegisteredDatabases;
@@ -191,6 +192,7 @@ type
     RegisteredDatabases: array of TDatabaseRec;
     Version: string;
     VersionDate: string;
+    function GetServerName(DBName: string): string;
     function RetreiveInputParamFromSP(Body: string): string;
     function LoadRegisteredDatabases: Boolean;
     function FindQueryWindow(ATitle: string): TComponent;
@@ -232,7 +234,7 @@ implementation
 uses CreateDB, ViewView, ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen,
      EnterPass, CreateTrigger, EditTable, CallProc, EditDataFullRec, UDFInfo, ViewDomain,
      NewDomain, SysTables, Scriptdb, UserPermissions, BackupRestore, UnitFirebirdServices, CreateUser, ChangePass,
-     PermissionManage, CopyTable, About, NewEditField, dbInfo;
+     PermissionManage, CopyTable, About, NewEditField, dbInfo, Comparison;
 
 
 procedure TfmMain.mnExitClick(Sender: TObject);
@@ -331,6 +333,12 @@ end;
 
 procedure TfmMain.lmCloseTabClick(Sender: TObject);
 begin
+end;
+
+procedure TfmMain.lmCompareClick(Sender: TObject);
+begin
+  fmComparison.Init(tvMain.Selected.OverlayIndex);
+  fmComparison.Show;
 end;
 
 procedure TfmMain.lmCopyRolePermissionClick(Sender: TObject);

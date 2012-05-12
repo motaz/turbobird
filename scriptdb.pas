@@ -25,6 +25,9 @@ function ScriptAllPermissions(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptUserAllPermissions(dbIndex: Integer; UserName: string; var List: TStringList;
    NewUser: string = ''): Boolean;
 
+procedure RemoveParamClosing(var AParams: string);
+
+
 implementation
 
 uses SysTables, Main;

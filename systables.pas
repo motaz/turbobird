@@ -75,8 +75,6 @@ end;
 
 { TdmSysTables }
 
-
-
 procedure TdmSysTables.Init(dbIndex: Integer);
 begin
   with fmMain.RegisteredDatabases[dbIndex] do

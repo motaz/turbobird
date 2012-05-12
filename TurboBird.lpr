@@ -1,9 +1,9 @@
 {***************************************************************************}
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
-{  Start development:  5.Dec.2009                                           }
-{  Last updated     :  2.May.2012                                           }
-{  License          : GPL for GUI, LGPL for Units                           }
+{  Start development :  5.Dec.2009                                          }
+{  Last updated      : 12.May.2012                                          }
+{  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
 program TurboBird;
@@ -15,15 +15,16 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, Controls, memdslaz, main, createdb, Reg, QueryWindow,
-  ViewView, ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen, EnterPass, About,
-  CreateTrigger, EditTable, CallProc, EditDataFullRec,
-  UDFInfo, ViewDomain, NewDomain, SysTables, NewConstraint, NewEditField, Calen, Scriptdb,
+  Forms, Controls, memdslaz, main, createdb, Reg, QueryWindow, ViewView,
+  ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen, EnterPass, About,
+  CreateTrigger, EditTable, CallProc, EditDataFullRec, UDFInfo, ViewDomain,
+  NewDomain, SysTables, NewConstraint, NewEditField, Calen, Scriptdb,
   UserPermissions, TableManage, BackupRestore, CreateUser, ChangePass,
-  PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo, sysutils;
+  PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo,
+  sysutils, Comparison;
 
 const
-  Version = '0.9.2';
+  Version = '0.9.3';
   VersionDate = '2010 - May 2012';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
@@ -82,6 +83,7 @@ begin
   fmMain.VersionDate:= VersionDate;
   SAbout.Free;
   InitialiseIBase60;
+  Application.CreateForm(TfmComparison, fmComparison);
   Application.Run;
   ReleaseIBase60;
 
