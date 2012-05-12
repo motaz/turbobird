@@ -5,7 +5,8 @@ unit Scriptdb;
 interface
 
 uses
-  Classes, SysUtils; 
+  Classes, SysUtils;
+
 
 function ScriptAllRoles(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllFunctions(dbIndex: Integer; var List: TStringList): Boolean;
@@ -26,6 +27,7 @@ function ScriptUserAllPermissions(dbIndex: Integer; UserName: string; var List: 
    NewUser: string = ''): Boolean;
 
 procedure RemoveParamClosing(var AParams: string);
+
 
 
 implementation

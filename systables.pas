@@ -514,6 +514,7 @@ begin
   GetDomainInfo(dbIndex, DomainTypeName, DomainType, Result, DefaultValue);
 end;
 
+
 function TdmSysTables.GetFieldInfo(dbIndex: Integer; TableName, FieldName: string; var FieldType: string;
   var Size, IsNull: Integer; var DefaultValue, Description: string): Boolean;
 begin

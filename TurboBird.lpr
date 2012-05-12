@@ -49,7 +49,6 @@ begin
     IBaseLibraryHandle:= LoadLibrary(seclib);
 {$ENDIF}
 
-
   // Check Firebird library existance
   if (IBaseLibraryHandle = nilhandle) then
     Application.MessageBox('Unable to load Firebird library: ' + fbclib, 'Warning', 0);
