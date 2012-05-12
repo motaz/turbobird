@@ -1,0 +1,176 @@
+object fmComparison: TfmComparison
+  Left = 447
+  Height = 478
+  Top = 170
+  Width = 623
+  Caption = 'Database comparison'
+  ClientHeight = 478
+  ClientWidth = 623
+  OnClose = FormClose
+  Position = poScreenCenter
+  LCLVersion = '0.9.31'
+  object Label1: TLabel
+    Left = 13
+    Height = 18
+    Top = 16
+    Width = 129
+    Caption = 'Compare database'
+    ParentColor = False
+  end
+  object laDatabase: TLabel
+    Left = 156
+    Height = 18
+    Top = 16
+    Width = 81
+    Caption = 'laDatabase'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label2: TLabel
+    Left = 13
+    Height = 18
+    Top = 47
+    Width = 99
+    Caption = 'With database'
+    ParentColor = False
+  end
+  object cbComparedDatabase: TComboBox
+    Left = 156
+    Height = 31
+    Top = 38
+    Width = 460
+    ItemHeight = 0
+    OnChange = cbComparedDatabaseChange
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object laComparedDatabase: TLabel
+    Left = 156
+    Height = 18
+    Top = 74
+    Width = 12
+    Caption = '[]'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object bbStart: TBitBtn
+    Left = 15
+    Height = 30
+    Top = 184
+    Width = 154
+    Caption = 'Start Comparison'
+    OnClick = bbStartClick
+    TabOrder = 1
+  end
+  object meLog: TMemo
+    Left = 13
+    Height = 242
+    Top = 226
+    Width = 603
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Font.Style = [fsUnderline]
+    ParentFont = False
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 2
+  end
+  object laScript: TLabel
+    Cursor = crHandPoint
+    Left = 187
+    Height = 18
+    Top = 196
+    Width = 301
+    Caption = 'Script missing objects in compared database'
+    Font.Style = [fsUnderline]
+    ParentColor = False
+    ParentFont = False
+    OnClick = laScriptClick
+  end
+  object GroupBox1: TGroupBox
+    Left = 15
+    Height = 79
+    Top = 101
+    Width = 601
+    Caption = 'Compared objects'
+    ClientHeight = 60
+    ClientWidth = 597
+    TabOrder = 3
+    object cxTables: TCheckBox
+      Left = 11
+      Height = 24
+      Top = 4
+      Width = 69
+      Caption = 'Tables'
+      TabOrder = 0
+    end
+    object cxGenerators: TCheckBox
+      Left = 11
+      Height = 24
+      Top = 32
+      Width = 102
+      Caption = 'Generators'
+      TabOrder = 1
+    end
+    object cxTriggers: TCheckBox
+      Left = 151
+      Height = 24
+      Top = 4
+      Width = 80
+      Caption = 'Triggers'
+      TabOrder = 2
+    end
+    object cxViews: TCheckBox
+      Left = 151
+      Height = 24
+      Top = 34
+      Width = 66
+      Caption = 'Views'
+      TabOrder = 3
+    end
+    object cxStoredProcs: TCheckBox
+      Left = 262
+      Height = 24
+      Top = 4
+      Width = 113
+      Caption = 'Stored Procs'
+      TabOrder = 4
+    end
+    object cxUDFs: TCheckBox
+      Left = 262
+      Height = 24
+      Hint = 'User Defined Functions'
+      Top = 32
+      Width = 61
+      Caption = 'UDFs'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+    end
+    object cxDomains: TCheckBox
+      Left = 390
+      Height = 24
+      Top = 4
+      Width = 85
+      Caption = 'Domains'
+      TabOrder = 6
+    end
+    object cxRoles: TCheckBox
+      Left = 390
+      Height = 24
+      Top = 34
+      Width = 63
+      Caption = 'Roles'
+      TabOrder = 7
+    end
+    object cxUsers: TCheckBox
+      Left = 495
+      Height = 24
+      Top = 4
+      Width = 64
+      Caption = 'Users'
+      TabOrder = 8
+    end
+  end
+end
