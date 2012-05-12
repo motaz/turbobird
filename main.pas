@@ -1727,6 +1727,7 @@ begin
       ScriptAllTriggers(dbIndex, List);
       Lines.AddStrings(List);
 
+
       Lines.Add('');
       Lines.Add('--      Secondary Indices');
       Lines.Add('');
