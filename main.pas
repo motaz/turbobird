@@ -1920,7 +1920,7 @@ begin
     List:= TStringList.Create;
 
     with dmSysTables do
-    if GetIndices(ATableName, sqQuery) then
+    if fmMain.GetIndices(ATableName, sqQuery) then
     with sqQuery do
     while not EOF do
     begin
@@ -2863,6 +2863,8 @@ begin
   Result:= AQuery.RecordCount > 0;
   if not Result then
     AQuery.Close;
+
+
 end;
 
 (***************  View Table Fields/ Fields Management  ***************)

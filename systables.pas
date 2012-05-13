@@ -49,6 +49,14 @@ type
     function GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet, CreationDate: string;
       var ODSVerMajor, ODSVerMinor, Pages, PageSize: Integer; var ProcessList: TStringList): Boolean;
 
+    function GetIndices(dbIndex: Integer; ATableName: string; PrimaryIndexName: string;
+      var List: TStringList): Boolean;
+
+    function GetPrimaryKeyIndexName(dbIndex: Integer; ATableName: string; var ConstraintName: string): string;
+
+    function GetIndexInfo(dbIndex: Integer; ATableName, AIndexName: string;
+      var FieldsList: TStringList; var Unique, Ascending: Boolean): Boolean;
+
     { public declarations }
   end; 
 
@@ -607,6 +615,78 @@ begin
   on e: exception do
     Result:= False;
   end;
+end;
+
+function TdmSysTables.GetIndices(dbIndex: Integer; ATableName: string; PrimaryIndexName: string;
+  var List: TStringList): Boolean;
+begin
+  Init(dbIndex);
+  sqQuery.Close;
+  sqQuery.SQL.Text:= 'SELECT * FROM RDB$INDICES WHERE RDB$RELATION_NAME=''' + UpperCase(ATableName) +
+    ''' AND RDB$FOREIGN_KEY IS NULL';
+  sqQuery.Open;
+  Result:= sqQuery.RecordCount > 0;
+  with sqQuery do
+  if Result then
+  begin
+    while not Eof do
+    begin
+      if UpperCase(Trim(PrimaryIndexName)) <> Trim(Fields[0].AsString) then
+        List.Add(Trim(Fields[0].AsString));
+      Next;
+    end;
+  end;
+  sqQuery.Close
+
+end;
+
+function TdmSysTables.GetPrimaryKeyIndexName(dbIndex: Integer; ATableName: string; var ConstraintName: string): string;
+begin
+  Init(dbIndex);
+  sqQuery.Close;
+  sqQuery.SQL.Text:= 'select RDB$Index_name, RDB$Constraint_Name from RDB$RELATION_CONSTRAINTS ' +
+    'where RDB$Relation_Name = ''' + UpperCase(ATableName) + ''' and RDB$Constraint_Type = ''PRIMARY KEY'' ';
+  sqQuery.Open;
+  if sqQuery.RecordCount > 0 then
+  begin
+    Result:= Trim(sqQuery.Fields[0].AsString);
+    ConstraintName:= Trim(sqQuery.Fields[1].AsString);
+  end
+  else
+    Result:= '';
+  sqQuery.Close;
+end;
+
+function TdmSysTables.GetIndexInfo(dbIndex: Integer; ATableName, AIndexName: string;
+  var FieldsList: TStringList; var Unique, Ascending: Boolean): Boolean;
+begin
+  Init(dbIndex);
+  sqQuery.Close;
+  sqQuery.SQL.Text:= 'SELECT RDB$Indices.*, RDB$INDEX_SEGMENTS.RDB$FIELD_NAME AS field_name, ' + #10 +
+     'RDB$INDICES.RDB$DESCRIPTION AS description, ' +#10 +
+     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position ' +#10 +
+     'FROM RDB$INDEX_SEGMENTS ' +#10 +
+     'LEFT JOIN RDB$INDICES ON RDB$INDICES.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' +#10 +
+     'LEFT JOIN RDB$RELATION_CONSTRAINTS ON RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' +#10 +
+     ' WHERE UPPER(RDB$INDICES.RDB$RELATION_NAME)=''' + UpperCase(ATablename) + '''         -- table name ' +#10 +
+     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' -- index name ' +#10 +
+     '--  AND RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE IS NULL ' +#10 +
+     'ORDER BY RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION;';
+  sqQuery.Open;
+  Result:= sqQuery.FieldCount > 0;
+  if Result then
+  begin
+    Unique:= sqQuery.FieldByName('RDB$Unique_Flag').AsString = '1';
+    Ascending:= sqQuery.FieldByName('RDB$Index_Type').AsString <> '1';
+  end;
+  FieldsList.Clear;
+  if Result then
+  while not sqQuery.EOF do
+  begin
+    FieldsList.Add(Trim(sqQuery.FieldByName('field_name').AsString));
+    sqQuery.Next;
+  end;
+  sqQuery.Close;
 end;
 
 initialization

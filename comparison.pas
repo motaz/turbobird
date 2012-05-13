@@ -9,8 +9,8 @@ uses
   Buttons, IBConnection, sqldb;
 
 const
-  dbObjects: array [1 .. 11] of string = ('Tables', 'Generators', 'Triggers', 'Views', 'Stored Procedures', 'UDFs',
-    'Sys Tables', 'Domains', 'Roles', 'Exceptions', 'Users');
+  dbObjects: array [1 .. 12] of string = ('Tables', 'Generators', 'Triggers', 'Views', 'Stored Procedures', 'UDFs',
+    'Sys Tables', 'Domains', 'Roles', 'Exceptions', 'Users', 'Indices');
 
 type
 
@@ -41,7 +41,7 @@ type
     procedure laScriptClick(Sender: TObject);
   private
     fdbIndex: Integer;
-    dbObjectsList: array [1 .. 11] of TStringList;
+    dbObjectsList: array [1 .. 12] of TStringList;
     { private declarations }
   public
     procedure Init(dbIndex: Integer);
@@ -90,16 +90,19 @@ var
   Line: string;
   DomainType, DefaultValue: string;
   DomainSize: Integer;
+  ATableName, AIndexName: string;
+  FieldsList: TStringList;
+  Unique, Ascending: Boolean;
 begin
   meLog.Clear;
   ScriptList:= TStringList.Create;
+  FieldsList:= TStringList.Create;
 
   QueryWindow:= fmMain.ShowQueryWindow(cbComparedDatabase.ItemIndex, 'Database Differences');
   QueryWindow.meQuery.ClearAll;
   dmSysTables.Init(fdbIndex);
 
-  for x:= 1 to 11 do
-  if x <> 7 then
+  for x:= 1 to 12 do
   begin
     if (x = 1) and cxTables.Checked then // Tables
     for i:= 0 to dbObjectsList[x].Count - 1 do
@@ -189,12 +192,40 @@ begin
       ScriptList.Clear;
       QueryWindow.meQuery.Lines.Add('create role ' + dbObjectsList[x].Strings[i] + ';');
       QueryWindow.meQuery.Lines.Add('');
+    end
+    else
+    if (x = 12) and cxTables.Checked then // Indices
+    for i:= 0 to dbObjectsList[x].Count - 1 do
+    begin
+      Line:= dbObjectsList[x].Strings[i];
+      ATableName:= copy(Line, 1, Pos(',', Line) - 1);
+      System.Delete(Line, 1, Pos(',', Line));
+      AIndexName:= Line;
+      ScriptList.Clear;
+      if dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, Unique, Ascending) then
+      begin
+        Line:= 'create ';
+        if Unique then
+          Line:= Line + 'Unique ';
+        if not Ascending then
+          Line:= Line + 'Descending ';
+
+        Line:= Line + 'index ' + AIndexName + ' on ' + ATableName;
+
+        Line:= Line + ' (' + FieldsList.CommaText + ') ;';
+
+        QueryWindow.meQuery.Lines.Add(Line);
+        QueryWindow.meQuery.Lines.Add('');
+      end;
+
     end;
 
   end;
 
+
   QueryWindow.Show;
   ScriptList.Free;
+  FieldsList.Free;
   Close;
 
 end;
@@ -203,23 +234,27 @@ procedure TfmComparison.bbStartClick(Sender: TObject);
 var
   List, ComparedList: TStringList;
   Count: Integer;
-  x, i: Integer;
+  x, i, j: Integer;
+  TablesList: TStringList;
+  PrimaryIndexName: string;
+  SecIndexList: TStringList;
+  ComparedSecIndexList: TStringList;
+  ConstraintName: string;
 begin
   List:= TStringList.Create;
   ComparedList:= TStringList.Create;
   meLog.Clear;
   meLog.Visible:= False;
   for x:= 1 to 11 do
-  if ((x <> 7) and (X <> 10)) and
-  (((x = 1) and cxTables.Checked) or
-  ((x = 2) and cxGenerators.Checked) or
-  ((x = 3) and cxTriggers.Checked) or
-  ((x = 4) and cxViews.Checked) or
-  ((x = 5) and cxStoredProcs.Checked) or
-  ((x = 6) and cxUDFs.Checked) or
-  ((x = 8) and cxDomains.Checked) or
-  ((x = 9) and cxRoles.Checked) or
-  ((x = 11) and cxUsers.Checked)) then
+  if ((x = 1) and cxTables.Checked) or
+     ((x = 2) and cxGenerators.Checked) or
+     ((x = 3) and cxTriggers.Checked) or
+     ((x = 4) and cxViews.Checked) or
+     ((x = 5) and cxStoredProcs.Checked) or
+     ((x = 6) and cxUDFs.Checked) or
+     ((x = 8) and cxDomains.Checked) or
+     ((x = 9) and cxRoles.Checked) or
+     ((x = 11) and cxUsers.Checked) then
   begin
     meLog.Lines.Add('');
     meLog.Lines.Add(dbObjects[x] + ':');
@@ -237,6 +272,45 @@ begin
 
   end;
 
+  // Indices
+  if cxTables.Checked then
+  begin
+    TablesList:= TStringList.Create;
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 1, Count);
+    SecIndexList:= TStringList.Create;
+    ComparedSecIndexList:= TStringList.Create;
+    meLog.Lines.Add('');
+    meLog.Lines.Add('Indices:');
+    dbObjectsList[12].Clear;
+    for i:= 0 to TablesList.Count - 1 do
+    begin
+      PrimaryIndexName:= dmSysTables.GetPrimaryKeyIndexName(fdbIndex, TablesList[i], ConstraintName);
+      SecIndexList.Clear;
+      dmSysTables.GetIndices(fdbIndex, TablesList[i], PrimaryIndexName, SecIndexList);
+      ComparedSecIndexList.Clear;
+      if dmSysTables.GetIndices(cbComparedDatabase.ItemIndex, TablesList[i], PrimaryIndexName, ComparedSecIndexList) then
+      begin
+        for j:= 0 to SecIndexList.Count - 1 do
+          if ComparedSecIndexList.IndexOf(SecIndexList[j]) = -1 then
+          begin
+            meLog.Lines.Add('Missing: ' + SecIndexList[j]);
+            dbObjectsList[12].Add(TablesList[i] + ',' + SecIndexList[j]);
+          end
+      end
+      else // Table does not exist, all indices are missing
+      if SecIndexList.Count > 0 then
+      for j:= 0 to SecIndexList.Count - 1 do
+      begin
+        dbObjectsList[12].Add(TablesList[i] + ',' + SecIndexList[j]);
+        meLog.Lines.Add('Missing: ' + SecIndexList[j]);
+      end;
+
+    end;
+
+    TablesList.Free;
+    SecIndexList.Free;
+    ComparedSecIndexList.Free;
+  end;
   meLog.Visible:= True;
   laScript.Enabled:= True;
   ComparedList.Free;
