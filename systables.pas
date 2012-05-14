@@ -26,7 +26,12 @@ type
       var TriggerPosition: Integer): Boolean;
     procedure ScriptTrigger(dbIndex: Integer; ATriggerName: string; List: TStrings;
       AsCreate: Boolean = False);
-    procedure GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery);
+    function GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery;
+      ConstraintsList: TStringList = nil): Boolean;
+
+    function GetConstraintInfo(dbIndex: Integer; ATableName, ConstraintName: string; var KeyName,
+        CurrentTableName, CurrentFieldName, OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string): Boolean;
+
     function GetExceptionInfo(ExceptionName: string; var Msg, Description, SqlQuery: string): Boolean;
     procedure GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
       var DomainSize: Integer; var DefaultValue: string);
@@ -88,6 +93,7 @@ begin
   with fmMain.RegisteredDatabases[dbIndex] do
   begin
   //  IBConnection.Close;
+    sqQuery.Close;
     IBConnection.DatabaseName:= RegRec.DatabaseName;
     IBConnection.UserName:= RegRec.UserName;
     IBConnection.Password:= RegRec.Password;
@@ -248,10 +254,12 @@ end;
 
 (**********  Get Table Constraints Info  ********************)
 
-procedure TdmSysTables.GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery);
+function TdmSysTables.GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery;
+   ConstraintsList: TStringList = nil): Boolean;
 begin
   SqlQuery.Close;
-  SqlQuery.SQL.Text:= 'select Trim(Refc.RDB$Constraint_Name) as ConstName, Trim(Refc.RDB$CONST_NAME_UQ) as KeyName, ' +
+  SqlQuery.SQL.Text:= 'select Trim(Refc.RDB$Constraint_Name) as ConstName, ' +
+    'Trim(Refc.RDB$CONST_NAME_UQ) as KeyName, ' +
     'Trim(Ind.RDB$Relation_Name) as CurrentTableName, ' +
     'Trim(Seg.RDB$Field_name) as CurrentFieldName, ' +
     'Trim(Con.RDB$Relation_Name) as OtherTableName, ' +
@@ -264,6 +272,55 @@ begin
     '  and Refc.RDB$COnstraint_Name = Seg.RDB$Index_Name' +
     '  and Ind.RDB$Relation_Name = ''' + UpperCase(ATableName) + '''';
   SqlQuery.Open;
+  Result:= SqlQuery.RecordCount > 0;
+  with SqlQuery do
+  if Result and Assigned(ConstraintsList) then
+  begin
+    ConstraintsList.Clear;
+    while not Eof do
+    begin
+      ConstraintsList.Add(FieldByName('ConstName').AsString);
+      Next;
+    end;
+    First;
+  end;
+
+end;
+
+(**********  Get Constraint Info  ********************)
+
+function TdmSysTables.GetConstraintInfo(dbIndex: Integer; ATableName, ConstraintName: string; var KeyName,
+    CurrentTableName, CurrentFieldName, OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string): Boolean;
+begin
+  Init(dbIndex);
+  sqQuery.Close;
+  sqQuery.SQL.Text:= 'select Trim(Refc.RDB$Constraint_Name) as ConstName, Trim(Refc.RDB$CONST_NAME_UQ) as KeyName, ' +
+    'Trim(Ind.RDB$Relation_Name) as CurrentTableName, ' +
+    'Trim(Seg.RDB$Field_name) as CurrentFieldName, ' +
+    'Trim(Con.RDB$Relation_Name) as OtherTableName, ' +
+    'Trim(Ind.RDB$Foreign_key) as OtherFieldName, ' +
+    'RDB$Update_Rule as UpdateRule, RDB$Delete_Rule as DeleteRule ' +
+    'from RDB$RELATION_CONSTRAINTS Con, rdb$REF_Constraints Refc, RDB$INDEX_SEGMENTS Seg, ' +
+    'RDB$INDICES Ind ' +
+    'where Con.RDB$COnstraint_Name = Refc.RDB$Const_Name_UQ ' +
+    '  and Refc.RDB$COnstraint_Name = Ind.RDB$Index_Name' +
+    '  and Refc.RDB$COnstraint_Name = Seg.RDB$Index_Name' +
+    '  and Ind.RDB$Relation_Name = ''' + UpperCase(ATableName) + ''' ' +
+    '  and Refc.RDB$Constraint_Name = ''' + ConstraintName + '''';
+  sqQuery.Open;
+  Result:= sqQuery.RecordCount > 0;
+  with sqQuery do
+  if Result then
+  begin
+    KeyName:= FieldByName('KeyName').AsString;
+    CurrentTableName:= FieldByName('CurrentTableName').AsString;
+    CurrentFieldName:= FieldByName('CurrentFieldName').AsString;
+    OtherTableName:= FieldByName('OtherTableName').AsString;
+    OtherFieldName:= FieldByName('OtherFieldName').AsString;
+    UpdateRule:= FieldByName('UpdateRule').AsString;
+    DeleteRule:= FieldByName('DeleteRule').AsString;
+  end;
+  sqQuery.Close;
 
 end;
 
