@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, IBConnection, sqldb;
+  Buttons, IBConnection, sqldb, QueryWindow;
 
 const
   dbObjects: array [1 .. 13] of string = ('Tables', 'Generators', 'Triggers', 'Views', 'Stored Procedures', 'UDFs',
@@ -42,7 +42,15 @@ type
   private
     fdbIndex: Integer;
     dbObjectsList: array [1 .. 13] of TStringList;
-    { private declarations }
+    dbExistingObjectsList: array [1 .. 13] of TStringList;
+    MissingFieldsList: TStringList;
+    fQueryWindow: TfmQueryWindow;
+    procedure CheckMissingIndices;
+    procedure CheckMissingConstraints;
+    procedure CheckMissingDBObjects;
+    procedure CheckMissingFields;
+    procedure InitializeQueryWindow;
+    procedure ScriptMissingFields;
   public
     procedure Init(dbIndex: Integer);
     { public declarations }
@@ -57,7 +65,7 @@ implementation
 
 { TfmComparison }
 
-uses Main, SysTables, Scriptdb, QueryWindow;
+uses Main, SysTables, Scriptdb;
 
 procedure TfmComparison.cbComparedDatabaseChange(Sender: TObject);
 begin
@@ -69,12 +77,31 @@ begin
   end;
 end;
 
+procedure TfmComparison.bbStartClick(Sender: TObject);
+begin
+  CheckMissingDBObjects;
+
+  if cxTables.Checked then
+    CheckMissingIndices;
+
+  if cxTables.Checked then
+    CheckMissingConstraints;
+
+  if cxTables.Checked then
+    CheckMissingFields;
+end;
+
 procedure TfmComparison.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 var
   i: Integer;
 begin
   for i:= 1 to High(dbObjectsList) do
     dbObjectsList[i].Free;
+
+  for i:= 1 to High(dbExistingObjectsList) do
+    dbExistingObjectsList[i].Free;
+
+  MissingFieldsList.Free;
 end;
 
 procedure TfmComparison.laScriptClick(Sender: TObject);
@@ -82,7 +109,6 @@ var
   x: Integer;
   i: Integer;
   ScriptList: TStringList;
-  QueryWindow: TfmQueryWindow;
   ViewBody: string;
   Columns: string;
   SPOwner: string;
@@ -96,13 +122,17 @@ var
   KeyName, CurrentTableName, CurrentFieldName,
   OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string;
 begin
+  InitializeQueryWindow;
   meLog.Clear;
   ScriptList:= TStringList.Create;
   FieldsList:= TStringList.Create;
 
-  QueryWindow:= fmMain.ShowQueryWindow(cbComparedDatabase.ItemIndex, 'Database Differences');
-  QueryWindow.meQuery.ClearAll;
+  ScriptMissingFields;
+
   dmSysTables.Init(fdbIndex);
+
+  fQueryWindow.meQuery.Lines.Add('');
+  fQueryWindow.meQuery.Lines.Add('-- Missing db Objects');
 
   for x:= 1 to 13 do
   begin
@@ -112,8 +142,8 @@ begin
       ScriptList.Clear;
       Scriptdb.ScriptTableAsCreate(fdbIndex, dbObjectsList[x].Strings[i], ScriptList);
 
-      QueryWindow.meQuery.Lines.AddStrings(ScriptList);
-      QueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+      fQueryWindow.meQuery.Lines.Add('');
     end
     else
     if (x = 2) and cxGenerators.Checked then // Generators
@@ -121,8 +151,8 @@ begin
     begin
       ScriptList.Clear;
 
-      QueryWindow.meQuery.Lines.Add('create generator ' + dbObjectsList[x].Strings[i] + ';');
-      QueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.Add('create generator ' + dbObjectsList[x].Strings[i] + ';');
+      fQueryWindow.meQuery.Lines.Add('');
     end
     else
     if (x = 3) and cxTriggers.Checked then // Triggers
@@ -131,8 +161,8 @@ begin
       ScriptList.Clear;
       dmSysTables.ScriptTrigger(fdbIndex, dbObjectsList[x].Strings[i], ScriptList, True);
 
-      QueryWindow.meQuery.Lines.AddStrings(ScriptList);
-      QueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+      fQueryWindow.meQuery.Lines.Add('');
     end
     else
     if (x = 4) and cxViews.Checked then // Views
@@ -141,12 +171,12 @@ begin
       fmMain.GetViewInfo(fdbIndex, dbObjectsList[x].Strings[i], Columns, ViewBody);
       ScriptList.Text:= Trim(ViewBody);
 
-      QueryWindow.meQuery.Lines.Add('CREATE VIEW "' + dbObjectsList[x].Strings[i] + '" (' + Columns + ')');
-      QueryWindow.meQuery.Lines.Add('AS');
+      fQueryWindow.meQuery.Lines.Add('CREATE VIEW "' + dbObjectsList[x].Strings[i] + '" (' + Columns + ')');
+      fQueryWindow.meQuery.Lines.Add('AS');
       ScriptList.Text:= Trim(ViewBody);
-      QueryWindow.meQuery.Lines.AddStrings(ScriptList);
-      QueryWindow.meQuery.Lines.Add(' ;');
-      QueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+      fQueryWindow.meQuery.Lines.Add(' ;');
+      fQueryWindow.meQuery.Lines.Add('');
     end
     else
     if (x = 5) and cxStoredProcs.Checked then // Stored proc
@@ -159,8 +189,8 @@ begin
       ScriptList.Add('SET TERM ; ^');
       ScriptList.Add('');
 
-      QueryWindow.meQuery.Lines.AddStrings(ScriptList);
-      QueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+      fQueryWindow.meQuery.Lines.Add('');
     end
     else
     if (x = 6) and cxUDFs.Checked then // UDF
@@ -176,7 +206,7 @@ begin
         ScriptList.Add('MODULE_NAME ''' + ModuleName + ''';');
         ScriptList.Add('');
       end;
-      QueryWindow.meQuery.Lines.AddStrings(ScriptList);
+      fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
     end
     else
     if (x = 8) and cxDomains.Checked then // Domains
@@ -189,16 +219,16 @@ begin
           Line:= Line + '(' + IntToStr(DomainSize) + ')';
         Line:= Line + ' ' + DefaultValue + ';';
 
-      QueryWindow.meQuery.Lines.Add(Line);
-      QueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.Add(Line);
+      fQueryWindow.meQuery.Lines.Add('');
     end
     else
     if (x = 9) and cxRoles.Checked then // Roles
     for i:= 0 to dbObjectsList[x].Count - 1 do
     begin
       ScriptList.Clear;
-      QueryWindow.meQuery.Lines.Add('create role ' + dbObjectsList[x].Strings[i] + ';');
-      QueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.Add('create role ' + dbObjectsList[x].Strings[i] + ';');
+      fQueryWindow.meQuery.Lines.Add('');
     end
     else
     if (x = 12) and cxTables.Checked then // Indices
@@ -221,8 +251,8 @@ begin
 
         Line:= Line + ' (' + FieldsList.CommaText + ') ;';
 
-        QueryWindow.meQuery.Lines.Add(Line);
-        QueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add(Line);
+        fQueryWindow.meQuery.Lines.Add('');
       end;
 
     end
@@ -246,8 +276,8 @@ begin
         if Trim(DeleteRule) <> 'RESTRICT' then
           Line:= Line + ' on delete ' + Trim(DeleteRule);
 
-        QueryWindow.meQuery.Lines.Add(Line);
-        QueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add(Line);
+        fQueryWindow.meQuery.Lines.Add('');
       end;
 
 
@@ -257,21 +287,18 @@ begin
   end;
 
 
-  QueryWindow.Show;
+  fQueryWindow.Show;
   ScriptList.Free;
   FieldsList.Free;
   Close;
 
 end;
 
-procedure TfmComparison.bbStartClick(Sender: TObject);
+procedure TfmComparison.CheckMissingDBObjects;
 var
   List, ComparedList: TStringList;
   Count: Integer;
   x, i, j: Integer;
-  TablesList: TStringList;
-  PrimaryIndexName: string;
-  ConstraintName: string;
 begin
   List:= TStringList.Create;
   ComparedList:= TStringList.Create;
@@ -289,98 +316,109 @@ begin
      ((x = 11) and cxUsers.Checked) then
   begin
     meLog.Lines.Add('');
-    meLog.Lines.Add(dbObjects[x] + ':');
+    meLog.Lines.Add('Missing ' + dbObjects[x] + ':');
 
     List.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, x, Count);
 
     ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, x, Count);
     dbObjectsList[x].Clear;
+    dbExistingObjectsList[x].Clear;
     for i:= 0 to List.Count -1 do
-    if ComparedList.IndexOf(List[i]) = -1 then
+    if ComparedList.IndexOf(List[i]) = -1 then  // Not exist
     begin
-      meLog.Lines.Add('Missing : ' + List[i]);
+      meLog.Lines.Add(' ' + List[i]);
       dbObjectsList[x].Add(List[i]);
-    end;
+    end
+    else                                        // Exist
+      dbExistingObjectsList[x].Add(List[i]);
 
   end;
 
-  if cxTables.Checked then
-  begin
-    TablesList:= TStringList.Create;
-    TablesList.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 1, Count);
-
-    // Indices
-    meLog.Lines.Add('');
-    meLog.Lines.Add('Indices:');
-    dbObjectsList[12].Clear;
-    for i:= 0 to TablesList.Count - 1 do
-    begin
-      PrimaryIndexName:= dmSysTables.GetPrimaryKeyIndexName(fdbIndex, TablesList[i], ConstraintName);
-      List.Clear;
-      dmSysTables.GetIndices(fdbIndex, TablesList[i], PrimaryIndexName, List);
-      ComparedList.Clear;
-      if dmSysTables.GetIndices(cbComparedDatabase.ItemIndex, TablesList[i], PrimaryIndexName, ComparedList) then
-      begin
-        for j:= 0 to List.Count - 1 do
-          if ComparedList.IndexOf(List[j]) = -1 then
-          begin
-            meLog.Lines.Add('Missing: ' + List[j]);
-            dbObjectsList[12].Add(TablesList[i] + ',' + List[j]);
-          end
-      end
-      else // Table does not exist, all indices are missing
-      if List.Count > 0 then
-      for j:= 0 to List.Count - 1 do
-      begin
-        dbObjectsList[12].Add(TablesList[i] + ',' + List[j]);
-        meLog.Lines.Add('Missing: ' + List[j]);
-      end;
-
-    end;
-
-    // Constraints
-    meLog.Lines.Add('');
-    meLog.Lines.Add('Constraints:');
-    dbObjectsList[13].Clear;
-    for i:= 0 to TablesList.Count - 1 do
-    begin
-      PrimaryIndexName:= dmSysTables.GetPrimaryKeyIndexName(fdbIndex, TablesList[i], ConstraintName);
-      dmSysTables.Init(fdbIndex);
-      List.Clear;
-      dmSysTables.GetTableConstraints(TablesList[i], dmSysTables.sqQuery, List);
-      dmSysTables.sqQuery.Close;
-
-      dmSysTables.Init(cbComparedDatabase.ItemIndex);
-      ComparedList.Clear;
-
-      if dmSysTables.GetTableConstraints(TablesList[i], dmSysTables.sqQuery, ComparedList) then
-      begin
-        dmSysTables.sqQuery.Close;
-        for j:= 0 to List.Count - 1 do
-          if ComparedList.IndexOf(List[j]) = -1 then
-          begin
-            meLog.Lines.Add('Missing: ' + List[j]);
-            dbObjectsList[13].Add(TablesList[i] + ',' + List[j]);
-          end
-      end
-      else // Table does not exist, all constraints are missing
-      if List.Count > 0 then
-      for j:= 0 to List.Count - 1 do
-      begin
-        dbObjectsList[13].Add(TablesList[i] + ',' + List[j]);
-        meLog.Lines.Add('Missing: ' + List[j]);
-      end;
-
-    end;
-
-
-    TablesList.Free;
-  end;
 
   meLog.Visible:= True;
   laScript.Enabled:= True;
   ComparedList.Free;
   List.Free;
+end;
+
+procedure TfmComparison.CheckMissingFields;
+var
+  i, j: Integer;
+  FieldsList: TStringList;
+  ComparedList: TStringList;
+begin
+  FieldsList:= TStringList.Create;
+  ComparedList:= TStringList.Create;
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Missing fields');
+  MissingFieldsList.Clear;
+  for i:= 0 to dbExistingObjectsList[1].Count - 1 do
+  begin
+    dmSysTables.GetTableFields(fdbIndex, dbExistingObjectsList[1].Strings[i], FieldsList);
+    dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, dbExistingObjectsList[1].Strings[i], ComparedList);
+
+    // Get missing fields
+    for j:= 0 to FieldsList.Count - 1 do
+      if ComparedList.IndexOf(FieldsList[j]) = -1 then
+      begin
+        meLog.Lines.Add(' ' + dbExistingObjectsList[1].Strings[i] + ': ' + FieldsList[j]);
+        MissingFieldsList.Add(dbExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
+      end;
+  end;
+
+  FieldsList.Free;
+  ComparedList.Free;
+
+end;
+
+procedure TfmComparison.InitializeQueryWindow;
+begin
+  fQueryWindow:= fmMain.ShowQueryWindow(cbComparedDatabase.ItemIndex, 'Database Differences');
+  fQueryWindow.meQuery.ClearAll;
+end;
+
+procedure TfmComparison.ScriptMissingFields;
+var
+  i: Integer;
+  ATableName, AFieldName: string;
+  Line: string;
+  FieldSize: Integer;
+  IsNull: Integer;
+  DefaultValue, Description: string;
+  FieldType: string;
+begin
+  fQueryWindow.meQuery.Lines.Add('');
+  fQueryWindow.meQuery.Lines.Add('-- Missing fields');
+  for i:= 0 to MissingFieldsList.Count - 1 do
+  begin
+    Line:= MissingFieldsList[i];
+    ATableName:= copy(Line, 1, Pos(',', Line) - 1);
+    System.Delete(Line, 1, Pos(',', Line));
+    AFieldName:= Line;
+    dmSysTables.GetFieldInfo(fdbIndex, ATableName, AFieldName, FieldType, FieldSize, IsNull, DefaultValue, Description);
+
+    // Script new field
+    Line:= FieldType;
+    if Pos('CHAR', Line) > 0 then
+      Line:= Line + '(' + IntToStr(FieldSize) + ')';
+
+    // Default value
+    if Trim(DefaultValue) <> '' then
+    begin
+      if (Pos('CHAR', FieldType) > 0) and (Pos('''', DefaultValue) = 0) then
+        Line:= Line + ' ''' + DefaultValue + ''''
+      else
+        Line:= Line + ' ' + DefaultValue;
+    end;
+
+    // Null/Not null
+    if IsNull = 1 then
+      Line:= Line + ' not null';
+
+    fQueryWindow.meQuery.Lines.Add('ALTER TABLE ' + ATableName + ' ADD ' + AFieldName + ' ' + Line + ';');
+
+  end;
+
 end;
 
 procedure TfmComparison.Init(dbIndex: Integer);
@@ -413,6 +451,127 @@ begin
 
   for i:= 1 to High(dbObjectsList) do
     dbObjectsList[i]:= TStringList.Create;
+
+  for i:= 1 to High(dbExistingObjectsList) do
+    dbExistingObjectsList[i]:= TStringList.Create;
+
+  MissingFieldsList:= TStringList.Create;
+
+end;
+
+procedure TfmComparison.CheckMissingIndices;
+var
+  i, j: Integer;
+  List, ComparedList: TStringList;
+  TablesList: TStringList;
+  PrimaryIndexName: string;
+  ConstraintName: string;
+  Count: Integer;
+begin
+  List:= TStringList.Create;
+  ComparedList:= TStringList.Create;
+  TablesList:= TStringList.Create;
+  TablesList.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 1, Count);
+
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Missing Indices:');
+  dbObjectsList[12].Clear;
+  try
+    for i:= 0 to TablesList.Count - 1 do
+    begin
+      PrimaryIndexName:= dmSysTables.GetPrimaryKeyIndexName(fdbIndex, TablesList[i], ConstraintName);
+      List.Clear;
+      dmSysTables.GetIndices(fdbIndex, TablesList[i], PrimaryIndexName, List);
+      ComparedList.Clear;
+      if dmSysTables.GetIndices(cbComparedDatabase.ItemIndex, TablesList[i], PrimaryIndexName, ComparedList) then
+      begin
+        for j:= 0 to List.Count - 1 do
+          if ComparedList.IndexOf(List[j]) = -1 then
+          begin
+            meLog.Lines.Add(' ' + List[j]);
+            dbObjectsList[12].Add(TablesList[i] + ',' + List[j]);
+          end
+      end
+      else // Table does not exist, all indices are missing
+      if List.Count > 0 then
+      for j:= 0 to List.Count - 1 do
+      begin
+        dbObjectsList[12].Add(TablesList[i] + ',' + List[j]);
+        meLog.Lines.Add(' ' + List[j]);
+      end;
+
+    end;
+
+
+  except
+  on e: exception do
+  begin
+    meLog.Lines.Add('---- Error while comparing indices: ' + e.Message);
+  end;
+  end;
+  List.Free;
+  ComparedList.Free;
+  TablesList.Free;
+
+end;
+
+procedure TfmComparison.CheckMissingConstraints;
+var
+  i, j: Integer;
+  List, ComparedList: TStringList;
+  TablesList: TStringList;
+  Count: Integer;
+begin
+  List:= TStringList.Create;
+  ComparedList:= TStringList.Create;
+  TablesList:= TStringList.Create;
+  TablesList.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 1, Count);
+
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Missing Constraints:');
+  try
+    dbObjectsList[13].Clear;
+    for i:= 0 to TablesList.Count - 1 do
+    begin
+      dmSysTables.Init(fdbIndex);
+      List.Clear;
+      dmSysTables.GetTableConstraints(TablesList[i], dmSysTables.sqQuery, List);
+      dmSysTables.sqQuery.Close;
+
+      dmSysTables.Init(cbComparedDatabase.ItemIndex);
+      ComparedList.Clear;
+
+      if dmSysTables.GetTableConstraints(TablesList[i], dmSysTables.sqQuery, ComparedList) then
+      begin
+        dmSysTables.sqQuery.Close;
+        for j:= 0 to List.Count - 1 do
+          if ComparedList.IndexOf(List[j]) = -1 then
+          begin
+            meLog.Lines.Add(' ' + List[j]);
+            dbObjectsList[13].Add(TablesList[i] + ',' + List[j]);
+          end
+      end
+      else // Table does not exist, all constraints are missing
+      if List.Count > 0 then
+      for j:= 0 to List.Count - 1 do
+      begin
+        dbObjectsList[13].Add(TablesList[i] + ',' + List[j]);
+        meLog.Lines.Add(' ' + List[j]);
+      end;
+
+    end;
+
+
+  except
+  on e: exception do
+  begin
+    meLog.Lines.Add('---- Error while comparing constraints: ' + e.Message);
+  end;
+  end;
+
+  List.Free;
+  ComparedList.Free;
+  TablesList.Free;
 
 end;
 

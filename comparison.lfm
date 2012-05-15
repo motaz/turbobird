@@ -70,6 +70,7 @@ object fmComparison: TfmComparison
     Top = 226
     Width = 603
     Anchors = [akTop, akLeft, akRight, akBottom]
+    Font.Name = 'Courier 10 Pitch'
     Font.Style = [fsUnderline]
     ParentFont = False
     ReadOnly = True

@@ -62,6 +62,9 @@ type
     function GetIndexInfo(dbIndex: Integer; ATableName, AIndexName: string;
       var FieldsList: TStringList; var Unique, Ascending: Boolean): Boolean;
 
+    procedure GetTableFields(dbIndex: Integer; ATableName: string; FieldsList: TStringList);
+
+
     { public declarations }
   end; 
 
@@ -720,14 +723,15 @@ begin
   Init(dbIndex);
   sqQuery.Close;
   sqQuery.SQL.Text:= 'SELECT RDB$Indices.*, RDB$INDEX_SEGMENTS.RDB$FIELD_NAME AS field_name, ' + #10 +
-     'RDB$INDICES.RDB$DESCRIPTION AS description, ' +#10 +
-     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position ' +#10 +
-     'FROM RDB$INDEX_SEGMENTS ' +#10 +
-     'LEFT JOIN RDB$INDICES ON RDB$INDICES.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' +#10 +
-     'LEFT JOIN RDB$RELATION_CONSTRAINTS ON RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' +#10 +
-     ' WHERE UPPER(RDB$INDICES.RDB$RELATION_NAME)=''' + UpperCase(ATablename) + '''         -- table name ' +#10 +
-     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' -- index name ' +#10 +
-     '--  AND RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE IS NULL ' +#10 +
+     'RDB$INDICES.RDB$DESCRIPTION AS description, ' + #10 +
+     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position ' + #10 +
+     'FROM RDB$INDEX_SEGMENTS ' + #10 +
+     'LEFT JOIN RDB$INDICES ON RDB$INDICES.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' + #10 +
+     'LEFT JOIN RDB$RELATION_CONSTRAINTS ON RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME '
+     + #10 +
+     ' WHERE UPPER(RDB$INDICES.RDB$RELATION_NAME)=''' + UpperCase(ATablename) + '''         -- table name ' + #10 +
+     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' -- index name ' + #10 +
+     '--  AND RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE IS NULL ' + #10 +
      'ORDER BY RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION;';
   sqQuery.Open;
   Result:= sqQuery.FieldCount > 0;
@@ -744,6 +748,59 @@ begin
     sqQuery.Next;
   end;
   sqQuery.Close;
+end;
+
+procedure TdmSysTables.GetTableFields(dbIndex: Integer; ATableName: string; FieldsList: TStringList);
+var
+  FieldName: string;
+begin
+  Init(dbIndex);
+  sqQuery.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
+      '  r.RDB$DESCRIPTION AS field_description, ' +
+      '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
+      '  r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
+      '  f.RDB$FIELD_LENGTH AS field_length, ' +
+      '  f.RDB$FIELD_PRECISION AS field_precision, ' +
+      '  f.RDB$FIELD_SCALE AS field_scale, ' +
+      '  f.RDB$FIELD_TYPE as Field_Type_Int, ' +
+      '  CASE f.RDB$FIELD_TYPE ' +
+      '    WHEN 261 THEN ''BLOB'' ' +
+      '    WHEN 14 THEN ''CHAR'' ' +
+      '    WHEN 40 THEN ''CSTRING''  ' +
+      '    WHEN 11 THEN ''D_FLOAT'' ' +
+      '    WHEN 27 THEN ''DOUBLE Precision'' ' +
+      '    WHEN 10 THEN ''FLOAT'' ' +
+      '    WHEN 16 THEN ''BIGINT'' ' +
+      '    WHEN 8 THEN ''INTEGER'' ' +
+      '    WHEN 9 THEN ''QUAD'' ' +
+      '    WHEN 7 THEN ''SMALLINT'' ' +
+      '    WHEN 12 THEN ''DATE'' ' +
+      '    WHEN 13 THEN ''TIME'' ' +
+      '    WHEN 35 THEN ''TIMESTAMP'' ' +
+      '    WHEN 37 THEN ''VARCHAR'' ' +
+      '    ELSE ''UNKNOWN'' ' +
+      '  END AS field_type_Str, ' +
+      '  f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
+      '  coll.RDB$COLLATION_NAME AS field_collation, ' +
+      '  cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
+      ' f.RDB$COMPUTED_Source AS Computed_Source ' +
+      ' FROM RDB$RELATION_FIELDS r ' +
+      ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
+      ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
+      ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
+      ' WHERE r.RDB$RELATION_NAME=''' + ATableName + '''  ' +
+      ' ORDER BY r.RDB$FIELD_POSITION;';
+
+    sqQuery.Open;
+    FieldsList.Clear;
+    while not sqQuery.EOF do
+    begin
+      FieldName:= Trim(sqQuery.FieldByName('field_name').AsString);
+      if FieldsList.IndexOf(FieldName) = -1 then
+        FieldsList.Add(FieldName);
+      sqQuery.Next;
+    end;
+    sqQuery.Close;
 end;
 
 initialization
