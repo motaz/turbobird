@@ -62,6 +62,8 @@ type
     tbRun: TToolButton;
     tbCommit: TToolButton;
     tbRollback: TToolButton;
+    tbCommitRetaining: TToolButton;
+    tbRollbackRetaining: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     tbHistory: TToolButton;
@@ -95,11 +97,13 @@ type
       TheException: Exception; var Continue: boolean);
     procedure tbCloseClick(Sender: TObject);
     procedure tbCommitClick(Sender: TObject);
+    procedure tbCommitRetainingClick(Sender: TObject);
     procedure tbHistoryClick(Sender: TObject);
     procedure tbMenuClick(Sender: TObject);
     procedure tbNewClick(Sender: TObject);
     procedure tbOpenClick(Sender: TObject);
     procedure tbRollbackClick(Sender: TObject);
+    procedure tbRollbackRetainingClick(Sender: TObject);
     procedure tbRunClick(Sender: TObject);
     procedure tbSaveClick(Sender: TObject);
   private
@@ -170,6 +174,11 @@ begin
   OnCommit:= nil;
 end;
 
+procedure TfmQueryWindow.tbCommitRetainingClick(Sender: TObject);
+begin
+  SqlTrans.CommitRetaining;
+end;
+
 procedure TfmQueryWindow.tbHistoryClick(Sender: TObject);
 begin
   fmSQLHistory.Init(RegRec.Title, Self);
@@ -215,6 +224,11 @@ begin
   ATab.ImageIndex:= 5;
   meResult.Lines.Add('Rollback');
   meResult.Font.Color:= $AA6666;
+end;
+
+procedure TfmQueryWindow.tbRollbackRetainingClick(Sender: TObject);
+begin
+  SqlTrans.RollbackRetaining;
 end;
 
 procedure TfmQueryWindow.tbRunClick(Sender: TObject);

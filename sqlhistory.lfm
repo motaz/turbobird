@@ -1,5 +1,5 @@
 object fmSQLHistory: TfmSQLHistory
-  Left = 668
+  Left = 565
   Height = 453
   Top = 354
   Width = 873
@@ -58,9 +58,9 @@ object fmSQLHistory: TfmSQLHistory
     TabOrder = 3
     object cxAfterDate: TCheckBox
       Left = 6
-      Height = 22
+      Height = 24
       Top = 7
-      Width = 147
+      Width = 152
       Caption = 'Only after the date'
       OnClick = cxAfterDateClick
       TabOrder = 0
@@ -121,13 +121,13 @@ object fmSQLHistory: TfmSQLHistory
       Left = 307
       Height = 18
       Top = 5
-      Width = 60
+      Width = 63
       Caption = 'SQL Type'
       ParentColor = False
     end
     object cbSQLType: TComboBox
       Left = 379
-      Height = 31
+      Height = 27
       Top = -2
       Width = 100
       ItemHeight = 0

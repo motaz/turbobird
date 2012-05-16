@@ -67,6 +67,7 @@ begin
     SQLStatement:= SQLStatement + ';';
 
   (fQueryForm as TfmQueryWindow).meQuery.Lines.Text:= (fQueryForm as TfmQueryWindow).meQuery.Lines.Text + SQLStatement;
+  Close;
 end;
 
 procedure TfmSQLHistory.Button1Click(Sender: TObject);

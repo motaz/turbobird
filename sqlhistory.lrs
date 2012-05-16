@@ -1,7 +1,7 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TfmSQLHistory','FORMDATA',[
-  'TPF0'#13'TfmSQLHistory'#12'fmSQLHistory'#4'Left'#3#156#2#6'Height'#3#197#1#3
+  'TPF0'#13'TfmSQLHistory'#12'fmSQLHistory'#4'Left'#3'5'#2#6'Height'#3#197#1#3
   +'Top'#3'b'#1#5'Width'#3'i'#3#7'Caption'#6#11'SQL History'#12'ClientHeight'#3
   +#197#1#11'ClientWidth'#3'i'#3#7'OnClose'#7#9'FormClose'#8'OnCreate'#7#10'For'
   +'mCreate'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6#6'0.9.31'#0#7'TD'
@@ -20,8 +20,8 @@ LazarusResources.Add('TfmSQLHistory','FORMDATA',[
   +'roupBox'#9'GroupBox1'#4'Left'#3#19#1#6'Height'#2'8'#3'Top'#3#136#1#5'Width'
   +#3'I'#2#7'Anchors'#11#6'akLeft'#7'akRight'#8'akBottom'#0#7'Caption'#6#19'Exp'
   +'ort to text file'#12'ClientHeight'#2'%'#11'ClientWidth'#3'E'#2#8'TabOrder'#2
-  +#3#0#9'TCheckBox'#11'cxAfterDate'#4'Left'#2#6#6'Height'#2#22#3'Top'#2#7#5'Wi'
-  +'dth'#3#147#0#7'Caption'#6#19'Only after the date'#7'OnClick'#7#16'cxAfterDa'
+  +#3#0#9'TCheckBox'#11'cxAfterDate'#4'Left'#2#6#6'Height'#2#24#3'Top'#2#7#5'Wi'
+  +'dth'#3#152#0#7'Caption'#6#19'Only after the date'#7'OnClick'#7#16'cxAfterDa'
   +'teClick'#8'TabOrder'#2#0#0#0#9'TDateEdit'#9'DateEdit1'#4'Left'#3#163#0#6'He'
   +'ight'#2#27#3'Top'#2#2#5'Width'#2'h'#23'CalendarDisplaySettings'#11#14'dsSho'
   +'wHeadings'#14'dsShowDayNames'#0#9'OKCaption'#6#2'OK'#13'CancelCaption'#6#6
@@ -81,8 +81,8 @@ LazarusResources.Add('TfmSQLHistory','FORMDATA',[
   +#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
   +#255#255#255#0#255#255#255#0#9'NumGlyphs'#2#0#9'MaxLength'#2#0#8'TabOrder'#2
   +#1#7'Visible'#8#0#0#6'TLabel'#6'Label1'#4'Left'#3'3'#1#6'Height'#2#18#3'Top'
-  +#2#5#5'Width'#2'<'#7'Caption'#6#8'SQL Type'#11'ParentColor'#8#0#0#9'TComboBo'
-  +'x'#9'cbSQLType'#4'Left'#3'{'#1#6'Height'#2#31#3'Top'#2#254#5'Width'#2'd'#10
+  +#2#5#5'Width'#2'?'#7'Caption'#6#8'SQL Type'#11'ParentColor'#8#0#0#9'TComboBo'
+  +'x'#9'cbSQLType'#4'Left'#3'{'#1#6'Height'#2#27#3'Top'#2#254#5'Width'#2'd'#10
   +'ItemHeight'#2#0#9'ItemIndex'#2#0#13'Items.Strings'#1#6#3'All'#6#7'DDL,DML'#6
   +#3'DDL'#6#3'DML'#6#6'Select'#0#5'Style'#7#14'csDropDownList'#8'TabOrder'#2#2
   +#4'Text'#6#3'All'#0#0#7'TBitBtn'#8'bbExport'#4'Left'#3#243#1#6'Height'#2#30#3
