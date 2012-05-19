@@ -177,6 +177,9 @@ end;
 procedure TfmQueryWindow.tbCommitRetainingClick(Sender: TObject);
 begin
   SqlTrans.CommitRetaining;
+  if OnCommit <> nil then
+    OnCommit(self);
+  OnCommit:= nil;
 end;
 
 procedure TfmQueryWindow.tbHistoryClick(Sender: TObject);

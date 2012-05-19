@@ -16,47 +16,69 @@ type
     bbApplyRoles: TBitBtn;
     bbApplyTable: TBitBtn;
     bbApplyProc: TBitBtn;
+    bbApplyView: TBitBtn;
     bbClose: TBitBtn;
     BitBtn1: TBitBtn;
     cbRolesUser: TComboBox;
     cbTables: TComboBox;
+    cbViews: TComboBox;
     cbUsers: TComboBox;
     cbProcUsers: TComboBox;
+    cbViewsUsers: TComboBox;
+    cxViewAll: TCheckBox;
+    cxViewAllGrant: TCheckBox;
+    cxViewDelete: TCheckBox;
+    cxViewDeleteGrant: TCheckBox;
+    cxViewInsert: TCheckBox;
+    cxViewInsertGrant: TCheckBox;
     cxProcGrant: TCheckBox;
     clbProcedures: TCheckListBox;
     clbRoles: TCheckListBox;
+    cxViewReferences: TCheckBox;
+    cxViewReferencesGrant: TCheckBox;
     cxRoleGrant: TCheckBox;
     cxSelect: TCheckBox;
     cxInsert: TCheckBox;
     cxDelete: TCheckBox;
     cxReferences: TCheckBox;
     cxAll: TCheckBox;
+    cxViewSelect: TCheckBox;
     cxSelectGrant: TCheckBox;
     cxInsertGrant: TCheckBox;
     cxAllGrant: TCheckBox;
+    cxViewSelectGrant: TCheckBox;
+    cxViewUpdate: TCheckBox;
     cxUpdateGrant: TCheckBox;
     cxDeleteGrant: TCheckBox;
     cxReferencesGrant: TCheckBox;
     cxUpdate: TCheckBox;
+    cxViewUpdateGrant: TCheckBox;
     Label1: TLabel;
+    Label10: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
     PageControl1: TPageControl;
+    tsViews: TTabSheet;
     tsRoles: TTabSheet;
     tsProcedures: TTabSheet;
     tsTables: TTabSheet;
     procedure bbApplyProcClick(Sender: TObject);
     procedure bbApplyRolesClick(Sender: TObject);
     procedure bbApplyTableClick(Sender: TObject);
+    procedure bbApplyViewClick(Sender: TObject);
     procedure bbCloseClick(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
     procedure cbProcUsersChange(Sender: TObject);
     procedure cbRolesUserChange(Sender: TObject);
     procedure cbTablesChange(Sender: TObject);
+    procedure cbViewsChange(Sender: TObject);
+    procedure cbViewsUsersChange(Sender: TObject);
     procedure clbProceduresClick(Sender: TObject);
     procedure clbProceduresKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -75,11 +97,12 @@ type
     OrigRoleGrant: array of Boolean;
     fOnCommitProcedure: TNotifyEvent;
     procedure UpdatePermissions;
+    procedure UpdateViewsPermissions;
     procedure UpdateProcPermissions;
     procedure UpdateRolePermissions;
-    procedure ComposeTablePermissionSQL(OptionName: string; Grant, WithGrant: Boolean; var List: TStringList);
+    procedure ComposeTablePermissionSQL(ATableName: string; OptionName: string; Grant, WithGrant: Boolean; var List: TStringList);
   public
-    procedure Init(dbIndex: integer; ATableName, AUserName: string; UserType: Integer;
+    procedure Init(dbIndex: Integer; ATableName, AUserName: string; UserType: Integer;
       OnCommitProcedure: TNotifyEvent = nil);
     { public declarations }
   end;
@@ -124,6 +147,32 @@ begin
     cxUpdateGrant.Checked:= Pos('UG', Permissions) > 0;;
     cxDeleteGrant.Checked:= Pos('DG', Permissions) > 0;;
     cxReferencesGrant.Checked:= Pos('RG', Permissions) > 0;;
+  end;
+
+end;
+
+procedure TfmPermissionManage.UpdateViewsPermissions;
+var
+  Permissions: string;
+  ObjType: Integer;
+begin
+  if (cbViewsUsers.Text <> '') and (cbViews.Text <> '') then
+  begin;
+    Permissions := dmSysTables.GetObjectUserPermission(fdbIndex, cbViews.Text, cbViewsUsers.Text, ObjType);
+    cxViewAll.Checked:= False;
+    cxViewAllGrant.Checked:= False;
+
+    cxViewSelect.Checked := Pos('S', Permissions) > 0;
+    cxViewInsert.Checked := Pos('I', Permissions) > 0;
+    cxViewUpdate.Checked := Pos('U', Permissions) > 0;
+    cxViewDelete.Checked := Pos('D', Permissions) > 0;
+    cxViewReferences.Checked:= Pos('R', Permissions) > 0;
+
+    cxViewSelectGrant.Checked:= Pos('SG', Permissions) > 0;;
+    cxViewInsertGrant.Checked:= Pos('IG', Permissions) > 0;;
+    cxViewUpdateGrant.Checked:= Pos('UG', Permissions) > 0;;
+    cxViewDeleteGrant.Checked:= Pos('DG', Permissions) > 0;;
+    cxViewReferencesGrant.Checked:= Pos('RG', Permissions) > 0;;
   end;
 
 end;
@@ -205,7 +254,7 @@ begin
 
 end;
 
-procedure TfmPermissionManage.ComposeTablePermissionSQL(OptionName: string; Grant, WithGrant: Boolean;
+procedure TfmPermissionManage.ComposeTablePermissionSQL(ATableName: string; OptionName: string; Grant, WithGrant: Boolean;
   var List: TStringList);
 var
   Line: string;
@@ -223,7 +272,7 @@ begin
     Command:= 'revoke ';
   end;
 
-  Line:= Command +  OptionName + ' on ' + cbTables.Text + ToFrom + cbUsers.Text;
+  Line:= Command +  OptionName + ' on ' + ATableName + ToFrom + cbUsers.Text;
   if Grant and WithGrant then
       Line:= Line + ' with grant option';
 
@@ -241,14 +290,14 @@ begin
     List:= TStringList.Create;
 
     if cxAll.Checked then
-      ComposeTablePermissionSQL('All', cxAll.Checked, cxAllGrant.Checked, List)
+      ComposeTablePermissionSQL(cbTables.Text, 'All', cxAll.Checked, cxAllGrant.Checked, List)
     else
     begin
-      ComposeTablePermissionSQL('Select', cxSelect.Checked, cxSelectGrant.Checked, List);
-      ComposeTablePermissionSQL('Insert', cxInsert.Checked, cxInsertGrant.Checked, List);
-      ComposeTablePermissionSQL('Update', cxUpdate.Checked, cxUpdateGrant.Checked, List);
-      ComposeTablePermissionSQL('Delete', cxDelete.Checked, cxDeleteGrant.Checked, List);
-      ComposeTablePermissionSQL('References', cxReferences.Checked, cxReferencesGrant.Checked, List);
+      ComposeTablePermissionSQL(cbTables.Text, 'Select', cxSelect.Checked, cxSelectGrant.Checked, List);
+      ComposeTablePermissionSQL(cbTables.Text, 'Insert', cxInsert.Checked, cxInsertGrant.Checked, List);
+      ComposeTablePermissionSQL(cbTables.Text, 'Update', cxUpdate.Checked, cxUpdateGrant.Checked, List);
+      ComposeTablePermissionSQL(cbTables.Text, 'Delete', cxDelete.Checked, cxDeleteGrant.Checked, List);
+      ComposeTablePermissionSQL(cbTables.Text, 'References', cxReferences.Checked, cxReferencesGrant.Checked, List);
     end;
 
     fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbTables.Text, List.Text, fOnCommitProcedure);
@@ -258,6 +307,35 @@ begin
   end
   else
     ShowMessage('You should enter user/role and a table');
+end;
+
+procedure TfmPermissionManage.bbApplyViewClick(Sender: TObject);
+var
+    List: TStringList;
+begin
+  if (cbViewsUsers.Text <> '') and (cbViews.ItemIndex <> -1) then
+  begin
+    List:= TStringList.Create;
+
+    if cxViewAll.Checked then
+      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'All', cxViewAll.Checked, cxViewAllGrant.Checked, List)
+    else
+    begin
+      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Select', cxViewSelect.Checked, cxViewSelectGrant.Checked, List);
+      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Insert', cxViewInsert.Checked, cxViewInsertGrant.Checked, List);
+      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Update', cxViewUpdate.Checked, cxViewUpdateGrant.Checked, List);
+      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Delete', cxViewDelete.Checked, cxViewDeleteGrant.Checked, List);
+      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'References', cxViewReferences.Checked, cxViewReferencesGrant.Checked, List);
+    end;
+
+    fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbViews.Text, List.Text, fOnCommitProcedure);
+    List.Free;
+    Close;
+    Parent.Free;
+  end
+  else
+    ShowMessage('You should enter user/role and a table');
+
 end;
 
 procedure TfmPermissionManage.bbCloseClick(Sender: TObject);
@@ -359,6 +437,16 @@ begin
   UpdatePermissions;
 end;
 
+procedure TfmPermissionManage.cbViewsChange(Sender: TObject);
+begin
+  UpdateViewsPermissions;
+end;
+
+procedure TfmPermissionManage.cbViewsUsersChange(Sender: TObject);
+begin
+  UpdateViewsPermissions;
+end;
+
 procedure TfmPermissionManage.clbProceduresClick(Sender: TObject);
 var
   Index: Integer;
@@ -429,12 +517,17 @@ begin
   fdbIndex := dbIndex;
   cbUsers.Text := AUserName;
   cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+  cbViews.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 4, Count);
   cbTables.Text:= ATableName;
   cbProcUsers.Text:= AUserName;
+  cbViewsUsers.Text:= AUserName;
 
   cbUsers.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count) + ',' +
     dmSysTables.GetDBObjectNames(dbIndex, 11, Count);
   cbProcUsers.Items.CommaText:= cbUsers.Items.CommaText;
+  cbViewsUsers.Items.CommaText:= cbUsers.Items.CommaText;
+
+
 
   // Update table permissions
   UpdatePermissions;

@@ -16,20 +16,20 @@ object fmTableManage: TfmTableManage
     Height = 413
     Top = 29
     Width = 817
-    ActivePage = tsFields
+    ActivePage = tsIndices
     Anchors = [akTop, akLeft, akRight, akBottom]
     Images = ImageList1
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     object tsFields: TTabSheet
       Caption = 'Fields'
-      ClientHeight = 378
-      ClientWidth = 811
+      ClientHeight = 382
+      ClientWidth = 813
       object sgFields: TStringGrid
         Left = 0
-        Height = 335
+        Height = 339
         Top = 0
-        Width = 811
+        Width = 813
         Align = alTop
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 7
@@ -82,7 +82,7 @@ object fmTableManage: TfmTableManage
       object bbEdit: TBitBtn
         Left = 14
         Height = 30
-        Top = 340
+        Top = 344
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Edit'
@@ -93,7 +93,7 @@ object fmTableManage: TfmTableManage
       object bbNew: TBitBtn
         Left = 104
         Height = 30
-        Top = 340
+        Top = 344
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'New'
@@ -104,7 +104,7 @@ object fmTableManage: TfmTableManage
       object edDrop: TBitBtn
         Left = 240
         Height = 30
-        Top = 340
+        Top = 344
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Drop'
@@ -114,9 +114,9 @@ object fmTableManage: TfmTableManage
         TabOrder = 3
       end
       object bbRefresh: TBitBtn
-        Left = 717
+        Left = 719
         Height = 30
-        Top = 340
+        Top = 344
         Width = 94
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -128,11 +128,11 @@ object fmTableManage: TfmTableManage
     end
     object tsIndices: TTabSheet
       Caption = 'Indices'
-      ClientHeight = 378
-      ClientWidth = 811
+      ClientHeight = 382
+      ClientWidth = 813
       ImageIndex = 2
       object bbRefreshIndices: TBitBtn
-        Left = 614
+        Left = 616
         Height = 30
         Top = 11
         Width = 88
@@ -147,7 +147,7 @@ object fmTableManage: TfmTableManage
         Left = -1
         Height = 139
         Top = -2
-        Width = 604
+        Width = 606
         Anchors = [akTop, akLeft, akRight]
         Columns = <        
           item
@@ -195,13 +195,13 @@ object fmTableManage: TfmTableManage
       end
       object GroupBox1: TGroupBox
         Left = -2
-        Height = 232
+        Height = 236
         Top = 139
-        Width = 605
+        Width = 607
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = 'Manage'
-        ClientHeight = 213
-        ClientWidth = 601
+        ClientHeight = 217
+        ClientWidth = 603
         TabOrder = 3
         object Label2: TLabel
           Left = 6
@@ -230,9 +230,9 @@ object fmTableManage: TfmTableManage
         end
         object cxUnique: TCheckBox
           Left = 254
-          Height = 22
+          Height = 24
           Top = 95
-          Width = 71
+          Width = 73
           Caption = 'Unique'
           TabOrder = 1
         end
@@ -294,13 +294,13 @@ object fmTableManage: TfmTableManage
     end
     object tsConstraints: TTabSheet
       Caption = 'Constraints'
-      ClientHeight = 378
-      ClientWidth = 811
+      ClientHeight = 382
+      ClientWidth = 813
       ImageIndex = 3
       object bbRefreshConstraint: TBitBtn
-        Left = 695
+        Left = 697
         Height = 30
-        Top = 339
+        Top = 343
         Width = 99
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -311,9 +311,9 @@ object fmTableManage: TfmTableManage
       end
       object sgConstraints: TStringGrid
         Left = -1
-        Height = 329
+        Height = 333
         Top = -1
-        Width = 813
+        Width = 815
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 7
         Columns = <        
@@ -354,7 +354,7 @@ object fmTableManage: TfmTableManage
       object bbNewConstraint: TBitBtn
         Left = 6
         Height = 30
-        Top = 339
+        Top = 343
         Width = 119
         Anchors = [akLeft, akBottom]
         Caption = 'New Constraint'
@@ -365,7 +365,7 @@ object fmTableManage: TfmTableManage
       object bbDropConstraint: TBitBtn
         Left = 144
         Height = 30
-        Top = 339
+        Top = 343
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Drop'
@@ -377,14 +377,14 @@ object fmTableManage: TfmTableManage
     end
     object tsTriggers: TTabSheet
       Caption = 'Triggers'
-      ClientHeight = 378
-      ClientWidth = 811
+      ClientHeight = 382
+      ClientWidth = 813
       ImageIndex = 1
       object sgTriggers: TStringGrid
         Left = 0
-        Height = 320
+        Height = 324
         Top = -1
-        Width = 793
+        Width = 795
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 2
         Columns = <        
@@ -404,9 +404,9 @@ object fmTableManage: TfmTableManage
         TabOrder = 0
       end
       object bbRefreshTriggers: TBitBtn
-        Left = 697
+        Left = 699
         Height = 30
-        Top = 333
+        Top = 337
         Width = 87
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -416,9 +416,9 @@ object fmTableManage: TfmTableManage
         TabOrder = 1
       end
       object bbNewTrigger: TBitBtn
-        Left = 7
+        Left = 6
         Height = 30
-        Top = 331
+        Top = 334
         Width = 87
         Anchors = [akLeft, akBottom]
         Caption = 'Add New'
@@ -429,7 +429,7 @@ object fmTableManage: TfmTableManage
       object bbEditTrigger: TBitBtn
         Left = 110
         Height = 30
-        Top = 331
+        Top = 334
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Edit'
@@ -440,7 +440,7 @@ object fmTableManage: TfmTableManage
       object bbDropTrigger: TBitBtn
         Left = 200
         Height = 30
-        Top = 331
+        Top = 335
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Drop'
@@ -452,14 +452,14 @@ object fmTableManage: TfmTableManage
     end
     object tsPermissions: TTabSheet
       Caption = 'Permissions'
-      ClientHeight = 378
-      ClientWidth = 811
+      ClientHeight = 382
+      ClientWidth = 813
       ImageIndex = 4
       object sgPermissions: TStringGrid
         Left = 0
-        Height = 320
+        Height = 324
         Top = -3
-        Width = 810
+        Width = 812
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 12
         Columns = <        
@@ -527,7 +527,7 @@ object fmTableManage: TfmTableManage
       object edEditPermission: TBitBtn
         Left = 6
         Height = 30
-        Top = 335
+        Top = 339
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Edit'
@@ -536,9 +536,9 @@ object fmTableManage: TfmTableManage
         TabOrder = 1
       end
       object bbRefreshPermissions: TBitBtn
-        Left = 697
+        Left = 699
         Height = 30
-        Top = 335
+        Top = 339
         Width = 87
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'
@@ -550,7 +550,7 @@ object fmTableManage: TfmTableManage
       object bbAddUser: TBitBtn
         Left = 90
         Height = 30
-        Top = 335
+        Top = 339
         Width = 125
         Anchors = [akLeft, akBottom]
         Caption = 'Add User / Role'

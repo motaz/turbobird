@@ -49,7 +49,7 @@ type
     function GetDomainTypeSize(dbIndex: Integer; DomainTypeName: string): Integer;
 
     function GetFieldInfo(dbIndex: Integer; TableName, FieldName: string; var FieldType: string;
-      var Size, IsNull: Integer; var DefaultValue, Description : string): Boolean;
+      var FieldSize: Integer; var NotNull: Boolean; var DefaultValue, Description : string): Boolean;
 
     function GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet, CreationDate: string;
       var ODSVerMajor, ODSVerMinor, Pages, PageSize: Integer; var ProcessList: TStringList): Boolean;
@@ -584,7 +584,7 @@ end;
 
 
 function TdmSysTables.GetFieldInfo(dbIndex: Integer; TableName, FieldName: string; var FieldType: string;
-  var Size, IsNull: Integer; var DefaultValue, Description: string): Boolean;
+  var FieldSize: Integer; var NotNull: Boolean; var DefaultValue, Description: string): Boolean;
 begin
   Init(dbIndex);
   sqQuery.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
@@ -628,8 +628,8 @@ begin
   with sqQuery do
   begin
     FieldType:= Trim(FieldByName('Field_Type_Str').AsString);
-    Size:= FieldByName('Field_Length').AsInteger;
-    IsNull:= FieldByName('Field_not_null_constraint').AsInteger;
+    FieldSize:= FieldByName('Field_Length').AsInteger;
+    NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';
     DefaultValue:= FieldByName('Field_Default_Value').AsString;
     Description:= FieldByName('Field_Description').AsString;
   end;

@@ -482,18 +482,19 @@ var
   dbIndex: Integer;
   FieldName: string;
   FieldType, DefaultValue: string;
-  FSize, IsNull: Integer;
+  FSize: Integer;
   Description: string;
+  NotNull: Boolean;
 begin
   SelNode:= tvMain.Selected;
   dbIndex:= SelNode.Parent.Parent.Parent.OverlayIndex;
   FieldName:= Copy(SelNode.Text, 1, Pos(' ', SelNode.Text) - 1);
-  if dmSysTables.GetFieldInfo(dbIndex, SelNode.Parent.Text, FieldName, FieldType, FSize, IsNull,
+  if dmSysTables.GetFieldInfo(dbIndex, SelNode.Parent.Text, FieldName, FieldType, FSize, NotNull,
     DefaultValue, Description) then
   begin
     fmNewEditField:= TfmNewEditField.Create(nil);
     fmNewEditField.Init(dbIndex, SelNode.Parent.Text, foEdit, FieldName, FieldType, DefaultValue, Description, FSize,
-      SelNode.OverlayIndex, (IsNull <> 1),  nil);
+      SelNode.OverlayIndex, not NotNull,  nil);
 
     fmNewEditField.Show;
   end
@@ -1299,7 +1300,7 @@ begin
       else
         Result:= Result + IntToStr(FieldLength) + ',';
     end;
-    Result:= Result + IntToStr(Abs(Scale)) + ')';
+    Result:= Result + IntToStr(Abs(Scale)) + ') ';
   end;
 end;
 
@@ -2244,6 +2245,7 @@ procedure TfmMain.lmUserPermManagementClick(Sender: TObject);
 var
   fmPermissions: TfmPermissionManage;
 begin
+  lmRolePerManagementClick(nil);
   fmPermissions:= TfmPermissionManage.Create(nil);
   fmPermissions.Init(tvMain.Selected.Parent.Parent.OverlayIndex, '', tvMain.Selected.Text, 1);
   fmPermissions.Show;
@@ -2954,7 +2956,7 @@ begin
 end;
 
 
-(*************   Display View  *******************)
+(*************   Display View DDL *******************)
 
 procedure TfmMain.lmDisplayViewClick(Sender: TObject);
 var

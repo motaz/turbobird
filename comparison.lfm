@@ -56,7 +56,7 @@ object fmComparison: TfmComparison
     ParentFont = False
   end
   object bbStart: TBitBtn
-    Left = 15
+    Left = 13
     Height = 30
     Top = 184
     Width = 154
