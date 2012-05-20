@@ -55,6 +55,8 @@ type
     ModifiedConstraintsList: TStringList;
 
     ModifiedViewsList: TStringList;
+    ModifiedTriggersList: TStringList;
+    ModifiedProceduresList: TStringList;
 
     fQueryWindow: TfmQueryWindow;
 
@@ -66,6 +68,8 @@ type
     procedure CheckModifiedIndices;
     procedure CheckModifiedConstraints;
     procedure CheckModifiedViews;
+    procedure CheckModifiedTriggers;
+    procedure CheckModifiedProcedures;
 
     procedure InitializeQueryWindow;
     procedure ScriptMissingFields;
@@ -73,6 +77,8 @@ type
     procedure ScriptModifiedIndices;
     procedure ScriptModifiedConstraints;
     procedure ScriptModifiedViews;
+    procedure ScriptModifiedTriggers;
+    procedure ScriptModifiedProcedures;
   public
     procedure Init(dbIndex: Integer);
     { public declarations }
@@ -112,8 +118,15 @@ begin
     CheckModifiedIndices;
     CheckModifiedConstraints;
   end;
+
   if cxViews.Checked then
     CheckModifiedViews;
+
+  if cxTriggers.Checked then
+    CheckModifiedTriggers;
+
+  if cxStoredProcs.Checked then
+    CheckModifiedProcedures;
 end;
 
 procedure TfmComparison.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -138,6 +151,8 @@ begin
   ModifiedConstraintsList.Free;
 
   ModifiedViewsList.Free;
+  ModifiedTriggersList.Free;
+  ModifiedProceduresList.Free;
 
 end;
 
@@ -174,6 +189,12 @@ begin
 
   if cxViews.Checked then
     ScriptModifiedViews;
+
+  if cxTriggers.Checked then
+    ScriptModifiedTriggers;
+
+  if cxStoredProcs.Checked then
+    ScriptModifiedProcedures;
 
 
   dmSysTables.Init(fdbIndex);
@@ -556,6 +577,65 @@ begin
 
   end;
 
+end;
+
+procedure TfmComparison.CheckModifiedTriggers;
+var
+  i: Integer;
+  TriggerName: string;
+  AfterBefor, OnTable, Event, Body : string;
+  TriggerEnabled: Boolean;
+  TPosition: Integer;
+  CAfterBefor, COnTable, CEvent, CBody : string;
+  CTriggerEnabled: Boolean;
+  CTPosition: Integer;
+begin
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Modified Triggers');
+  ModifiedTriggersList.Clear;
+
+  for i:= 0 to dbExistingObjectsList[3].Count - 1 do
+  begin
+    TriggerName:= dbExistingObjectsList[3][i];
+    dmSysTables.GetTriggerInfo(fdbIndex, TriggerName, AfterBefor, OnTable, Event, Body, TriggerEnabled, TPosition);
+    if dmSysTables.GetTriggerInfo(cbComparedDatabase.ItemIndex, TriggerName, CAfterBefor, COnTable, CEvent, CBody,
+      CTriggerEnabled, CTPosition) then
+    if  (Trim(Body) <> Trim(CBody)) or (AfterBefor <> CAfterBefor) or (TriggerEnabled <> CTriggerEnabled)
+       or (TPosition <> CTPosition) then
+    begin
+      meLog.Lines.Add(' ' + TriggerName);
+      ModifiedTriggersList.Add(TriggerName);
+    end;
+
+  end;
+
+end;
+
+procedure TfmComparison.CheckModifiedProcedures;
+var
+  i: Integer;
+  ProcName: string;
+  Body : string;
+  CBody : string;
+  SPOwner: string;
+  CSPOwner: string;
+begin
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Modified Procedures');
+  ModifiedProceduresList.Clear;
+
+  for i:= 0 to dbExistingObjectsList[5].Count - 1 do
+  begin
+    ProcName:= dbExistingObjectsList[5][i];
+    Body:= fmMain.GetStoredProcBody(fdbIndex, ProcName, SPOwner);
+    CBody:= fmMain.GetStoredProcBody(cbComparedDatabase.ItemIndex, ProcName, CSPOwner);
+    if  (Trim(Body) <> Trim(CBody)) then
+    begin
+      meLog.Lines.Add(' ' + ProcName);
+      ModifiedProceduresList.Add(ProcName);
+    end;
+
+  end;
 
 end;
 
@@ -794,11 +874,63 @@ begin
   begin
     ViewName:= ModifiedViewsList[i];
     fmMain.GetViewInfo(fdbIndex, ViewName, Columns, Body);
-    fQueryWindow.meQuery.Lines.Add('drop view "' + ViewName + '";');
-    fQueryWindow.meQuery.Lines.Add('create view "' + ViewName + '" (' + Columns + ')');
+    fQueryWindow.meQuery.Lines.Add('alter view "' + ViewName + '" (' + Columns + ')');
     fQueryWindow.meQuery.Lines.Add('as');
     fQueryWindow.meQuery.Lines.Add(Body);
     fQueryWindow.meQuery.Lines.Add(';');
+    fQueryWindow.meQuery.Lines.Add('');
+  end;
+
+end;
+
+procedure TfmComparison.ScriptModifiedTriggers;
+var
+  i: Integer;
+  TriggerName: string;
+  List: TStringList;
+begin
+  fQueryWindow.meQuery.Lines.Add('');
+  fQueryWindow.meQuery.Lines.Add('-- Modified Triggers');
+  List:= TStringList.Create;
+  try
+    for i:= 0 to ModifiedTriggersList.Count - 1 do
+    begin
+      TriggerName:= ModifiedTriggersList[i];
+      List.Clear;
+      if dmSysTables.ScriptTrigger(fdbIndex, TriggerName, List, True) then
+      begin
+        fQueryWindow.meQuery.Lines.Add('drop trigger ' + TriggerName + ';');
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.AddStrings(List);
+        fQueryWindow.meQuery.Lines.Add('');
+      end;
+    end;
+
+  finally
+    List.Free;
+  end;
+
+end;
+
+procedure TfmComparison.ScriptModifiedProcedures;
+var
+  i: Integer;
+  ProcName: string;
+  Body: string;
+  SOwner: string;
+  List: TStringList;
+begin
+  List:= TStringList.Create;
+  fQueryWindow.meQuery.Lines.Add('');
+  fQueryWindow.meQuery.Lines.Add('-- Modified Procedures');
+  for i:= 0 to ModifiedProceduresList.Count - 1 do
+  begin
+    ProcName:= ModifiedProceduresList[i];
+    Body:= fmMain.GetStoredProcBody(fdbIndex, ProcName, SOwner);
+    fQueryWindow.meQuery.Lines.Add('alter procedure ' + ProcName + '(');
+    List.Text:= Body + ';';
+    fQueryWindow.meQuery.Lines.AddStrings(List);
+
     fQueryWindow.meQuery.Lines.Add('');
   end;
 
@@ -850,6 +982,8 @@ begin
   ModifiedConstraintsList:= TStringList.Create;
 
   ModifiedViewsList:= TStringList.Create;
+  ModifiedTriggersList:= TStringList.Create;
+  ModifiedProceduresList:= TStringList.Create;
 end;
 
 procedure TfmComparison.CheckMissingIndices;

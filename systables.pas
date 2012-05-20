@@ -24,8 +24,8 @@ type
     function GetTriggerInfo(DatabaseIndex: Integer; ATriggername: string;
       var AfterBefor, OnTable, Event, Body: string; var TriggerEnabled: Boolean;
       var TriggerPosition: Integer): Boolean;
-    procedure ScriptTrigger(dbIndex: Integer; ATriggerName: string; List: TStrings;
-      AsCreate: Boolean = False);
+    function ScriptTrigger(dbIndex: Integer; ATriggerName: string; List: TStrings;
+      AsCreate: Boolean = False): Boolean;
     function GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery;
       ConstraintsList: TStringList = nil): Boolean;
 
@@ -226,8 +226,8 @@ end;
 
 (****************  Script Trigger  ***************)
 
-procedure TdmSysTables.ScriptTrigger(dbIndex: Integer; ATriggerName: string; List: TStrings;
-   AsCreate: Boolean = False);
+function TdmSysTables.ScriptTrigger(dbIndex: Integer; ATriggerName: string;
+  List: TStrings; AsCreate: Boolean): Boolean;
 var
   Body: string;
   AfterBefore: string;
@@ -236,22 +236,25 @@ var
   TriggerEnabled: Boolean;
   TriggerPosition: Integer;
 begin
-  GetTriggerInfo(dbIndex, ATriggerName, AfterBefore, OnTable, Event, Body, TriggerEnabled, TriggerPosition);
-  List.Add('SET TERM ^ ;');
-  if AsCreate then
-    List.Add('Create Trigger ' + ATriggerName + ' for ' + OnTable)
-  else
-    List.Add('Alter Trigger ' + ATriggerName);
-    if TriggerEnabled then
-      List.Add('ACTIVE')
+  Result:= GetTriggerInfo(dbIndex, ATriggerName, AfterBefore, OnTable, Event, Body, TriggerEnabled, TriggerPosition);
+  if Result then
+  begin
+    List.Add('SET TERM ^ ;');
+    if AsCreate then
+      List.Add('Create Trigger ' + ATriggerName + ' for ' + OnTable)
     else
-      List.Add('INACTIVE');
+      List.Add('Alter Trigger ' + ATriggerName);
+      if TriggerEnabled then
+        List.Add('ACTIVE')
+      else
+        List.Add('INACTIVE');
 
-  List.Add(AfterBefore + ' ' + Event);
-  List.Add('Position ' + IntToStr(TriggerPosition));
+    List.Add(AfterBefore + ' ' + Event);
+    List.Add('Position ' + IntToStr(TriggerPosition));
 
-  List.Text:= List.Text + Body + ' ^';
-  List.Add('SET TERM ; ^');
+    List.Text:= List.Text + Body + ' ^';
+    List.Add('SET TERM ; ^');
+  end;
 
 end;
 

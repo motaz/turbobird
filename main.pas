@@ -3142,7 +3142,7 @@ begin
     AProcName:= SelNode.Text;
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     SPBody:= GetStoredProcBody(dbIndex, AProcName, SPOwner);
-    Title:= 'StoredProcedure : ' + AProcName;
+    Title:= SelNode.Parent.Parent.Text +  ': StoredProcedure : ' + AProcName;
     // Fill SProc Parameters
     fmViewSProc:= FindCusomForm(Title, TfmViewSProc) as TfmViewSProc;
     if fmViewSProc = nil then
@@ -3200,7 +3200,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ATriggerName:= SelNode.Text;
-    Title:= 'Trigger : ' + ATriggerName;
+    Title:= SelNode.Parent.Parent.Text +  ': Trigger : ' + ATriggerName;
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     dmSysTables.GetTriggerInfo(dbIndex, ATriggerName, BeforeAfter, OnTable,
       Event, Body, TriggerEnabled, TriggerPosition);
