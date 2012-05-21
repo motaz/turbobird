@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, IBConnection, sqldb, QueryWindow;
+  Buttons, ComCtrls, IBConnection, sqldb, QueryWindow;
 
 const
   dbObjects: array [1 .. 13] of string = ('Tables', 'Generators', 'Triggers', 'Views', 'Stored Procedures', 'UDFs',
@@ -35,12 +35,14 @@ type
     laDatabase: TLabel;
     laComparedDatabase: TLabel;
     meLog: TMemo;
+    StatusBar1: TStatusBar;
     procedure bbStartClick(Sender: TObject);
     procedure cbComparedDatabaseChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure laScriptClick(Sender: TObject);
   private
     fdbIndex: Integer;
+    DiffCount: Integer;
     dbObjectsList: array [1 .. 13] of TStringList;
     dbExistingObjectsList: array [1 .. 13] of TStringList;
     MissingFieldsList: TStringList;
@@ -57,8 +59,12 @@ type
     ModifiedViewsList: TStringList;
     ModifiedTriggersList: TStringList;
     ModifiedProceduresList: TStringList;
+    ModifiedFunctionsList: TStringList;
+    ModifiedDomainsList: TStringList;
 
     fQueryWindow: TfmQueryWindow;
+
+    procedure DisplayStatus(AStatus: string);
 
     procedure CheckMissingIndices;
     procedure CheckMissingConstraints;
@@ -70,6 +76,8 @@ type
     procedure CheckModifiedViews;
     procedure CheckModifiedTriggers;
     procedure CheckModifiedProcedures;
+    procedure CheckModifiedFunctions;
+    procedure CheckModifiedDomains;
 
     procedure InitializeQueryWindow;
     procedure ScriptMissingFields;
@@ -79,6 +87,8 @@ type
     procedure ScriptModifiedViews;
     procedure ScriptModifiedTriggers;
     procedure ScriptModifiedProcedures;
+    procedure ScriptModifiedFunctions;
+    procedure ScriptModifiedDomains;
   public
     procedure Init(dbIndex: Integer);
     { public declarations }
@@ -96,17 +106,39 @@ implementation
 uses Main, SysTables, Scriptdb;
 
 procedure TfmComparison.cbComparedDatabaseChange(Sender: TObject);
+var
+  ComparedDBIndex: Integer;
+  Connected: Boolean;
 begin
-  if cbComparedDatabase.ItemIndex <> -1 then
-  with fmMain.RegisteredDatabases[cbComparedDatabase.ItemIndex].RegRec do
+  ComparedDBIndex:= cbComparedDatabase.ItemIndex;
+  if (ComparedDBIndex <> -1) then
   begin
-    laComparedDatabase.Caption:= DatabaseName;
-    bbStart.Enabled:= True;
+    Connected:= True;
+    if (fmMain.RegisteredDatabases[ComparedDBIndex].RegRec.Password = '') then
+      Connected:= fmMain.ConnectToDBAs(ComparedDBIndex);
+
+    if not Connected then
+    begin
+      bbStart.Enabled:= False;
+      cbComparedDatabase.ItemIndex:= -1;
+    end;
+
+    if Connected then
+    with fmMain.RegisteredDatabases[ComparedDBIndex].RegRec do
+    begin
+      laComparedDatabase.Caption:= DatabaseName;
+      bbStart.Enabled:= True;
+    end;
+
   end;
 end;
 
 procedure TfmComparison.bbStartClick(Sender: TObject);
 begin
+  DiffCount:= 0;
+  StatusBar1.Color:= clBlue;
+  DisplayStatus('Searching for missing DB Objects...');
+
   CheckMissingDBObjects;
 
   if cxTables.Checked then
@@ -119,6 +151,7 @@ begin
     CheckModifiedConstraints;
   end;
 
+  DisplayStatus('Searching for modified db Objects...');
   if cxViews.Checked then
     CheckModifiedViews;
 
@@ -127,6 +160,15 @@ begin
 
   if cxStoredProcs.Checked then
     CheckModifiedProcedures;
+
+  if cxUDFs.Checked then
+    CheckModifiedFunctions;
+
+  if cxDomains.Checked then
+    CheckModifiedDomains;
+
+  StatusBar1.Color:= clDefault;
+  DisplayStatus('Comparison Finished, ' + IntToStr(DiffCount) + ' difference(s) found');
 end;
 
 procedure TfmComparison.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -153,6 +195,8 @@ begin
   ModifiedViewsList.Free;
   ModifiedTriggersList.Free;
   ModifiedProceduresList.Free;
+  ModifiedFunctionsList.Free;
+  ModifiedDomainsList.Free;
 
 end;
 
@@ -196,6 +240,11 @@ begin
   if cxStoredProcs.Checked then
     ScriptModifiedProcedures;
 
+  if cxUDFs.Checked then
+    ScriptModifiedFunctions;
+
+  if cxDomains.Checked then
+    ScriptModifiedDomains;
 
   dmSysTables.Init(fdbIndex);
 
@@ -265,7 +314,7 @@ begin
     for i:= 0 to dbObjectsList[x].Count - 1 do
     begin
       ScriptList.Clear;
-      ScriptList.Add('Declare External Function ' + dbObjectsList[x].Strings[i]);
+      ScriptList.Add('Declare External Function "' + dbObjectsList[x].Strings[i] + '"');
       if fmMain.GetUDFInfo(fdbIndex, dbObjectsList[x].Strings[i], ModuleName, EntryPoint, Params) then
       begin
         RemoveParamClosing(Params);
@@ -360,6 +409,12 @@ begin
 
 end;
 
+procedure TfmComparison.DisplayStatus(AStatus: string);
+begin
+  StatusBar1.Panels[0].Text:= AStatus;
+  Application.ProcessMessages;
+end;
+
 procedure TfmComparison.CheckMissingDBObjects;
 var
   List, ComparedList: TStringList;
@@ -394,6 +449,7 @@ begin
     begin
       meLog.Lines.Add(' ' + List[i]);
       dbObjectsList[x].Add(List[i]);
+      Inc(DiffCount);
     end
     else                                        // Exist
       dbExistingObjectsList[x].Add(List[i]);
@@ -430,6 +486,7 @@ begin
       begin
         meLog.Lines.Add(' ' + dbExistingObjectsList[1].Strings[i] + ': ' + FieldsList[j]);
         MissingFieldsList.Add(dbExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
+        Inc(DiffCount);
       end
       else                                             // Add to existing list
         ExistFieldsList.Add(dbExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
@@ -471,6 +528,7 @@ begin
        begin
          meLog.Lines.Add(' ' + ExistFieldsList[i]);
          ModifiedFieldsList.Add(ExistFieldsList[i]);
+         Inc(DiffCount);
        end;
 
   end;
@@ -507,6 +565,7 @@ begin
     begin
       meLog.Lines.Add(' ' + ExistIndicesList[i]);
       ModifiedIndicesList.Add(ExistIndicesList[i]);
+      Inc(DiffCount);
     end;
 
   end;
@@ -547,6 +606,7 @@ begin
     begin
       meLog.Lines.Add(' ' + ExistConstraintsList[i]);
       ModifiedConstraintsList.Add(ExistConstraintsList[i]);
+      Inc(DiffCount);
     end;
 
   end;
@@ -573,6 +633,7 @@ begin
     begin
       meLog.Lines.Add(' ' + ViewName);
       ModifiedViewsList.Add(ViewName);
+      Inc(DiffCount);
     end;
 
   end;
@@ -605,6 +666,7 @@ begin
     begin
       meLog.Lines.Add(' ' + TriggerName);
       ModifiedTriggersList.Add(TriggerName);
+      Inc(DiffCount);
     end;
 
   end;
@@ -633,6 +695,62 @@ begin
     begin
       meLog.Lines.Add(' ' + ProcName);
       ModifiedProceduresList.Add(ProcName);
+      Inc(DiffCount);
+    end;
+
+  end;
+
+end;
+
+procedure TfmComparison.CheckModifiedFunctions;
+var
+  i: Integer;
+  FunctionName, ModuleName, EntryPoint, Params: string;
+  CModuleName, CEntryPoint, CParams: string;
+begin
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Modified Functions');
+  ModifiedFunctionsList.Clear;
+
+  for i:= 0 to dbExistingObjectsList[6].Count - 1 do
+  begin
+    FunctionName:= dbExistingObjectsList[6][i];
+    fmMain.GetUDFInfo(fdbIndex, FunctionName, ModuleName, EntryPoint, Params);
+    if fmMain.GetUDFInfo(cbComparedDatabase.ItemIndex, FunctionName, CModuleName, CEntryPoint, CParams) then
+    if  (ModuleName <> CModuleName) or (EntryPoint <> CEntryPoint) or (Params <> CParams) then
+    begin
+      meLog.Lines.Add(' ' + FunctionName);
+      ModifiedFunctionsList.Add(FunctionName);
+      Inc(DiffCount);
+    end;
+
+  end;
+
+end;
+
+procedure TfmComparison.CheckModifiedDomains;
+var
+  i: Integer;
+  DomainName: string;
+  DomainType, DefaultValue: string;
+  CDomainType, CDefaultValue: string;
+  DomainSize, CDomainSize: Integer;
+
+begin
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Modified domains');
+  ModifiedDomainsList.Clear;
+
+  for i:= 0 to dbExistingObjectsList[8].Count - 1 do
+  begin
+    DomainName:= dbExistingObjectsList[8][i];
+    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue);
+    dmSysTables.GetDomainInfo(cbComparedDatabase.ItemIndex, DomainName, CDomainType, CDomainSize, CDefaultValue);
+    if (DomainType <> CDomainType) or (DomainSize <> CDomainSize) or (DefaultValue <> CDefaultValue) then
+    begin
+      meLog.Lines.Add(' ' + DomainName);
+      ModifiedDomainsList.Add(DomainName);
+      Inc(DiffCount);
     end;
 
   end;
@@ -658,8 +776,12 @@ var
   TableSpaces: Integer;
   FieldSpaces: Integer;
 begin
-  fQueryWindow.meQuery.Lines.Add('');
-  fQueryWindow.meQuery.Lines.Add('-- Missing fields');
+  if MissingFieldsList.Count > 0 then
+  begin
+    fQueryWindow.meQuery.Lines.Add('');
+    fQueryWindow.meQuery.Lines.Add('-- Missing fields');
+  end;
+
   for i:= 0 to MissingFieldsList.Count - 1 do
   begin
     Line:= MissingFieldsList[i];
@@ -715,64 +837,69 @@ var
   NotNull, CNotNull: Boolean;
   ScriptList: TStringList;
 begin
-  ScriptList:= TStringList.Create;
+  if ModifiedFieldsList.Count > 0 then
   try
-  fQueryWindow.meQuery.Lines.Add('');
-  fQueryWindow.meQuery.Lines.Add('-- Modified fields');
-  for i:= 0 to ModifiedFieldsList.Count - 1 do
-  begin
-    Line:= ModifiedFieldsList[i];
-    ATableName:= copy(Line, 1, Pos(',', Line) - 1);
-    System.Delete(Line, 1, Pos(',', Line));
-    AFieldName:= Line;
-
-    dmSysTables.GetFieldInfo(fdbIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
-    dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName, CFieldType, CFieldSize, CNotNull,
-      cDefaultValue, cDescription);
-
-    ScriptList.Clear;
-    // check type/size change
-    if (FieldType <> CFieldType) or (FieldSize <> CFieldSize) then
+    ScriptList:= TStringList.Create;
+    if ModifiedFieldsList.Count > 0 then
     begin
-      Line:= 'ALTER TABLE ' + ATableName + ' ALTER ' + AFieldName + ' TYPE ' + FieldType;
-
-      if Pos('CHAR', FieldType) > 0 then
-        Line:= Line + '(' + IntToStr(FieldSize) + ')';
-      Line:= Line + ';';
-      ScriptList.Add(Line);
+      fQueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.Add('-- Modified fields');
     end;
 
-    // Allow Null
-    if NotNull <> CNotNull then
+    for i:= 0 to ModifiedFieldsList.Count - 1 do
     begin
-      if NotNull then
-        NullFlag:= '1'
-      else
-        NullFlag:= 'NULL';
-      ScriptList.Add('UPDATE RDB$RELATION_FIELDS SET RDB$NULL_FLAG = ' + NullFlag);
-      ScriptList.Add('WHERE RDB$FIELD_NAME = ''' + AFieldName + ''' AND RDB$RELATION_NAME = ''' + ATableName + ''';');
-    end;
+      Line:= ModifiedFieldsList[i];
+      ATableName:= copy(Line, 1, Pos(',', Line) - 1);
+      System.Delete(Line, 1, Pos(',', Line));
+      AFieldName:= Line;
 
-    // Description
-    if Description <> CDescription then
-    begin
-      ScriptList.Add('UPDATE RDB$RELATION_FIELDS set RDB$DESCRIPTION = ''' + Description + '''');
-      ScriptList.Add('where RDB$FIELD_NAME = ''' + UpperCase(AFieldName) + '''');
-      ScriptList.Add('and RDB$RELATION_NAME = ''' + ATableName + ''';');
-    end;
+      dmSysTables.GetFieldInfo(fdbIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
+      dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName, CFieldType, CFieldSize, CNotNull,
+        cDefaultValue, cDescription);
 
-    // Default value
-    if DefaultValue <> cDefaultValue then
-    begin
-      ScriptList.Add('UPDATE RDB$RELATION_FIELDS set RDB$Default_Source = ''' + DefaultValue + ''' ');
-      ScriptList.Add('where RDB$FIELD_NAME = ''' + UpperCase(AFieldName) + '''');
-      ScriptList.Add('and RDB$RELATION_NAME = ''' + ATableName + ''';');
-    end;
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- ' + AFieldName + ' on ' + ATableName);
-    fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+      ScriptList.Clear;
+      // check type/size change
+      if (FieldType <> CFieldType) or (FieldSize <> CFieldSize) then
+      begin
+        Line:= 'ALTER TABLE ' + ATableName + ' ALTER ' + AFieldName + ' TYPE ' + FieldType;
 
-  end;
+        if Pos('CHAR', FieldType) > 0 then
+          Line:= Line + '(' + IntToStr(FieldSize) + ')';
+        Line:= Line + ';';
+        ScriptList.Add(Line);
+      end;
+
+      // Allow Null
+      if NotNull <> CNotNull then
+      begin
+        if NotNull then
+          NullFlag:= '1'
+        else
+          NullFlag:= 'NULL';
+        ScriptList.Add('UPDATE RDB$RELATION_FIELDS SET RDB$NULL_FLAG = ' + NullFlag);
+        ScriptList.Add('WHERE RDB$FIELD_NAME = ''' + AFieldName + ''' AND RDB$RELATION_NAME = ''' + ATableName + ''';');
+      end;
+
+      // Description
+      if Description <> CDescription then
+      begin
+        ScriptList.Add('UPDATE RDB$RELATION_FIELDS set RDB$DESCRIPTION = ''' + Description + '''');
+        ScriptList.Add('where RDB$FIELD_NAME = ''' + UpperCase(AFieldName) + '''');
+        ScriptList.Add('and RDB$RELATION_NAME = ''' + ATableName + ''';');
+      end;
+
+      // Default value
+      if DefaultValue <> cDefaultValue then
+      begin
+        ScriptList.Add('UPDATE RDB$RELATION_FIELDS set RDB$Default_Source = ''' + DefaultValue + ''' ');
+        ScriptList.Add('where RDB$FIELD_NAME = ''' + UpperCase(AFieldName) + '''');
+        ScriptList.Add('and RDB$RELATION_NAME = ''' + ATableName + ''';');
+      end;
+      fQueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.Add('-- ' + AFieldName + ' on ' + ATableName);
+      fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+
+    end;
 
 
   finally
@@ -788,8 +915,9 @@ var
   Line: string;
   Unique, Ascending: Boolean;
 begin
-  FieldsList:= TStringList.Create;
+  if ModifiedIndicesList.Count > 0 then
   try
+    FieldsList:= TStringList.Create;
     fQueryWindow.meQuery.Lines.Add('');
     fQueryWindow.meQuery.Lines.Add('-- Modified Indices');
     for i:= 0 to ModifiedIndicesList.Count - 1 do
@@ -833,6 +961,8 @@ var
   KeyName, CurrentTableName, CurrentFieldName,
   OtherTablename, OtherFieldName, UpdateRule, DeleteRule: string;
 begin
+  if ModifiedConstraintsList.Count > 0 then
+  begin
     fQueryWindow.meQuery.Lines.Add('');
     fQueryWindow.meQuery.Lines.Add('-- Modified Constraints');
     for i:= 0 to ModifiedConstraintsList.Count - 1 do
@@ -860,6 +990,8 @@ begin
 
     end;
 
+  end;
+
 end;
 
 procedure TfmComparison.ScriptModifiedViews;
@@ -868,17 +1000,26 @@ var
   ViewName: string;
   Columns, Body: string;
 begin
-  fQueryWindow.meQuery.Lines.Add('');
-  fQueryWindow.meQuery.Lines.Add('-- Modified Views');
-  for i:= 0 to ModifiedViewsList.Count - 1 do
-  begin
-    ViewName:= ModifiedViewsList[i];
-    fmMain.GetViewInfo(fdbIndex, ViewName, Columns, Body);
-    fQueryWindow.meQuery.Lines.Add('alter view "' + ViewName + '" (' + Columns + ')');
-    fQueryWindow.meQuery.Lines.Add('as');
-    fQueryWindow.meQuery.Lines.Add(Body);
-    fQueryWindow.meQuery.Lines.Add(';');
+  if ModifiedViewsList.Count > 0 then
+  try
     fQueryWindow.meQuery.Lines.Add('');
+    fQueryWindow.meQuery.Lines.Add('-- Modified Views');
+    for i:= 0 to ModifiedViewsList.Count - 1 do
+    begin
+      ViewName:= ModifiedViewsList[i];
+      fmMain.GetViewInfo(fdbIndex, ViewName, Columns, Body);
+      fQueryWindow.meQuery.Lines.Add('alter view "' + ViewName + '" (' + Columns + ')');
+      fQueryWindow.meQuery.Lines.Add('as');
+      fQueryWindow.meQuery.Lines.Add(Body);
+      fQueryWindow.meQuery.Lines.Add(';');
+      fQueryWindow.meQuery.Lines.Add('');
+    end;
+
+  except
+  on e: exception do
+  begin
+    ShowMessage(e.Message);
+  end;
   end;
 
 end;
@@ -889,10 +1030,11 @@ var
   TriggerName: string;
   List: TStringList;
 begin
-  fQueryWindow.meQuery.Lines.Add('');
-  fQueryWindow.meQuery.Lines.Add('-- Modified Triggers');
-  List:= TStringList.Create;
+  if ModifiedTriggersList.Count > 0 then
   try
+    fQueryWindow.meQuery.Lines.Add('');
+    fQueryWindow.meQuery.Lines.Add('-- Modified Triggers');
+    List:= TStringList.Create;
     for i:= 0 to ModifiedTriggersList.Count - 1 do
     begin
       TriggerName:= ModifiedTriggersList[i];
@@ -920,18 +1062,101 @@ var
   SOwner: string;
   List: TStringList;
 begin
-  List:= TStringList.Create;
-  fQueryWindow.meQuery.Lines.Add('');
-  fQueryWindow.meQuery.Lines.Add('-- Modified Procedures');
-  for i:= 0 to ModifiedProceduresList.Count - 1 do
-  begin
-    ProcName:= ModifiedProceduresList[i];
-    Body:= fmMain.GetStoredProcBody(fdbIndex, ProcName, SOwner);
-    fQueryWindow.meQuery.Lines.Add('alter procedure ' + ProcName + '(');
-    List.Text:= Body + ';';
-    fQueryWindow.meQuery.Lines.AddStrings(List);
+  if ModifiedProceduresList.Count > 0 then
+  try
+    List:= TStringList.Create;
 
     fQueryWindow.meQuery.Lines.Add('');
+    fQueryWindow.meQuery.Lines.Add('-- Modified Procedures');
+    for i:= 0 to ModifiedProceduresList.Count - 1 do
+    begin
+      ProcName:= ModifiedProceduresList[i];
+      Body:= fmMain.GetStoredProcBody(fdbIndex, ProcName, SOwner);
+      fQueryWindow.meQuery.Lines.Add('alter procedure ' + ProcName + '(');
+      List.Text:= Body + ';';
+      fQueryWindow.meQuery.Lines.AddStrings(List);
+
+      fQueryWindow.meQuery.Lines.Add('');
+    end;
+
+
+  finally
+    List.Free;
+  end;
+
+end;
+
+procedure TfmComparison.ScriptModifiedFunctions;
+var
+  i: Integer;
+  FunctionName: string;
+  ModuleName, EntryPoint, Params: string;
+begin
+  if ModifiedFunctionsList.Count > 0 then
+  begin
+    fQueryWindow.meQuery.Lines.Add('');
+    fQueryWindow.meQuery.Lines.Add('-- Modified Functions (UDFs)');
+  end;
+
+  for i:= 0 to ModifiedFunctionsList.Count - 1 do
+  begin
+    FunctionName:= ModifiedFunctionsList[i];
+    if fmMain.GetUDFInfo(fdbIndex, FunctionName, ModuleName, EntryPoint, Params) then
+    begin
+      fQueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.Add('drop external function "' + FunctionName + '";');
+      fQueryWindow.meQuery.Lines.Add('');
+      fQueryWindow.meQuery.Lines.Add('DECLARE EXTERNAL FUNCTION "' + FunctionName + '"(');
+      fQueryWindow.meQuery.Lines.Add(Params);
+      fQueryWindow.meQuery.Lines.Add('ENTRY_POINT ''' + EntryPoint + '''');
+      fQueryWindow.meQuery.Lines.Add('MODULE_NAME ''' + ModuleName + ''' ;');
+
+      fQueryWindow.meQuery.Lines.Add('');
+
+    end;
+
+  end;
+
+end;
+
+procedure TfmComparison.ScriptModifiedDomains;
+var
+  i: Integer;
+  DomainName: string;
+  DomainType, DefaultValue: string;
+  DomainSize: Integer;
+  Line: string;
+begin
+  if ModifiedDomainsList.Count > 0 then
+  begin
+    fQueryWindow.meQuery.Lines.Add('');
+    fQueryWindow.meQuery.Lines.Add('-- Modified Domains');
+  end;
+
+  for i:= 0 to ModifiedDomainsList.Count - 1 do
+  begin
+    DomainName:= ModifiedDomainsList[i];
+    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, domainSize, DefaultValue);
+    fQueryWindow.meQuery.Lines.Add('');
+    Line:= 'Alter DOMAIN ' + DomainName + ' type ' + DomainType;
+    if Pos('char', LowerCase(DomainType)) > 0 then
+      Line:= Line + '(' + IntToStr(DomainSize) + ')';
+    fQueryWindow.meQuery.Lines.Add(Line);
+
+    if Trim(DefaultValue) <> '' then
+    begin
+      if (Pos('char', LowerCase(DomainType)) > 0) and (Pos('''', DefaultValue) = 0) then
+        fQueryWindow.meQuery.Lines.Add('set ''' + DefaultValue + ''';')
+      else
+        fQueryWindow.meQuery.Lines.Add('set ' + DefaultValue + ';');
+    end
+    else
+      fQueryWindow.meQuery.Lines.Add('set DEFAULT NULL;');
+
+
+    fQueryWindow.meQuery.Lines.Add('');
+
+
   end;
 
 end;
@@ -984,6 +1209,8 @@ begin
   ModifiedViewsList:= TStringList.Create;
   ModifiedTriggersList:= TStringList.Create;
   ModifiedProceduresList:= TStringList.Create;
+  ModifiedFunctionsList:= TStringList.Create;
+  ModifiedDomainsList:= TStringList.Create;
 end;
 
 procedure TfmComparison.CheckMissingIndices;
@@ -1018,6 +1245,7 @@ begin
           begin
             meLog.Lines.Add(' ' + List[j]);
             dbObjectsList[12].Add(TablesList[i] + ',' + List[j]);
+            Inc(DiffCount);
           end
           else
             ExistIndicesList.Add(TablesList[i] + ',' + List[j]); // Add to existing indices list
@@ -1028,6 +1256,7 @@ begin
       begin
         dbObjectsList[12].Add(TablesList[i] + ',' + List[j]);
         meLog.Lines.Add(' ' + List[j]);
+        Inc(DiffCount);
       end;
 
     end;
@@ -1080,6 +1309,7 @@ begin
           begin
             meLog.Lines.Add(' ' + List[j]);
             dbObjectsList[13].Add(TablesList[i] + ',' + List[j]);
+            Inc(DiffCount);
           end
           else
             ExistConstraintsList.Add(TablesList[i] + ',' + List[j]);
@@ -1090,6 +1320,7 @@ begin
       begin
         dbObjectsList[13].Add(TablesList[i] + ',' + List[j]);
         meLog.Lines.Add(' ' + List[j]);
+        Inc(DiffCount);
       end;
 
     end;

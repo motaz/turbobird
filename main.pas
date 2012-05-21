@@ -180,7 +180,7 @@ type
     sqlTransaction: TSQLTransaction;
     CurrentHistoryFile: string;
     fActivated: Boolean;
-    function FindCusomForm(ATitle: string; AClass: TClass): TComponent;
+    function FindCustomForm(ATitle: string; AClass: TClass): TComponent;
     procedure InitNewGen(DatabaseIndex: Integer);
     function GetServerNameNode(ServerName: string): TTreeNode;
     function RemoveSpecialChars(AText: string): string;
@@ -221,6 +221,7 @@ type
     function AddToSQLHistory(DatabaseTitle: string; SQLType, SQLStatement: string): Boolean;
     function SaveAndCloseSQLHistory: Boolean;
     function OpenSQLHistory(DatabaseTitle: string): Boolean;
+    function ConnectToDBAs(dbIndex: Integer): Boolean;
   end;
 
 var
@@ -336,9 +337,17 @@ begin
 end;
 
 procedure TfmMain.lmCompareClick(Sender: TObject);
+var
+  dbIndex: Integer;
 begin
-  fmComparison.Init(tvMain.Selected.OverlayIndex);
-  fmComparison.Show;
+  dbIndex:= tvMain.Selected.OverlayIndex;
+
+  if (RegisteredDatabases[dbIndex].RegRec.Password <> '') or
+  ConnectToDBAs(dbIndex) then
+  begin
+    fmComparison.Init(dbIndex);
+    fmComparison.Show;
+  end;
 end;
 
 procedure TfmMain.lmCopyRolePermissionClick(Sender: TObject);
@@ -394,7 +403,7 @@ begin
     MajorVer, MinorVer, Pages, PageSize, ProcessList) then
   with fmDBInfo do
   begin
-    fmDBInfo:= FindCusomForm(Title, TfmDBInfo) as TfmDBInfo;
+    fmDBInfo:= FindCustomForm(Title, TfmDBInfo) as TfmDBInfo;
 
     if fmDBInfo = nil then
     begin
@@ -627,17 +636,28 @@ end;
 (****************  Connect As  *****************)
 
 procedure TfmMain.lmConnectAsClick(Sender: TObject);
+begin
+  if ConnectToDBAs(tvMain.Selected.OverlayIndex) then
+    tvMain.Selected.Expand(False)
+  else
+    tvMain.Selected.Collapse(False);
+end;
+
+function TfmMain.ConnectToDBAs(dbIndex: Integer): Boolean;
 var
-  Node: TTreeNode;
   Rec: TRegisteredDatabase;
   Count: Integer;
 begin
-  Node:= tvMain.Selected;
-  Rec:= RegisteredDatabases[Node.OverlayIndex].RegRec;
+  Result:= False;
+  Rec:= RegisteredDatabases[dbIndex].RegRec;
   fmEnterPass.edUser.Text:= Rec.UserName;
   fmEnterPass.edPassword.Clear;
+  fmEnterPass.cbRole.Clear;
+  if Rec.Password <> '' then
   try
-    fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(Node.OverlayIndex, 9, Count);
+    fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
+    fmEnterPass.cbRole.ItemIndex:= -1;
+    fmEnterPass.cbRole.Text:= '';
   except
   end;
   if fmEnterPass.ShowModal = mrOk then
@@ -645,14 +665,10 @@ begin
     if fmReg.TestConnection(Rec.DatabaseName, fmEnterPass.edUser.Text, fmEnterPass.edPassword.Text,
       Rec.Charset) then
       begin
-        RegisteredDatabases[Node.OverlayIndex].RegRec.UserName:= fmEnterPass.edUser.Text;
-        RegisteredDatabases[Node.OverlayIndex].RegRec.Password:= fmEnterPass.edPassword.Text;
-        RegisteredDatabases[Node.OverlayIndex].RegRec.Role:= fmEnterPass.cbRole.Text;
-        Node.Expand(False);
-      end
-      else
-      begin
-        Exit;
+        RegisteredDatabases[dbIndex].RegRec.UserName:= fmEnterPass.edUser.Text;
+        RegisteredDatabases[dbIndex].RegRec.Password:= fmEnterPass.edPassword.Text;
+        RegisteredDatabases[dbIndex].RegRec.Role:= fmEnterPass.cbRole.Text;
+        Result:= True;
       end;
   end;
 end;
@@ -906,7 +922,7 @@ begin
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     ATableName:= SelNode.Text;
     Rec:= RegisteredDatabases[dbIndex];
-    EditForm:= TfmEditDataFullRec(FindCusomForm(Rec.RegRec.Title + ': Edit Data (Form) for Table : ' +
+    EditForm:= TfmEditDataFullRec(FindCustomForm(Rec.RegRec.Title + ': Edit Data (Form) for Table : ' +
       ATableName, TfmEditDataFullRec));
     if EditForm = nil then
     begin
@@ -969,7 +985,7 @@ begin
     ATableName:= SelNode.Text;
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     Rec:= RegisteredDatabases[dbIndex];
-    EditWindow:= TfmEditTable(FindCusomForm(Rec.RegRec.Title + ': Edit Data for Table : ' + ATableName, TfmEditTable));
+    EditWindow:= TfmEditTable(FindCustomForm(Rec.RegRec.Title + ': Edit Data for Table : ' + ATableName, TfmEditTable));
     if EditWindow = nil then
     begin
       EditWindow:= TfmEditTable.Create(Application);
@@ -1450,28 +1466,44 @@ var
   Rec: TDatabaseRec;
   SelNode: TTreeNode;
   dbIndex: Integer;
+  Form: TfmNewTable;
+  Title: string;
+  ATab: TTabSheet;
 begin
   SelNode:= tvMain.Selected;
   dbIndex:= SelNode.Parent.OverlayIndex;
   Rec:= RegisteredDatabases[dbIndex];
 
-  fmNewTable.Init(dbIndex);
-  fmNewTable.ShowModal;
-  {= mrOK then
-    if fmNewTable.cxCreateGen.Checked then // Create Auto Inc generator
-    begin
-      InitNewGen(dbIndex);
-      fmNewGen.edGenName.Text:= GeneratorName;
-      fmNewGen.edGenName.Enabled:= True;
-      fmNewGen.cxTrigger.Checked:= True;
+{  fmNewTable.Init(dbIndex);
+  fmNewTable.ShowModal;}
 
-      // Select table name as default in create new generator form
-      fmNewGen.cbTables.ItemIndex:= fmNewGen.cbTables.Items.IndexOf(UpperCase(Trim(fmNewTable.edNewTable.Text)));
-      fmNewGen.cbTablesChange(nil);
-      fmNewGen.gbTrigger.Enabled:= False;
-      fmNewGen.cxTrigger.Enabled:= False;
-      fmNewGen.Show;
-    end;}
+  Title:= SelNode.Parent.Text + ': New Table';
+
+  Form:= FindCustomForm(Title, TfmNewTable) as TfmNewTable;
+  if Form = nil then
+  begin
+    Form:= TfmNewTable.Create(Application);
+    ATab:= TTabSheet.Create(nil);
+    ATab.Parent:= PageControl1;
+    Form.Parent:= ATab;
+    Form.Caption:= Title;
+    ATab.Caption:= Form.Caption;
+    Form.Left:= 0;
+    Form.Top:= 0;
+    Form.BorderStyle:= bsNone;
+    Form.Align:= alClient;
+    Form.Init(dbIndex);
+  end
+  else
+    ATab:= Form.Parent as TTabSheet;
+  PageControl1.ActivePage:= ATab;
+  Form.Show;
+  Form.edNewTable.SetFocus;
+
+
+  ATab.Tag:= dbIndex;
+  PageControl1.ActivePage:= ATab;
+
 end;
 
 (*************  Create new function  ******************)
@@ -1493,11 +1525,11 @@ begin
   begin
     QWindow:= ShowQueryWindow(SelNode.Parent.OverlayIndex, 'Create new function');
     QWindow.meQuery.Lines.Clear;
-    QWindow.meQuery.Lines.Add('DEFINE EXTERNAL FUNCTION ' + AFuncName + ' [<datatype> | CSTRING (int)');
-    QWindow.meQuery.Lines.Add('[, <datatype> | CSTRING (int) ...]]');
-    QWindow.meQuery.Lines.Add('RETURNS {<datatype> [BY VALUE] | CSTRING (int)}');
-    QWindow.meQuery.Lines.Add('ENTRY_POINT "' + entryPoint + '"');
-    QWindow.meQuery.Lines.Add('MODULE_NAME "' + modulename + '" ;');
+    QWindow.meQuery.Lines.Add('DECLARE EXTERNAL FUNCTION "' + AFuncName + '"');
+    QWindow.meQuery.Lines.Add('-- (int, varchar(100))');
+    QWindow.meQuery.Lines.Add('RETURNS (int)');
+    QWindow.meQuery.Lines.Add('ENTRY_POINT ''' + entryPoint + '''');
+    QWindow.meQuery.Lines.Add('MODULE_NAME ''' + modulename + ''' ;');
     QWindow.Show;
   end;
 end;
@@ -1557,7 +1589,7 @@ begin
   List.CommaText:= dmSysTables.GetUserObjects(dbIndex, UserName);
   Title:= 'Permissions for: ' + UserName;
 
-  Form:= FindCusomForm(Title, TfmUserPermissions) as TfmUserPermissions;
+  Form:= FindCustomForm(Title, TfmUserPermissions) as TfmUserPermissions;
   if Form = nil then
   begin
     Form:= TfmUserPermissions.Create(Application);
@@ -1634,7 +1666,7 @@ var
   dbIndex: Integer;
 begin
   Title:= 'Permission management for: ' + tvMain.Selected.Text;
-  fmPermissions:= FindCusomForm(Title, TfmPermissionManage) as TfmPermissionManage;
+  fmPermissions:= FindCustomForm(Title, TfmPermissionManage) as TfmPermissionManage;
   if fmPermissions = nil then
   begin
     fmPermissions:= TfmPermissionManage.Create(nil);
@@ -2198,7 +2230,7 @@ begin
 
     Title:= RegisteredDatabases[dbIndex].RegRec.Title +  ': Management of : ' + SelNode.Text;
     // Fields
-    fmTableManage:= FindCusomForm(Title, TfmTableManage) as TfmTableManage;
+    fmTableManage:= FindCustomForm(Title, TfmTableManage) as TfmTableManage;
     if fmTableManage = nil then
     begin
       fmTableManage:= TfmTableManage.Create(Application);
@@ -2263,13 +2295,15 @@ var
   DefaultValue: string;
   ATab: TTabSheet;
   dbIndex: Integer;
+  Title: string;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ADomainName:= SelNode.Text;
-    //ADomainForm:= TfmViewDomain(FindCusomForm('Domain : ' + ADomainName, TfmViewDomain));
-    //if ADomainForm  = nil then
+    Title:= SelNode.Parent.Parent.Text + ': Domain: ' + ADomainName;
+    ADomainForm:= TfmViewDomain(FindCustomForm(Title, TfmViewDomain));
+    if ADomainForm  = nil then
     begin
       ADomainForm:= TfmViewDomain.Create(Application);
       ATab:= TTabSheet.Create(nil);
@@ -2280,7 +2314,11 @@ begin
       ADomainForm.BorderStyle:= bsNone;
       ADomainForm.Align:= alClient;
       PageControl1.ActivePage:= ATab;
-    end;
+    end
+    else
+      ATab:= ADomainForm.Parent as TTabSheet;
+    PageControl1.ActivePage:= ATab;
+
 
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue);
@@ -2293,7 +2331,7 @@ begin
     // Fill ViewDomain form
     with ADomainForm do
     begin
-      Caption:= 'Domain : ' + ADomainName;
+      Caption:= Title;
       ATab.Caption:= Caption;
       edName.Caption:= ADomainName;
       laType.Caption:= DomainType;
@@ -2587,6 +2625,8 @@ begin
     end;
     SQLQuery1.Close;
     Params:= Params + ')' + #10 + #10 + 'Returns ';
+
+    {todo: return values cann't be determined}
 
     // Result Params
     SQLQuery1.SQL.Text:= 'SELECT * FROM RDB$FUNCTION_ARGUMENTS where RDB$FUNCTION_Name = ''' +
@@ -3094,7 +3134,7 @@ begin
 
     // Fill ViewGen form
     Title:= 'Generator : ' + AGenName;
-    fmViewGen:= FindCusomForm(Title, TfmViewGen) as TfmViewGen;
+    fmViewGen:= FindCustomForm(Title, TfmViewGen) as TfmViewGen;
     if fmViewGen = nil then
     begin
       fmViewGen:= TfmViewGen.Create(Application);
@@ -3144,7 +3184,7 @@ begin
     SPBody:= GetStoredProcBody(dbIndex, AProcName, SPOwner);
     Title:= SelNode.Parent.Parent.Text +  ': StoredProcedure : ' + AProcName;
     // Fill SProc Parameters
-    fmViewSProc:= FindCusomForm(Title, TfmViewSProc) as TfmViewSProc;
+    fmViewSProc:= FindCustomForm(Title, TfmViewSProc) as TfmViewSProc;
     if fmViewSProc = nil then
     begin
       fmViewSProc:= TfmViewSProc.Create(Application);
@@ -3206,7 +3246,7 @@ begin
       Event, Body, TriggerEnabled, TriggerPosition);
 
     // Fill ViewTrigger form
-    fmViewTrigger:= FindCusomForm(Title, TfmViewTrigger) as TfmViewTrigger;
+    fmViewTrigger:= FindCustomForm(Title, TfmViewTrigger) as TfmViewTrigger;
     if fmViewTrigger = nil then
     begin
       fmViewTrigger:= TfmViewTrigger.Create(Application);
@@ -3259,27 +3299,37 @@ var
   Params: string;
   ATab: TTabSheet;
   dbIndex: Integer;
+  Title: string;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     AFuncName:= SelNode.Text;
+    Title:= SelNode.Parent.Parent.Text + ': UDF: ' + AFuncName;
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+
     if GetUDFInfo(dbIndex, AFuncName, ModuleName, EntryPoint, Params) then
     with fmUDFINfo do
     begin
-      fmUDFInfo:= TfmUDFInfo.Create(nil);
-      ATab:= TTabSheet.Create(nil);
-      ATab.Parent:= PageControl1;
-      fmUDFInfo.Parent:= ATab;
-      ATab.Tag:= dbIndex;
-      fmUDFInfo.Left:= 0;
-      fmUDFInfo.Top:= 0;
-      fmUDFInfo.BorderStyle:= bsNone;
-      fmUDFInfo.Align:= alClient;
+      fmUDFInfo:= FindCustomForm(Title, TfmUDFInfo) as TfmUDFInfo;
+      if fmUDFInfo = nil then
+      begin
+        fmUDFInfo:= TfmUDFInfo.Create(Application);
+        fmUDFInfo.Caption:= Title;
+        ATab:= TTabSheet.Create(nil);
+        ATab.Parent:= PageControl1;
+        fmUDFInfo.Parent:= ATab;
+        ATab.Tag:= dbIndex;
+        fmUDFInfo.Left:= 0;
+        fmUDFInfo.Top:= 0;
+        fmUDFInfo.BorderStyle:= bsNone;
+        fmUDFInfo.Align:= alClient;
+      end
+      else
+        ATab:= fmUDFInfo.Parent as TTabSheet;
+
       PageControl1.ActivePage:= ATab;
-      Caption:= 'Function : ' + AFuncName;
-      ATab.Caption:= Caption;
+      ATab.Caption:= Title;
       edName.Caption:= AFuncName;
       edModule.Caption:= ModuleName;
       edEntry.Caption:= EntryPoint;
@@ -3644,40 +3694,10 @@ begin
     RegisteredDatabases[Node.OverlayIndex].OrigRegRec.LastOpened:= Now;
     // Password form
     if Rec.Password = '' then
-    begin
-      fmEnterPass.edUser.Text:= Rec.UserName;
-      fmEnterPass.cbRole.Text:= Rec.Role;
-      fmEnterPass.edPassword.Clear;
-      try
-        fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(Node.OverlayIndex, 9, Count);
-      except
-      end;
-
-      if fmEnterPass.ShowModal = mrOk then
-      begin
-        if fmReg.TestConnection(Rec.DatabaseName, fmEnterPass.edUser.Text, fmEnterPass.edPassword.Text,
-          Rec.Charset) then
-          begin
-           { Self.ibConnection.Close;
-            Self.ibConnection.UserName:= fmEnterPass.edUser.Text;
-            Self.ibConnection.Password:= fmEnterPass.edPassword.Text;}
-
-            RegisteredDatabases[Node.OverlayIndex].RegRec.UserName:= fmEnterPass.edUser.Text;
-            RegisteredDatabases[Node.OverlayIndex].RegRec.Password:= fmEnterPass.edPassword.Text;
-            RegisteredDatabases[Node.OverlayIndex].RegRec.Role:= fmEnterPass.cbRole.Text;
-            Node.Expand(False);
-          end
-          else
-          begin
-            Exit;
-          end;
-      end
-      else
-      begin
-        Node.Collapse(False);
-        Exit;
-      end;
-    end;
+    if ConnectToDBAs(Node.OverlayIndex) then
+      Node.Expand(False)
+    else
+      Node.Collapse(False);
   end
   else  // Expand objects root (Tables, Procedures, etc)
   if (Node.Parent <> nil) and (Node.Parent.Parent <> nil) and (Node.Parent.Parent.Parent = nil) and (not Node.Expanded) then
@@ -3841,7 +3861,7 @@ end;
 
 (**********************   Find CustomForm   *********************************)
 
-function TfmMain.FindCusomForm(ATitle: string; AClass: TClass): TComponent;
+function TfmMain.FindCustomForm(ATitle: string; AClass: TClass): TComponent;
 var
   i: Integer;
 begin

@@ -10,13 +10,14 @@ object fmEnterPass: TfmEnterPass
   ClientHeight = 236
   ClientWidth = 388
   OnActivate = FormActivate
+  OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '0.9.31'
   object Label1: TLabel
     Left = 14
     Height = 18
     Top = 80
-    Width = 62
+    Width = 67
     Caption = 'Password'
     ParentColor = False
   end
@@ -24,7 +25,7 @@ object fmEnterPass: TfmEnterPass
     Left = 14
     Height = 18
     Top = 30
-    Width = 31
+    Width = 32
     Caption = 'User'
     ParentColor = False
   end
@@ -32,7 +33,7 @@ object fmEnterPass: TfmEnterPass
     Left = 14
     Height = 18
     Top = 125
-    Width = 29
+    Width = 31
     Caption = 'Role'
     ParentColor = False
   end
@@ -55,7 +56,6 @@ object fmEnterPass: TfmEnterPass
     Default = True
     Kind = bkOK
     ModalResult = 1
-    OnClick = BitBtn1Click
     TabOrder = 3
   end
   object BitBtn2: TBitBtn

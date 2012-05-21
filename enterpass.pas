@@ -21,8 +21,8 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    procedure BitBtn1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { private declarations }
   public
@@ -38,13 +38,15 @@ implementation
 
 procedure TfmEnterPass.FormActivate(Sender: TObject);
 begin
-  edPassword.SetFocus;
+  if Showing then
+    edPassword.SetFocus;
 end;
 
-procedure TfmEnterPass.BitBtn1Click(Sender: TObject);
+procedure TfmEnterPass.FormShow(Sender: TObject);
 begin
-
+  cbRole.ItemIndex:= -1;
 end;
+
 
 initialization
   {$I enterpass.lrs}

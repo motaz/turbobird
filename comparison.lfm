@@ -66,8 +66,8 @@ object fmComparison: TfmComparison
   end
   object meLog: TMemo
     Left = 13
-    Height = 242
-    Top = 226
+    Height = 224
+    Top = 222
     Width = 603
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Name = 'Courier 10 Pitch'
@@ -173,5 +173,16 @@ object fmComparison: TfmComparison
       Caption = 'Users'
       TabOrder = 8
     end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 21
+    Top = 457
+    Width = 623
+    Panels = <    
+      item
+        Width = 50
+      end>
+    SimplePanel = False
   end
 end

@@ -14,17 +14,19 @@ type
   { TfmNewTable }
 
   TfmNewTable = class(TForm)
+    bbClose: TBitBtn;
     bbScript: TBitBtn;
     BitBtn2: TBitBtn;
     cxCreateGen: TCheckBox;
     edNewTable: TEdit;
     Label1: TLabel;
     StringGrid1: TStringGrid;
+    procedure bbCloseClick(Sender: TObject);
     procedure bbScriptClick(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
     procedure cxCreateGenClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure StringGrid1ChangeBounds(Sender: TObject);
-    procedure StringGrid1EditingDone(Sender: TObject);
     procedure StringGrid1KeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure StringGrid1MouseUp(Sender: TObject; Button: TMouseButton;
@@ -140,17 +142,6 @@ begin
   end;
 end;
 
-procedure TfmNewTable.StringGrid1EditingDone(Sender: TObject);
-var
-  SelType: string;
-begin
-//  if (StringGrid1.Col = 1) and (Trim(StringGrid1.Cells[2, StringGrid1.Row]) = '') then
-//  begin
-//    SelType:= StringGrid1.Cells[1, StringGrid1.Row];
-//    StringGrid1.Cells[2, StringGrid1.Row]:= IntToStr(dmSysTables.GetDefaultTypeSize(fdbIndex, SelType));
-//  end;
-
-end;
 
 procedure TfmNewTable.bbScriptClick(Sender: TObject);
 var
@@ -166,6 +157,7 @@ begin
     List.Add('-- Generator');
     List.Add('create generator ' + GeneratorName + ';');
 
+    List.Add('');
     List.Add('-- Trigger');
     List.Add('CREATE TRIGGER ' + GeneratorName + ' FOR ' + edNewTable.Text);
     List.Add('ACTIVE BEFORE INSERT POSITION 0 ');
@@ -177,7 +169,18 @@ begin
 
   fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create New Table: ' + edNewTable.Text, List.Text);
   List.Free;
+  bbCloseClick(nil);
+end;
+
+procedure TfmNewTable.BitBtn2Click(Sender: TObject);
+begin
+  bbCloseClick(nil);
+end;
+
+procedure TfmNewTable.bbCloseClick(Sender: TObject);
+begin
   Close;
+  Parent.Free;
 end;
 
 procedure TfmNewTable.cxCreateGenClick(Sender: TObject);
@@ -188,7 +191,7 @@ end;
 
 procedure TfmNewTable.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  StringGrid1.Row:= 1;
+  CloseAction:= caFree;
 end;
 
 procedure TfmNewTable.StringGrid1ChangeBounds(Sender: TObject);

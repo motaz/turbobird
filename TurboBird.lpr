@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      : 20.May.2012                                          }
+{  Last updated      : 21.May.2012                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
@@ -62,7 +62,6 @@ begin
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TfmCreateDB, fmCreateDB);
   Application.CreateForm(TfmReg, fmReg);
-  Application.CreateForm(TfmNewTable, fmNewTable);
   Application.CreateForm(TfmNewGen, fmNewGen);
   Application.CreateForm(TfmEnterPass, fmEnterPass);
   Application.CreateForm(TfmCreateTrigger, fmCreateTrigger);
@@ -78,11 +77,11 @@ begin
   Application.CreateForm(TfmChangePass, fmChangePass);
   Application.CreateForm(TfmSQLHistory, fmSQLHistory);
   Application.CreateForm(TfmCopyTable, fmCopyTable);
+  Application.CreateForm(TfmComparison, fmComparison);
   fmMain.Version:= Version;
   fmMain.VersionDate:= VersionDate;
   SAbout.Free;
   InitialiseIBase60;
-  Application.CreateForm(TfmComparison, fmComparison);
   Application.Run;
   ReleaseIBase60;
 

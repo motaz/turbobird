@@ -474,9 +474,9 @@ object fmPermissionManage: TfmPermissionManage
     end
   end
   object bbClose: TBitBtn
-    Left = 491
+    Left = 488
     Height = 24
-    Top = 0
+    Top = -1
     Width = 27
     Anchors = [akTop, akRight]
     Caption = ' X  '
