@@ -1,10 +1,10 @@
 object fmComparison: TfmComparison
   Left = 447
-  Height = 478
+  Height = 550
   Top = 170
   Width = 623
   Caption = 'Database comparison'
-  ClientHeight = 478
+  ClientHeight = 550
   ClientWidth = 623
   OnClose = FormClose
   Position = poScreenCenter
@@ -58,7 +58,7 @@ object fmComparison: TfmComparison
   object bbStart: TBitBtn
     Left = 13
     Height = 30
-    Top = 184
+    Top = 240
     Width = 154
     Caption = 'Start Comparison'
     OnClick = bbStartClick
@@ -66,8 +66,8 @@ object fmComparison: TfmComparison
   end
   object meLog: TMemo
     Left = 13
-    Height = 224
-    Top = 222
+    Height = 238
+    Top = 280
     Width = 603
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Name = 'Courier 10 Pitch'
@@ -79,9 +79,9 @@ object fmComparison: TfmComparison
   end
   object laScript: TLabel
     Cursor = crHandPoint
-    Left = 187
+    Left = 190
     Height = 18
-    Top = 196
+    Top = 252
     Width = 301
     Caption = 'Script missing objects in compared database'
     Font.Style = [fsUnderline]
@@ -165,24 +165,24 @@ object fmComparison: TfmComparison
       Caption = 'Roles'
       TabOrder = 7
     end
-    object cxUsers: TCheckBox
-      Left = 495
-      Height = 24
-      Top = 4
-      Width = 64
-      Caption = 'Users'
-      TabOrder = 8
-    end
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 21
-    Top = 457
+    Top = 529
     Width = 623
     Panels = <    
       item
         Width = 50
       end>
     SimplePanel = False
+  end
+  object cxRemovedObjects: TCheckBox
+    Left = 15
+    Height = 24
+    Top = 200
+    Width = 185
+    Caption = 'Check Removed objects'
+    TabOrder = 5
   end
 end

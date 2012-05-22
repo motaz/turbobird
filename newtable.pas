@@ -24,9 +24,7 @@ type
     procedure bbCloseClick(Sender: TObject);
     procedure bbScriptClick(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
-    procedure cxCreateGenClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure StringGrid1ChangeBounds(Sender: TObject);
     procedure StringGrid1KeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure StringGrid1MouseUp(Sender: TObject; Button: TMouseButton;
@@ -101,7 +99,7 @@ begin
   if PKey <> '' then
   begin
     Delete(PKey, Length(PKey), 1);
-    Result:= Result + ', ' + #10 + ' primary key (' + PKey + ') ' + #10;
+    Result:= Result + ', ' + #10 + ' constraint ' + edNewTable.Text + '_pk_1 primary key (' + PKey + ') ' + #10;
   end;
   Result:= Result + ');';
 end;
@@ -183,20 +181,9 @@ begin
   Parent.Free;
 end;
 
-procedure TfmNewTable.cxCreateGenClick(Sender: TObject);
-begin
-  if cxCreateGen.Checked and (StringGrid1.RowCount > 1) then
-    StringGrid1.Cells[3, 1]:= '1';
-end;
-
 procedure TfmNewTable.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
-end;
-
-procedure TfmNewTable.StringGrid1ChangeBounds(Sender: TObject);
-begin
-
 end;
 
 

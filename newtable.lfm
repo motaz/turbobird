@@ -105,7 +105,6 @@ object fmNewTable: TfmNewTable
     Width = 328
     Anchors = [akLeft, akBottom]
     Caption = 'Create Auto increment Generator and Trigger'
-    OnClick = cxCreateGenClick
     TabOrder = 4
   end
   object bbClose: TBitBtn

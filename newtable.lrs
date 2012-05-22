@@ -30,9 +30,9 @@ LazarusResources.Add('TfmNewTable','FORMDATA',[
   +'Color'#4#219#242#247#0#7'Default'#9#4'Kind'#7#5'bkYes'#7'OnClick'#7#13'bbSc'
   +'riptClick'#8'TabOrder'#2#3#0#0#9'TCheckBox'#11'cxCreateGen'#4'Left'#2#18#6
   +'Height'#2#24#3'Top'#3#191#1#5'Width'#3'H'#1#7'Anchors'#11#6'akLeft'#8'akBot'
-  +'tom'#0#7'Caption'#6'+Create Auto increment Generator and Trigger'#7'OnClick'
-  +#7#16'cxCreateGenClick'#8'TabOrder'#2#4#0#0#7'TBitBtn'#7'bbClose'#4'Left'#3
-  +'0'#2#6'Height'#2#24#3'Top'#2#0#5'Width'#2#27#7'Anchors'#11#5'akTop'#7'akRig'
-  +'ht'#0#7'Caption'#6#4' X  '#5'Color'#4#219#242#247#0#10'Font.Style'#11#6'fsB'
-  +'old'#0#7'OnClick'#7#12'bbCloseClick'#10'ParentFont'#8#8'TabOrder'#2#5#0#0#0
+  +'tom'#0#7'Caption'#6'+Create Auto increment Generator and Trigger'#8'TabOrde'
+  +'r'#2#4#0#0#7'TBitBtn'#7'bbClose'#4'Left'#3'0'#2#6'Height'#2#24#3'Top'#2#0#5
+  +'Width'#2#27#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#4' X  '#5'Colo'
+  +'r'#4#219#242#247#0#10'Font.Style'#11#6'fsBold'#0#7'OnClick'#7#12'bbCloseCli'
+  +'ck'#10'ParentFont'#8#8'TabOrder'#2#5#0#0#0
 ]);

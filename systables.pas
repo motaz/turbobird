@@ -29,6 +29,8 @@ type
     function GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery;
       ConstraintsList: TStringList = nil): Boolean;
 
+    function GetAllConstraints(dbIndex: Integer; ConstraintsList, TablesList: TStringList): Boolean;
+
     function GetConstraintInfo(dbIndex: Integer; ATableName, ConstraintName: string; var KeyName,
         CurrentTableName, CurrentFieldName, OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string): Boolean;
 
@@ -57,10 +59,12 @@ type
     function GetIndices(dbIndex: Integer; ATableName: string; PrimaryIndexName: string;
       var List: TStringList): Boolean;
 
+    function GetAllIndices(dbIndex: Integer; List, TablesList: TStringList): Boolean;
+
     function GetPrimaryKeyIndexName(dbIndex: Integer; ATableName: string; var ConstraintName: string): string;
 
     function GetIndexInfo(dbIndex: Integer; ATableName, AIndexName: string;
-      var FieldsList: TStringList; var Unique, Ascending: Boolean): Boolean;
+      var FieldsList: TStringList; var ConstraintName: string; var Unique, Ascending, IsPrimary: Boolean): Boolean;
 
     procedure GetTableFields(dbIndex: Integer; ATableName: string; FieldsList: TStringList);
 
@@ -290,6 +294,42 @@ begin
     end;
     First;
   end;
+
+end;
+
+function TdmSysTables.GetAllConstraints(dbIndex: Integer; ConstraintsList, TablesList: TStringList): Boolean;
+begin
+  Init(dbIndex);
+  sqQuery.Close;
+  sqQuery.SQL.Text:= 'select Trim(Refc.RDB$Constraint_Name) as ConstName, ' +
+    'Trim(Refc.RDB$CONST_NAME_UQ) as KeyName, ' +
+    'Trim(Ind.RDB$Relation_Name) as CurrentTableName, ' +
+    'Trim(Seg.RDB$Field_name) as CurrentFieldName, ' +
+    'Trim(Con.RDB$Relation_Name) as OtherTableName, ' +
+    'Trim(Ind.RDB$Foreign_key) as OtherFieldName, ' +
+    'RDB$Update_Rule as UpdateRule, RDB$Delete_Rule as DeleteRule ' +
+    'from RDB$RELATION_CONSTRAINTS Con, rdb$REF_Constraints Refc, RDB$INDEX_SEGMENTS Seg, ' +
+    'RDB$INDICES Ind ' +
+    'where Con.RDB$COnstraint_Name = Refc.RDB$Const_Name_UQ ' +
+    '  and Refc.RDB$COnstraint_Name = Ind.RDB$Index_Name' +
+    '  and Refc.RDB$COnstraint_Name = Seg.RDB$Index_Name';
+  sqQuery.Open;
+  Result:= sqQuery.RecordCount > 0;
+  with sqQuery do
+  if Result then
+  begin
+    ConstraintsList.Clear;
+    if Assigned(TablesList) then
+      TablesList.Clear;
+    while not Eof do
+    begin
+      ConstraintsList.Add(FieldByName('ConstName').AsString);
+      if Assigned(TablesList) then
+        TablesList.Add(FieldByName('CurrentTableName').AsString);
+      Next;
+    end;
+  end;
+  sqQuery.Close;
 
 end;
 
@@ -703,6 +743,31 @@ begin
 
 end;
 
+function TdmSysTables.GetAllIndices(dbIndex: Integer; List, TablesList: TStringList): Boolean;
+begin
+  Init(dbIndex);
+  sqQuery.Close;
+  sqQuery.SQL.Text:= 'SELECT * FROM RDB$INDICES WHERE  RDB$FOREIGN_KEY IS NULL ' +
+   'and RDB$system_flag = 0';
+  sqQuery.Open;
+  Result:= sqQuery.RecordCount > 0;
+  List.Clear;
+  if TablesList <> nil then
+    TablesList.Clear;
+  with sqQuery do
+  if Result then
+  begin
+    while not Eof do
+    begin
+      List.Add(Trim(Fields[0].AsString));
+      if TablesList <> nil then
+        TablesList.Add(Trim(FieldByName('RDB$Relation_Name').AsString));
+      Next;
+    end;
+  end;
+  sqQuery.Close
+end;
+
 function TdmSysTables.GetPrimaryKeyIndexName(dbIndex: Integer; ATableName: string; var ConstraintName: string): string;
 begin
   Init(dbIndex);
@@ -721,20 +786,21 @@ begin
 end;
 
 function TdmSysTables.GetIndexInfo(dbIndex: Integer; ATableName, AIndexName: string;
-  var FieldsList: TStringList; var Unique, Ascending: Boolean): Boolean;
+  var FieldsList: TStringList; var ConstraintName: string; var Unique, Ascending, IsPrimary: Boolean): Boolean;
 begin
   Init(dbIndex);
   sqQuery.Close;
   sqQuery.SQL.Text:= 'SELECT RDB$Indices.*, RDB$INDEX_SEGMENTS.RDB$FIELD_NAME AS field_name, ' + #10 +
      'RDB$INDICES.RDB$DESCRIPTION AS description, ' + #10 +
-     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position ' + #10 +
+     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position, ' + #10 +
+     'RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE as IndexType, ' + #10 +
+     'RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_Name as ConstraintName' + #10 +
      'FROM RDB$INDEX_SEGMENTS ' + #10 +
      'LEFT JOIN RDB$INDICES ON RDB$INDICES.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' + #10 +
      'LEFT JOIN RDB$RELATION_CONSTRAINTS ON RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME '
      + #10 +
      ' WHERE UPPER(RDB$INDICES.RDB$RELATION_NAME)=''' + UpperCase(ATablename) + '''         -- table name ' + #10 +
-     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' -- index name ' + #10 +
-     '--  AND RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE IS NULL ' + #10 +
+     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' ' + #10 +
      'ORDER BY RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION;';
   sqQuery.Open;
   Result:= sqQuery.FieldCount > 0;
@@ -742,6 +808,8 @@ begin
   begin
     Unique:= sqQuery.FieldByName('RDB$Unique_Flag').AsString = '1';
     Ascending:= sqQuery.FieldByName('RDB$Index_Type').AsString <> '1';
+    IsPrimary:= Trim(sqQuery.FieldByName('IndexType').AsString) = 'PRIMARY KEY';
+    ConstraintName:= Trim(sqQuery.FieldByName('ConstraintName').AsString);
   end;
   FieldsList.Clear;
   if Result then

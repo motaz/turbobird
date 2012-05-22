@@ -19,9 +19,9 @@ type
   TfmComparison = class(TForm)
     bbStart: TBitBtn;
     cbComparedDatabase: TComboBox;
+    cxRemovedObjects: TCheckBox;
     cxDomains: TCheckBox;
     cxRoles: TCheckBox;
-    cxUsers: TCheckBox;
     cxTriggers: TCheckBox;
     cxGenerators: TCheckBox;
     cxTables: TCheckBox;
@@ -45,6 +45,7 @@ type
     DiffCount: Integer;
     dbObjectsList: array [1 .. 13] of TStringList;
     dbExistingObjectsList: array [1 .. 13] of TStringList;
+    dbRemovedObjectsList: array [1 .. 13] of TStringList;
     MissingFieldsList: TStringList;
 
     ExistFieldsList: TStringList;
@@ -64,6 +65,7 @@ type
 
     fQueryWindow: TfmQueryWindow;
 
+    procedure CheckRemovedDBObjects;
     procedure DisplayStatus(AStatus: string);
 
     procedure CheckMissingIndices;
@@ -71,6 +73,7 @@ type
     procedure CheckMissingDBObjects;
     procedure CheckMissingFields;
     procedure CheckModifiedFields;
+
     procedure CheckModifiedIndices;
     procedure CheckModifiedConstraints;
     procedure CheckModifiedViews;
@@ -79,8 +82,12 @@ type
     procedure CheckModifiedFunctions;
     procedure CheckModifiedDomains;
 
+    procedure CheckRemovedIndices;
+    procedure CheckRemovedConstraints;
+
     procedure InitializeQueryWindow;
     procedure ScriptMissingFields;
+
     procedure ScriptModifiedFields;
     procedure ScriptModifiedIndices;
     procedure ScriptModifiedConstraints;
@@ -89,6 +96,8 @@ type
     procedure ScriptModifiedProcedures;
     procedure ScriptModifiedFunctions;
     procedure ScriptModifiedDomains;
+
+    procedure ScriptRemovedDBObjects;
   public
     procedure Init(dbIndex: Integer);
     { public declarations }
@@ -135,6 +144,8 @@ end;
 
 procedure TfmComparison.bbStartClick(Sender: TObject);
 begin
+  meLog.Clear;
+  meLog.Visible:= False;
   DiffCount:= 0;
   StatusBar1.Color:= clBlue;
   DisplayStatus('Searching for missing DB Objects...');
@@ -167,8 +178,14 @@ begin
   if cxDomains.Checked then
     CheckModifiedDomains;
 
+  DisplayStatus('Searching for removed db Objects...');
+
+  if cxRemovedObjects.Checked then
+    CheckRemovedDBObjects;
+
   StatusBar1.Color:= clDefault;
   DisplayStatus('Comparison Finished, ' + IntToStr(DiffCount) + ' difference(s) found');
+  meLog.Visible:= True;
 end;
 
 procedure TfmComparison.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -180,6 +197,9 @@ begin
 
   for i:= 1 to High(dbExistingObjectsList) do
     dbExistingObjectsList[i].Free;
+
+  for i:= 1 to High(dbRemovedObjectsList) do
+    dbRemovedObjectsList[i].Free;
 
   MissingFieldsList.Free;
 
@@ -217,11 +237,15 @@ var
   Unique, Ascending: Boolean;
   KeyName, CurrentTableName, CurrentFieldName,
   OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string;
+  IsPrimary: Boolean;
+  ConstraintName: string;
 begin
   InitializeQueryWindow;
   meLog.Clear;
   ScriptList:= TStringList.Create;
   FieldsList:= TStringList.Create;
+
+  ScriptRemovedDBObjects;
 
   if cxTables.Checked then
   begin
@@ -249,7 +273,6 @@ begin
   dmSysTables.Init(fdbIndex);
 
   fQueryWindow.meQuery.Lines.Add('');
-  fQueryWindow.meQuery.Lines.Add('-- Missing db Objects');
 
   for x:= 1 to 13 do
   begin
@@ -356,17 +379,29 @@ begin
       System.Delete(Line, 1, Pos(',', Line));
       AIndexName:= Line;
       ScriptList.Clear;
-      if dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, Unique, Ascending) then
+      if dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique,
+        Ascending, IsPrimary) then
       begin
-        Line:= 'create ';
-        if Unique then
-          Line:= Line + 'Unique ';
-        if not Ascending then
-          Line:= Line + 'Descending ';
+        if IsPrimary then
+        begin
+          Line:= 'alter table ' + ATableName + #13#10 +
+          'add constraint ' + AIndexName + #13#10 +
+          'primary key (' + FieldsList.CommaText + ');';
 
-        Line:= Line + 'index ' + AIndexName + ' on ' + ATableName;
+        end
+        else
+        begin
+          Line:= 'create ';
+          if Unique then
+            Line:= Line + 'Unique ';
+          if not Ascending then
+            Line:= Line + 'Descending ';
 
-        Line:= Line + ' (' + FieldsList.CommaText + ') ;';
+          Line:= Line + 'index ' + AIndexName + ' on ' + ATableName;
+
+          Line:= Line + ' (' + FieldsList.CommaText + ') ;';
+
+        end;
 
         fQueryWindow.meQuery.Lines.Add(Line);
         fQueryWindow.meQuery.Lines.Add('');
@@ -380,12 +415,12 @@ begin
       Line:= dbObjectsList[x].Strings[i];
       ATableName:= copy(Line, 1, Pos(',', Line) - 1);
       System.Delete(Line, 1, Pos(',', Line));
-      AIndexName:= Line;
+      ConstraintName:= Line;
       ScriptList.Clear;
       if dmSysTables.GetConstraintInfo(fdbIndex, ATableName, AIndexName, KeyName, CurrentTableName, CurrentFieldName,
         OtherTableName, OtherFieldName, UpdateRule, DeleteRule) then
       begin
-        Line:= 'alter table ' + ATableName + ' add constraint ' + AIndexName +
+        Line:= 'alter table ' + ATableName + ' add constraint ' + ConstraintName +
           ' foreign key (' + CurrentFieldName + ') references ' +  OtherTableName  +
           ' (' + dmSysTables.GetConstraintForiegnKeyFields(OtherFieldName, dmSysTables.sqQuery) + ') ';
         if Trim(UpdateRule) <> 'RESTRICT' then
@@ -423,8 +458,6 @@ var
 begin
   List:= TStringList.Create;
   ComparedList:= TStringList.Create;
-  meLog.Clear;
-  meLog.Visible:= False;
   for x:= 1 to 11 do
   if ((x = 1) and cxTables.Checked) or
      ((x = 2) and cxGenerators.Checked) or
@@ -433,11 +466,10 @@ begin
      ((x = 5) and cxStoredProcs.Checked) or
      ((x = 6) and cxUDFs.Checked) or
      ((x = 8) and cxDomains.Checked) or
-     ((x = 9) and cxRoles.Checked) or
-     ((x = 11) and cxUsers.Checked) then
+     ((x = 9) and cxRoles.Checked) then
   begin
     meLog.Lines.Add('');
-    meLog.Lines.Add('Missing ' + dbObjects[x] + ':');
+    meLog.Lines.Add('Checking Missing ' + dbObjects[x] + ':');
 
     List.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, x, Count);
 
@@ -457,8 +489,47 @@ begin
   end;
 
 
-  meLog.Visible:= True;
   laScript.Enabled:= True;
+  ComparedList.Free;
+  List.Free;
+end;
+
+procedure TfmComparison.CheckRemovedDBObjects;
+var
+  List, ComparedList: TStringList;
+  Count: Integer;
+  x, i: Integer;
+begin
+  List:= TStringList.Create;
+  ComparedList:= TStringList.Create;
+  for x:= 1 to 11 do
+  if ((x = 1) and cxTables.Checked) or
+     ((x = 2) and cxGenerators.Checked) or
+     ((x = 3) and cxTriggers.Checked) or
+     ((x = 4) and cxViews.Checked) or
+     ((x = 5) and cxStoredProcs.Checked) or
+     ((x = 6) and cxUDFs.Checked) or
+     ((x = 8) and cxDomains.Checked) then
+  begin
+    meLog.Lines.Add('');
+    meLog.Lines.Add('Checking Removed ' + dbObjects[x] + ':');
+
+    List.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, x, Count);
+
+    ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, x, Count);
+    dbRemovedObjectsList[x].Clear;
+
+    for i:= 0 to ComparedList.Count -1 do
+    if List.IndexOf(ComparedList[i]) = -1 then  // Removed
+    begin
+      meLog.Lines.Add(' ' + ComparedList[i]);
+      dbRemovedObjectsList[x].Add(ComparedList[i]);
+      Inc(DiffCount);
+    end;
+
+  end;
+  CheckRemovedIndices;
+  CheckRemovedConstraints;
   ComparedList.Free;
   List.Free;
 end;
@@ -545,6 +616,9 @@ var
   Unique, Ascending: Boolean;
   CFieldsList: TStringList;
   CUnique, CAscending: Boolean;
+  IsPrimary: Boolean;
+  ConstraintName: string;
+  CConstraintName: string;
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Indices');
@@ -559,8 +633,9 @@ begin
     System.Delete(Line, 1, Pos(',', Line));
     AIndexName:= Line;
 
-    dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, Unique, Ascending);
-    dmSysTables.GetIndexInfo(cbComparedDatabase.ItemIndex, ATableName, AIndexName, CFieldsList, CUnique, CAscending);
+    dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique, Ascending, IsPrimary);
+    dmSysTables.GetIndexInfo(cbComparedDatabase.ItemIndex, ATableName, AIndexName, CFieldsList, CConstraintName,
+      CUnique, CAscending, IsPrimary);
     if (FieldsList.CommaText <> CFieldsList.CommaText) or (Unique <> CUnique) or (Ascending <> CAscending) then
     begin
       meLog.Lines.Add(' ' + ExistIndicesList[i]);
@@ -757,6 +832,79 @@ begin
 
 end;
 
+procedure TfmComparison.CheckRemovedIndices;
+var
+  i: Integer;
+  OrigList: TStringList;
+  ComparedList: TStringList;
+  TablesList: TStringList;
+  CTablesList: TStringList;
+  Po: Integer;
+begin
+  OrigList:= TStringList.Create;
+  ComparedList:= TStringList.Create;
+  TablesList:= TStringList.Create;
+  CTablesList:= TStringList.Create;
+
+  dmSysTables.GetAllIndices(fdbIndex, OrigList, TablesList);
+  dmSysTables.GetAllIndices(cbComparedDatabase.ItemIndex, ComparedList, CTablesList);
+  dbRemovedObjectsList[12].Clear;
+
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Checking removed indices');
+  for i:= 0 to ComparedList.Count - 1 do
+  begin
+    Po:= OrigList.IndexOf(ComparedList[i]);
+    if (Po = -1) or (TablesList[Po] <> CTablesList[i]) then
+    begin
+      dbRemovedObjectsList[12].Add(CTablesList[i] + ',' + ComparedList[i]);
+      meLog.Lines.Add(' ' + CTableslist[i] + ':' + ComparedList[i]);
+    end;
+  end;
+
+  OrigList.Free;
+  ComparedList.Free;
+  TablesList.Free;
+  CTablesList.Free;
+end;
+
+procedure TfmComparison.CheckRemovedConstraints;
+var
+  i: Integer;
+  OrigList: TStringList;
+  ComparedList: TStringList;
+  TablesList: TStringList;
+  CTablesList: TStringList;
+  Po: Integer;
+begin
+  OrigList:= TStringList.Create;
+  ComparedList:= TStringList.Create;
+  TablesList:= TStringList.Create;
+  CTablesList:= TStringList.Create;
+
+  dmSysTables.GetAllConstraints(fdbIndex, OrigList, TablesList);
+  dmSysTables.GetAllConstraints(cbComparedDatabase.ItemIndex, ComparedList, CTablesList);
+  dbRemovedObjectsList[13].Clear;
+
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Checking removed constraints');
+  for i:= 0 to ComparedList.Count - 1 do
+  begin
+    Po:= OrigList.IndexOf(ComparedList[i]);
+    if (Po = -1) or (TablesList[Po] <> CTablesList[i]) then
+    begin
+      dbRemovedObjectsList[13].Add(CTablesList[i] + ',' + ComparedList[i]);
+      meLog.Lines.Add(' ' + CTableslist[i] + ':' + ComparedList[i]);
+    end;
+
+  end;
+
+  OrigList.Free;
+  ComparedList.Free;
+  TablesList.Free;
+  CTablesList.Free;
+end;
+
 procedure TfmComparison.InitializeQueryWindow;
 begin
   fQueryWindow:= fmMain.ShowQueryWindow(cbComparedDatabase.ItemIndex, 'Database Differences');
@@ -914,6 +1062,8 @@ var
   FieldsList: TStringList;
   Line: string;
   Unique, Ascending: Boolean;
+  IsPrimary: Boolean;
+  ConstraintName: string;
 begin
   if ModifiedIndicesList.Count > 0 then
   try
@@ -926,19 +1076,33 @@ begin
       ATableName:= copy(Line, 1, Pos(',', Line) - 1);
       System.Delete(Line, 1, Pos(',', Line));
       AIndexName:= Line;
-      if dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, Unique, Ascending) then
+      if dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique, Ascending,
+        IsPrimary) then
       begin
-        fQueryWindow.meQuery.Lines.Add('drop index ' + AIndexName + ';');
+        if IsPrimary then
+        begin
+          fQueryWindow.meQuery.Lines.Add('alter table AAAA DROP constraint ' + ConstraintName + ';');
 
-        Line:= 'create ';
-        if Unique then
-          Line:= Line + 'Unique ';
-        if not Ascending then
-          Line:= Line + 'Descending ';
+          Line:= 'alter table ' + ATableName + #13#10 +
+          'add constraint ' + AIndexName + #13#10 +
+          'primary key (' + FieldsList.CommaText + ')';
 
-        Line:= Line + 'index ' + AIndexName + ' on ' + ATableName;
+        end
+        else // Secondary
+        begin
+          fQueryWindow.meQuery.Lines.Add('drop index ' + AIndexName + ';');
 
-        Line:= Line + ' (' + FieldsList.CommaText + ') ;';
+          Line:= 'create ';
+          if Unique then
+            Line:= Line + 'Unique ';
+          if not Ascending then
+            Line:= Line + 'Descending ';
+
+          Line:= Line + 'index ' + AIndexName + ' on ' + ATableName;
+
+          Line:= Line + ' (' + FieldsList.CommaText + ') ;';
+
+        end;
 
         fQueryWindow.meQuery.Lines.Add(Line);
         fQueryWindow.meQuery.Lines.Add('');
@@ -1161,6 +1325,179 @@ begin
 
 end;
 
+procedure TfmComparison.ScriptRemovedDBObjects;
+var
+  x: Integer;
+  ObjName: string;
+  i: Integer;
+  IsPrimary: Boolean;
+  TableName: string;
+  IndexName: string;
+  FieldsList: TStringList;
+  Unique, Asc: Boolean;
+  ConstraintName: string;
+begin
+  FieldsList:= TStringList.Create;
+  for x:= 13 downto 1 do
+  begin
+    if (x = 1) and cxTables.Checked then
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Tables');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        fQueryWindow.meQuery.Lines.Add('drop table ' + ObjName + ';');
+      end;
+    end
+    else
+    if (x = 2) and cxGenerators.Checked then
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Generators');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        fQueryWindow.meQuery.Lines.Add('drop generator ' + ObjName + ';');
+      end;
+    end
+    else
+    if (x = 3) and cxTriggers.Checked then
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Triggers');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        fQueryWindow.meQuery.Lines.Add('drop trigger ' + ObjName + ';');
+      end;
+    end
+    else
+    if (x = 4) and cxViews.Checked then
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Views');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        fQueryWindow.meQuery.Lines.Add('drop view "' + ObjName + '";');
+      end;
+    end
+    else
+    if (x = 5) and cxStoredProcs.Checked then
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Procedures');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        fQueryWindow.meQuery.Lines.Add('drop procedure ' + ObjName + ';');
+      end;
+    end
+    else
+    if (x = 6) and cxUDFs.Checked then
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Functions (UDFs)');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        fQueryWindow.meQuery.Lines.Add('drop external function "' + ObjName + '";');
+      end;
+    end
+    else
+    if (x = 8) and cxDomains.Checked then
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Domains');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        fQueryWindow.meQuery.Lines.Add('drop domain ' + ObjName + ';');
+      end;
+    end
+    else
+    if (x = 9) and cxRoles.Checked then
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Roles');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        fQueryWindow.meQuery.Lines.Add('drop role ' + ObjName + ';');
+      end;
+    end
+    else
+    if (x = 12) and cxTables.Checked then // Indices are linked to tables
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Indices');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        TableName:= Copy(ObjName, 1, Pos(',', ObjName) - 1);
+        System.Delete(ObjName, 1, Pos(',', ObjName));
+        IndexName:= ObjName;
+        dmSysTables.GetIndexInfo(cbComparedDatabase.ItemIndex, TableName, IndexName, FieldsList,
+        ConstraintName, Unique, Asc, IsPrimary);
+        if IsPrimary then
+          fQueryWindow.meQuery.Lines.Add('alter table ' + TableName + ' DROP constraint ' + ConstraintName + ';')
+        else
+          fQueryWindow.meQuery.Lines.Add('drop index ' + IndexName + ';');
+      end;
+    end
+    else
+    if (x = 13) and cxTables.Checked then // Constraints are linked to tables
+    begin
+      if dbRemovedObjectsList[x].Count > 0 then
+      begin
+        fQueryWindow.meQuery.Lines.Add('');
+        fQueryWindow.meQuery.Lines.Add('-- Removed Constraints');
+      end;
+      for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+      begin
+        ObjName:= dbRemovedObjectsList[x][i];
+        TableName:= Copy(ObjName, 1, Pos(',', ObjName) - 1);
+        System.Delete(ObjName, 1, Pos(',', ObjName));
+        ConstraintName:= ObjName;
+        fQueryWindow.meQuery.Lines.Add('alter table ' + TableName + ' DROP constraint ' + ConstraintName + ';');
+      end;
+    end;
+
+
+  end;
+
+  FieldsList.Free;
+
+end;
+
 procedure TfmComparison.Init(dbIndex: Integer);
 var
   i: Integer;
@@ -1174,7 +1511,7 @@ begin
   cxUDFs.Checked:= True;
   cxTriggers.Checked:= True;
   cxRoles.Checked:= True;
-  cxUsers.Checked:= False;
+  cxRemovedObjects.Checked:= False;
 
   laScript.Enabled:= False;
   laComparedDatabase.Caption:= '[]';
@@ -1194,6 +1531,9 @@ begin
 
   for i:= 1 to High(dbExistingObjectsList) do
     dbExistingObjectsList[i]:= TStringList.Create;
+
+  for i:= 1 to High(dbRemovedObjectsList) do
+    dbRemovedObjectsList[i]:= TStringList.Create;
 
   MissingFieldsList:= TStringList.Create;
 
@@ -1234,11 +1574,11 @@ begin
   try
     for i:= 0 to TablesList.Count - 1 do
     begin
-      PrimaryIndexName:= dmSysTables.GetPrimaryKeyIndexName(fdbIndex, TablesList[i], ConstraintName);
+     // PrimaryIndexName:= dmSysTables.GetPrimaryKeyIndexName(fdbIndex, TablesList[i], ConstraintName);
       List.Clear;
-      dmSysTables.GetIndices(fdbIndex, TablesList[i], PrimaryIndexName, List);
+      dmSysTables.GetIndices(fdbIndex, TablesList[i], '', List);
       ComparedList.Clear;
-      if dmSysTables.GetIndices(cbComparedDatabase.ItemIndex, TablesList[i], PrimaryIndexName, ComparedList) then
+      if dmSysTables.GetIndices(cbComparedDatabase.ItemIndex, TablesList[i], '', ComparedList) then
       begin
         for j:= 0 to List.Count - 1 do
           if ComparedList.IndexOf(List[j]) = -1 then // Add to missing indices

@@ -1,7 +1,7 @@
 object fmTableManage: TfmTableManage
-  Left = 214
+  Left = 298
   Height = 448
-  Top = 386
+  Top = 206
   Width = 819
   ActiveControl = PageControl1
   Anchors = [akTop, akLeft, akRight]
