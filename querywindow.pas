@@ -115,6 +115,7 @@ type
     fOptions: set of TSynSearchOption;
     ibConnection: TIBConnection;
     SqlTrans: TSQLTransaction;
+    function GetNewTabNum: string;
   public
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
@@ -246,6 +247,18 @@ begin
     meQuery.Lines.SaveToFile(SaveDialog1.FileName);
 end;
 
+function TfmQueryWindow.GetNewTabNum: string;
+var
+  i: Integer;
+  Cnt: Integer;
+begin
+  Cnt:= 0;
+  for i:= 0 to PageControl1.ControlCount - 1 do
+  if PageControl1.Pages[i].TabVisible then
+   Inc(Cnt);
+  Result:= IntToStr(Cnt);
+end;
+
 procedure TfmQueryWindow.Init(dbIndex: Integer);
 begin
   fdbIndex:= dbIndex;
@@ -332,7 +345,7 @@ begin
   ATab:= TTabSheet.Create(nil);
   Result:= ATab;
   ATab.Parent:= PageControl1;
-  ATab.Caption:= 'Result # ' + IntToStr(PageControl1.PageCount) + AdditionalTitle;
+  ATab.Caption:= 'Result # ' + GetNewTabNum + ' ' + AdditionalTitle;
   if QueryType = 1 then // Select, need record set result
   begin
     // Query
@@ -448,10 +461,10 @@ begin
         else
           StartLine:= EndLine + 1;
 
-
         if Trim(QueryPart) <> '' then   // Select
         if QueryType = 1 then
         begin
+          ATab:= nil;
           try
             ATab:= CreateResultTab(1, SqlQuery, SqlScript, meResult);
             ATab.ImageIndex:= 0;
@@ -462,9 +475,10 @@ begin
           except
           on e: exception do
           begin
-            ATab.Free;
+            if Assigned(ATab) then
+              ATab.TabVisible:= False;
             SetLength(ResultControls, High(ResultControls));
-            setlength(ParentResultControls, High(ParentResultControls));
+            SetLength(ParentResultControls, High(ParentResultControls));
             ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
             PageControl1.ActivePage:= ATab;
 
@@ -479,6 +493,7 @@ begin
         else  // Execute
         if QueryType = 2 then
         begin
+          ATab:= nil;
           ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
           ATab.ImageIndex:= 1;
           SqlType:= GetSQLType(QueryPart, Command);
@@ -513,6 +528,8 @@ begin
           except
           on e: exception do
           begin
+            if Assigned(ATab) then
+              ATab.TabVisible:= False;
             ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
             PageControl1.ActivePage:= ATab;
             meResult.Text:= e.message;
@@ -541,6 +558,8 @@ begin
   except
   on e: exception do
   begin
+    if Assigned(ATab) then
+      ATab.TabVisible:= False;
     ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
     ATab.ImageIndex:= 2;
     PageControl1.ActivePage:= ATab;
@@ -561,6 +580,7 @@ var
   meResult: TMemo;
   ATab: TTabSheet;
 begin
+  ATab:= nil;
   try
     StartTime:= Now;
     ATab:= CreateResultTab(3, SqlQuery, SqlScript, meResult);
@@ -575,6 +595,8 @@ begin
   on e: exception do
   begin
     Result:= False;
+    if Assigned(ATab) then
+      ATab.TabVisible:= False;
     ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
     PageControl1.ActivePage:= ATab;
     meResult.Text:= e.Message;
