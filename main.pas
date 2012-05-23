@@ -109,7 +109,6 @@ type
     procedure lmAddUserClick(Sender: TObject);
     procedure lmBackupClick(Sender: TObject);
     procedure lmChangePasswordClick(Sender: TObject);
-    procedure lmCloseTabClick(Sender: TObject);
     procedure lmCompareClick(Sender: TObject);
     procedure lmCopyRolePermissionClick(Sender: TObject);
     procedure lmCopyUserPermissionClick(Sender: TObject);
@@ -175,6 +174,7 @@ type
     procedure pmDatabasePopup(Sender: TObject);
     procedure tvMainDblClick(Sender: TObject);
     procedure tvMainExpanded(Sender: TObject; Node: TTreeNode);
+    procedure GlobalException(Sender: TObject; E : Exception);
   private
     ibConnection: TIBConnection;
     sqlTransaction: TSQLTransaction;
@@ -245,6 +245,7 @@ end;
 
 procedure TfmMain.FormCreate(Sender: TObject);
 begin
+  Application.OnException:= @GlobalException;
   fActivated:= False;
   LoadRegisteredDatabases;
 end;
@@ -332,19 +333,37 @@ begin
   end;
 end;
 
-procedure TfmMain.lmCloseTabClick(Sender: TObject);
-begin
-end;
-
 procedure TfmMain.lmCompareClick(Sender: TObject);
 var
   dbIndex: Integer;
+  Title: string;
+  ATab: TTabSheet;
 begin
   dbIndex:= tvMain.Selected.OverlayIndex;
 
   if (RegisteredDatabases[dbIndex].RegRec.Password <> '') or
   ConnectToDBAs(dbIndex) then
   begin
+    Title:= RegisteredDatabases[dbIndex].RegRec.Title + ': Database Comparison';
+    fmComparison:= FindCustomForm(Title, TfmComparison) as TfmComparison;
+    if fmComparison = nil then
+    begin
+      fmComparison:= TfmComparison.Create(Application);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      fmComparison.Parent:= ATab;
+      fmComparison.Left:= 0;
+      fmComparison.Top:= 0;
+      fmComparison.BorderStyle:= bsNone;
+      fmComparison.Align:= alClient;
+      fmComparison.Caption:= Title;
+    end
+    else
+      ATab:= fmComparison.Parent as TTabSheet;
+
+    PageControl1.ActivePage:= ATab;
+    ATab.Tag:= dbIndex;
+    ATab.Caption:= Title;
     fmComparison.Init(dbIndex);
     fmComparison.Show;
   end;
@@ -3676,7 +3695,8 @@ begin
   end
   else
   if Node.Level = 4 then // Table fields (Edit)
-    lmEditFieldClick(nil)
+    lmEditFieldClick(nil);
+
 end;
 
 (**************    Expanded     *****************)
@@ -3709,6 +3729,11 @@ begin
     end;
     FillObjectRoot(Node);
   end;
+end;
+
+procedure TfmMain.GlobalException(Sender: TObject; E : Exception);
+begin
+  MessageDlg('Exception', e.Message, mtError, [mbOk], 0);
 end;
 
 (**********************             Load databases            *********************************)

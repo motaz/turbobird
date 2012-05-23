@@ -17,6 +17,7 @@ type
   { TfmComparison }
 
   TfmComparison = class(TForm)
+    bbClose: TBitBtn;
     bbStart: TBitBtn;
     cbComparedDatabase: TComboBox;
     cxRemovedObjects: TCheckBox;
@@ -31,11 +32,13 @@ type
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
     laScript: TLabel;
     laDatabase: TLabel;
     laComparedDatabase: TLabel;
     meLog: TMemo;
     StatusBar1: TStatusBar;
+    procedure bbCloseClick(Sender: TObject);
     procedure bbStartClick(Sender: TObject);
     procedure cbComparedDatabaseChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -63,6 +66,8 @@ type
     ModifiedFunctionsList: TStringList;
     ModifiedDomainsList: TStringList;
 
+    RemovedFieldsList: TStringList;
+
     fQueryWindow: TfmQueryWindow;
 
     procedure CheckRemovedDBObjects;
@@ -84,8 +89,10 @@ type
 
     procedure CheckRemovedIndices;
     procedure CheckRemovedConstraints;
+    procedure CheckRemovedFields;
 
     procedure InitializeQueryWindow;
+
     procedure ScriptMissingFields;
 
     procedure ScriptModifiedFields;
@@ -98,6 +105,7 @@ type
     procedure ScriptModifiedDomains;
 
     procedure ScriptRemovedDBObjects;
+    procedure ScriptRemovedFields;
   public
     procedure Init(dbIndex: Integer);
     { public declarations }
@@ -183,9 +191,20 @@ begin
   if cxRemovedObjects.Checked then
     CheckRemovedDBObjects;
 
+  if cxTables.Checked and cxRemovedObjects.Checked then
+    CheckRemovedFields;
+
   StatusBar1.Color:= clDefault;
   DisplayStatus('Comparison Finished, ' + IntToStr(DiffCount) + ' difference(s) found');
+  if DiffCount = 0 then
+   meLog.Text:= 'No difference';
   meLog.Visible:= True;
+end;
+
+procedure TfmComparison.bbCloseClick(Sender: TObject);
+begin
+  Close;
+  Parent.Free;
 end;
 
 procedure TfmComparison.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -217,7 +236,9 @@ begin
   ModifiedProceduresList.Free;
   ModifiedFunctionsList.Free;
   ModifiedDomainsList.Free;
+  RemovedFieldsList.Free;
 
+  CloseAction:= caFree;
 end;
 
 procedure TfmComparison.laScriptClick(Sender: TObject);
@@ -241,11 +262,15 @@ var
   ConstraintName: string;
 begin
   InitializeQueryWindow;
-  meLog.Clear;
   ScriptList:= TStringList.Create;
   FieldsList:= TStringList.Create;
 
-  ScriptRemovedDBObjects;
+  if cxRemovedObjects.Checked then
+  begin
+    ScriptRemovedDBObjects;
+    if cxTables.Checked then
+      ScriptRemovedFields;
+  end;
 
   if cxTables.Checked then
   begin
@@ -405,7 +430,9 @@ begin
 
         fQueryWindow.meQuery.Lines.Add(Line);
         fQueryWindow.meQuery.Lines.Add('');
-      end;
+      end
+      else
+        fQueryWindow.meQuery.Lines.Add('-- Index ' + AIndexName + ' not exist on ' + ATableName);
 
     end
     else
@@ -417,7 +444,7 @@ begin
       System.Delete(Line, 1, Pos(',', Line));
       ConstraintName:= Line;
       ScriptList.Clear;
-      if dmSysTables.GetConstraintInfo(fdbIndex, ATableName, AIndexName, KeyName, CurrentTableName, CurrentFieldName,
+      if dmSysTables.GetConstraintInfo(fdbIndex, ATableName, ConstraintName, KeyName, CurrentTableName, CurrentFieldName,
         OtherTableName, OtherFieldName, UpdateRule, DeleteRule) then
       begin
         Line:= 'alter table ' + ATableName + ' add constraint ' + ConstraintName +
@@ -430,8 +457,9 @@ begin
 
         fQueryWindow.meQuery.Lines.Add(Line + ';');
         fQueryWindow.meQuery.Lines.Add('');
-      end;
-
+      end
+      else
+        fQueryWindow.meQuery.Lines.Add('-- Constraint ' + ConstraintName + ' not exist on ' + ATableName);
 
     end;
 
@@ -440,7 +468,6 @@ begin
   fQueryWindow.Show;
   ScriptList.Free;
   FieldsList.Free;
-  Close;
 
 end;
 
@@ -659,6 +686,8 @@ var
   OtherTablename, OtherFieldName, UpdateRole, DeleteRole: string;
   CKeyName, CCurrentTableName, CCurrentFieldName,
   COtherTablename, COtherFieldName, CUpdateRole, CDeleteRole: string;
+  Exist: Boolean;
+  OtherFieldNames, COtherFieldNames: string;
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Constraints');
@@ -671,12 +700,24 @@ begin
     System.Delete(Line, 1, Pos(',', Line));
     AConstraintName:= Line;
 
-    dmSysTables.GetConstraintInfo(fdbIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
-      OtherTablename, OtherFieldName, UpdateRole, DeleteRole);
-    dmSysTables.GetConstraintInfo(cbComparedDatabase.ItemIndex, ATableName, AConstraintName, CKeyName,
+    Exist:= (dmSysTables.GetConstraintInfo(fdbIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
+        OtherTablename, OtherFieldName, UpdateRole, DeleteRole));
+    if Exist then
+      OtherFieldNames:= dmSysTables.GetConstraintForiegnKeyFields(OtherFieldName, dmSysTables.sqQuery);
+
+    if Exist then
+    Exist:= dmSysTables.GetConstraintInfo(cbComparedDatabase.ItemIndex, ATableName, AConstraintName, CKeyName,
       CCurrentTableName, CCurrentFieldName, COtherTablename, COtherFieldName, CUpdateRole, CDeleteRole);
+
+    if Exist then
+      COtherFieldNames:= dmSysTables.GetConstraintForiegnKeyFields(COtherFieldName, dmSysTables.sqQuery);
+
+    if not Exist then
+      meLog.Lines.Add(' -- Error: Constraint: ' + AConstraintName + ' not exist on table: ' + ATableName);
+
+    if Exist then
     if (CurrentTableName <> CCurrentTableName) or (CurrentFieldName <> CCurrentFieldName) or
-       (OtherTablename <> COtherTablename) or (OtherFieldName <> COtherFieldName) or (UpdateRole <> CUpdateRole) or
+       (OtherTablename <> COtherTablename) or (OtherFieldNames <> COtherFieldNames) or (UpdateRole <> CUpdateRole) or
        (DeleteRole <> CDeleteRole) then
     begin
       meLog.Lines.Add(' ' + ExistConstraintsList[i]);
@@ -859,6 +900,7 @@ begin
     begin
       dbRemovedObjectsList[12].Add(CTablesList[i] + ',' + ComparedList[i]);
       meLog.Lines.Add(' ' + CTableslist[i] + ':' + ComparedList[i]);
+      Inc(DiffCount);
     end;
   end;
 
@@ -895,6 +937,7 @@ begin
     begin
       dbRemovedObjectsList[13].Add(CTablesList[i] + ',' + ComparedList[i]);
       meLog.Lines.Add(' ' + CTableslist[i] + ':' + ComparedList[i]);
+      Inc(DiffCount);
     end;
 
   end;
@@ -903,6 +946,37 @@ begin
   ComparedList.Free;
   TablesList.Free;
   CTablesList.Free;
+end;
+
+procedure TfmComparison.CheckRemovedFields;
+var
+  i, j: Integer;
+  FieldsList: TStringList;
+  ComparedList: TStringList;
+begin
+  FieldsList:= TStringList.Create;
+  ComparedList:= TStringList.Create;
+  meLog.Lines.Add('');
+  meLog.Lines.Add('Removed fields');
+  RemovedFieldsList.Clear;
+  for i:= 0 to dbExistingObjectsList[1].Count - 1 do
+  begin
+    dmSysTables.GetTableFields(fdbIndex, dbExistingObjectsList[1].Strings[i], FieldsList);
+    dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, dbExistingObjectsList[1].Strings[i], ComparedList);
+
+    // Get missing fields
+    for j:= 0 to ComparedList.Count - 1 do
+      if FieldsList.IndexOf(ComparedList[j]) = -1 then // Add to missing list
+      begin
+        meLog.Lines.Add(' ' + dbExistingObjectsList[1].Strings[i] + ': ' + ComparedList[j]);
+        RemovedFieldsList.Add(dbExistingObjectsList[1].Strings[i] + ',' + ComparedList[j]);
+        Inc(DiffCount);
+      end;
+  end;
+
+  FieldsList.Free;
+  ComparedList.Free;
+
 end;
 
 procedure TfmComparison.InitializeQueryWindow;
@@ -948,9 +1022,11 @@ begin
     if Trim(DefaultValue) <> '' then
     begin
       if (Pos('CHAR', FieldType) > 0) and (Pos('''', DefaultValue) = 0) then
-        Line:= Line + ' ''' + DefaultValue + ''''
-      else
-        Line:= Line + ' ' + DefaultValue;
+        DefaultValue:= ' ''' + DefaultValue + '''';
+      if Pos('default', LowerCase(DefaultValue)) = 0 then
+        DefaultValue:= ' default ' + DefaultValue;
+      Line:= Line + ' ' + DefaultValue;
+
     end;
 
     // Null/Not null
@@ -1498,6 +1574,29 @@ begin
 
 end;
 
+procedure TfmComparison.ScriptRemovedFields;
+var
+  i: Integer;
+  Line, ATableName, AFieldName: string;
+begin
+  if RemovedFieldsList.Count > 0 then
+  begin
+    fQueryWindow.meQuery.Lines.Add('');
+    fQueryWindow.meQuery.Lines.Add('-- Removed Fields');
+  end;
+
+  for i:= 0 to RemovedFieldsList.Count - 1 do
+  begin
+    Line:= RemovedFieldsList[i];
+    ATableName:= copy(Line, 1, Pos(',', Line) - 1);
+    System.Delete(Line, 1, Pos(',', Line));
+    AFieldName:= Line;
+    fQueryWindow.meQuery.Lines.Add('alter table ' + ATableName + ' drop ' + AFieldName + ';');
+  end;
+
+
+end;
+
 procedure TfmComparison.Init(dbIndex: Integer);
 var
   i: Integer;
@@ -1551,6 +1650,8 @@ begin
   ModifiedProceduresList:= TStringList.Create;
   ModifiedFunctionsList:= TStringList.Create;
   ModifiedDomainsList:= TStringList.Create;
+
+  RemovedFieldsList:= TStringList.Create;
 end;
 
 procedure TfmComparison.CheckMissingIndices;

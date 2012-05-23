@@ -219,7 +219,7 @@ begin
   if PKeyName <> '' then
   begin
     fmMain.GetConstraintFields(ATableName, PKeyName, PKFieldsList);
-    FieldLine:= 'constraint ' + ConstraintName + ' primary key (';
+    FieldLine:= 'constraint ' + PKeyName + ' primary key (';
     for i:= 0 to PKFieldsList.Count - 1 do
       FieldLine:= FieldLine + PKFieldsList[i] + ', ';
     if PKFieldsList.Count > 0 then

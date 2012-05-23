@@ -429,8 +429,10 @@ var
   Command: string;
   IsDDL: Boolean;
   Affected: Integer;
+  ModifyCount: Integer;
 begin
   try
+    ModifyCount:= 0;
     RemoveControls;
     Query:= Trim(GetQuery);
 
@@ -443,6 +445,7 @@ begin
     if (QueryType = 3) then
     begin
       ExecuteScript(Query);
+      Inc(ModifyCount);
       SqlType:= GetSQLType(Query, Command);
       fmMain.AddToSQLHistory(RegRec.Title, SqlType, Query);
     end
@@ -509,6 +512,7 @@ begin
               SqlQuery.ExecSQL;
               Affected:= sqlQuery.RowsAffected;
             end;
+            Inc(ModifyCount);
 
             fmMain.AddToSQLHistory(RegRec.Title, SQLType, QueryPart);
             meResult.Visible:= True;
@@ -545,10 +549,20 @@ begin
         begin
           if ExecuteScript(QueryPart) then
           begin
+            Inc(ModifyCount);
             SqlType:= GetSQLType(QueryPart, Command);
             fmMain.AddToSQLHistory(RegRec.Title, SqlType, Query);
           end;
         end;
+        if (ModifyCount > 50) then
+        if (MessageDlg('Commit', 'There are too many transactions, did you want to commit',
+          mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+        begin
+          SqlTrans.CommitRetaining;
+          ModifyCount:= 0;
+        end
+        else
+          ModifyCount:= 0;
 
         Application.ProcessMessages;
       until StartLine >= List.Count;
@@ -848,12 +862,12 @@ begin
   RemoveControls;
   if SqlTrans.Active then
   begin
-    SqlTrans.Commit;
+    SqlTrans.CommitRetaining;
     if OnCommit <> nil then
       OnCommit(self);
     OnCommit:= nil;
   end;
-  IBConnection.Close;
+  //IBConnection.Close;
   CloseAction:= caFree;
 end;
 

@@ -1,26 +1,26 @@
 object fmComparison: TfmComparison
-  Left = 447
-  Height = 550
-  Top = 170
-  Width = 623
+  Left = 410
+  Height = 625
+  Top = 127
+  Width = 653
   Caption = 'Database comparison'
-  ClientHeight = 550
-  ClientWidth = 623
+  ClientHeight = 625
+  ClientWidth = 653
   OnClose = FormClose
   Position = poScreenCenter
   LCLVersion = '0.9.31'
   object Label1: TLabel
-    Left = 13
+    Left = 15
     Height = 18
-    Top = 16
-    Width = 129
-    Caption = 'Compare database'
+    Top = 112
+    Width = 125
+    Caption = 'Orgional database'
     ParentColor = False
   end
   object laDatabase: TLabel
-    Left = 156
+    Left = 159
     Height = 18
-    Top = 16
+    Top = 112
     Width = 81
     Caption = 'laDatabase'
     Font.Style = [fsBold]
@@ -28,17 +28,17 @@ object fmComparison: TfmComparison
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 13
+    Left = 16
     Height = 18
-    Top = 47
-    Width = 99
-    Caption = 'With database'
+    Top = 143
+    Width = 138
+    Caption = 'Compared database'
     ParentColor = False
   end
   object cbComparedDatabase: TComboBox
-    Left = 156
+    Left = 159
     Height = 31
-    Top = 38
+    Top = 134
     Width = 460
     ItemHeight = 0
     OnChange = cbComparedDatabaseChange
@@ -46,9 +46,9 @@ object fmComparison: TfmComparison
     TabOrder = 0
   end
   object laComparedDatabase: TLabel
-    Left = 156
+    Left = 159
     Height = 18
-    Top = 74
+    Top = 168
     Width = 12
     Caption = '[]'
     Font.Style = [fsBold]
@@ -58,7 +58,7 @@ object fmComparison: TfmComparison
   object bbStart: TBitBtn
     Left = 13
     Height = 30
-    Top = 240
+    Top = 320
     Width = 154
     Caption = 'Start Comparison'
     OnClick = bbStartClick
@@ -66,12 +66,11 @@ object fmComparison: TfmComparison
   end
   object meLog: TMemo
     Left = 13
-    Height = 238
-    Top = 280
-    Width = 603
+    Height = 233
+    Top = 360
+    Width = 633
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Name = 'Courier 10 Pitch'
-    Font.Style = [fsUnderline]
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssAutoBoth
@@ -81,9 +80,9 @@ object fmComparison: TfmComparison
     Cursor = crHandPoint
     Left = 190
     Height = 18
-    Top = 252
-    Width = 301
-    Caption = 'Script missing objects in compared database'
+    Top = 330
+    Width = 273
+    Caption = 'Script differences in compared database'
     Font.Style = [fsUnderline]
     ParentColor = False
     ParentFont = False
@@ -92,7 +91,7 @@ object fmComparison: TfmComparison
   object GroupBox1: TGroupBox
     Left = 15
     Height = 79
-    Top = 101
+    Top = 192
     Width = 601
     Caption = 'Compared objects'
     ClientHeight = 60
@@ -169,8 +168,8 @@ object fmComparison: TfmComparison
   object StatusBar1: TStatusBar
     Left = 0
     Height = 21
-    Top = 529
-    Width = 623
+    Top = 604
+    Width = 653
     Panels = <    
       item
         Width = 50
@@ -180,9 +179,37 @@ object fmComparison: TfmComparison
   object cxRemovedObjects: TCheckBox
     Left = 15
     Height = 24
-    Top = 200
+    Top = 278
     Width = 185
     Caption = 'Check Removed objects'
     TabOrder = 5
+  end
+  object bbClose: TBitBtn
+    Left = 626
+    Height = 24
+    Top = 0
+    Width = 27
+    Anchors = [akTop, akRight]
+    Caption = ' X  '
+    Color = 16249563
+    Font.Style = [fsBold]
+    OnClick = bbCloseClick
+    ParentFont = False
+    TabOrder = 6
+  end
+  object Label3: TLabel
+    Left = 8
+    Height = 98
+    Top = 6
+    Width = 608
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
+    Caption = 'Database comparison tool compares origional database structure to another database structure.'#10'It generates script to make compared database structure becomes like origional database.'#10'For instance, origional database could be a development database, and compared database is an old version that'#10'is deployed in customer side. This tool generates script to make customer database structure '#10'resembles developmenent database as much as possible.'
+    Color = clCream
+    Font.Height = -11
+    ParentColor = False
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
   end
 end
