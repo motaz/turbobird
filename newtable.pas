@@ -34,6 +34,8 @@ type
     procedure StringGrid1PickListSelect(Sender: TObject);
   private
     fdbIndex: Integer;
+    function Validate: Boolean;
+    function GetFieldsCount: Integer;
     { private declarations }
   public
     { public declarations }
@@ -140,6 +142,48 @@ begin
   end;
 end;
 
+function TfmNewTable.Validate: Boolean;
+var
+  i: Integer;
+begin
+  Result:= False;
+  if Trim(edNewTable.Text) = '' then
+    MessageDlg('Warning', 'You should enter new table name', mtWarning, [mbOk], 0)
+  else
+  if GetFieldsCount = 0 then
+    MessageDlg('Warning', 'You should enter fields', mtWarning, [mbOk], 0)
+  else
+  begin
+    Result:= True;
+    with StringGrid1 do
+    for i:= 1 to RowCount - 1 do
+    if (Trim(Cells[0, i]) <> '') and (Trim(Cells[1, i]) = '') then
+    begin
+      Result:= False;
+      MessageDlg('Warning', 'You should write field type for the column: ' + Cells[0, i], mtWarning, [mbOk], 0);
+    end
+    else
+    if (Trim(Cells[0, i]) = '') and (Trim(Cells[1, i]) <> '') then
+    begin
+      Result:= False;
+      MessageDlg('Warning', 'You should select field name for the column number ' + IntToStr(i), mtWarning, [mbOk], 0);
+    end;
+  end;
+
+end;
+
+function TfmNewTable.GetFieldsCount: Integer;
+var
+  i: Integer;
+begin
+  Result:= 0;
+  with StringGrid1 do
+  for i:= 1 to RowCount - 1 do
+  if Trim(Cells[0, i]) <> '' then
+    Inc(Result);
+
+end;
+
 
 procedure TfmNewTable.bbScriptClick(Sender: TObject);
 var
@@ -147,27 +191,31 @@ var
   KeyField: string;
   GeneratorName: string;
 begin
-  List:= TStringList.Create;
-  List.Text:= GenerateCreateSQL(KeyField, GeneratorName);
-  if cxCreateGen.Checked then
-  begin;
-    List.Add('');
-    List.Add('-- Generator');
-    List.Add('create generator ' + GeneratorName + ';');
+  if Validate then
+  begin
+    List:= TStringList.Create;
+    List.Text:= GenerateCreateSQL(KeyField, GeneratorName);
+    if cxCreateGen.Checked then
+    begin;
+      List.Add('');
+      List.Add('-- Generator');
+      List.Add('create generator ' + GeneratorName + ';');
 
-    List.Add('');
-    List.Add('-- Trigger');
-    List.Add('CREATE TRIGGER ' + GeneratorName + ' FOR ' + edNewTable.Text);
-    List.Add('ACTIVE BEFORE INSERT POSITION 0 ');
-    List.Add('AS BEGIN ');
-    List.Add('IF (NEW.' + KeyField + ' IS NULL OR NEW.' + KeyField + ' = 0) THEN ');
-    List.Add('  NEW.' + KeyField + ' = GEN_ID(' + GeneratorName + ', 1);');
-    List.Add('END;');
+      List.Add('');
+      List.Add('-- Trigger');
+      List.Add('CREATE TRIGGER ' + GeneratorName + ' FOR ' + edNewTable.Text);
+      List.Add('ACTIVE BEFORE INSERT POSITION 0 ');
+      List.Add('AS BEGIN ');
+      List.Add('IF (NEW.' + KeyField + ' IS NULL OR NEW.' + KeyField + ' = 0) THEN ');
+      List.Add('  NEW.' + KeyField + ' = GEN_ID(' + GeneratorName + ', 1);');
+      List.Add('END;');
+    end;
+
+    fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create New Table: ' + edNewTable.Text, List.Text);
+    List.Free;
+    bbCloseClick(nil);
+
   end;
-
-  fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create New Table: ' + edNewTable.Text, List.Text);
-  List.Free;
-  bbCloseClick(nil);
 end;
 
 procedure TfmNewTable.BitBtn2Click(Sender: TObject);
