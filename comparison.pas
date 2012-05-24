@@ -691,7 +691,7 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Constraints');
-  ModifiedIndicesList.Clear;
+  ModifiedConstraintsList.Clear;
 
   for i:= 0 to ExistConstraintsList.Count - 1 do
   begin
@@ -1182,7 +1182,9 @@ begin
 
         fQueryWindow.meQuery.Lines.Add(Line);
         fQueryWindow.meQuery.Lines.Add('');
-      end;
+      end
+      else
+        fQueryWindow.meQuery.Lines.Add('--Index ' + AIndexName + ' does not exist on table: ' + ATableName);
 
     end;
 
