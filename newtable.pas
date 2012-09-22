@@ -17,13 +17,18 @@ type
     bbClose: TBitBtn;
     bbScript: TBitBtn;
     BitBtn2: TBitBtn;
+    cbPermission: TComboBox;
+    cbRolesUsers: TComboBox;
+    cxGrantPermission: TCheckBox;
     cxCreateGen: TCheckBox;
     edNewTable: TEdit;
     Label1: TLabel;
+    Label2: TLabel;
     StringGrid1: TStringGrid;
     procedure bbCloseClick(Sender: TObject);
     procedure bbScriptClick(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
+    procedure edNewTableKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure StringGrid1KeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -36,6 +41,7 @@ type
     fdbIndex: Integer;
     function Validate: Boolean;
     function GetFieldsCount: Integer;
+    function GetClosestType(ATypePart: string): string;
     { private declarations }
   public
     { public declarations }
@@ -103,7 +109,18 @@ begin
     Delete(PKey, Length(PKey), 1);
     Result:= Result + ', ' + #10 + ' constraint ' + edNewTable.Text + '_pk_1 primary key (' + PKey + ') ' + #10;
   end;
-  Result:= Result + ');';
+  Result:= Result + ');' + #10;
+
+  // Permission
+  if cxGrantPermission.Checked then
+  begin
+    case cbPermission.ItemIndex of
+      0: Result:= Result + 'grant All on ' + edNewTable.Text + ' to ' + cbRolesUsers.Text + ';';
+      1: Result:= Result + 'grant Select, insert, update, references on ' + edNewTable.Text + ' to ' + cbRolesUsers.Text + ';';
+      2: Result:= Result + 'grant Select, references on ' + edNewTable.Text + ' to ' + cbRolesUsers.Text + ';';
+    end;
+
+  end;
 end;
 
 procedure TfmNewTable.Init(dbIndex: Integer);
@@ -129,16 +146,24 @@ begin
     StringGrid1.Cells[3, i]:= '1';
     StringGrid1.Cells[4, i]:= '0';
   end;
+
+  cbRolesUsers.Items.CommaText:= StringReplace(dmSysTables.GetDBUsers(fdbIndex), '<R>', '', [rfReplaceAll]);
 end;
 
 procedure TfmNewTable.StringGrid1PickListSelect(Sender: TObject);
 var
   SelType: string;
 begin
-  if (StringGrid1.Col = 1) then
+  with StringGrid1 do
+  if (Col = 1) then
   begin
-    SelType:= StringGrid1.Cells[1, StringGrid1.Row];
-    StringGrid1.Cells[2, StringGrid1.Row]:= IntToStr(dmSysTables.GetDefaultTypeSize(fdbIndex, SelType));
+    SelType:= Cells[1, Row];
+    SelType:= GetClosestType(SelType);
+    if SelType <> '' then
+    begin
+      Cells[1, Row]:= SelType;
+      Cells[2, Row]:= IntToStr(dmSysTables.GetDefaultTypeSize(fdbIndex, SelType));
+    end;
   end;
 end;
 
@@ -184,6 +209,39 @@ begin
 
 end;
 
+function TfmNewTable.GetClosestType(ATypePart: string): string;
+var
+  i: Integer;
+begin
+  Result:= '';
+  ATypePart:= UpperCase(ATypePart);
+  with StringGrid1 do
+  if Columns[1].PickList.IndexOf(ATypePart) <> -1 then
+    Result:= ATypePart
+  else
+  begin
+    for i:= 0 to Columns[1].PickList.Count -1 do
+    begin
+      if Pos(ATypePart, UpperCase(Columns[1].PickList[i])) = 1 then
+      begin
+        Result:= Columns[1].PickList[i];
+        Break;
+      end;
+    end;
+
+    if Result = '' then
+    for i:= 0 to Columns[1].PickList.Count -1 do
+    begin
+      if Pos(ATypePart, UpperCase(Columns[1].PickList[i])) > 0 then
+      begin
+        Result:= Columns[1].PickList[i];
+        Break;
+      end;
+    end;
+
+  end;
+end;
+
 
 procedure TfmNewTable.bbScriptClick(Sender: TObject);
 var
@@ -223,6 +281,13 @@ begin
   bbCloseClick(nil);
 end;
 
+procedure TfmNewTable.edNewTableKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = 13 then
+    StringGrid1.SetFocus;
+end;
+
 procedure TfmNewTable.bbCloseClick(Sender: TObject);
 begin
   Close;
@@ -237,24 +302,45 @@ end;
 
 procedure TfmNewTable.StringGrid1KeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var
+  aType: string;
 begin
+  with StringGrid1 do
   if Key = 40 then // Key down
-    if Trim(StringGrid1.Cells[0, StringGrid1.RowCount - 1]) <> '' then
-    begin
-      StringGrid1.RowCount:= StringGrid1.RowCount + 1;
-      StringGrid1.Row:= StringGrid1.RowCount - 1;
-      StringGrid1.Cells[3, StringGrid1.Row]:= '1';
-      StringGrid1.Cells[4, StringGrid1.Row]:= '0';
-    end;
+  if Trim(Cells[0, RowCount - 1]) <> '' then
+  begin
+    RowCount:= RowCount + 1;
+    Row:= RowCount - 1;
+    Cells[3, Row]:= '1';
+    Cells[4, Row]:= '0';
+  end
+  else
   if Key = 45 then // Insert
   begin
-    StringGrid1.InsertColRow(False, StringGrid1.Row);
+    InsertColRow(False, Row);
   end
   else
   if Key = 46 then // Delete
   begin
-    if StringGrid1.RowCount > 1 then
-      StringGrid1.DeleteColRow(False, StringGrid1.Row);
+    if RowCount > 1 then
+      DeleteColRow(False, Row);
+  end
+  else
+  if key = 13 then // Enter
+  begin
+    if (Row + 1 = RowCount) and (Col > 1) then
+    begin
+      RowCount:= RowCount + 1;
+      Col:= 0;
+      Row:= Row + 1;
+    end
+    else
+    if Col > 1 then
+    begin
+      Col:= 0;
+      Row:= Row + 1;
+    end;
+    Key:= 0;
   end;
 end;
 

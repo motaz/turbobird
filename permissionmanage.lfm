@@ -8,7 +8,7 @@ object fmPermissionManage: TfmPermissionManage
   ClientWidth = 518
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.0.1.3'
   object PageControl1: TPageControl
     Left = 0
     Height = 368
@@ -160,7 +160,8 @@ object fmPermissionManage: TfmPermissionManage
         Left = 318
         Height = 24
         Top = 34
-        Width = 47
+        Width = 58
+        AutoSize = False
         Caption = 'All'
         Font.Style = [fsBold]
         ParentFont = False
@@ -169,8 +170,9 @@ object fmPermissionManage: TfmPermissionManage
       object cxAllGrant: TCheckBox
         Left = 345
         Height = 24
-        Top = 49
-        Width = 104
+        Top = 51
+        Width = 110
+        AutoSize = False
         Caption = 'With Grant'
         Font.Style = [fsBold]
         ParentFont = False

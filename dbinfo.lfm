@@ -18,7 +18,7 @@ object fmDBInfo: TfmDBInfo
     ParentColor = False
   end
   object edName: TEdit
-    Left = 136
+    Left = 144
     Height = 21
     Top = 33
     Width = 479
@@ -40,7 +40,7 @@ object fmDBInfo: TfmDBInfo
     ParentColor = False
   end
   object edODSVer: TEdit
-    Left = 136
+    Left = 144
     Height = 21
     Top = 69
     Width = 88
@@ -61,7 +61,7 @@ object fmDBInfo: TfmDBInfo
     ParentColor = False
   end
   object edCharset: TEdit
-    Left = 136
+    Left = 144
     Height = 21
     Top = 104
     Width = 88
@@ -82,7 +82,7 @@ object fmDBInfo: TfmDBInfo
     ParentColor = False
   end
   object edCreationDate: TEdit
-    Left = 136
+    Left = 144
     Height = 21
     Top = 136
     Width = 176
@@ -103,7 +103,7 @@ object fmDBInfo: TfmDBInfo
     ParentColor = False
   end
   object edPageSize: TEdit
-    Left = 136
+    Left = 144
     Height = 21
     Top = 168
     Width = 88
@@ -116,7 +116,7 @@ object fmDBInfo: TfmDBInfo
     Text = 'odsVersion'
   end
   object edDBSize: TEdit
-    Left = 136
+    Left = 144
     Height = 21
     Top = 200
     Width = 176
@@ -169,5 +169,27 @@ object fmDBInfo: TfmDBInfo
     OnClick = bbCloseClick
     ParentFont = False
     TabOrder = 7
+  end
+  object edConnections: TEdit
+    Left = 144
+    Height = 21
+    Top = 231
+    Width = 112
+    AutoSelect = False
+    BorderStyle = bsNone
+    Font.Color = clNavy
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 8
+    Text = 'odsVersion'
+  end
+  object bbRefresh: TBitBtn
+    Left = 16
+    Height = 30
+    Top = 0
+    Width = 75
+    Caption = 'Refresh'
+    OnClick = bbRefreshClick
+    TabOrder = 9
   end
 end

@@ -1,15 +1,15 @@
 object fmNewTable: TfmNewTable
-  Left = 532
-  Height = 535
-  Top = 302
+  Left = 535
+  Height = 564
+  Top = 192
   Width = 594
   ActiveControl = edNewTable
   Caption = 'New Table'
-  ClientHeight = 535
+  ClientHeight = 564
   ClientWidth = 594
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.0.1.3'
   object Label1: TLabel
     Left = 18
     Height = 15
@@ -25,11 +25,12 @@ object fmNewTable: TfmNewTable
     Height = 27
     Top = 28
     Width = 153
+    OnKeyUp = edNewTableKeyUp
     TabOrder = 0
   end
   object StringGrid1: TStringGrid
-    Left = 19
-    Height = 374
+    Left = 18
+    Height = 403
     Top = 59
     Width = 573
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -63,7 +64,7 @@ object fmNewTable: TfmNewTable
       end>
     FixedColor = 14539471
     FixedCols = 0
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goSmoothScroll]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goTabs, goAlwaysShowEditor, goSmoothScroll]
     RowCount = 3
     TabOrder = 1
     OnEditingDone = StringGrid1PickListSelect
@@ -72,9 +73,9 @@ object fmNewTable: TfmNewTable
     OnPickListSelect = StringGrid1PickListSelect
   end
   object BitBtn2: TBitBtn
-    Left = 472
+    Left = 448
     Height = 32
-    Top = 488
+    Top = 529
     Width = 96
     Anchors = [akLeft, akBottom]
     Cancel = True
@@ -86,14 +87,13 @@ object fmNewTable: TfmNewTable
     TabOrder = 2
   end
   object bbScript: TBitBtn
-    Left = 19
+    Left = 18
     Height = 32
-    Top = 488
+    Top = 529
     Width = 118
     Anchors = [akLeft, akBottom]
     Caption = 'Script'
     Color = 16249563
-    Default = True
     Kind = bkYes
     OnClick = bbScriptClick
     TabOrder = 3
@@ -101,7 +101,7 @@ object fmNewTable: TfmNewTable
   object cxCreateGen: TCheckBox
     Left = 18
     Height = 24
-    Top = 447
+    Top = 473
     Width = 328
     Anchors = [akLeft, akBottom]
     Caption = 'Create Auto increment Generator and Trigger'
@@ -119,5 +119,56 @@ object fmNewTable: TfmNewTable
     OnClick = bbCloseClick
     ParentFont = False
     TabOrder = 5
+  end
+  object cxGrantPermission: TCheckBox
+    Left = 18
+    Height = 24
+    Top = 501
+    Width = 64
+    Anchors = [akLeft, akBottom]
+    Caption = 'Grant'
+    TabOrder = 6
+  end
+  object cbPermission: TComboBox
+    Left = 96
+    Height = 27
+    Top = 498
+    Width = 145
+    Anchors = [akLeft, akBottom]
+    ItemHeight = 0
+    ItemIndex = 0
+    Items.Strings = (
+      'Full'
+      'Modify '
+      'Read'
+    )
+    Style = csDropDownList
+    TabOrder = 7
+    Text = 'Full'
+  end
+  object Label2: TLabel
+    Left = 256
+    Height = 18
+    Top = 507
+    Width = 16
+    Anchors = [akLeft, akBottom]
+    Caption = 'to'
+    ParentColor = False
+  end
+  object cbRolesUsers: TComboBox
+    Left = 296
+    Height = 29
+    Top = 496
+    Width = 161
+    Anchors = [akLeft, akBottom]
+    ItemHeight = 0
+    ItemIndex = 0
+    Items.Strings = (
+      'Full'
+      'Read '
+      'Insert'
+    )
+    TabOrder = 8
+    Text = 'Full'
   end
 end

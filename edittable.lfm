@@ -17,8 +17,8 @@ object fmEditTable: TfmEditTable
     Top = 0
     Width = 568
     Align = alTop
-    ClientHeight = 46
-    ClientWidth = 564
+    ClientHeight = 50
+    ClientWidth = 568
     ParentColor = False
     TabOrder = 0
     OnClick = Panel1Click
@@ -52,10 +52,11 @@ object fmEditTable: TfmEditTable
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 100
-      ClientHeight = 21
-      ClientWidth = 237
+      ClientHeight = 25
+      ClientWidth = 241
       Color = 14539471
       DataSource = Datasource1
+      Options = []
       ParentColor = False
       TabOrder = 0
     end
@@ -91,9 +92,9 @@ object fmEditTable: TfmEditTable
     top = 48
   end
   object sqEditTable: TSQLQuery
+    FieldDefs = <>
     AutoCalcFields = False
     AfterScroll = sqEditTableAfterScroll
-    ReadOnly = False
     Params = <>
     left = 357
     top = 20

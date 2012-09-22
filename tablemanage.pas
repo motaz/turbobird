@@ -400,8 +400,6 @@ begin
 end;
 
 procedure TfmTableManage.FillConstraints(dbIndex: Integer);
-var
-  IndexFields: string;
 begin
   SQLQuery1.First;
   fdbIndex:= dbIndex;

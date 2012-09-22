@@ -14,7 +14,9 @@ type
 
   TfmDBInfo = class(TForm)
     bbClose: TBitBtn;
+    bbRefresh: TBitBtn;
     edCreationDate: TEdit;
+    edConnections: TEdit;
     edPageSize: TEdit;
     edDBSize: TEdit;
     edName: TEdit;
@@ -29,6 +31,7 @@ type
     Label7: TLabel;
     meClients: TMemo;
     procedure bbCloseClick(Sender: TObject);
+    procedure bbRefreshClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
     { private declarations }
@@ -45,10 +48,17 @@ implementation
 
 { TfmDBInfo }
 
+uses Main;
+
 procedure TfmDBInfo.bbCloseClick(Sender: TObject);
 begin
   Close;
   Parent.Free;
+end;
+
+procedure TfmDBInfo.bbRefreshClick(Sender: TObject);
+begin
+  fmMain.lmDBIndoClick(nil);
 end;
 
 procedure TfmDBInfo.FormClose(Sender: TObject; var CloseAction: TCloseAction);

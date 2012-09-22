@@ -447,6 +447,7 @@ begin
     edCharset.Text:= ACharSet;
     edCreationDate.Text:= CreationDate;
     edPageSize.Text:= IntToStr(PageSize);
+    edConnections.Text:= IntToStr(ProcessList.Count);
     dbSize:= Pages * PageSize;
     if dbSize > 1000000000 then
     begin

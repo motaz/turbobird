@@ -84,10 +84,10 @@ end;
 
 procedure TfmEditTable.DBGrid1TitleClick(Column: TColumn);
 begin
- if sqEditTable.IndexFieldNames = Column.Field.FieldName then
+{ if sqEditTable.IndexFieldNames = Column.Field.FieldName then
    sqEditTable.IndexFieldNames := Column.Field.FieldName //+ 'DESC'
  else
-   sqEditTable.IndexFieldNames := Column.Field.FieldName
+   sqEditTable.IndexFieldNames := Column.Field.FieldName}
 end;
 
 procedure TfmEditTable.sqEditTableAfterScroll(DataSet: TDataSet);

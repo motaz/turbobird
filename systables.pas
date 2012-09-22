@@ -684,6 +684,7 @@ function TdmSysTables.GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSe
 begin
   try
     Init(dbIndex);
+    stTrans.Commit;
     sqQuery.SQL.Text:= 'select * from RDB$DATABASE';
     sqQuery.Open;
     CharSet:= sqQuery.fieldbyName('RDB$Character_Set_Name').AsString;
