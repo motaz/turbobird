@@ -64,7 +64,7 @@ object fmNewTable: TfmNewTable
       end>
     FixedColor = 14539471
     FixedCols = 0
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goTabs, goAlwaysShowEditor, goSmoothScroll]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goAlwaysShowEditor, goSmoothScroll]
     RowCount = 3
     TabOrder = 1
     OnEditingDone = StringGrid1PickListSelect
@@ -150,13 +150,13 @@ object fmNewTable: TfmNewTable
     Left = 256
     Height = 18
     Top = 507
-    Width = 16
+    Width = 94
     Anchors = [akLeft, akBottom]
-    Caption = 'to'
+    Caption = 'Permission to'
     ParentColor = False
   end
   object cbRolesUsers: TComboBox
-    Left = 296
+    Left = 376
     Height = 29
     Top = 496
     Width = 161
