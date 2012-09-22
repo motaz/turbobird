@@ -112,7 +112,7 @@ begin
   Result:= Result + ');' + #10;
 
   // Permission
-  if cxGrantPermission.Checked then
+  if cxGrantPermission.Checked and (Trim(cbRolesUsers.Text) <> '') then
   begin
     case cbPermission.ItemIndex of
       0: Result:= Result + 'grant All on ' + edNewTable.Text + ' to ' + cbRolesUsers.Text + ';';

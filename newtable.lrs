@@ -45,6 +45,6 @@ LazarusResources.Add('TfmNewTable','FORMDATA',[
   +#251#1#5'Width'#2'^'#7'Anchors'#11#6'akLeft'#8'akBottom'#0#7'Caption'#6#13'P'
   +'ermission to'#11'ParentColor'#8#0#0#9'TComboBox'#12'cbRolesUsers'#4'Left'#3
   +'x'#1#6'Height'#2#29#3'Top'#3#240#1#5'Width'#3#161#0#7'Anchors'#11#6'akLeft'
-  +#8'akBottom'#0#10'ItemHeight'#2#0#9'ItemIndex'#2#0#13'Items.Strings'#1#6#4'F'
-  +'ull'#6#5'Read '#6#6'Insert'#0#8'TabOrder'#2#8#4'Text'#6#4'Full'#0#0#0
+  +#8'akBottom'#0#10'ItemHeight'#2#0#13'Items.Strings'#1#6#4'Full'#6#5'Read '#6
+  +#6'Insert'#0#8'TabOrder'#2#8#0#0#0
 ]);

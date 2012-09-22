@@ -162,13 +162,11 @@ object fmNewTable: TfmNewTable
     Width = 161
     Anchors = [akLeft, akBottom]
     ItemHeight = 0
-    ItemIndex = 0
     Items.Strings = (
       'Full'
       'Read '
       'Insert'
     )
     TabOrder = 8
-    Text = 'Full'
   end
 end
