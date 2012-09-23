@@ -39,6 +39,7 @@ type
     lmCopyCell: TMenuItem;
     lmExportAsComma: TMenuItem;
     lmExportAsHTML: TMenuItem;
+    lmCopyAll: TMenuItem;
     MenuItem5: TMenuItem;
     lmRun: TMenuItem;
     lmRunSelect: TMenuItem;
@@ -77,6 +78,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure lmCloseTabClick(Sender: TObject);
     procedure lmCommaDelemitedClick(Sender: TObject);
+    procedure lmCopyAllClick(Sender: TObject);
     procedure lmCopyCellClick(Sender: TObject);
     procedure lmCopyClick(Sender: TObject);
     procedure lmCutClick(Sender: TObject);
@@ -934,6 +936,49 @@ begin
     SQLQuery.EnableControls;
   end;
 
+end;
+
+procedure TfmQueryWindow.lmCopyAllClick(Sender: TObject);
+var
+   Grid: TDBGrid;
+   i: Integer;
+   List: TStringList;
+   Line: string;
+begin
+  Grid:= TDBGrid(pmGrid.PopupComponent);
+  try
+    Grid.DataSource.DataSet.DisableControls;
+    Grid.DataSource.DataSet.First;
+    List:= TStringList.Create;
+    Line:= '';
+    with Grid.DataSource.DataSet do
+    for i:= 0 to FieldCount - 1 do
+    begin
+      Line:= Line + '"' + Fields[i].FieldName + '"';
+      if i + 1 < FieldCount then
+        Line:= Line + ',';
+    end;
+    List.Add(Line);
+    with Grid.DataSource.DataSet do
+    while not Eof do
+    begin
+      Line:= '';
+      for i:= 0 to FieldCount - 1 do
+      begin
+        Line:= Line + '"' + Trim(Fields[i].AsString) + '"';
+        if i + 1 < FieldCount then
+          Line:= Line + ',';
+      end;
+      List.Add(Line);
+      Next;
+    end;
+   Clipboard.AsText:= List.Text;
+
+  except
+  on e: exception do
+    ShowMessage(e.Message);
+  end;
+  grid.DataSource.DataSet.EnableControls;
 end;
 
 procedure TfmQueryWindow.lmCopyCellClick(Sender: TObject);

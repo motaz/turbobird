@@ -6,8 +6,8 @@ LazarusResources.Add('TfmQueryWindow','FORMDATA',[
   +'QueryWindow'#12'ClientHeight'#3'Y'#2#11'ClientWidth'#3#208#2#5'Color'#7#6'c'
   +'lForm'#4'Menu'#7#9'MainMenu1'#7'OnClose'#7#9'FormClose'#6'OnShow'#7#8'FormS'
   +'how'#9'PopupMenu'#7#5'pmTab'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'
-  +#6#6'0.9.31'#0#6'TPanel'#6'Panel1'#4'Left'#2#0#6'Height'#2'<'#3'Top'#2#0#5'W'
-  +'idth'#3#208#2#5'Align'#7#5'alTop'#12'ClientHeight'#2'<'#11'ClientWidth'#3
+  +#6#7'1.0.1.3'#0#6'TPanel'#6'Panel1'#4'Left'#2#0#6'Height'#2'<'#3'Top'#2#0#5
+  +'Width'#3#208#2#5'Align'#7#5'alTop'#12'ClientHeight'#2'<'#11'ClientWidth'#3
   +#208#2#5'Color'#7#6'clForm'#11'ParentColor'#8#8'TabOrder'#2#1#0#7'TBitBtn'#7
   +'bbClose'#4'Left'#3#180#2#6'Height'#2#24#3'Top'#2#253#5'Width'#2#27#7'Anchor'
   +'s'#11#5'akTop'#7'akRight'#0#7'Caption'#6#4' X  '#5'Color'#4#219#242#247#0#10
@@ -2531,8 +2531,10 @@ LazarusResources.Add('TfmQueryWindow','FORMDATA',[
   +#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255
   +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#0#0#10'TP'
   +'opupMenu'#6'pmGrid'#4'left'#3#192#1#3'top'#3#146#1#0#9'TMenuItem'#10'lmCopy'
-  +'Cell'#7'Caption'#6#4'Copy'#7'OnClick'#7#15'lmCopyCellClick'#0#0#9'TMenuItem'
-  +#15'lmExportAsComma'#7'Caption'#6#30'Export Grid as Comma Delemited'#7'OnCli'
-  +'ck'#7#20'lmExportAsCommaClick'#0#0#9'TMenuItem'#14'lmExportAsHTML'#7'Captio'
-  +'n'#6#19'Export Grid as HTML'#7'OnClick'#7#19'lmExportAsHTMLClick'#0#0#0#0
+  +'Cell'#7'Caption'#6#10'Copy field'#7'OnClick'#7#15'lmCopyCellClick'#0#0#9'TM'
+  +'enuItem'#9'lmCopyAll'#7'Caption'#6#15'Copy all result'#7'OnClick'#7#14'lmCo'
+  +'pyAllClick'#0#0#9'TMenuItem'#15'lmExportAsComma'#7'Caption'#6#30'Export Gri'
+  +'d as Comma Delemited'#7'OnClick'#7#20'lmExportAsCommaClick'#0#0#9'TMenuItem'
+  +#14'lmExportAsHTML'#7'Caption'#6#19'Export Grid as HTML'#7'OnClick'#7#19'lmE'
+  +'xportAsHTMLClick'#0#0#0#0
 ]);

@@ -13,7 +13,7 @@ object fmQueryWindow: TfmQueryWindow
   OnShow = FormShow
   PopupMenu = pmTab
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.0.1.3'
   object Panel1: TPanel
     Left = 0
     Height = 60
@@ -2594,8 +2594,12 @@ object fmQueryWindow: TfmQueryWindow
     left = 448
     top = 402
     object lmCopyCell: TMenuItem
-      Caption = 'Copy'
+      Caption = 'Copy field'
       OnClick = lmCopyCellClick
+    end
+    object lmCopyAll: TMenuItem
+      Caption = 'Copy all result'
+      OnClick = lmCopyAllClick
     end
     object lmExportAsComma: TMenuItem
       Caption = 'Export Grid as Comma Delemited'

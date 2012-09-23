@@ -17,8 +17,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="9"/>
-      <RevisionNr Value="4"/>
-      <BuildNr Value="1073"/>
+      <RevisionNr Value="5"/>
+      <BuildNr Value="1074"/>
       <StringTable ProductVersion="0.9"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -60,11 +60,10 @@
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TurboBird"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="58"/>
-        <CursorPos X="1" Y="84"/>
+        <TopLine Value="1"/>
+        <CursorPos X="26" Y="5"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -75,13 +74,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="main"/>
-        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="407"/>
         <CursorPos X="20" Y="419"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="createdb.pas"/>
@@ -119,10 +115,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="QueryWindow"/>
-        <EditorIndex Value="8"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="527"/>
-        <CursorPos X="42" Y="556"/>
+        <TopLine Value="944"/>
+        <CursorPos X="53" Y="968"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -201,13 +198,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewTable"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="102"/>
         <CursorPos X="67" Y="115"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit13>
       <Unit14>
         <Filename Value="newgen.pas"/>
@@ -227,7 +221,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EnterPass"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
         <CursorPos X="17" Y="46"/>
@@ -379,13 +373,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EditTable"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="58" Y="90"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit34>
       <Unit35>
         <Filename Value="/usr/share/fpcsrc/2.2.4/packages/fcl-base/src/custapp.pp"/>
@@ -463,7 +454,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="SysTables"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="571"/>
         <CursorPos X="3" Y="573"/>
@@ -545,12 +536,10 @@
         <Filename Value="scriptdb.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Scriptdb"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit51>
       <Unit52>
         <Filename Value="connectas.pas"/>
@@ -587,7 +576,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="TableManage"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="384"/>
         <CursorPos X="1" Y="405"/>
@@ -722,7 +711,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="PermissionManage"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="341"/>
         <CursorPos X="17" Y="342"/>
@@ -954,13 +943,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="dbInfo"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="19" Y="39"/>
         <UsageCount Value="87"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit98>
       <Unit99>
         <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60dyn.pp"/>
@@ -992,7 +978,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Comparison"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="666"/>
         <CursorPos X="3" Y="668"/>
@@ -1035,127 +1021,31 @@
         <UsageCount Value="20"/>
       </Unit106>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="6" HistoryIndex="5">
       <Position1>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="36" Column="34" TopLine="18"/>
-      </Position1>
-      <Position2>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="121" Column="34" TopLine="103"/>
-      </Position2>
-      <Position3>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="201" Column="48" TopLine="189"/>
-      </Position3>
-      <Position4>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="204" Column="15" TopLine="190"/>
-      </Position4>
-      <Position5>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="303" Column="15" TopLine="283"/>
-      </Position5>
-      <Position6>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="299" Column="36" TopLine="292"/>
-      </Position6>
-      <Position7>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="140" Column="3" TopLine="136"/>
-      </Position7>
-      <Position8>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="301" Column="32" TopLine="291"/>
-      </Position8>
-      <Position9>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="203" Column="8" TopLine="189"/>
-      </Position9>
-      <Position10>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="140" Column="1" TopLine="136"/>
-      </Position10>
-      <Position11>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="296" Column="22" TopLine="277"/>
-      </Position11>
-      <Position12>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="142" Column="23" TopLine="136"/>
-      </Position12>
-      <Position13>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="208" Column="53" TopLine="200"/>
-      </Position13>
-      <Position14>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="214" Column="9" TopLine="194"/>
-      </Position14>
-      <Position15>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="140" Column="3" TopLine="136"/>
-      </Position15>
-      <Position16>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="333" Column="3" TopLine="330"/>
-      </Position16>
-      <Position17>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="149" Column="9" TopLine="136"/>
-      </Position17>
-      <Position18>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="28" Column="15" TopLine="20"/>
-      </Position18>
-      <Position19>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="148" Column="5" TopLine="136"/>
-      </Position19>
-      <Position20>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="313" Column="1" TopLine="301"/>
-      </Position20>
-      <Position21>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="310" Column="18" TopLine="301"/>
-      </Position21>
-      <Position22>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="311" Column="18" TopLine="302"/>
-      </Position22>
-      <Position23>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="312" Column="18" TopLine="303"/>
-      </Position23>
-      <Position24>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="313" Column="18" TopLine="304"/>
-      </Position24>
-      <Position25>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="139" Column="108" TopLine="115"/>
-      </Position25>
-      <Position26>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="241" Column="3" TopLine="235"/>
-      </Position26>
-      <Position27>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="122" Column="1" TopLine="98"/>
-      </Position27>
-      <Position28>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="308" Column="3" TopLine="308"/>
-      </Position28>
-      <Position29>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="252" Column="3" TopLine="246"/>
-      </Position29>
-      <Position30>
         <Filename Value="TurboBird.lpr"/>
         <Caret Line="24" Column="23" TopLine="13"/>
-      </Position30>
+      </Position1>
+      <Position2>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="556" Column="42" TopLine="527"/>
+      </Position2>
+      <Position3>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="557" Column="42" TopLine="528"/>
+      </Position3>
+      <Position4>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="948" Column="3" TopLine="946"/>
+      </Position4>
+      <Position5>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="956" Column="37" TopLine="941"/>
+      </Position5>
+      <Position6>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="977" Column="1" TopLine="951"/>
+      </Position6>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
