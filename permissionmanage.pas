@@ -96,6 +96,13 @@ type
     RoleGrant: array of Boolean;
     OrigRoleGrant: array of Boolean;
     fOnCommitProcedure: TNotifyEvent;
+
+    OldTableSelectGrant: Boolean;
+    OldTableInsertGrant: Boolean;
+    OldTableUpdateGrant: Boolean;
+    OldTableDeleteGrant: Boolean;
+    OldTableReferencesGrant: Boolean;
+
     procedure UpdatePermissions;
     procedure UpdateViewsPermissions;
     procedure UpdateProcPermissions;
@@ -147,6 +154,12 @@ begin
     cxUpdateGrant.Checked:= Pos('UG', Permissions) > 0;;
     cxDeleteGrant.Checked:= Pos('DG', Permissions) > 0;;
     cxReferencesGrant.Checked:= Pos('RG', Permissions) > 0;;
+
+    OldTableSelectGrant:= cxSelectGrant.Checked;
+    OldTableInsertGrant:= cxInsertGrant.Checked;
+    OldTableUpdateGrant:= cxUpdateGrant.Checked;
+    OldTableDeleteGrant:= cxDeleteGrant.Checked;
+    OldTableReferencesGrant:= cxReferencesGrant.Checked;
   end;
 
 end;
@@ -275,8 +288,25 @@ begin
   Line:= Command +  OptionName + ' on ' + ATableName + ToFrom + cbUsers.Text;
   if Grant and WithGrant then
       Line:= Line + ' with grant option';
-
   Line:= Line + ';';
+
+  if (Grant) and (not WithGrant) then
+  begin
+    if OldTableSelectGrant and not cxSelectGrant.Checked and (LowerCase(OptionName) = 'select') then
+      Line:= Line + #10 + 'REVOKE GRANT OPTION FOR SELECT ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+
+    if OldTableUpdateGrant and not cxUpdateGrant.Checked and (LowerCase(OptionName) = 'update') then
+      Line:= Line + #10 + 'REVOKE GRANT OPTION FOR Update ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+
+    if OldTableReferencesGrant and not cxReferencesGrant.Checked and (LowerCase(OptionName) = 'references') then
+      Line:= Line + #10 + 'REVOKE GRANT OPTION FOR References ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+
+    if OldTableDeleteGrant and not cxDeleteGrant.Checked and (LowerCase(OptionName) = 'delete') then
+      Line:= Line +#10 +  'REVOKE GRANT OPTION FOR Delete ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+
+    if OldTableInsertGrant and not cxInsertGrant.Checked and (LowerCase(OptionName) = 'insert') then
+      Line:= Line  +#10 +  'REVOKE GRANT OPTION FOR Insert ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+  end;
 
   List.Add(Line);
 end;

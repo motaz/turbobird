@@ -39,9 +39,9 @@ LazarusResources.Add('TfmPermissionManage','FORMDATA',[
   +'th'#2'c'#7'Caption'#6#10'With Grant'#8'TabOrder'#2#11#0#0#9'TCheckBox'#17'c'
   +'xReferencesGrant'#4'Left'#3'Y'#1#6'Height'#2#24#3'Top'#3'3'#1#5'Width'#2'c'
   +#7'Caption'#6#10'With Grant'#8'TabOrder'#2#12#0#0#9'TCheckBox'#5'cxAll'#4'Le'
-  +'ft'#3'>'#1#6'Height'#2#24#3'Top'#2'"'#5'Width'#2':'#8'AutoSize'#8#7'Caption'
+  +'ft'#3'>'#1#6'Height'#2#24#3'Top'#2'"'#5'Width'#2'B'#8'AutoSize'#8#7'Caption'
   +#6#3'All'#10'Font.Style'#11#6'fsBold'#0#10'ParentFont'#8#8'TabOrder'#2#13#0#0
-  +#9'TCheckBox'#10'cxAllGrant'#4'Left'#3'Y'#1#6'Height'#2#24#3'Top'#2'3'#5'Wid'
+  +#9'TCheckBox'#10'cxAllGrant'#4'Left'#3'Y'#1#6'Height'#2#24#3'Top'#2'5'#5'Wid'
   +'th'#2'n'#8'AutoSize'#8#7'Caption'#6#10'With Grant'#10'Font.Style'#11#6'fsBo'
   +'ld'#0#10'ParentFont'#8#8'TabOrder'#2#14#0#0#0#9'TTabSheet'#7'tsViews'#7'Cap'
   +'tion'#6#5'Views'#12'ClientHeight'#3'Q'#1#11'ClientWidth'#3#236#1#0#6'TLabel'

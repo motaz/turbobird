@@ -17,8 +17,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="9"/>
-      <RevisionNr Value="5"/>
-      <BuildNr Value="1074"/>
+      <RevisionNr Value="6"/>
+      <BuildNr Value="1075"/>
       <StringTable ProductVersion="0.9"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -115,7 +115,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="QueryWindow"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="944"/>
@@ -456,7 +455,7 @@
         <UnitName Value="SysTables"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="571"/>
+        <TopLine Value="568"/>
         <CursorPos X="3" Y="573"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -625,7 +624,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="22" Y="54"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="197"/>
       </Unit60>
       <Unit61>
         <Filename Value="unitfirebirdservices.pas"/>
@@ -691,7 +690,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="71" Y="7"/>
-        <UsageCount Value="166"/>
+        <UsageCount Value="167"/>
       </Unit68>
       <Unit69>
         <Filename Value="changepass.pas"/>
@@ -702,7 +701,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="88" Y="14"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
       </Unit69>
       <Unit70>
         <Filename Value="permissionmanage.pas"/>
@@ -711,11 +710,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="PermissionManage"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="341"/>
-        <CursorPos X="17" Y="342"/>
-        <UsageCount Value="163"/>
+        <TopLine Value="277"/>
+        <CursorPos X="27" Y="308"/>
+        <UsageCount Value="164"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit70>
@@ -728,7 +728,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="66"/>
-        <UsageCount Value="148"/>
+        <UsageCount Value="149"/>
       </Unit71>
       <Unit72>
         <Filename Value="../../lazarus/lazarus/lcl/include/menuitem.inc"/>
@@ -753,7 +753,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="18"/>
         <CursorPos X="1" Y="44"/>
-        <UsageCount Value="119"/>
+        <UsageCount Value="120"/>
       </Unit74>
       <Unit75>
         <Filename Value="/usr/lib/lazarus/0.9.30/lcl/comctrls.pp"/>
@@ -946,7 +946,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="19" Y="39"/>
-        <UsageCount Value="87"/>
+        <UsageCount Value="88"/>
       </Unit98>
       <Unit99>
         <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60dyn.pp"/>
@@ -982,7 +982,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="666"/>
         <CursorPos X="3" Y="668"/>
-        <UsageCount Value="74"/>
+        <UsageCount Value="75"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit102>
@@ -1018,10 +1018,10 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit106>
     </Units>
-    <JumpHistory Count="6" HistoryIndex="5">
+    <JumpHistory Count="18" HistoryIndex="17">
       <Position1>
         <Filename Value="TurboBird.lpr"/>
         <Caret Line="24" Column="23" TopLine="13"/>
@@ -1046,6 +1046,54 @@
         <Filename Value="querywindow.pas"/>
         <Caret Line="977" Column="1" TopLine="951"/>
       </Position6>
+      <Position7>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="342" Column="17" TopLine="341"/>
+      </Position7>
+      <Position8>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="288" Column="3" TopLine="284"/>
+      </Position8>
+      <Position9>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="277" Column="42" TopLine="242"/>
+      </Position9>
+      <Position10>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="288" Column="3" TopLine="284"/>
+      </Position10>
+      <Position11>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="264" Column="3" TopLine="257"/>
+      </Position11>
+      <Position12>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="437" Column="3" TopLine="435"/>
+      </Position12>
+      <Position13>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="150" Column="1" TopLine="128"/>
+      </Position13>
+      <Position14>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="162" Column="48" TopLine="135"/>
+      </Position14>
+      <Position15>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="301" Column="3" TopLine="297"/>
+      </Position15>
+      <Position16>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="307" Column="45" TopLine="275"/>
+      </Position16>
+      <Position17>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="296" Column="102" TopLine="277"/>
+      </Position17>
+      <Position18>
+        <Filename Value="permissionmanage.pas"/>
+        <Caret Line="318" Column="3" TopLine="314"/>
+      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

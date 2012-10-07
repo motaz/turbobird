@@ -160,7 +160,7 @@ object fmPermissionManage: TfmPermissionManage
         Left = 318
         Height = 24
         Top = 34
-        Width = 58
+        Width = 66
         AutoSize = False
         Caption = 'All'
         Font.Style = [fsBold]
@@ -170,7 +170,7 @@ object fmPermissionManage: TfmPermissionManage
       object cxAllGrant: TCheckBox
         Left = 345
         Height = 24
-        Top = 51
+        Top = 53
         Width = 110
         AutoSize = False
         Caption = 'With Grant'
