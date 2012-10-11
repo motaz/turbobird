@@ -14,7 +14,7 @@ object fmMain: TfmMain
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.0.2.0'
   object tvMain: TTreeView
     Left = 0
     Height = 617
@@ -2432,6 +2432,11 @@ object fmMain: TfmMain
       Tag = 2
       Caption = 'Create Auto increment Trigger'
       OnClick = lmCreateAutoIncClick
+    end
+    object lmGetIncrementGen: TMenuItem
+      Tag = 2
+      Caption = 'Get increment SQL'
+      OnClick = lmGetIncrementGenClick
     end
     object lmDisplay1000V: TMenuItem
       Tag = 4

@@ -48,6 +48,7 @@ type
     lmDBIndo: TMenuItem;
     lmCopyRolePermission: TMenuItem;
     lmCompare: TMenuItem;
+    lmGetIncrementGen: TMenuItem;
     mnExit: TMenuItem;
     mnCreateDB: TMenuItem;
     mnRegDB: TMenuItem;
@@ -117,6 +118,7 @@ type
     procedure lmDBIndoClick(Sender: TObject);
     procedure lmDisconnectClick(Sender: TObject);
     procedure lmEditFieldClick(Sender: TObject);
+    procedure lmGetIncrementGenClick(Sender: TObject);
     procedure lmOpenSystemTableClick(Sender: TObject);
     procedure lmActivateTrigClick(Sender: TObject);
     procedure lmCallStoreProcClick(Sender: TObject);
@@ -529,6 +531,26 @@ begin
   end
   else
     ShowMessage('Unable to locate the field: ' + SelNode.Text);
+end;
+
+procedure TfmMain.lmGetIncrementGenClick(Sender: TObject);
+var
+  SelNode: TTreeNode;
+  AGenName: string;
+  dbIndex: Integer;
+begin
+  SelNode:= tvMain.Selected;
+  if (SelNode <> nil) and (SelNode.Parent <> nil) then
+  begin
+    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+
+    AGenName:= SelNode.Text;
+
+    ShowCompleteQueryWindow(dbIndex, 'get increment generator SQL for:' + AGenName,
+      'select GEN_ID(' + AGenName + ', 1) from RDB$Database;');
+  end;
+
+
 end;
 
 procedure TfmMain.FormClose(Sender: TObject; var CloseAction: TCloseAction);
