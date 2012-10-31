@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      : 11.Oct.2012                                          }
+{  Last updated      : 31.Oct.2012                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 

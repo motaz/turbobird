@@ -60,11 +60,10 @@
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TurboBird"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="19" Y="27"/>
+        <CursorPos X="26" Y="7"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -121,8 +120,8 @@
         <UnitName Value="QueryWindow"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="944"/>
-        <CursorPos X="53" Y="968"/>
+        <TopLine Value="188"/>
+        <CursorPos X="3" Y="190"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -224,7 +223,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EnterPass"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
         <CursorPos X="17" Y="46"/>
@@ -726,12 +725,17 @@
         <Filename Value="sqlhistory.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmSQLHistory"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SQLHistory"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="35" Y="66"/>
+        <TopLine Value="87"/>
+        <CursorPos X="20" Y="89"/>
         <UsageCount Value="149"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit71>
       <Unit72>
         <Filename Value="../../lazarus/lazarus/lcl/include/menuitem.inc"/>
@@ -1024,7 +1028,7 @@
         <UsageCount Value="21"/>
       </Unit106>
     </Units>
-    <JumpHistory Count="21" HistoryIndex="20">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
         <Filename Value="TurboBird.lpr"/>
         <Caret Line="24" Column="23" TopLine="13"/>
@@ -1109,6 +1113,34 @@
         <Filename Value="main.pas"/>
         <Caret Line="2196" Column="1" TopLine="2170"/>
       </Position21>
+      <Position22>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="968" Column="53" TopLine="944"/>
+      </Position22>
+      <Position23>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="196" Column="3" TopLine="193"/>
+      </Position23>
+      <Position24>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="190" Column="3" TopLine="188"/>
+      </Position24>
+      <Position25>
+        <Filename Value="sqlhistory.pas"/>
+        <Caret Line="39" Column="15" TopLine="22"/>
+      </Position25>
+      <Position26>
+        <Filename Value="sqlhistory.pas"/>
+        <Caret Line="40" Column="15" TopLine="23"/>
+      </Position26>
+      <Position27>
+        <Filename Value="sqlhistory.pas"/>
+        <Caret Line="71" Column="3" TopLine="61"/>
+      </Position27>
+      <Position28>
+        <Filename Value="sqlhistory.pas"/>
+        <Caret Line="72" Column="50" TopLine="46"/>
+      </Position28>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

@@ -1,18 +1,18 @@
 object fmSQLHistory: TfmSQLHistory
   Left = 565
-  Height = 453
+  Height = 492
   Top = 354
   Width = 873
   Caption = 'SQL History'
-  ClientHeight = 453
+  ClientHeight = 492
   ClientWidth = 873
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.0.2.0'
   object DBGrid1: TDBGrid
     Left = 8
-    Height = 376
+    Height = 404
     Top = 8
     Width = 852
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -23,21 +23,22 @@ object fmSQLHistory: TfmSQLHistory
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
     ReadOnly = True
     TabOrder = 0
+    OnDblClick = DBGrid1DblClick
   end
-  object BitBtn1: TBitBtn
+  object bbInsert: TBitBtn
     Left = 8
     Height = 30
-    Top = 408
+    Top = 427
     Width = 152
     Anchors = [akLeft, akBottom]
     Caption = 'Insert in SQL Query'
-    OnClick = BitBtn1Click
+    OnClick = bbInsertClick
     TabOrder = 1
   end
   object bbDelete: TBitBtn
     Left = 184
     Height = 30
-    Top = 408
+    Top = 427
     Width = 81
     Anchors = [akLeft, akBottom]
     Cancel = True
@@ -49,7 +50,7 @@ object fmSQLHistory: TfmSQLHistory
   object GroupBox1: TGroupBox
     Left = 275
     Height = 56
-    Top = 392
+    Top = 422
     Width = 585
     Anchors = [akLeft, akRight, akBottom]
     Caption = 'Export to text file'
@@ -152,6 +153,14 @@ object fmSQLHistory: TfmSQLHistory
       OnClick = bbExportClick
       TabOrder = 3
     end
+  end
+  object cxOverwrite: TCheckBox
+    Left = 8
+    Height = 24
+    Top = 462
+    Width = 179
+    Caption = 'Overwrite existing SQL'
+    TabOrder = 4
   end
   object Datasource1: TDatasource
     left = 127

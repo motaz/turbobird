@@ -13,10 +13,11 @@ type
   { TfmSQLHistory }
 
   TfmSQLHistory = class(TForm)
-    BitBtn1: TBitBtn;
+    bbInsert: TBitBtn;
     bbDelete: TBitBtn;
     bbExport: TBitBtn;
     cbSQLType: TComboBox;
+    cxOverwrite: TCheckBox;
     cxAfterDate: TCheckBox;
     Datasource1: TDatasource;
     DateEdit1: TDateEdit;
@@ -26,9 +27,10 @@ type
     SaveDialog1: TSaveDialog;
     procedure bbDeleteClick(Sender: TObject);
     procedure bbExportClick(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
+    procedure bbInsertClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure cxAfterDateClick(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private
@@ -58,13 +60,16 @@ begin
   DateEdit1.Date:= Now - 7;
 end;
 
-procedure TfmSQLHistory.BitBtn1Click(Sender: TObject);
+procedure TfmSQLHistory.bbInsertClick(Sender: TObject);
 var
   SQLStatement: string;
 begin
   SQLStatement:= (fmMain.mdsHistory.FieldByName('SQLStatement').AsString);
   if Pos(';', SQLStatement) = 0 then
     SQLStatement:= SQLStatement + ';';
+
+  if cxOverwrite.Checked then
+    (fQueryForm as TfmQueryWindow).meQuery.Lines.Clear;
 
   (fQueryForm as TfmQueryWindow).meQuery.Lines.Text:= (fQueryForm as TfmQueryWindow).meQuery.Lines.Text + SQLStatement;
   Close;
@@ -77,6 +82,11 @@ end;
 procedure TfmSQLHistory.cxAfterDateClick(Sender: TObject);
 begin
   DateEdit1.Visible:= cxAfterDate.Checked;
+end;
+
+procedure TfmSQLHistory.DBGrid1DblClick(Sender: TObject);
+begin
+  bbInsertClick(nil);
 end;
 
 procedure TfmSQLHistory.bbDeleteClick(Sender: TObject);
