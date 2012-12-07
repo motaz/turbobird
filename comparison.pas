@@ -777,7 +777,8 @@ begin
     dmSysTables.GetTriggerInfo(fdbIndex, TriggerName, AfterBefor, OnTable, Event, Body, TriggerEnabled, TPosition);
     if dmSysTables.GetTriggerInfo(cbComparedDatabase.ItemIndex, TriggerName, CAfterBefor, COnTable, CEvent, CBody,
       CTriggerEnabled, CTPosition) then
-    if  (Trim(Body) <> Trim(CBody)) or (AfterBefor <> CAfterBefor) or (TriggerEnabled <> CTriggerEnabled)
+    if  (StringReplace(Body, ' ', '', [rfReplaceAll]) <> StringReplace(CBody, ' ', '', [rfReplaceAll]))
+       or (AfterBefor <> CAfterBefor) or (TriggerEnabled <> CTriggerEnabled)
        or (TPosition <> CTPosition) then
     begin
       meLog.Lines.Add(' ' + TriggerName);

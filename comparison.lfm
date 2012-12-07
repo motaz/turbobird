@@ -8,7 +8,7 @@ object fmComparison: TfmComparison
   ClientWidth = 653
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.0.4.0'
   object Label1: TLabel
     Left = 15
     Height = 18

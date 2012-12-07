@@ -692,6 +692,7 @@ var
 begin
   Result:= False;
   Rec:= RegisteredDatabases[dbIndex].RegRec;
+  fmEnterPass.laDatabase.Caption:= Rec.Title;
   fmEnterPass.edUser.Text:= Rec.UserName;
   fmEnterPass.edPassword.Clear;
   fmEnterPass.cbRole.Clear;

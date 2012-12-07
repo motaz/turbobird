@@ -14,7 +14,7 @@ object fmMain: TfmMain
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.0.2.0'
+  LCLVersion = '1.0.4.0'
   object tvMain: TTreeView
     Left = 0
     Height = 617
