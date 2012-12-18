@@ -86,6 +86,7 @@ var
   Statement: string;
   Values: string;
   SQLTarget: TSQLQuery;
+  Num: Integer;
 begin
   Statement:= 'insert into ' + cbDestTable.Text + ' (';
   dmSysTables.sqQuery.Close;
@@ -135,16 +136,18 @@ begin
     // Start copy
     try
       dmSysTables.sqQuery.First;
+      Num:= 0;
       with dmSysTables.sqQuery do
       while not EOF do
       begin
         for i:= 0 to Fields.Count - 1 do
           SQLTarget.Params.ParamByName(Fields[i].FieldName).Value:= Fields[i].Value;
         SQLTarget.ExecSQL;
+        Inc(Num);
         Next;
       end;
       SQLTrans.Commit;
-      ShowMessage('Table has been copied' + #10 + 'Don''t forget to set the Generator to the new value, ' +
+      ShowMessage(IntToStr(Num) + ' record(s) has been copied' + #10 + 'Don''t forget to set the Generator to the new value, ' +
         'if it does exists');
       dmSysTables.sqQuery.Close;
       SQLTarget.Free;
