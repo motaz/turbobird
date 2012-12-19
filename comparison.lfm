@@ -1,11 +1,11 @@
 object fmComparison: TfmComparison
   Left = 410
-  Height = 625
+  Height = 658
   Top = 127
-  Width = 653
+  Width = 820
   Caption = 'Database comparison'
-  ClientHeight = 625
-  ClientWidth = 653
+  ClientHeight = 658
+  ClientWidth = 820
   OnClose = FormClose
   Position = poScreenCenter
   LCLVersion = '1.0.4.0'
@@ -66,9 +66,9 @@ object fmComparison: TfmComparison
   end
   object meLog: TMemo
     Left = 13
-    Height = 233
+    Height = 266
     Top = 360
-    Width = 633
+    Width = 800
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Name = 'Courier 10 Pitch'
     ParentFont = False
@@ -168,8 +168,8 @@ object fmComparison: TfmComparison
   object StatusBar1: TStatusBar
     Left = 0
     Height = 21
-    Top = 604
-    Width = 653
+    Top = 637
+    Width = 820
     Panels = <    
       item
         Width = 50
@@ -185,7 +185,7 @@ object fmComparison: TfmComparison
     TabOrder = 5
   end
   object bbClose: TBitBtn
-    Left = 626
+    Left = 793
     Height = 24
     Top = 0
     Width = 27
@@ -201,7 +201,7 @@ object fmComparison: TfmComparison
     Left = 8
     Height = 98
     Top = 6
-    Width = 608
+    Width = 775
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
     Caption = 'Database comparison tool compares origional database structure to another database structure.'#10'It generates script to make compared database structure becomes like origional database.'#10'For instance, origional database could be a development database, and compared database is an old version that'#10'is deployed in customer side. This tool generates script to make customer database structure '#10'resembles developmenent database as much as possible.'
@@ -211,5 +211,23 @@ object fmComparison: TfmComparison
     ParentFont = False
     Transparent = False
     WordWrap = True
+  end
+  object GroupBox2: TGroupBox
+    Left = 616
+    Height = 76
+    Top = 195
+    Width = 189
+    Caption = 'Options'
+    ClientHeight = 57
+    ClientWidth = 185
+    TabOrder = 7
+    object cxIgnoreLength: TCheckBox
+      Left = 16
+      Height = 24
+      Top = 6
+      Width = 154
+      Caption = 'Ignore fields length'
+      TabOrder = 0
+    end
   end
 end

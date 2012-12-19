@@ -20,6 +20,7 @@ type
     bbClose: TBitBtn;
     bbStart: TBitBtn;
     cbComparedDatabase: TComboBox;
+    cxIgnoreLength: TCheckBox;
     cxRemovedObjects: TCheckBox;
     cxDomains: TCheckBox;
     cxRoles: TCheckBox;
@@ -30,6 +31,7 @@ type
     cxUDFs: TCheckBox;
     cxViews: TCheckBox;
     GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -621,7 +623,8 @@ begin
     dmSysTables.GetFieldInfo(fdbIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
     dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName, CFieldType, CFieldSize, CNotNull,
       CDefaultValue, CDescription);
-    if (FieldType <> CFieldType) or (FieldSize <> CFieldSize) or (NotNull <> CNotNull) or (DefaultValue <> CDefaultValue)
+    if (FieldType <> CFieldType) or ((FieldSize <> CFieldSize) and (not cxIgnoreLength.Checked)) or
+       (NotNull <> CNotNull) or (DefaultValue <> CDefaultValue)
        or (Description <> CDescription) then
        begin
          meLog.Lines.Add(' ' + ExistFieldsList[i]);
