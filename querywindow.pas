@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, IBConnection, sqldb, db, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg, sqlscript,
-  SynEditTypes, Clipbrd,grids;
+  SynEditTypes, Clipbrd, grids, DbCtrls;
 
 type
 
@@ -343,6 +343,8 @@ var
   DBGrid: TDBGrid;
   DataSource: TDataSource;
   StatusBar: TStatusBar;
+  Nav: TDBNavigator;
+  Pan: TPanel;
 begin
   ATab:= TTabSheet.Create(nil);
   Result:= ATab;
@@ -368,6 +370,13 @@ begin
     DataSource.DataSet:= SqlQuery;
     AddResultControl(ATab, DataSource);
 
+    // Panel
+    pan:= TPanel.Create(nil);
+    pan.Parent:= ATab;
+    Pan.Height:= 30;
+    Pan.Align:= alTop;
+    AddResultControl(ATab, Pan);
+
     // Query result Grid
     DBGrid:= TDBGrid.Create(nil);
     DBGrid.Parent:= ATab;
@@ -376,12 +385,22 @@ begin
     DBGrid.OnDblClick:= @DBGrid1DblClick;
     DBGrid.ReadOnly:= False;
     DBGrid.AutoEdit:= False;
-//    DBGrid.FixedColor:= $00DDDACF;   // delete
+
     DBGrid.PopupMenu:= pmGrid;
-    DBGrid.TitleStyle:=tsNative; // add
-    DBGrid.Options:= DBGrid.Options + [dgAutoSizeColumns,dgHeaderHotTracking, dgHeaderPushedLook];  // edit
-    DBGrid.OnTitleClick:=@DBGridTitleClick;  //  add
+    DBGrid.TitleStyle:= tsNative;
+    DBGrid.Options:= DBGrid.Options + [dgAutoSizeColumns,dgHeaderHotTracking, dgHeaderPushedLook, dgAnyButtonCanSelect];
+    DBGrid.Options:= DBGrid.Options - [dgEditing];
+
+    DBGrid.OnTitleClick:= @DBGridTitleClick;
     AddResultControl(ATab, DBGrid);
+
+    // Navigator
+    Nav:= TDBNavigator.Create(nil);
+    Nav.Parent:= Pan;
+    Nav.VisibleButtons:= [nbFirst, nbNext, nbPrior, nbLast, nbRefresh];
+    Nav.DataSource:= DataSource;
+    AddResultControl(ATab, Nav);
+
   end
   else
   if QueryType in [2, 3] then

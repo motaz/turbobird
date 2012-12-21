@@ -17,8 +17,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="9"/>
-      <RevisionNr Value="6"/>
-      <BuildNr Value="1075"/>
+      <RevisionNr Value="5"/>
+      <BuildNr Value="1076"/>
       <StringTable ProductVersion="0.9"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -62,8 +62,8 @@
         <UnitName Value="TurboBird"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="31"/>
-        <CursorPos X="3" Y="50"/>
+        <TopLine Value="1"/>
+        <CursorPos X="27" Y="10"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -118,10 +118,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="QueryWindow"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="188"/>
-        <CursorPos X="3" Y="190"/>
+        <TopLine Value="374"/>
+        <CursorPos X="20" Y="377"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -631,7 +632,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="22" Y="54"/>
-        <UsageCount Value="199"/>
+        <UsageCount Value="200"/>
       </Unit60>
       <Unit61>
         <Filename Value="unitfirebirdservices.pas"/>
@@ -697,7 +698,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="71" Y="7"/>
-        <UsageCount Value="169"/>
+        <UsageCount Value="170"/>
       </Unit68>
       <Unit69>
         <Filename Value="changepass.pas"/>
@@ -710,7 +711,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="88" Y="14"/>
-        <UsageCount Value="168"/>
+        <UsageCount Value="169"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit69>
@@ -725,7 +726,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="270"/>
         <CursorPos X="33" Y="284"/>
-        <UsageCount Value="166"/>
+        <UsageCount Value="167"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit70>
@@ -740,7 +741,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="20" Y="89"/>
-        <UsageCount Value="151"/>
+        <UsageCount Value="152"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit71>
@@ -769,7 +770,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="120"/>
         <CursorPos X="20" Y="126"/>
-        <UsageCount Value="122"/>
+        <UsageCount Value="123"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit74>
@@ -964,7 +965,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="19" Y="39"/>
-        <UsageCount Value="90"/>
+        <UsageCount Value="91"/>
       </Unit98>
       <Unit99>
         <Filename Value="../../FromInternet/fpc2.4/fpc-2.4.4/packages/ibase/src/ibase60dyn.pp"/>
@@ -996,12 +997,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Comparison"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="600"/>
         <CursorPos X="95" Y="626"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="78"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit102>
@@ -1037,53 +1037,53 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="24"/>
       </Unit106>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="main.pas"/>
-        <Caret Line="420" Column="20" TopLine="408"/>
+        <Caret Line="549" Column="83" TopLine="536"/>
       </Position1>
       <Position2>
         <Filename Value="main.pas"/>
-        <Caret Line="2196" Column="1" TopLine="2170"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="968" Column="53" TopLine="944"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="678" Column="30" TopLine="658"/>
       </Position3>
       <Position4>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="196" Column="3" TopLine="193"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="693" Column="3" TopLine="686"/>
       </Position4>
       <Position5>
-        <Filename Value="querywindow.pas"/>
-        <Caret Line="190" Column="3" TopLine="188"/>
+        <Filename Value="enterpass.pas"/>
+        <Caret Line="37" Column="32" TopLine="1"/>
       </Position5>
       <Position6>
-        <Filename Value="sqlhistory.pas"/>
-        <Caret Line="39" Column="15" TopLine="22"/>
+        <Filename Value="enterpass.pas"/>
+        <Caret Line="38" Column="32" TopLine="3"/>
       </Position6>
       <Position7>
-        <Filename Value="sqlhistory.pas"/>
-        <Caret Line="40" Column="15" TopLine="23"/>
+        <Filename Value="comparison.pas"/>
+        <Caret Line="781" Column="8" TopLine="757"/>
       </Position7>
       <Position8>
-        <Filename Value="sqlhistory.pas"/>
-        <Caret Line="71" Column="3" TopLine="61"/>
+        <Filename Value="comparison.pas"/>
+        <Caret Line="764" Column="19" TopLine="763"/>
       </Position8>
       <Position9>
-        <Filename Value="sqlhistory.pas"/>
-        <Caret Line="72" Column="50" TopLine="46"/>
+        <Filename Value="comparison.pas"/>
+        <Caret Line="264" Column="3" TopLine="259"/>
       </Position9>
       <Position10>
-        <Filename Value="about.pas"/>
-        <Caret Line="72" Column="20" TopLine="58"/>
+        <Filename Value="comparison.pas"/>
+        <Caret Line="155" Column="3" TopLine="152"/>
       </Position10>
       <Position11>
         <Filename Value="main.pas"/>
-        <Caret Line="549" Column="83" TopLine="536"/>
+        <Caret Line="695" Column="31" TopLine="686"/>
       </Position11>
       <Position12>
         <Filename Value="main.pas"/>
@@ -1091,75 +1091,75 @@
       </Position12>
       <Position13>
         <Filename Value="main.pas"/>
-        <Caret Line="678" Column="30" TopLine="658"/>
+        <Caret Line="44" Column="13" TopLine="15"/>
       </Position13>
       <Position14>
         <Filename Value="main.pas"/>
-        <Caret Line="693" Column="3" TopLine="686"/>
+        <Caret Line="399" Column="3" TopLine="396"/>
       </Position14>
       <Position15>
-        <Filename Value="enterpass.pas"/>
-        <Caret Line="37" Column="32" TopLine="1"/>
+        <Filename Value="copytable.pas"/>
+        <Caret Line="173" Column="3" TopLine="155"/>
       </Position15>
       <Position16>
-        <Filename Value="enterpass.pas"/>
-        <Caret Line="38" Column="32" TopLine="3"/>
+        <Filename Value="comparison.pas"/>
+        <Caret Line="749" Column="11" TopLine="706"/>
       </Position16>
       <Position17>
         <Filename Value="comparison.pas"/>
-        <Caret Line="781" Column="8" TopLine="757"/>
+        <Caret Line="750" Column="11" TopLine="714"/>
       </Position17>
       <Position18>
         <Filename Value="comparison.pas"/>
-        <Caret Line="764" Column="19" TopLine="763"/>
+        <Caret Line="751" Column="11" TopLine="715"/>
       </Position18>
       <Position19>
         <Filename Value="comparison.pas"/>
-        <Caret Line="264" Column="3" TopLine="259"/>
+        <Caret Line="157" Column="3" TopLine="155"/>
       </Position19>
       <Position20>
         <Filename Value="comparison.pas"/>
-        <Caret Line="155" Column="3" TopLine="152"/>
+        <Caret Line="627" Column="8" TopLine="598"/>
       </Position20>
       <Position21>
-        <Filename Value="main.pas"/>
-        <Caret Line="695" Column="31" TopLine="686"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="190" Column="3" TopLine="254"/>
       </Position21>
       <Position22>
-        <Filename Value="main.pas"/>
+        <Filename Value="querywindow.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
       </Position22>
       <Position23>
-        <Filename Value="main.pas"/>
-        <Caret Line="44" Column="13" TopLine="15"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="10" Column="9" TopLine="1"/>
       </Position23>
       <Position24>
-        <Filename Value="main.pas"/>
-        <Caret Line="399" Column="3" TopLine="396"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="74" Column="21" TopLine="46"/>
       </Position24>
       <Position25>
-        <Filename Value="copytable.pas"/>
-        <Caret Line="173" Column="3" TopLine="155"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="75" Column="21" TopLine="47"/>
       </Position25>
       <Position26>
-        <Filename Value="comparison.pas"/>
-        <Caret Line="749" Column="11" TopLine="706"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="343" Column="18" TopLine="335"/>
       </Position26>
       <Position27>
-        <Filename Value="comparison.pas"/>
-        <Caret Line="750" Column="11" TopLine="714"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="346" Column="11" TopLine="334"/>
       </Position27>
       <Position28>
-        <Filename Value="comparison.pas"/>
-        <Caret Line="751" Column="11" TopLine="715"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="11" Column="40" TopLine="1"/>
       </Position28>
       <Position29>
-        <Filename Value="comparison.pas"/>
-        <Caret Line="157" Column="3" TopLine="155"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="397" Column="21" TopLine="369"/>
       </Position29>
       <Position30>
-        <Filename Value="comparison.pas"/>
-        <Caret Line="627" Column="8" TopLine="598"/>
+        <Filename Value="querywindow.pas"/>
+        <Caret Line="376" Column="13" TopLine="359"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
