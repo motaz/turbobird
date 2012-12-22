@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons;
+  StdCtrls, Buttons, ExtCtrls;
 
 type
 
@@ -21,6 +21,7 @@ type
     edHost: TEdit;
     edUserName: TEdit;
     GroupBox1: TGroupBox;
+    Image1: TImage;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;

@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      : 21.Dec.2012                                          }
+{  Last updated      : 22.Dec.2012                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
@@ -15,7 +15,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, Controls, memdslaz, main, createdb, Reg, QueryWindow, ViewView,
+  Forms, Controls, memdslaz, main, CreateDb, Reg, QueryWindow, ViewView,
   ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen, EnterPass, About,
   CreateTrigger, EditTable, CallProc, EditDataFullRec, UDFInfo, ViewDomain,
   NewDomain, SysTables, NewConstraint, NewEditField, Calen, Scriptdb,

@@ -234,7 +234,7 @@ implementation
 
 { TfmMain }
 
-uses CreateDB, ViewView, ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen,
+uses CreateDb, ViewView, ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen,
      EnterPass, CreateTrigger, EditTable, CallProc, EditDataFullRec, UDFInfo, ViewDomain,
      NewDomain, SysTables, Scriptdb, UserPermissions, BackupRestore, UnitFirebirdServices, CreateUser, ChangePass,
      PermissionManage, CopyTable, About, NewEditField, dbInfo, Comparison;

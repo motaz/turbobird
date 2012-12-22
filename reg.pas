@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, IBConnection, FileUtil, LResources, Forms, Controls,
-  Graphics, Dialogs, StdCtrls, Buttons;
+  Graphics, Dialogs, StdCtrls, Buttons, ExtCtrls;
 
 type
 
@@ -38,6 +38,7 @@ type
     edPassword: TEdit;
     edUserName: TEdit;
     IBConnection1: TIBConnection;
+    Image1: TImage;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
