@@ -3,27 +3,27 @@
 LazarusResources.Add('TfmMain','FORMDATA',[
   'TPF0'#7'TfmMain'#6'fmMain'#4'Left'#3#244#0#6'Height'#3#128#2#3'Top'#3#139#0#5
   +'Width'#3#0#4#13'ActiveControl'#7#6'tvMain'#7'Caption'#6#28'TurboBird Admin '
-  +'for FireBird'#12'ClientHeight'#3'i'#2#11'ClientWidth'#3#0#4#5'Color'#7#7'cl'
+  +'for FireBird'#12'ClientHeight'#3'l'#2#11'ClientWidth'#3#0#4#5'Color'#7#7'cl'
   +'White'#9'Font.Name'#6#4'Sans'#4'Menu'#7#9'MainMenu1'#10'OnActivate'#7#12'Fo'
   +'rmActivate'#7'OnClose'#7#9'FormClose'#8'OnCreate'#7#10'FormCreate'#8'Positi'
   +'on'#7#14'poScreenCenter'#10'LCLVersion'#6#7'1.0.4.0'#0#9'TTreeView'#6'tvMai'
-  +'n'#4'Left'#2#0#6'Height'#3'i'#2#3'Top'#2#0#5'Width'#3'h'#1#5'Align'#7#6'alL'
+  +'n'#4'Left'#2#0#6'Height'#3'l'#2#3'Top'#2#0#5'Width'#3'h'#1#5'Align'#7#6'alL'
   +'eft'#15'BackgroundColor'#7#7'clWhite'#5'Color'#7#7'clCream'#13'HideSelectio'
   +'n'#8#6'Images'#7#10'ImageList1'#6'Indent'#2#25#8'ReadOnly'#9#16'RightClickS'
   +'elect'#9#9'ShowLines'#8#8'TabOrder'#2#0#10'OnDblClick'#7#14'tvMainDblClick'
   +#10'OnExpanded'#7#14'tvMainExpanded'#7'Options'#11#17'tvoAutoItemHeight'#21
   +'tvoKeepCollapsedNodes'#11'tvoReadOnly'#19'tvoRightClickSelect'#14'tvoShowBu'
   +'ttons'#11'tvoShowRoot'#11'tvoToolTips'#0#15'ExpandSignColor'#7#8'clMaroon'#0
-  +#0#9'TSplitter'#9'Splitter1'#4'Left'#3'h'#1#6'Height'#3'i'#2#3'Top'#2#0#5'Wi'
+  +#0#9'TSplitter'#9'Splitter1'#4'Left'#3'h'#1#6'Height'#3'l'#2#3'Top'#2#0#5'Wi'
   +'dth'#2#14#7'Beveled'#9#0#0#12'TPageControl'#12'PageControl1'#4'Left'#3'y'#1
-  +#6'Height'#3'b'#2#3'Top'#2#3#5'Width'#3#132#2#10'ActivePage'#7#9'TabSheet1'#5
+  +#6'Height'#3'e'#2#3'Top'#2#3#5'Width'#3#132#2#10'ActivePage'#7#9'TabSheet1'#5
   +'Align'#7#8'alClient'#18'BorderSpacing.Left'#2#1#17'BorderSpacing.Top'#2#1#19
   +'BorderSpacing.Right'#2#1#20'BorderSpacing.Bottom'#2#2#20'BorderSpacing.Arou'
   +'nd'#2#2#25'BorderSpacing.InnerBorder'#2#1#9'Font.Name'#6#4'Sans'#10'ParentF'
   +'ont'#8#8'TabIndex'#2#0#8'TabOrder'#2#2#17'OnCloseTabClicked'#7#27'PageContr'
   +'ol1CloseTabClicked'#7'Options'#11#20'nboHidePageListPopup'#0#0#9'TTabSheet'
-  +#9'TabSheet1'#11'BorderWidth'#2#1#7'Caption'#6#4'Main'#12'ClientHeight'#3'D'
-  +#2#11'ClientWidth'#3#128#2#10'Font.Color'#7#6'clNavy'#9'Font.Name'#6#5'Arial'
+  +#9'TabSheet1'#11'BorderWidth'#2#1#7'Caption'#6#4'Main'#12'ClientHeight'#3'F'
+  +#2#11'ClientWidth'#3'|'#2#10'Font.Color'#7#6'clNavy'#9'Font.Name'#6#5'Arial'
   +#10'ParentFont'#8#0#7'TBitBtn'#11'bbRestoreDB'#4'Left'#2#3#6'Height'#2']'#3
   +'Top'#3#216#0#5'Width'#3#208#0#7'Caption'#6#16'Restore Database'#5'Color'#7#7
   +'clCream'#9'Font.Name'#6#4'Sans'#10'Glyph.Data'#10':'#16#0#0'6'#16#0#0'BM6'

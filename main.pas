@@ -3673,7 +3673,7 @@ begin
     else  // Expand object
     begin
       tvMainExpanded(nil, Node);
-      Rec:= RegisteredDatabases[Node.OverlayIndex].RegRec;
+      Rec:= RegisteredDatabases[Node.Parent.OverlayIndex].RegRec;
     end;
   end
   else

@@ -172,6 +172,7 @@ end;
 function TfmNewTable.Validate: Boolean;
 var
   i: Integer;
+  PKeyFound: Boolean;
 begin
   Result:= False;
   if Trim(edNewTable.Text) = '' then
@@ -194,6 +195,26 @@ begin
     begin
       Result:= False;
       MessageDlg('Warning', 'You should select field name for the column number ' + IntToStr(i), mtWarning, [mbOk], 0);
+    end;
+
+    // Check Primary key
+    if cxCreateGen.Checked then
+    begin
+      PKeyFound:= False;
+      with StringGrid1 do
+      for i:= 1 to RowCount - 1 do
+      if Cells[4, i] = '1' then
+      begin
+        PKeyFound:= True;
+        Break;
+      end;
+
+      if not PKeyFound then
+      begin
+        Result:= False;
+        MessageDlg('Warning', 'There is no primary key', mtWarning, [mbOk], 0);
+      end;
+
     end;
   end;
 

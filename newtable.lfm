@@ -12,9 +12,9 @@ object fmNewTable: TfmNewTable
   LCLVersion = '1.0.4.0'
   object Label1: TLabel
     Left = 18
-    Height = 15
+    Height = 14
     Top = 9
-    Width = 84
+    Width = 85
     Caption = 'New Table name'
     Font.Height = -11
     ParentColor = False
@@ -22,7 +22,7 @@ object fmNewTable: TfmNewTable
   end
   object edNewTable: TEdit
     Left = 18
-    Height = 27
+    Height = 23
     Top = 28
     Width = 206
     OnKeyUp = edNewTableKeyUp
@@ -100,9 +100,9 @@ object fmNewTable: TfmNewTable
   end
   object cxCreateGen: TCheckBox
     Left = 18
-    Height = 24
-    Top = 496
-    Width = 328
+    Height = 19
+    Top = 501
+    Width = 259
     Anchors = [akLeft, akBottom]
     Caption = 'Create Auto increment Generator and Trigger'
     TabOrder = 4
@@ -122,9 +122,9 @@ object fmNewTable: TfmNewTable
   end
   object cxGrantPermission: TCheckBox
     Left = 16
-    Height = 24
-    Top = 529
-    Width = 64
+    Height = 19
+    Top = 534
+    Width = 49
     Anchors = [akLeft, akBottom]
     Caption = 'Grant'
     OnChange = cxGrantPermissionChange
@@ -132,12 +132,12 @@ object fmNewTable: TfmNewTable
   end
   object cbPermission: TComboBox
     Left = 96
-    Height = 27
-    Top = 526
+    Height = 23
+    Top = 530
     Width = 145
     Anchors = [akLeft, akBottom]
     Enabled = False
-    ItemHeight = 0
+    ItemHeight = 15
     ItemIndex = 0
     Items.Strings = (
       'Full'
@@ -150,9 +150,9 @@ object fmNewTable: TfmNewTable
   end
   object laPermission: TLabel
     Left = 256
-    Height = 18
-    Top = 531
-    Width = 94
+    Height = 16
+    Top = 533
+    Width = 73
     Anchors = [akLeft, akBottom]
     Caption = 'Permission to'
     ParentColor = False
@@ -160,11 +160,11 @@ object fmNewTable: TfmNewTable
   end
   object cbRolesUsers: TComboBox
     Left = 361
-    Height = 29
-    Top = 524
+    Height = 23
+    Top = 530
     Width = 181
     Anchors = [akLeft, akBottom]
-    ItemHeight = 0
+    ItemHeight = 15
     Items.Strings = (
       'Full'
       'Read '
