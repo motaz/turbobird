@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons;
+  StdCtrls, Buttons, ExtCtrls;
 
 type
 
@@ -19,6 +19,7 @@ type
     cxGrantRole: TCheckBox;
     edUserName: TEdit;
     edPassword: TEdit;
+    Image1: TImage;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;

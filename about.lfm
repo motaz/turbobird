@@ -12,7 +12,7 @@ object fmAbout: TfmAbout
   Color = 15792364
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.0.4.0'
   object Shape1: TShape
     Left = 9
     Height = 294
@@ -58,8 +58,8 @@ object fmAbout: TfmAbout
     Left = 24
     Height = 18
     Top = 168
-    Width = 171
-    Caption = 'http://code.sd/turbobird'
+    Width = 204
+    Caption = 'http://code-sd.com/turbobird'
     Font.Color = 7303023
     ParentColor = False
     ParentFont = False
@@ -81,15 +81,15 @@ object fmAbout: TfmAbout
     Left = 240
     Height = 18
     Top = 65
-    Width = 101
-    Caption = '2010 - Jan 2011'
+    Width = 106
+    Caption = '2010 - May 2012'
     Font.Color = 6908265
     ParentColor = False
     ParentFont = False
   end
   object BitBtn1: TBitBtn
-    Left = 24
-    Height = 30
+    Left = 9
+    Height = 43
     Top = 312
     Width = 75
     Caption = '&OK'

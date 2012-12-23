@@ -107,6 +107,7 @@ begin
   Delete(Values, Length(Values), 1);
   Statement:= Statement + ') Values (' + Values + ')';
 
+  // Enter password if it is not saved
   with fmMain.RegisteredDatabases[cbDestDatabase.ItemIndex] do
   begin
     if IBConnection.Password = '' then
@@ -177,6 +178,8 @@ begin
   fSourceIndex:= SourceIndex;
   laSourceDatabase.Caption:= fmMain.RegisteredDatabases[SourceIndex].RegRec.Title;
   cbDestDatabase.Clear;
+
+  // Display databases in destination combo box
   for i:= 0 to High(fmMain.RegisteredDatabases) do
     cbDestDatabase.Items.Add(fmMain.RegisteredDatabases[i].RegRec.Title);
   laDatabase.Caption:= '';

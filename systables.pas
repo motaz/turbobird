@@ -53,8 +53,9 @@ type
     function GetFieldInfo(dbIndex: Integer; TableName, FieldName: string; var FieldType: string;
       var FieldSize: Integer; var NotNull: Boolean; var DefaultValue, Description : string): Boolean;
 
-    function GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet, CreationDate: string;
-      var ODSVerMajor, ODSVerMinor, Pages, PageSize: Integer; var ProcessList: TStringList): Boolean;
+    function GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet,
+      CreationDate, ServerTime: string; var ODSVerMajor, ODSVerMinor, Pages,
+  PageSize: Integer; var ProcessList: TStringList): Boolean;
 
     function GetIndices(dbIndex: Integer; ATableName: string; PrimaryIndexName: string;
       var List: TStringList): Boolean;
@@ -99,7 +100,6 @@ procedure TdmSysTables.Init(dbIndex: Integer);
 begin
   with fmMain.RegisteredDatabases[dbIndex] do
   begin
-  //  IBConnection.Close;
     sqQuery.Close;
     IBConnection.DatabaseName:= RegRec.DatabaseName;
     IBConnection.UserName:= RegRec.UserName;
@@ -154,7 +154,7 @@ begin
     if TVIndex = 11 then // Users
       sqQuery.SQL.Text:= 'select distinct RDB$User from RDB$USER_PRIVILEGES where RDB$User_Type = 8 order by rdb$User';
 
-
+    // Put the result list as comma delemited string
     sqQuery.Open;
     while not sqQuery.EOF do
     begin
@@ -679,7 +679,7 @@ begin
   sqQuery.Close;
 end;
 
-function TdmSysTables.GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet, CreationDate: string;
+function TdmSysTables.GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet, CreationDate, ServerTime: string;
   var ODSVerMajor, ODSVerMinor, Pages, PageSize: Integer; var ProcessList: TStringList): Boolean;
 begin
   try
@@ -700,6 +700,7 @@ begin
     Pages:= sqQuery.FieldByName('MON$Pages').AsInteger;
     sqQuery.Close;
 
+    // Attached clients
     sqQuery.SQL.Text:= 'select * from MON$ATTACHMENTS';
     if ProcessList = nil then
       ProcessList:= TStringList.Create;
@@ -712,6 +713,12 @@ begin
         '   Process: ' + Trim(FieldByName('Mon$Remote_Process').AsString));
       Next;
     end;
+    sqQuery.Close;
+
+    // Server time
+    sqQuery.SQL.Text:= 'select current_timestamp from RDB$Database';
+    sqQuery.Open;
+    ServerTime:= sqQuery.Fields[0].AsString;
     sqQuery.Close;
     Result:= True;
 

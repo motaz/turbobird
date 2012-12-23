@@ -416,11 +416,12 @@ var
   ATab: TTabSheet;
   Title: string;
   dbIndex: Integer;
+  ServerTime: string;
 begin
   ProcessList:= TStringList.Create;
   dbIndex:= tvMain.Selected.OverlayIndex;
   Title:= 'Database information for: ' + tvMain.Selected.Text;
-  if dmSysTables.GetDatabaseInfo(dbIndex, dbName, ACharSet, CreationDate,
+  if dmSysTables.GetDatabaseInfo(dbIndex, dbName, ACharSet, CreationDate, ServerTime,
     MajorVer, MinorVer, Pages, PageSize, ProcessList) then
   with fmDBInfo do
   begin
@@ -474,7 +475,9 @@ begin
     end;
 
     edDBSize.Text:= Format('%3.1n %s', [dbSize, AType]);
+    fmDBInfo.edServerTime.Text:= ServerTime;
     meClients.Lines.Text:= ProcessList.Text;
+    meClients.Lines.Insert(0, '');
     ProcessList.Free;
     Show;
   end

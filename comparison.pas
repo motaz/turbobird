@@ -19,6 +19,7 @@ type
   TfmComparison = class(TForm)
     bbClose: TBitBtn;
     bbStart: TBitBtn;
+    bbCancel: TBitBtn;
     cbComparedDatabase: TComboBox;
     cxIgnoreLength: TCheckBox;
     cxRemovedObjects: TCheckBox;
@@ -40,6 +41,7 @@ type
     laComparedDatabase: TLabel;
     meLog: TMemo;
     StatusBar1: TStatusBar;
+    procedure bbCancelClick(Sender: TObject);
     procedure bbCloseClick(Sender: TObject);
     procedure bbStartClick(Sender: TObject);
     procedure cbComparedDatabaseChange(Sender: TObject);
@@ -71,6 +73,7 @@ type
     RemovedFieldsList: TStringList;
 
     fQueryWindow: TfmQueryWindow;
+    fCanceled: Boolean;
 
     procedure CheckRemovedDBObjects;
     procedure DisplayStatus(AStatus: string);
@@ -130,6 +133,12 @@ var
   Connected: Boolean;
 begin
   ComparedDBIndex:= cbComparedDatabase.ItemIndex;
+  if ComparedDBIndex = fdbIndex then
+  begin
+    ShowMessage('Could not compare database with it self');
+    cbComparedDatabase.ItemIndex:= -1;
+  end
+  else
   if (ComparedDBIndex <> -1) then
   begin
     Connected:= True;
@@ -159,54 +168,83 @@ begin
   DiffCount:= 0;
   StatusBar1.Color:= clBlue;
   DisplayStatus('Searching for missing DB Objects...');
+  bbCancel.Enabled:= True;
+  fCanceled:= False;
 
   CheckMissingDBObjects;
+  Application.ProcessMessages;
 
-  if cxTables.Checked then
+  if cxTables.Checked and not fCanceled then
   begin
     CheckMissingIndices;
-    CheckMissingConstraints;
-    CheckMissingFields;
-    CheckModifiedFields;
-    CheckModifiedIndices;
-    CheckModifiedConstraints;
+    if not fCanceled then
+      CheckMissingConstraints;
+    if not fCanceled then
+      CheckMissingFields;
+    if not fCanceled then
+      CheckModifiedFields;
+    if not fCanceled then
+      CheckModifiedIndices;
+    if not fCanceled then
+      CheckModifiedConstraints;
   end;
+  Application.ProcessMessages;
 
   DisplayStatus('Searching for modified db Objects...');
-  if cxViews.Checked then
+  if cxViews.Checked and not fCanceled then
     CheckModifiedViews;
+  Application.ProcessMessages;
 
-  if cxTriggers.Checked then
+  if cxTriggers.Checked and not fCanceled then
     CheckModifiedTriggers;
+  Application.ProcessMessages;
 
-  if cxStoredProcs.Checked then
+  if cxStoredProcs.Checked and not fCanceled then
     CheckModifiedProcedures;
+  Application.ProcessMessages;
 
-  if cxUDFs.Checked then
+  if cxUDFs.Checked and not fCanceled then
     CheckModifiedFunctions;
+  Application.ProcessMessages;
 
-  if cxDomains.Checked then
+  if cxDomains.Checked and not fCanceled then
     CheckModifiedDomains;
+  Application.ProcessMessages;
 
   DisplayStatus('Searching for removed db Objects...');
 
-  if cxRemovedObjects.Checked then
+  if cxRemovedObjects.Checked and not fCanceled then
     CheckRemovedDBObjects;
+  Application.ProcessMessages;
 
-  if cxTables.Checked and cxRemovedObjects.Checked then
+  if cxTables.Checked and cxRemovedObjects.Checked and not fCanceled then
     CheckRemovedFields;
+  Application.ProcessMessages;
 
   StatusBar1.Color:= clDefault;
-  DisplayStatus('Comparison Finished, ' + IntToStr(DiffCount) + ' difference(s) found');
-  if DiffCount = 0 then
-   meLog.Text:= 'No difference';
-  meLog.Visible:= True;
+  if not fCanceled then
+  begin
+    DisplayStatus('Comparison Finished, ' + IntToStr(DiffCount) + ' difference(s) found');
+    if DiffCount = 0 then
+      meLog.Text:= 'No difference';
+    meLog.Visible:= True;
+  end
+  else
+    DisplayStatus('Canceled');
+  bbCancel.Enabled:= False;
+
 end;
 
 procedure TfmComparison.bbCloseClick(Sender: TObject);
 begin
   Close;
   Parent.Free;
+end;
+
+procedure TfmComparison.bbCancelClick(Sender: TObject);
+begin
+  fCanceled:= True;
+  laScript.Enabled:= False;
 end;
 
 procedure TfmComparison.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -502,6 +540,13 @@ begin
 
     List.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, x, Count);
 
+    Application.ProcessMessages;
+    if fCanceled then
+    begin
+      ComparedList.Free;
+      List.Free;
+      Exit;
+    end;
     ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, x, Count);
     dbObjectsList[x].Clear;
     dbExistingObjectsList[x].Clear;
@@ -577,6 +622,15 @@ begin
   ExistFieldsList.Clear;
   for i:= 0 to dbExistingObjectsList[1].Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+    begin
+      FieldsList.Free;
+      ComparedList.Free;
+      Exit;
+    end;
+
     dmSysTables.GetTableFields(fdbIndex, dbExistingObjectsList[1].Strings[i], FieldsList);
     dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, dbExistingObjectsList[1].Strings[i], ComparedList);
 
@@ -615,14 +669,22 @@ begin
 
   for i:= 0 to ExistFieldsList.Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Exit;
+
     Line:= ExistFieldsList[i];
     ATableName:= copy(Line, 1, Pos(',', Line) - 1);
     System.Delete(Line, 1, Pos(',', Line));
     AFieldName:= Line;
 
+    // Read all field properties
     dmSysTables.GetFieldInfo(fdbIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
     dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName, CFieldType, CFieldSize, CNotNull,
       CDefaultValue, CDescription);
+
+    // Compare
     if (FieldType <> CFieldType) or ((FieldSize <> CFieldSize) and (not cxIgnoreLength.Checked)) or
        (NotNull <> CNotNull) or (DefaultValue <> CDefaultValue)
        or (Description <> CDescription) then
@@ -658,14 +720,26 @@ begin
 
   for i:= 0 to ExistIndicesList.Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+    begin
+      FieldsList.Free;
+      CFieldsList.Free;
+      Exit;
+    end;
+
     Line:= ExistIndicesList[i];
     ATableName:= copy(Line, 1, Pos(',', Line) - 1);
     System.Delete(Line, 1, Pos(',', Line));
     AIndexName:= Line;
 
+    // Read all Index properties
     dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique, Ascending, IsPrimary);
     dmSysTables.GetIndexInfo(cbComparedDatabase.ItemIndex, ATableName, AIndexName, CFieldsList, CConstraintName,
       CUnique, CAscending, IsPrimary);
+
+    // Compare
     if (FieldsList.CommaText <> CFieldsList.CommaText) or (Unique <> CUnique) or (Ascending <> CAscending) then
     begin
       meLog.Lines.Add(' ' + ExistIndicesList[i]);
@@ -698,13 +772,20 @@ begin
 
   for i:= 0 to ExistConstraintsList.Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Exit;
+
     Line:= ExistConstraintsList[i];
     ATableName:= copy(Line, 1, Pos(',', Line) - 1);
     System.Delete(Line, 1, Pos(',', Line));
     AConstraintName:= Line;
 
+    // Read all contraint properties
     Exist:= (dmSysTables.GetConstraintInfo(fdbIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
         OtherTablename, OtherFieldName, UpdateRole, DeleteRole));
+
     if Exist then
       OtherFieldNames:= dmSysTables.GetConstraintForiegnKeyFields(OtherFieldName, dmSysTables.sqQuery);
 
@@ -718,6 +799,7 @@ begin
     if not Exist then
       meLog.Lines.Add(' -- Error: Constraint: ' + AConstraintName + ' not exist on table: ' + ATableName);
 
+    // Compare
     if Exist then
     if (CurrentTableName <> CCurrentTableName) or (CurrentFieldName <> CCurrentFieldName) or
        (OtherTablename <> COtherTablename) or (OtherFieldNames <> COtherFieldNames) or (UpdateRole <> CUpdateRole) or
@@ -745,8 +827,15 @@ begin
 
   for i:= 0 to dbExistingObjectsList[4].Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Exit;
+
     ViewName:= dbExistingObjectsList[4][i];
     fmMain.GetViewInfo(fdbIndex, ViewName, Columns, Body);
+
+    // Compare
     if fmMain.GetViewInfo(cbComparedDatabase.ItemIndex, ViewName, CColumns, CBody) then
     if  (Trim(Body) <> Trim(CBody)) then
     begin
@@ -776,10 +865,17 @@ begin
 
   for i:= 0 to dbExistingObjectsList[3].Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Exit;
+
     TriggerName:= dbExistingObjectsList[3][i];
     dmSysTables.GetTriggerInfo(fdbIndex, TriggerName, AfterBefor, OnTable, Event, Body, TriggerEnabled, TPosition);
+
+    // Read all trigger properties
     if dmSysTables.GetTriggerInfo(cbComparedDatabase.ItemIndex, TriggerName, CAfterBefor, COnTable, CEvent, CBody,
-      CTriggerEnabled, CTPosition) then
+      CTriggerEnabled, CTPosition) then // Compare
     if  (StringReplace(Body, ' ', '', [rfReplaceAll]) <> StringReplace(CBody, ' ', '', [rfReplaceAll]))
        or (AfterBefor <> CAfterBefor) or (TriggerEnabled <> CTriggerEnabled)
        or (TPosition <> CTPosition) then
@@ -808,9 +904,18 @@ begin
 
   for i:= 0 to dbExistingObjectsList[5].Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Exit;
+
     ProcName:= dbExistingObjectsList[5][i];
+
+    // Read procedure script
     Body:= fmMain.GetStoredProcBody(fdbIndex, ProcName, SPOwner);
     CBody:= fmMain.GetStoredProcBody(cbComparedDatabase.ItemIndex, ProcName, CSPOwner);
+
+    // Compare
     if  (Trim(Body) <> Trim(CBody)) then
     begin
       meLog.Lines.Add(' ' + ProcName);
@@ -834,9 +939,18 @@ begin
 
   for i:= 0 to dbExistingObjectsList[6].Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Exit;
+
     FunctionName:= dbExistingObjectsList[6][i];
+
+    // Get function properties
     fmMain.GetUDFInfo(fdbIndex, FunctionName, ModuleName, EntryPoint, Params);
+
     if fmMain.GetUDFInfo(cbComparedDatabase.ItemIndex, FunctionName, CModuleName, CEntryPoint, CParams) then
+    // Compare
     if  (ModuleName <> CModuleName) or (EntryPoint <> CEntryPoint) or (Params <> CParams) then
     begin
       meLog.Lines.Add(' ' + FunctionName);
@@ -863,9 +977,18 @@ begin
 
   for i:= 0 to dbExistingObjectsList[8].Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Exit;
+
     DomainName:= dbExistingObjectsList[8][i];
+
+    // Read all domain properties
     dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue);
     dmSysTables.GetDomainInfo(cbComparedDatabase.ItemIndex, DomainName, CDomainType, CDomainSize, CDefaultValue);
+
+    // Compare
     if (DomainType <> CDomainType) or (DomainSize <> CDomainSize) or (DefaultValue <> CDefaultValue) then
     begin
       meLog.Lines.Add(' ' + DomainName);
@@ -899,7 +1022,13 @@ begin
   meLog.Lines.Add('Checking removed indices');
   for i:= 0 to ComparedList.Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Break;
+
     Po:= OrigList.IndexOf(ComparedList[i]);
+    // Compare
     if (Po = -1) or (TablesList[Po] <> CTablesList[i]) then
     begin
       dbRemovedObjectsList[12].Add(CTablesList[i] + ',' + ComparedList[i]);
@@ -936,7 +1065,14 @@ begin
   meLog.Lines.Add('Checking removed constraints');
   for i:= 0 to ComparedList.Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Break;
+
     Po:= OrigList.IndexOf(ComparedList[i]);
+
+    // Compare
     if (Po = -1) or (TablesList[Po] <> CTablesList[i]) then
     begin
       dbRemovedObjectsList[13].Add(CTablesList[i] + ',' + ComparedList[i]);
@@ -965,6 +1101,12 @@ begin
   RemovedFieldsList.Clear;
   for i:= 0 to dbExistingObjectsList[1].Count - 1 do
   begin
+    // Check for cancel button press
+    Application.ProcessMessages;
+    if fCanceled then
+      Break;
+
+    // Read all table fields
     dmSysTables.GetTableFields(fdbIndex, dbExistingObjectsList[1].Strings[i], FieldsList);
     dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, dbExistingObjectsList[1].Strings[i], ComparedList);
 
@@ -1608,6 +1750,7 @@ var
   i: Integer;
   Servername: string;
 begin
+  bbCancel.Enabled:= False;
   cxTables.Checked:= True;
   cxGenerators.Checked:= True;
   cxDomains.Checked:= True;
@@ -1681,7 +1824,17 @@ begin
   try
     for i:= 0 to TablesList.Count - 1 do
     begin
-     // PrimaryIndexName:= dmSysTables.GetPrimaryKeyIndexName(fdbIndex, TablesList[i], ConstraintName);
+
+      // Check for cancel button press
+      Application.ProcessMessages;
+      if fCanceled then
+      begin
+        List.Free;
+        ComparedList.Free;
+        TablesList.Free;
+        Exit;
+      end;
+
       List.Clear;
       dmSysTables.GetIndices(fdbIndex, TablesList[i], '', List);
       ComparedList.Clear;
@@ -1737,9 +1890,21 @@ begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Missing Constraints:');
   try
+
     dbObjectsList[13].Clear;
     for i:= 0 to TablesList.Count - 1 do
     begin
+
+      // Check for cancel button press
+      Application.ProcessMessages;
+      if fCanceled then
+      begin
+        List.Free;
+        ComparedList.Free;
+        TablesList.Free;
+        Exit;
+      end;
+
       dmSysTables.Init(fdbIndex);
       List.Clear;
       dmSysTables.GetTableConstraints(TablesList[i], dmSysTables.sqQuery, List);

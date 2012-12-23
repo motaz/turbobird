@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, IBConnection, sqldb, FileUtil, LResources, Forms, Controls,
-  Graphics, Dialogs, StdCtrls, Grids, Buttons, SynEdit, SynCompletion,
+  Graphics, Dialogs, StdCtrls, Grids, Buttons, ExtCtrls, SynEdit, SynCompletion,
   SynHighlighterSQL;
 
 type
@@ -22,12 +22,14 @@ type
     cxGrantPermission: TCheckBox;
     cxCreateGen: TCheckBox;
     edNewTable: TEdit;
+    Image1: TImage;
     Label1: TLabel;
-    Label2: TLabel;
+    laPermission: TLabel;
     StringGrid1: TStringGrid;
     procedure bbCloseClick(Sender: TObject);
     procedure bbScriptClick(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
+    procedure cxGrantPermissionChange(Sender: TObject);
     procedure edNewTableKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure StringGrid1KeyUp(Sender: TObject; var Key: Word;
@@ -279,6 +281,14 @@ end;
 procedure TfmNewTable.BitBtn2Click(Sender: TObject);
 begin
   bbCloseClick(nil);
+end;
+
+procedure TfmNewTable.cxGrantPermissionChange(Sender: TObject);
+begin
+  cbPermission.Enabled:= cxGrantPermission.Checked;
+  laPermission.Visible:= cxGrantPermission.Checked;
+  cbRolesUsers.Visible:= cxGrantPermission.Checked;
+
 end;
 
 procedure TfmNewTable.edNewTableKeyUp(Sender: TObject; var Key: Word;

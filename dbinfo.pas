@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons;
+  Buttons, ExtCtrls;
 
 type
 
@@ -17,11 +17,13 @@ type
     bbRefresh: TBitBtn;
     edCreationDate: TEdit;
     edConnections: TEdit;
+    edServerTime: TEdit;
     edPageSize: TEdit;
     edDBSize: TEdit;
     edName: TEdit;
     edODSVer: TEdit;
     edCharset: TEdit;
+    Image1: TImage;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -29,6 +31,7 @@ type
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
+    Label8: TLabel;
     meClients: TMemo;
     procedure bbCloseClick(Sender: TObject);
     procedure bbRefreshClick(Sender: TObject);

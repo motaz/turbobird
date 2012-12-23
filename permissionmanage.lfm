@@ -8,7 +8,7 @@ object fmPermissionManage: TfmPermissionManage
   ClientWidth = 518
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.4.0'
   object PageControl1: TPageControl
     Left = 0
     Height = 368
@@ -98,7 +98,7 @@ object fmPermissionManage: TfmPermissionManage
       end
       object bbApplyTable: TBitBtn
         Left = 6
-        Height = 30
+        Height = 35
         Top = 299
         Width = 75
         Anchors = [akLeft, akBottom]
@@ -119,7 +119,7 @@ object fmPermissionManage: TfmPermissionManage
       object cxSelectGrant: TCheckBox
         Left = 345
         Height = 24
-        Top = 102
+        Top = 103
         Width = 99
         Caption = 'With Grant'
         TabOrder = 8
@@ -127,7 +127,7 @@ object fmPermissionManage: TfmPermissionManage
       object cxInsertGrant: TCheckBox
         Left = 345
         Height = 24
-        Top = 154
+        Top = 156
         Width = 99
         Caption = 'With Grant'
         TabOrder = 9
@@ -135,7 +135,7 @@ object fmPermissionManage: TfmPermissionManage
       object cxUpdateGrant: TCheckBox
         Left = 345
         Height = 24
-        Top = 202
+        Top = 203
         Width = 99
         Caption = 'With Grant'
         TabOrder = 10
@@ -143,7 +143,7 @@ object fmPermissionManage: TfmPermissionManage
       object cxDeleteGrant: TCheckBox
         Left = 342
         Height = 24
-        Top = 253
+        Top = 254
         Width = 99
         Caption = 'With Grant'
         TabOrder = 11
@@ -151,7 +151,7 @@ object fmPermissionManage: TfmPermissionManage
       object cxReferencesGrant: TCheckBox
         Left = 345
         Height = 24
-        Top = 307
+        Top = 309
         Width = 99
         Caption = 'With Grant'
         TabOrder = 12
@@ -170,7 +170,7 @@ object fmPermissionManage: TfmPermissionManage
       object cxAllGrant: TCheckBox
         Left = 345
         Height = 24
-        Top = 53
+        Top = 55
         Width = 110
         AutoSize = False
         Caption = 'With Grant'
@@ -220,7 +220,7 @@ object fmPermissionManage: TfmPermissionManage
       end
       object bbApplyView: TBitBtn
         Left = 6
-        Height = 30
+        Height = 33
         Top = 299
         Width = 75
         Anchors = [akLeft, akBottom]
@@ -241,7 +241,7 @@ object fmPermissionManage: TfmPermissionManage
         Left = 318
         Height = 24
         Top = 34
-        Width = 44
+        Width = 47
         Caption = 'All'
         Font.Style = [fsBold]
         ParentFont = False
@@ -251,7 +251,7 @@ object fmPermissionManage: TfmPermissionManage
         Left = 345
         Height = 24
         Top = 49
-        Width = 99
+        Width = 104
         Caption = 'With Grant'
         Font.Style = [fsBold]
         ParentFont = False
@@ -381,7 +381,7 @@ object fmPermissionManage: TfmPermissionManage
       end
       object bbApplyProc: TBitBtn
         Left = 6
-        Height = 30
+        Height = 33
         Top = 296
         Width = 75
         Anchors = [akLeft, akBottom]
@@ -432,7 +432,7 @@ object fmPermissionManage: TfmPermissionManage
       end
       object bbApplyRoles: TBitBtn
         Left = 12
-        Height = 30
+        Height = 35
         Top = 298
         Width = 75
         Anchors = [akLeft, akBottom]
@@ -455,7 +455,7 @@ object fmPermissionManage: TfmPermissionManage
       end
       object BitBtn1: TBitBtn
         Left = 102
-        Height = 30
+        Height = 35
         Top = 298
         Width = 75
         Anchors = [akLeft, akBottom]
