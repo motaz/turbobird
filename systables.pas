@@ -635,6 +635,7 @@ begin
       '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
       '  r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
       '  f.RDB$FIELD_LENGTH AS field_length, ' +
+      '  f.RDB$Character_LENGTH AS Character_leng, ' +
       '  f.RDB$FIELD_PRECISION AS field_precision, ' +
       '  f.RDB$FIELD_SCALE AS field_scale, ' +
       '  f.RDB$FIELD_TYPE as Field_Type_Int, ' +
@@ -671,7 +672,10 @@ begin
   with sqQuery do
   begin
     FieldType:= Trim(FieldByName('Field_Type_Str').AsString);
-    FieldSize:= FieldByName('Field_Length').AsInteger;
+    if FieldByName('Field_Type_int').AsInteger = 37 then // VarChar
+      FieldSize:= FieldByName('Character_Leng').AsInteger
+    else
+      FieldSize:= FieldByName('Field_Length').AsInteger;
     NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';
     DefaultValue:= FieldByName('Field_Default_Value').AsString;
     Description:= FieldByName('Field_Description').AsString;

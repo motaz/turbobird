@@ -76,8 +76,8 @@
         <UnitName Value="main"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="3656"/>
-        <CursorPos X="1" Y="3676"/>
+        <TopLine Value="3105"/>
+        <CursorPos X="48" Y="3132"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -106,7 +106,7 @@
         <UnitName Value="Reg"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="235"/>
+        <TopLine Value="237"/>
         <CursorPos X="22" Y="270"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -208,10 +208,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewTable"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="181"/>
+        <TopLine Value="113"/>
         <CursorPos X="56" Y="215"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -474,8 +473,8 @@
         <UnitName Value="SysTables"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="698"/>
-        <CursorPos X="18" Y="722"/>
+        <TopLine Value="610"/>
+        <CursorPos X="32" Y="638"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -554,10 +553,13 @@
         <Filename Value="scriptdb.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Scriptdb"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="491"/>
+        <CursorPos X="46" Y="518"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit51>
       <Unit52>
         <Filename Value="connectas.pas"/>
@@ -715,7 +717,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="24" Y="12"/>
-        <UsageCount Value="175"/>
+        <UsageCount Value="176"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit68>
@@ -730,7 +732,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="88" Y="14"/>
-        <UsageCount Value="174"/>
+        <UsageCount Value="175"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit69>
@@ -745,7 +747,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="274"/>
         <CursorPos X="25" Y="289"/>
-        <UsageCount Value="172"/>
+        <UsageCount Value="173"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit70>
@@ -758,9 +760,9 @@
         <UnitName Value="SQLHistory"/>
         <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4"/>
+        <TopLine Value="56"/>
         <CursorPos X="20" Y="89"/>
-        <UsageCount Value="157"/>
+        <UsageCount Value="158"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit71>
@@ -789,7 +791,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="51" Y="14"/>
-        <UsageCount Value="128"/>
+        <UsageCount Value="129"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit74>
@@ -985,7 +987,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="39"/>
         <CursorPos X="3" Y="64"/>
-        <UsageCount Value="96"/>
+        <UsageCount Value="97"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit98>
@@ -1023,7 +1025,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="244"/>
         <CursorPos X="15" Y="255"/>
-        <UsageCount Value="83"/>
+        <UsageCount Value="84"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit102>
@@ -1059,130 +1061,126 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="29"/>
+        <UsageCount Value="30"/>
       </Unit106>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
-        <Filename Value="about.pas"/>
-        <Caret Line="7" Column="9" TopLine="4"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="2992" Column="78" TopLine="2971"/>
       </Position1>
       <Position2>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="115" Column="67" TopLine="102"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3002" Column="58" TopLine="2981"/>
       </Position2>
       <Position3>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="117" Column="67" TopLine="104"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3005" Column="61" TopLine="2981"/>
       </Position3>
       <Position4>
-        <Filename Value="createuser.pas"/>
-        <Caret Line="7" Column="71" TopLine="3"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3136" Column="90" TopLine="3121"/>
       </Position4>
       <Position5>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="39" Column="19" TopLine="31"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3131" Column="52" TopLine="3115"/>
       </Position5>
       <Position6>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="40" Column="19" TopLine="32"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3106" Column="9" TopLine="3098"/>
       </Position6>
       <Position7>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="41" Column="19" TopLine="32"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3134" Column="57" TopLine="3116"/>
       </Position7>
       <Position8>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="42" Column="19" TopLine="32"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="3136" Column="102" TopLine="3111"/>
       </Position8>
       <Position9>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="41" Column="19" TopLine="32"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="674" Column="32" TopLine="609"/>
       </Position9>
       <Position10>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="42" Column="19" TopLine="33"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position10>
       <Position11>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="64" Column="3" TopLine="39"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="638" Column="50" TopLine="610"/>
       </Position11>
       <Position12>
-        <Filename Value="main.pas"/>
-        <Caret Line="420" Column="3" TopLine="414"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="676" Column="46" TopLine="649"/>
       </Position12>
       <Position13>
-        <Filename Value="main.pas"/>
-        <Caret Line="461" Column="42" TopLine="403"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position13>
       <Position14>
         <Filename Value="main.pas"/>
-        <Caret Line="3676" Column="22" TopLine="3653"/>
+        <Caret Line="2407" Column="50" TopLine="2389"/>
       </Position14>
       <Position15>
         <Filename Value="main.pas"/>
-        <Caret Line="3675" Column="16" TopLine="3653"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position15>
       <Position16>
         <Filename Value="main.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="1900" Column="68" TopLine="1873"/>
       </Position16>
       <Position17>
         <Filename Value="main.pas"/>
-        <Caret Line="189" Column="41" TopLine="160"/>
+        <Caret Line="2128" Column="68" TopLine="2101"/>
       </Position17>
       <Position18>
         <Filename Value="main.pas"/>
-        <Caret Line="1306" Column="45" TopLine="1276"/>
+        <Caret Line="2407" Column="32" TopLine="2379"/>
       </Position18>
       <Position19>
         <Filename Value="main.pas"/>
-        <Caret Line="3676" Column="8" TopLine="3651"/>
+        <Caret Line="2475" Column="28" TopLine="2447"/>
       </Position19>
       <Position20>
         <Filename Value="main.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="2501" Column="73" TopLine="2474"/>
       </Position20>
       <Position21>
         <Filename Value="main.pas"/>
-        <Caret Line="265" Column="39" TopLine="235"/>
+        <Caret Line="2668" Column="76" TopLine="2640"/>
       </Position21>
       <Position22>
         <Filename Value="main.pas"/>
-        <Caret Line="306" Column="53" TopLine="276"/>
+        <Caret Line="2686" Column="76" TopLine="2659"/>
       </Position22>
       <Position23>
         <Filename Value="main.pas"/>
-        <Caret Line="322" Column="64" TopLine="292"/>
+        <Caret Line="3003" Column="63" TopLine="2976"/>
       </Position23>
       <Position24>
-        <Filename Value="main.pas"/>
-        <Caret Line="344" Column="38" TopLine="314"/>
+        <Filename Value="scriptdb.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position24>
       <Position25>
-        <Filename Value="main.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="scriptdb.pas"/>
+        <Caret Line="175" Column="66" TopLine="151"/>
       </Position25>
       <Position26>
-        <Filename Value="main.pas"/>
-        <Caret Line="3129" Column="33" TopLine="3109"/>
+        <Filename Value="scriptdb.pas"/>
+        <Caret Line="212" Column="13" TopLine="185"/>
       </Position26>
       <Position27>
-        <Filename Value="main.pas"/>
-        <Caret Line="3826" Column="34" TopLine="3820"/>
+        <Filename Value="scriptdb.pas"/>
+        <Caret Line="227" Column="31" TopLine="200"/>
       </Position27>
       <Position28>
-        <Filename Value="main.pas"/>
-        <Caret Line="3676" Column="6" TopLine="3659"/>
+        <Filename Value="scriptdb.pas"/>
+        <Caret Line="442" Column="38" TopLine="414"/>
       </Position28>
       <Position29>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="288" Column="13" TopLine="285"/>
+        <Filename Value="scriptdb.pas"/>
+        <Caret Line="510" Column="57" TopLine="482"/>
       </Position29>
-      <Position30>
-        <Filename Value="newtable.pas"/>
-        <Caret Line="254" Column="3" TopLine="248"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

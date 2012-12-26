@@ -172,7 +172,7 @@ begin
         FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
 
       if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
-        FieldLine:= FieldLine + '(' + FieldByName('Field_Length').AsString + ') ';
+        FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
 
       // Default value
       DefaultValue:= Trim(FieldByName('Field_Default_Value').AsString);

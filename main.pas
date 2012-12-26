@@ -1897,7 +1897,7 @@ begin
         FieldLine:= Trim(FieldByName('Field_Name').AsString) + ' ';
         FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
         if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
-          FieldLine:= FieldLine + '(' + FieldByName('Field_Length').AsString + ') ';
+          FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
       end
       else
         Skipped:= True;
@@ -2125,7 +2125,7 @@ begin
         FieldLine:= AFieldName + ' ';
         FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
         if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
-          FieldLine:= FieldLine + '(' + FieldByName('Field_Length').AsString + ') ';
+          FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
       end
       else
         Skipped:= True;
@@ -2404,6 +2404,7 @@ begin
       '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
       '  r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
       '  f.RDB$FIELD_LENGTH AS field_length, ' +
+      '  f.RDB$Character_LENGTH AS character_leng, ' +
       '  f.RDB$FIELD_PRECISION AS field_precision, ' +
       '  f.RDB$FIELD_SCALE AS field_scale, ' +
       '  f.RDB$FIELD_TYPE as Field_Type_Int, ' +
@@ -2497,7 +2498,7 @@ begin
         Line:= '  ' + ParamName + '    ' +
           GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger);
         if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger = 37 then
-          Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Field_Length').AsString + ')';
+          Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
 
 
         SQLQuery1.Next;
@@ -2664,7 +2665,7 @@ begin
     begin
       Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger);
       if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [14, 37, 40] then
-        Params:= Params + '(' + SQLQuery1.FieldByName('RDB$FIELD_LENGTH').AsString + ')';
+        Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
       SQLQuery1.Next;
       if not SQLQuery1.EOF then
         Params:= Params + ', ';
@@ -2682,7 +2683,7 @@ begin
     begin
       Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger);
       if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [14, 37, 40] then
-        Params:= Params + '(' + SQLQuery1.FieldByName('RDB$FIELD_LENGTH').AsString + ')';
+        Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
       SQLQuery1.Next;
       if not SQLQuery1.EOF then
         Params:= Params + ', ';
@@ -2998,7 +2999,10 @@ begin
           Cells[2, RowCount - 1]:= FieldByName('Computed_Source').AsString;
 
         // Field Size
-        Cells[3, RowCount - 1]:= FieldByName('Field_Length').AsString;
+        if FieldByName('Field_Type_Int').AsInteger in [37] then
+          Cells[3, RowCount - 1]:= FieldByName('Character_Leng').AsString
+        else
+          Cells[3, RowCount - 1]:= FieldByName('Field_Length').AsString;
 
         // Null/Not null
         if FieldByName('field_not_null_constraint').AsString = '1' then
@@ -3099,6 +3103,7 @@ var
   ConstraintName: string;
   AFieldName: string;
   i: Integer;
+  LenStr: string;
 begin
   try
     Node:= tvMain.Selected;
@@ -3123,8 +3128,12 @@ begin
        (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
        (FieldByName('Field_Collation').IsNull) then
        begin
-        FieldTitle:= AFieldName + '   ' + Trim(FieldByName('Field_Type_str').AsString) +
-          ' ' + FieldByName('Field_Length').AsString;
+         if FieldByName('Field_type_int').AsInteger = 37 then
+           LenStr:= FieldByName('Character_Leng').AsString
+         else
+           LenStr:= FieldByName('Field_Length').AsString;
+
+        FieldTitle:= AFieldName + '   ' + Trim(FieldByName('Field_Type_str').AsString) + ' ' + LenStr;
         FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
         FieldNode.OverlayIndex:= i;
         if PKFieldsList.IndexOf(AFieldname) <> -1 then // Primary key
