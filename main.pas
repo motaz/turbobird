@@ -2755,6 +2755,8 @@ begin
   DBIndex:= Node.Parent.OverlayIndex;
   Rec:= RegisteredDatabases[DBIndex].RegRec;
   Objects:= TStringList.Create;
+  Screen.Cursor:= crSQLWait;
+  try
 
   ANodeText:= Node.Text;
   if Pos('(', ANodeText) > 0 then
@@ -2937,7 +2939,19 @@ begin
 
   if not Node.Expanded then
     Node.Expand(False);
+
+
+  except
+  on e: exception do
+  begin
+    Screen.Cursor:= crDefault;
+    ShowMessage(e.Message);
+  end;
+
+  end;
+
   Objects.Free;
+  Screen.Cursor:= crDefault;
 
 end;
 

@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      : 23.Dec.2012                                          }
+{  Last updated      : 29.Dec.2012                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
@@ -11,9 +11,9 @@ program TurboBird;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, Controls, memdslaz, main, CreateDb, Reg, QueryWindow, ViewView,
   ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen, EnterPass, About,
@@ -24,7 +24,7 @@ uses
   sysutils, Comparison;
 
 const
-  Version = '0.9.6';
+  Version = '0.9.7';
   VersionDate = '2010 - Dec 2012';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
@@ -34,6 +34,7 @@ const
   {$DEFINE extdecl:=stdcall}
    fbclib = 'fbclient.dll';
    seclib = 'gds32.dll';
+   thirdlib = 'fbembed.dll';
 {$ENDIF}
 
 {$R *.res}
@@ -47,6 +48,8 @@ begin
   {$IFDEF Windows}
   if IBaseLibraryHandle = NilHandle then
     IBaseLibraryHandle:= LoadLibrary(seclib);
+  if IBaseLibraryHandle = NilHandle then
+    IBaseLibraryHandle:= LoadLibrary(thirdlib);
   {$ENDIF}
 
   // Check Firebird library existance

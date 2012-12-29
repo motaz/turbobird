@@ -5,7 +5,7 @@ object fmMain: TfmMain
   Width = 1024
   ActiveControl = tvMain
   Caption = 'TurboBird Admin for FireBird'
-  ClientHeight = 617
+  ClientHeight = 620
   ClientWidth = 1024
   Color = clWhite
   Font.Name = 'Sans'
@@ -17,7 +17,7 @@ object fmMain: TfmMain
   LCLVersion = '1.0.4.0'
   object tvMain: TTreeView
     Left = 0
-    Height = 617
+    Height = 620
     Top = 0
     Width = 360
     Align = alLeft
@@ -37,14 +37,14 @@ object fmMain: TfmMain
   end
   object Splitter1: TSplitter
     Left = 360
-    Height = 617
+    Height = 620
     Top = 0
     Width = 14
     Beveled = True
   end
   object PageControl1: TPageControl
     Left = 377
-    Height = 610
+    Height = 613
     Top = 3
     Width = 644
     ActivePage = TabSheet1
@@ -64,8 +64,8 @@ object fmMain: TfmMain
     object TabSheet1: TTabSheet
       BorderWidth = 1
       Caption = 'Main'
-      ClientHeight = 580
-      ClientWidth = 640
+      ClientHeight = 582
+      ClientWidth = 636
       Font.Color = clNavy
       Font.Name = 'Arial'
       ParentFont = False
