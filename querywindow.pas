@@ -18,14 +18,19 @@ type
     private
       fSQLQuery: TSQLQuery;
       fTrans: TSQLTransaction;
+      fConnection: TIBConnection;
 
     public
       Error: Boolean;
       ErrorMsg: string;
       fTerminated: Boolean;
       fType: string;
+      fStatement: string;
       property Query: TSQLQuery read fSQLQuery write fSQLQuery;
       property Trans: TSQLTransaction read fTrans write fTrans;
+      property Connection: TIBConnection read fConnection write fConnection;
+      property Statement: String read fStatement write fStatement;
+      procedure DoJob;
       procedure Execute; override;
       constructor Create(aType: string);
   end;
@@ -83,7 +88,6 @@ type
     tbRollback: TToolButton;
     tbCommitRetaining: TToolButton;
     tbRollbackRetaining: TToolButton;
-    ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     tbHistory: TToolButton;
@@ -127,7 +131,6 @@ type
     procedure tbRollbackRetainingClick(Sender: TObject);
     procedure tbRunClick(Sender: TObject);
     procedure tbSaveClick(Sender: TObject);
-    procedure ToolButton1Click(Sender: TObject);
   private
     { private declarations }
     fdbIndex: Integer;
@@ -138,14 +141,29 @@ type
     ibConnection: TIBConnection;
     SqlTrans: TSQLTransaction;
     fCanceled: Boolean;
-    procedure ExecuteQuery(fQueryType: Integer);
+    fStartLine: Integer;
+    fList: TStringList;
+    fQuery: string;
+    fQueryType: Integer;
+    fFinished: Boolean;
+    fQT: TQueryThread;
+    fQueryPart: string;
+    fTab: TTabSheet;
+    fmeResult: TMemo;
+    fSqlQuery: TSQLQuery;
+    fSqlScript: TSQLScript;
+    faText: string;
+    fModifyCount: Integer;
+    fCnt: Integer;
+
+    procedure ExecuteQuery;
     function GetNewTabNum: string;
   public
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
     function GetQueryType(AQuery: string): Integer;
     function GetQuery: string;
-    function CreateResultTab(QueryType: Byte; var SqlQuery: TSQLQuery; var SQLScript: TSqlScript;
+    function CreateResultTab(QueryType: Byte; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
     function ExecuteScript(Script: string): Boolean;
     procedure AddResultControl(ParentControl: TObject; AControl: TObject);
@@ -155,7 +173,9 @@ type
     function GetSQLSegment(QueryList: TStringList; StartLine: Integer; var QueryType, EndLine: Integer;
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
     procedure QueryAfterScroll(DataSet: TDataSet);
-    procedure CallExecuteQuery(QueryType: Integer);
+    procedure CallExecuteQuery(aQueryType: Integer);
+    procedure ThreadTerminated(Sender: TObject);
+    procedure EnableButtons;
 
     { public declarations }
   end; 
@@ -171,21 +191,51 @@ uses main, SQLHistory;
 
 { TQueryThread }
 
-procedure TQueryThread.Execute;
+procedure TQueryThread.DoJob;
 begin
   try
-    fTerminated:= False;
     if fType = 'open' then
       fSQLQuery.Open
     else
     if fType = 'exec' then
       fSQLQuery.ExecSQL
     else
+    if fType = 'ddl' then
+      fConnection.ExecuteDirect(fStatement)
+    else
     if fType = 'commit' then
-      fTrans.Commit;
+      fTrans.Commit
+    else
+    if fType = 'commitret' then
+      fTrans.CommitRetaining
+    else
+    if fType = 'rollback' then
+      fTrans.Rollback
+    else
+    if fType = 'rollbackret' then
+      fTrans.RollbackRetaining;
 
-    fTerminated:= True;
     Error:= False;
+    fTerminated:= True;
+
+  except
+  on e: exception do
+  begin
+    Error:= True;
+    ErrorMsg:= e.Message;
+    fTerminated:= True;
+  end;
+  end;
+
+end;
+
+procedure TQueryThread.Execute;
+begin
+  try
+    fTerminated:= False;
+    Error:= False;
+    DoJob;
+    fTerminated:= True;
 
   except
   on e: exception do
@@ -232,7 +282,8 @@ begin
   QT.Resume;
   repeat
     application.ProcessMessages;
-  until QT.fTerminated or (fCanceled);
+  until QT.fTerminated;
+
   if QT.Error then
   begin
     ATab.ImageIndex:= 3;
@@ -244,6 +295,8 @@ begin
     ATab.ImageIndex:= 4;
     meResult.Lines.Add('Commited');
     meResult.Font.Color:= clGreen;
+
+    // Call OnCommit procedure if assigned, it is used to refresh table management view
     if OnCommit <> nil then
       OnCommit(self);
     OnCommit:= nil;
@@ -252,11 +305,27 @@ begin
 end;
 
 procedure TfmQueryWindow.tbCommitRetainingClick(Sender: TObject);
+var
+  QT: TQueryThread;
 begin
-  SqlTrans.CommitRetaining;
-  if OnCommit <> nil then
-    OnCommit(self);
-  OnCommit:= nil;
+  QT:= TQueryThread.Create('commitret');
+  QT.Trans:= SqlTrans;
+  QT.Resume;
+  repeat
+    application.ProcessMessages;
+  until QT.fTerminated;
+
+  if QT.Error then
+    ShowMessage(QT.ErrorMsg)
+  else
+  begin
+    // Call OnCommit procedure if assigned, it is used to refresh table management view
+    if OnCommit <> nil then
+      OnCommit(self);
+    OnCommit:= nil;
+
+  end;
+  QT.Free;
 end;
 
 procedure TfmQueryWindow.tbHistoryClick(Sender: TObject);
@@ -297,18 +366,51 @@ var
   SqlQuery: TSQLQuery;
   SqlScript: TSQLScript;
   ATab: TTabSheet;
+  QT: TQueryThread;
 begin
   RemoveControls;
-  SqlTrans.Rollback;
   ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
-  ATab.ImageIndex:= 5;
-  meResult.Lines.Add('Rollback');
-  meResult.Font.Color:= $AA6666;
+  QT:= TQueryThread.Create('rollback');
+  QT.Trans:= SqlTrans;
+  ATab.ImageIndex:= 6;
+  QT.Resume;
+  repeat
+    application.ProcessMessages;
+  until QT.fTerminated;
+
+  if QT.Error then
+  begin
+    ATab.ImageIndex:= 3;
+    meResult.Lines.Text:= QT.ErrorMsg;
+    meResult.Font.Color:= clRed;
+  end
+  else
+  begin
+    ATab.ImageIndex:= 4;
+    meResult.Lines.Add('Rollback');
+    meResult.Font.Color:= clGreen;
+    if OnCommit <> nil then
+      OnCommit(self);
+    OnCommit:= nil;
+    meResult.Font.Color:= $AA6666;
+  end;
+  QT.Free;
 end;
 
 procedure TfmQueryWindow.tbRollbackRetainingClick(Sender: TObject);
+var
+  QT: TQueryThread;
 begin
-  SqlTrans.RollbackRetaining;
+  QT:= TQueryThread.Create('rollbackret');
+  QT.Trans:= SqlTrans;
+  QT.Resume;
+  repeat
+    application.ProcessMessages;
+  until QT.fTerminated or (fCanceled);
+  if QT.Error then
+    ShowMessage(QT.ErrorMsg);
+  QT.Free;
+
 end;
 
 procedure TfmQueryWindow.tbRunClick(Sender: TObject);
@@ -321,12 +423,6 @@ begin
   SaveDialog1.DefaultExt:= '.sql';
   if SaveDialog1.Execute then
     meQuery.Lines.SaveToFile(SaveDialog1.FileName);
-end;
-
-procedure TfmQueryWindow.ToolButton1Click(Sender: TObject);
-begin
-{  if Assigned(fQT) and (not fQT.Suspended) then
-  fQT.Terminate;}
 end;
 
 function TfmQueryWindow.GetNewTabNum: string;
@@ -345,21 +441,21 @@ procedure TfmQueryWindow.Init(dbIndex: Integer);
 begin
   fdbIndex:= dbIndex;
   RegRec:= fmMain.RegisteredDatabases[dbIndex].RegRec;
-//  ibConnection:= fmMain.RegisteredDatabases[dbIndex].IBConnection;
+
+  // Initialize new instance of IBConnection and SQLTransaction to the current Query Window
   ibConnection:= TIBConnection.Create(nil);
   SqlTrans:= TSQLTransaction.Create(nil);
   SqlTrans.DataBase:= ibConnection;
 
+  // Set connection parameters to IBConnection
   with fmMain.RegisteredDatabases[dbIndex] do
   begin
-  //  Self.ibConnection.Close;
     Self.ibConnection.DatabaseName:= RegRec.DatabaseName;
     Self.ibConnection.UserName:= RegRec.UserName;
     Self.ibConnection.Password:= RegRec.Password;
     Self.IBConnection.CharSet:= RegRec.Charset;
     Self.ibConnection.Role:= RegRec.Role;
   end;
-  //SqlTrans:= fmMain.RegisteredDatabases[dbIndex].SQLTrans;
 
   SynSQLSyn1.TableNames.CommaText:= fmMain.GetTableNames(dbIndex);
 end;
@@ -420,8 +516,9 @@ begin
     Result:= meQuery.Lines.Text;
 end;
 
-function TfmQueryWindow.CreateResultTab(QueryType: Byte; var SqlQuery: TSQLQuery; var SQLScript: TSqlScript;
-  var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
+function TfmQueryWindow.CreateResultTab(QueryType: Byte;
+  var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript; var meResult: TMemo;
+  AdditionalTitle: string): TTabSheet;
 var
   ATab: TTabSheet;
   DBGrid: TDBGrid;
@@ -437,11 +534,11 @@ begin
   if QueryType = 1 then // Select, need record set result
   begin
     // Query
-    SqlQuery:= TSQLQuery.Create(nil);
-    SqlQuery.DataBase:= ibConnection;
-    SqlQuery.Transaction:= SqlTrans;
-    SqlQuery.AfterScroll:= @QueryAfterScroll;
-    AddResultControl(ATab, SqlQuery);
+    aSqlQuery:= TSQLQuery.Create(nil);
+    aSqlQuery.DataBase:= ibConnection;
+    aSqlQuery.Transaction:= SqlTrans;
+    aSqlQuery.AfterScroll:= @QueryAfterScroll;
+    AddResultControl(ATab, aSqlQuery);
 
 
     // Status Bar
@@ -451,7 +548,7 @@ begin
 
     // Datasource
     DataSource:= TDataSource.Create(nil);
-    DataSource.DataSet:= SqlQuery;
+    DataSource.DataSet:= aSqlQuery;
     AddResultControl(ATab, DataSource);
 
     // Panel
@@ -497,19 +594,19 @@ begin
 
     if QueryType = 2 then
     begin
-      SqlQuery:= TSQLQuery.Create(nil);
-      SqlQuery.DataBase:= ibConnection;
-      SqlQuery.Transaction:= SqlTrans;
-      AddResultControl(ATab, SqlQuery);
+      aSqlQuery:= TSQLQuery.Create(nil);
+      aSqlQuery.DataBase:= ibConnection;
+      aSqlQuery.Transaction:= SqlTrans;
+      AddResultControl(ATab, aSqlQuery);
     end;
 
 
     if QueryType = 3 then // Script
     begin
-      SQLScript:= TSQLScript.Create(nil);
-      SQLScript.DataBase:= ibConnection;
-      SQLScript.Transaction:= SqlTrans;
-      AddResultControl(ATab, SQLScript);
+      aSQLScript:= TSQLScript.Create(nil);
+      aSQLScript.DataBase:= ibConnection;
+      aSQLScript.Transaction:= SqlTrans;
+      AddResultControl(ATab, aSQLScript);
     end;
   end;
   AddResultControl(nil, ATab);
@@ -517,233 +614,229 @@ end;
 
 (***************  Execute Query   ******************)
 
-procedure TfmQueryWindow.ExecuteQuery(fQueryType: Integer);
+procedure TfmQueryWindow.ExecuteQuery;
 var
-  Query: string;
   StartTime: TDateTime;
-  QueryPart: string;
-  Cnt: Integer;
-  SqlQuery: TSQLQuery;
-  SqlScript: TSQLScript;
-  meResult: TMemo;
-  ATab: TTabSheet;
   SqlType: string;
-  List: TStringList;
   EndLine: Integer;
-  StartLine: Integer;
   Command: string;
   IsDDL: Boolean;
   Affected: Integer;
-  ModifyCount: Integer;
-  aText: string;
-  j: Integer;
-  fQT: TQueryThread;
 begin
   try
-     tbRun.Enabled:= False;
-     tbCommit.Enabled:= False;
-    tbCommitRetaining.Enabled:= False;
-    tbRollback.Enabled:= False;
-    tbRollbackRetaining.Enabled:= False;
-
-    ModifyCount:= 0;
-    fCanceled:= False;
-    RemoveControls;
-    Query:= Trim(GetQuery);
-
-    if fQueryType = 0 then // Auto
-      fQueryType:= GetQueryType(Query);
-
-    Cnt:= 0;
 
     // Script
     if (fQueryType = 3) then
     begin
-      ExecuteScript(Query);
-      Inc(ModifyCount);
-      SqlType:= GetSQLType(Query, Command);
-      fmMain.AddToSQLHistory(RegRec.Title, SqlType, Query);
+      ExecuteScript(fQuery);
+      Inc(fModifyCount);
+      SqlType:= GetSQLType(fQuery, Command);
+      fmMain.AddToSQLHistory(RegRec.Title, SqlType, fQuery);
+      fFinished:= True;
+      fList.Free;
     end
     else       // normal statement / Multi statements
     begin
-      List:= TStringList.Create;
-      List.Text:= Query;
-      StartLine:= 0;
-      repeat
-        Inc(Cnt);
-        if not GetSQLSegment(List, Startline, fQueryType, EndLine, QueryPart, IsDDL) then
-          Break;
+      Inc(fCnt);
+      if not GetSQLSegment(fList, fStartline, fQueryType, EndLine, fQueryPart, IsDDL) then
+      begin
+        fFinished:= True;
+        Exit;
+      end;
 
-        if EndLine < StartLine then
-          StartLine:= StartLine + 1
-        else
-          StartLine:= EndLine + 1;
+      if EndLine < fStartLine then
+        fStartLine:= fStartLine + 1
+      else
+        fStartLine:= EndLine + 1;
 
-        if Trim(QueryPart) <> '' then   // Select
-        if fQueryType = 1 then
-        begin
-          ATab:= nil;
-          try
-            ATab:= CreateResultTab(1, SqlQuery, SqlScript, meResult);
-            ATab.ImageIndex:= 6;
-            ATab.Hint:= QueryPart;
-            ATab.ShowHint:= True;
-            SQLQuery.SQL.Text:= QueryPart;
-            fQT:= TQueryThread.Create('open');
-            fQT.Query:= SqlQuery;
-            fQT.Resume;
-            aText:= ATab.Caption;
-            ATab.Caption:= 'Running..';
-            {$ifdef UNIX}
-            fQT.WaitFor;
-            {$endif}
+      if Trim(fQueryPart) <> '' then   // Select
+      if fQueryType = 1 then
+      begin
+        fTab:= nil;
+        try
+          fTab:= CreateResultTab(1, fSqlQuery, fSqlScript, fmeResult);
+          fTab.ImageIndex:= 6;
+          fTab.Hint:= fQueryPart;
+          fTab.ShowHint:= True;
+          fSQLQuery.SQL.Text:= fQueryPart;
 
-            {$ifdef windows}
-            repeat
-              application.ProcessMessages;
-            until fQT.fTerminated or (fCanceled);
-            {$endif}
+          // Create thread to open dataset
+          fQT:= TQueryThread.Create('open');
+          fQT.Query:= fSqlQuery;
+         // fQT.OnTerminate:= @ThreadTerminated;
+          faText:= fTab.Caption;
+          fTab.Caption:= 'Running..';
+          fQT.Resume;
+
+
+          // Wait for the thread to complete
+          repeat
+
+              Sleep(100);
+              application.ProcessMessages; // This prevents display freeze
+
+            until fQT.fTerminated;
+
+            // Raise exception if an error occured during thread execution (Open)
+            if fQT.Error then
+                raise Exception.Create(fQT.ErrorMsg);
 
             fQT.Free;
-            ATab.Caption:= aText;
-            ATab.ImageIndex:= 0;
-            fmMain.AddToSQLHistory(RegRec.Title, 'SELECT', QueryPart);
+            fTab.Caption:= faText;
+            fTab.ImageIndex:= 0;
+            fmMain.AddToSQLHistory(RegRec.Title, 'SELECT', fQueryPart);
 
           except
           on e: exception do
           begin
-            fCanceled:= True;
-            if Assigned(ATab) then
-              ATab.TabVisible:= False;
+            if Assigned(fTab) then
+              fTab.TabVisible:= False;
             SetLength(ResultControls, High(ResultControls));
             SetLength(ParentResultControls, High(ParentResultControls));
-            ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
-            PageControl1.ActivePage:= ATab;
+            fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+            PageControl1.ActivePage:= fTab;
 
-            meResult.Text:= e.message;
-            meResult.Lines.Add(QueryPart);
-            meResult.Font.Color:= clRed;
-            ATab.Font.Color:= clRed;
-            ATab.ImageIndex:= 3;
+            fmeResult.Text:= e.message;
+            fmeResult.Lines.Add(fQueryPart);
+            fmeResult.Font.Color:= clRed;
+            fTab.Font.Color:= clRed;
+            fTab.ImageIndex:= 3;
           end;
           end;
         end
         else  // Execute
         if fQueryType = 2 then
         begin
-          ATab:= nil;
-          ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
+          fTab:= nil;
+          fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
 
-          ATab.ImageIndex:= 1;
-          SqlType:= GetSQLType(QueryPart, Command);
+          fTab.ImageIndex:= 1;
+          SqlType:= GetSQLType(fQueryPart, Command);
           StartTime:= Now;
           Affected:= 0;
           try
             if IsDDL then
-              ibConnection.ExecuteDirect(QueryPart)
-            else
-            begin   // DML
-              SqlQuery.Close;
-              SqlQuery.SQL.Text:= QueryPart;
-              ATab.ImageIndex:= 6;
-              ATab.Hint:= QueryPart;
-              ATab.ShowHint:= True;
-              SQLQuery.SQL.Text:= QueryPart;
-              fQT:= TQueryThread.Create('exec');
-              fQT.Query:= SqlQuery;
+            begin
+              // Execute the statement in thread
+              fQT:= TQueryThread.Create('ddl');
+              fQT.Connection:= ibConnection;
+              fQT.Statement:= fQueryPart;
               fQT.Resume;
-              aText:= ATab.Caption;
-              ATab.Caption:= 'Running..';
-              j:= 0;
+              faText:= fTab.Caption;
+              fTab.Caption:= 'Running..';
+
+              // Wait for thread completion
               repeat
                 application.ProcessMessages;
               until (fQT.fTerminated) or (fCanceled);
+
+              // Raise exception if an error occured during thread execution (ExecProc)
               if fQT.Error then
                 raise Exception.Create(fQT.ErrorMsg);
-              fQT.Free;
-              ATab.Caption:= aText;
-              ATab.ImageIndex:= 1;
-              Affected:= sqlQuery.RowsAffected;
-            end;
-            Inc(ModifyCount);
 
-            fmMain.AddToSQLHistory(RegRec.Title, SQLType, QueryPart);
-            meResult.Visible:= True;
-            meResult.Clear;
-            meResult.Lines.Add('statement #' + IntToStr(cnt));
+              fQT.Free;
+            end
+            else
+            begin   // DML
+              fSqlQuery.Close;
+              fSqlQuery.SQL.Text:= fQueryPart;
+              fTab.ImageIndex:= 6;
+              fTab.Hint:= fQueryPart;
+              fTab.ShowHint:= True;
+              fSQLQuery.SQL.Text:= fQueryPart;
+
+              // Execute the statement in thread
+              fQT:= TQueryThread.Create('exec');
+              fQT.Query:= fSqlQuery;
+              fQT.Resume;
+              faText:= fTab.Caption;
+              fTab.Caption:= 'Running..';
+
+              // Wait for thread completion
+              repeat
+                application.ProcessMessages;
+              until (fQT.fTerminated) or (fCanceled);
+
+              // Raise exception if an error occured during thread execution (ExecProc)
+              if fQT.Error then
+                raise Exception.Create(fQT.ErrorMsg);
+
+              fQT.Free;
+              fTab.Caption:= faText;
+              fTab.ImageIndex:= 1;
+              Affected:= fsqlQuery.RowsAffected;
+            end;
+            Inc(fModifyCount);
+
+            fmMain.AddToSQLHistory(RegRec.Title, SQLType, fQueryPart);
+            fmeResult.Visible:= True;
+            fmeResult.Clear;
+            fmeResult.Lines.Add('statement #' + IntToStr(fCnt));
             if IsDDL then
-              meResult.Lines.Add(FormatDateTime('hh:nn:ss.z', Now) + ' - DDL Executed. Takes (H:M:S.MS) ' +
+              fmeResult.Lines.Add(FormatDateTime('hh:nn:ss.z', Now) + ' - DDL Executed. Takes (H:M:S.MS) ' +
                 FormatDateTime('HH:nn:ss.z', Now - StartTime))
             else // DML
             begin
-              meResult.Lines.Add(FormatDateTime('hh:nn:ss.z', Now) + ' - DML Executed. Takes (H:M:S.MS) ' +
+              fmeResult.Lines.Add(FormatDateTime('hh:nn:ss.z', Now) + ' - DML Executed. Takes (H:M:S.MS) ' +
                 FormatDateTime('HH:nn:ss.z', Now - StartTime));
-              meResult.Lines.Add('Rows affected: ' + Format('%3.0n', [Affected / 1]));
+              fmeResult.Lines.Add('Rows affected: ' + Format('%3.0n', [Affected / 1]));
 
             end;
 
           except
           on e: exception do
           begin
-            fCanceled:= True;
-            if Assigned(ATab) then
-              ATab.TabVisible:= False;
-            ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
-            PageControl1.ActivePage:= ATab;
-            meResult.Text:= e.message;
-            meResult.Lines.Add(QueryPart);
-            meResult.Font.Color:= clRed;
-            ATab.Font.Color:= clRed;
-            ATab.ImageIndex:= 3;
+            if Assigned(fTab) then
+              fTab.TabVisible:= False;
+            fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+            PageControl1.ActivePage:= fTab;
+            fmeResult.Text:= e.message;
+            fmeResult.Lines.Add(fQueryPart);
+            fmeResult.Font.Color:= clRed;
+            fTab.Font.Color:= clRed;
+            fTab.ImageIndex:= 3;
           end;
           end
 
         end
         else  // Script
         begin
-          if ExecuteScript(QueryPart) then
+          if ExecuteScript(fQueryPart) then
           begin
-            Inc(ModifyCount);
-            SqlType:= GetSQLType(QueryPart, Command);
-            fmMain.AddToSQLHistory(RegRec.Title, SqlType, Query);
+            Inc(fModifyCount);
+            SqlType:= GetSQLType(fQueryPart, Command);
+            fmMain.AddToSQLHistory(RegRec.Title, SqlType, fQueryPart);
           end;
         end;
-        if (ModifyCount > 50) then
+        if (fModifyCount > 50) then
         if (MessageDlg('Commit', 'There are too many transactions, did you want to commit',
           mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
         begin
           SqlTrans.CommitRetaining;
-          ModifyCount:= 0;
+          fModifyCount:= 0;
         end
         else
-          ModifyCount:= 0;
+          fModifyCount:= 0;
 
-        Application.ProcessMessages;
-      until StartLine >= List.Count;
-      List.Free;
+      if fStartLine >= fList.Count then
+        fFinished:= True;
     end;
 
   except
   on e: exception do
   begin
-    if Assigned(ATab) then
-      ATab.TabVisible:= False;
-    ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
-    ATab.ImageIndex:= 2;
-    PageControl1.ActivePage:= ATab;
+    if Assigned(fTab) then
+      fTab.TabVisible:= False;
+    fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+    fTab.ImageIndex:= 2;
+    PageControl1.ActivePage:= fTab;
 
-    meResult.Text:= e.message;
-    meResult.Lines.Add(QueryPart);
-    meResult.Font.Color:= clRed;
-    fCanceled:= True;
+    fmeResult.Text:= e.message;
+    fmeResult.Lines.Add(fQueryPart);
+    fmeResult.Font.Color:= clRed;
+    fFinished:= True;
   end;
   end;
-
-  tbRun.Enabled:= True;
-  tbCommit.Enabled:= True;
-  tbCommitRetaining.Enabled:= True;
-  tbRollback.Enabled:= True;
-  tbRollbackRetaining.Enabled:= True;
 
 end;
 
@@ -1303,9 +1396,75 @@ begin
 
 end;
 
-procedure TfmQueryWindow.CallExecuteQuery(QueryType: Integer);
+procedure TfmQueryWindow.CallExecuteQuery(aQueryType: Integer);
 begin
-  ExecuteQuery(QueryType);
+  fList:= TStringList.Create;
+  fQuery:= Trim(GetQuery);
+  fList.Text:= fQuery;
+  fStartLine:= 0;
+
+  tbRun.Enabled:= False;
+  tbCommit.Enabled:= False;
+  tbCommitRetaining.Enabled:= False;
+  tbRollback.Enabled:= False;
+  tbRollbackRetaining.Enabled:= False;
+
+  fModifyCount:= 0;
+  RemoveControls;
+
+  if aQueryType = 0 then // Auto
+    fQueryType:= GetQueryType(fQuery)
+  else
+    fQueryType:= aQueryType;
+
+  fCnt:= 0;
+  fFinished:= False;
+  repeat
+    ExecuteQuery;
+  until fFinished;
+  EnableButtons;
+end;
+
+procedure TfmQueryWindow.ThreadTerminated(Sender: TObject);
+begin
+  // Raise exception if an error occured during thread execution (Open)
+  if fQT.Error then
+  begin
+    if Assigned(fTab) then
+      fTab.TabVisible:= False;
+    SetLength(ResultControls, High(ResultControls));
+    SetLength(ParentResultControls, High(ParentResultControls));
+    fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+    PageControl1.ActivePage:= fTab;
+
+    fmeResult.Text:= fQT.ErrorMsg;
+    fmeResult.Lines.Add(fQueryPart);
+    fmeResult.Font.Color:= clRed;
+    fTab.Font.Color:= clRed;
+    fTab.ImageIndex:= 3;
+  end
+  else
+  begin
+    fTab.Caption:= faText;
+    fTab.ImageIndex:= 0;
+    fmMain.AddToSQLHistory(RegRec.Title, 'SELECT', fQueryPart);
+  end;
+  fQT.Free;
+  if fFinished then
+    EnableButtons;
+
+  if not fFinished then
+    ExecuteQuery;
+
+end;
+
+procedure TfmQueryWindow.EnableButtons;
+begin
+  tbRun.Enabled:= True;
+  tbCommit.Enabled:= True;
+  tbCommitRetaining.Enabled:= True;
+  tbRollback.Enabled:= True;
+  tbRollbackRetaining.Enabled:= True;
 end;
 
 initialization

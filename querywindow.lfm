@@ -179,13 +179,6 @@ object fmQueryWindow: TfmQueryWindow
         ParentShowHint = False
         ShowHint = True
       end
-      object ToolButton1: TToolButton
-        Left = 386
-        Hint = 'Cancel'
-        Top = 2
-        Caption = 'Cancel'
-        OnClick = ToolButton1Click
-      end
     end
   end
   object Splitter1: TSplitter

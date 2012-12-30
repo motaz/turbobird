@@ -1113,6 +1113,7 @@ var
   ConstraintName: string;
   Form: TfmTableManage;
 begin
+
   Form:= AForm as TfmTableManage;
   Rec:= RegisteredDatabases[DatabaseIndex];
   AQuery:= TSQLQuery.Create(nil);
@@ -1124,6 +1125,7 @@ begin
     sqlTransaction:= RegisteredDatabases[DatabaseIndex].SQLTrans;
   end;
   AQuery.DataBase:= ibConnection;
+  sqlTransaction.Commit;
 
   Form.sgIndices.RowCount:= 1;
 
@@ -2399,6 +2401,7 @@ begin
   SQLQuery1.Close;
   Rec:= RegisteredDatabases[DatabaseIndex];
   SetConnection(DatabaseIndex);
+  sqlTransaction.Commit;
   SQLQuery1.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
       '  r.RDB$DESCRIPTION AS field_description, ' +
       '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +

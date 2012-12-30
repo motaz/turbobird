@@ -29,17 +29,20 @@ type
     bbDropTrigger: TBitBtn;
     bbRefreshPermissions: TBitBtn;
     bbAddUser: TBitBtn;
-    edEditPermission: TBitBtn;
     cbIndexType: TComboBox;
     cbSortType: TComboBox;
     clbFields: TCheckListBox;
     cxUnique: TCheckBox;
+    edEditPermission: TBitBtn;
     edDrop: TBitBtn;
     edIndexName: TEdit;
     GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
     ImageList1: TImageList;
+    Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     PageControl1: TPageControl;
     sgTriggers: TStringGrid;
     sgPermissions: TStringGrid;
@@ -303,7 +306,6 @@ begin
   fmMain.ViewTableFields(fTableName, fdbIndex, sgFields);
   Parent.Show;
   Show;
-  //fmMain.PageControl1.ActivePage:= Self.Parent as TTabSheet;
 end;
 
 procedure TfmTableManage.bbRefreshConstraintClick(Sender: TObject);
@@ -450,6 +452,7 @@ var
   ObjType: Integer;
   Permissions: string;
 begin
+  sqlTrans.Commit;
   UsersList:= TStringList.Create;
   UsersList.CommaText:= dmSysTables.GetDBUsers(fdbIndex, fTableName);
   sgPermissions.RowCount:= UsersList.Count + 1;

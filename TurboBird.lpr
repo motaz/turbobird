@@ -13,6 +13,7 @@ program TurboBird;
 uses
   {$IFDEF UNIX}
   cthreads,
+  cmem,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, Controls, memdslaz, main, CreateDb, Reg, QueryWindow, ViewView,
