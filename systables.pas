@@ -53,9 +53,9 @@ type
     function GetFieldInfo(dbIndex: Integer; TableName, FieldName: string; var FieldType: string;
       var FieldSize: Integer; var NotNull: Boolean; var DefaultValue, Description : string): Boolean;
 
-    function GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet,
-      CreationDate, ServerTime: string; var ODSVerMajor, ODSVerMinor, Pages,
-  PageSize: Integer; var ProcessList: TStringList): Boolean;
+    function GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet, CreationDate, ServerTime: string;
+      var ODSVerMajor, ODSVerMinor, Pages, PageSize: Integer;
+      var ProcessList: TStringList; var ErrorMsg: string): Boolean;
 
     function GetIndices(dbIndex: Integer; ATableName: string; PrimaryIndexName: string;
       var List: TStringList): Boolean;
@@ -100,6 +100,8 @@ procedure TdmSysTables.Init(dbIndex: Integer);
 begin
   with fmMain.RegisteredDatabases[dbIndex] do
   begin
+    if IBConnection.Connected then
+      IBConnection.Close;
     sqQuery.Close;
     IBConnection.DatabaseName:= RegRec.DatabaseName;
     IBConnection.UserName:= RegRec.UserName;
@@ -683,8 +685,10 @@ begin
   sqQuery.Close;
 end;
 
-function TdmSysTables.GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet, CreationDate, ServerTime: string;
-  var ODSVerMajor, ODSVerMinor, Pages, PageSize: Integer; var ProcessList: TStringList): Boolean;
+function TdmSysTables.GetDatabaseInfo(dbIndex: Integer; var DatabaseName,
+  CharSet, CreationDate, ServerTime: string; var ODSVerMajor, ODSVerMinor,
+  Pages, PageSize: Integer; var ProcessList: TStringList; var ErrorMsg: string
+  ): Boolean;
 begin
   try
     Init(dbIndex);
@@ -728,7 +732,10 @@ begin
 
   except
   on e: exception do
+  begin
+    ErrorMsg:= e.Message;
     Result:= False;
+  end;
   end;
 end;
 

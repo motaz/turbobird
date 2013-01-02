@@ -408,81 +408,35 @@ end;
 
 procedure TfmMain.lmDBIndoClick(Sender: TObject);
 var
-  dbName, CreationDate, ACharSet: string;
-  MajorVer, MinorVer, Pages, PageSize: Integer;
-  ProcessList: TStringList;
-  dbSize: Double;
-  AType: string;
   ATab: TTabSheet;
   Title: string;
   dbIndex: Integer;
-  ServerTime: string;
 begin
-  ProcessList:= TStringList.Create;
-  dbIndex:= tvMain.Selected.OverlayIndex;
   Title:= 'Database information for: ' + tvMain.Selected.Text;
-  if dmSysTables.GetDatabaseInfo(dbIndex, dbName, ACharSet, CreationDate, ServerTime,
-    MajorVer, MinorVer, Pages, PageSize, ProcessList) then
-  with fmDBInfo do
+  dbIndex:= tvMain.Selected.OverlayIndex;
+
+  fmDBInfo:= FindCustomForm(Title, TfmDBInfo) as TfmDBInfo;
+
+  if fmDBInfo = nil then
   begin
-    fmDBInfo:= FindCustomForm(Title, TfmDBInfo) as TfmDBInfo;
-
-    if fmDBInfo = nil then
-    begin
-      fmDBInfo:= TfmDBInfo.Create(Application);
-      ATab:= TTabSheet.Create(nil);
-      ATab.Parent:= PageControl1;
-      fmDBInfo.Parent:= ATab;
-      fmDBInfo.Left:= 0;
-      fmDBInfo.Top:= 0;
-      fmDBInfo.BorderStyle:= bsNone;
-      fmDBInfo.Align:= alClient;
-      Caption:= Title;
-    end
-    else
-      ATab:= fmDBInfo.Parent as TTabSheet;
-
-    PageControl1.ActivePage:= ATab;
-    ATab.Tag:= dbIndex;
-    ATab.Caption:= Title;
-    edName.Text:= dbName;
-    edODSVer.Text:= IntToStr(MajorVer) + '.' + IntToStr(MinorVer);
-    edCharset.Text:= ACharSet;
-    edCreationDate.Text:= CreationDate;
-    edPageSize.Text:= IntToStr(PageSize);
-    edConnections.Text:= IntToStr(ProcessList.Count);
-    dbSize:= Pages * PageSize;
-    if dbSize > 1000000000 then
-    begin
-      dbSize:= ((dbSize / 1024) / 1024) / 1024;
-      AType:= 'Giga bytes';
-    end
-    else
-    if dbSize > 1000000 then
-    begin
-      dbSize:= ((dbSize / 1024) / 1024);
-      AType:= 'Mega bytes';
-    end
-    else
-    if dbSize > 1000 then
-    begin
-      dbSize:= (dbSize / 1024);
-      AType:= 'Kilo bytes';
-    end
-    else
-    begin
-      AType:= 'Bytes';
-    end;
-
-    edDBSize.Text:= Format('%3.1n %s', [dbSize, AType]);
-    fmDBInfo.edServerTime.Text:= ServerTime;
-    meClients.Lines.Text:= ProcessList.Text;
-    meClients.Lines.Insert(0, '');
-    ProcessList.Free;
-    Show;
+    fmDBInfo:= TfmDBInfo.Create(Application);
+    ATab:= TTabSheet.Create(nil);
+    ATab.Parent:= PageControl1;
+    fmDBInfo.Parent:= ATab;
+    fmDBInfo.Left:= 0;
+    fmDBInfo.Top:= 0;
+    fmDBInfo.BorderStyle:= bsNone;
+    fmDBInfo.Align:= alClient;
+    Caption:= Title;
   end
   else
-    ShowMessage('Unable to get database information');
+    ATab:= fmDBInfo.Parent as TTabSheet;
+
+  PageControl1.ActivePage:= ATab;
+  ATab.Tag:= dbIndex;
+  ATab.Caption:= Title;
+
+  fmDBInfo.Init(dbIndex);
 end;
 
 procedure TfmMain.lmDisconnectClick(Sender: TObject);
@@ -1266,6 +1220,8 @@ begin
   fmNewGen.Init(DatabaseIndex);
 end;
 
+(*  Get server name from database string  *)
+
 function TfmMain.GetServerName(DBName: string): string;
 begin
   if Pos(':', DBName) > 2 then
@@ -1273,6 +1229,9 @@ begin
   else
     Result:= 'localhost';
 end;
+
+
+(* Search and get server node in tree view *)
 
 function TfmMain.GetServerNameNode(ServerName: string): TTreeNode;
 var
@@ -1368,6 +1327,9 @@ begin
   end;
 end;
 
+
+(* Insert SQL query into database history file *)
+
 function TfmMain.AddToSQLHistory(DatabaseTitle: string; SQLType, SQLStatement: string): Boolean;
 begin
   try
@@ -1411,6 +1373,9 @@ begin
 
   end;
 end;
+
+
+(* Open SQL history file for current database *)
 
 function TfmMain.OpenSQLHistory(DatabaseTitle: string): Boolean;
 var
@@ -1463,6 +1428,9 @@ begin
 
   end;
 end;
+
+
+(* Get input parameters from stored procedure body *)
 
 function TfmMain.RetreiveInputParamFromSP(Body: string): string;
 var
@@ -1521,9 +1489,6 @@ begin
   SelNode:= tvMain.Selected;
   dbIndex:= SelNode.Parent.OverlayIndex;
   Rec:= RegisteredDatabases[dbIndex];
-
-{  fmNewTable.Init(dbIndex);
-  fmNewTable.ShowModal;}
 
   Title:= SelNode.Parent.Text + ': New Table';
 
@@ -2486,6 +2451,7 @@ begin
     SQLQuery1.Open;
     FirstOutput:= False;
 
+    // Get procedure parameters
       while not SQLQuery1.EOF do
       begin
         ParamName:= Trim(SQLQuery1.FieldByName('RDB$Parameter_Name').AsString);
@@ -2518,7 +2484,7 @@ begin
 
     SQLQuery1.Close;
 
-    // Procedure body
+    // Get Procedure body
     SQLQuery1.SQL.Text:= 'SELECT * FROM rdb$procedures where rdb$Procedure_name =  ''' + AProcName + '''';
     SQLQuery1.Open;
     SPOwner:= Trim(SQLQuery1.FieldByName('rdb$Owner_Name').AsString);
@@ -2631,6 +2597,8 @@ begin
   AQuery.Open;
   Result:= AQuery.FieldCount > 0;
   FieldsList.Clear;
+
+  // Get index field names
   if Result then
   while not AQuery.EOF do
   begin
@@ -2715,7 +2683,11 @@ var
 begin
   Rec:= RegisteredDatabases[DatabaseIndex];
   ACaption:= Rec.RegRec.Title + ': ' + ATitle;
+
+  // Search for already opened query window for the same title
   Result:= TfmQueryWindow(FindQueryWindow(ACaption));
+
+  // No opened query window
   if Result = nil then
   begin
     Result:= TfmQueryWindow.Create(Application);
@@ -2728,7 +2700,7 @@ begin
     Result.Align:= alClient;
     Result.Font.Name:= 'Arial';
   end
-  else
+  else // Already opened query window found
     ATab:= Result.Parent as TTabSheet;
 
   Result.Init(DatabaseIndex);

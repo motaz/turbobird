@@ -343,6 +343,7 @@ procedure TfmQueryWindow.tbNewClick(Sender: TObject);
 var
   i: Integer;
 begin
+  // Get a free number to be assigned to the new Query window
   for i:= 1 to 1000 do
   begin
     if fmMain.FindQueryWindow(RegRec.Title + ': Query Window # ' + IntToStr(i)) = nil then
@@ -457,6 +458,7 @@ begin
     Self.ibConnection.Role:= RegRec.Role;
   end;
 
+  // Get current database tables to be hilighted in SQL query editor
   SynSQLSyn1.TableNames.CommaText:= fmMain.GetTableNames(dbIndex);
 end;
 
@@ -1000,7 +1002,7 @@ begin
      end;
   end;
 
-
+  // Get SQL type
   IsDDL:= False;
   if SecondRealStart < QueryList.Count then
   begin
@@ -1115,6 +1117,8 @@ procedure TfmQueryWindow.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
   RemoveControls;
+
+  // Check if the transaction is active commit it
   if SqlTrans.Active then
   begin
     SqlTrans.CommitRetaining;
@@ -1122,7 +1126,7 @@ begin
       OnCommit(self);
     OnCommit:= nil;
   end;
-  //IBConnection.Close;
+  IBConnection.Close;
   CloseAction:= caFree;
 end;
 
@@ -1204,6 +1208,8 @@ begin
     Grid.DataSource.DataSet.First;
     List:= TStringList.Create;
     Line:= '';
+
+    // Copy fields header
     with Grid.DataSource.DataSet do
     for i:= 0 to FieldCount - 1 do
     begin
@@ -1212,6 +1218,8 @@ begin
         Line:= Line + ',';
     end;
     List.Add(Line);
+
+    // Copy table data
     with Grid.DataSource.DataSet do
     while not Eof do
     begin
@@ -1383,13 +1391,15 @@ begin
     Break;
   end;
 
+  // Search for status bar inside current query result TabSheet
   if TabSheet <> nil then
   for i:= 0 to High(ResultControls) do
   if ResultControls[i] <> nil then
     if  (ParentResultControls[i] <> nil) and ((ParentResultControls[i] as TTabSheet) = TabSheet)
       and (ResultControls[i] is TStatusBar) then
       begin
-      (ResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
+        // Display current record and number of total records in status bar
+        (ResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
         ' records fetched. At record # ' + IntToStr(DataSet.RecNo);
       break;
   end;
@@ -1399,10 +1409,13 @@ end;
 procedure TfmQueryWindow.CallExecuteQuery(aQueryType: Integer);
 begin
   fList:= TStringList.Create;
+
+  // Get query text from memo
   fQuery:= Trim(GetQuery);
   fList.Text:= fQuery;
   fStartLine:= 0;
 
+  // Disable buttons to prevent query interrupt
   tbRun.Enabled:= False;
   tbCommit.Enabled:= False;
   tbCommitRetaining.Enabled:= False;
@@ -1412,11 +1425,13 @@ begin
   fModifyCount:= 0;
   RemoveControls;
 
+  // Get initial query type, it could be changed later in the next parts
   if aQueryType = 0 then // Auto
     fQueryType:= GetQueryType(fQuery)
   else
     fQueryType:= aQueryType;
 
+  // Call execute query for each parts until finished
   fCnt:= 0;
   fFinished:= False;
   repeat
