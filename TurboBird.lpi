@@ -17,8 +17,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="9"/>
-      <RevisionNr Value="7"/>
-      <BuildNr Value="1087"/>
+      <RevisionNr Value="8"/>
+      <BuildNr Value="1088"/>
       <StringTable ProductVersion="0.9"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -60,10 +60,11 @@
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TurboBird"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="10"/>
-        <CursorPos X="33" Y="29"/>
+        <CursorPos X="19" Y="28"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -124,7 +125,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1116"/>
         <CursorPos X="3" Y="1119"/>
-        <FoldState Value=" T3ra0j("/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 X="3" Y="628" ID="0"/>
@@ -978,7 +978,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="dbInfo"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="64"/>
@@ -1090,7 +1089,7 @@
         <UsageCount Value="23"/>
       </Unit110>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="querywindow.pas"/>
         <Caret Line="1404" Column="21" TopLine="1310"/>
@@ -1157,60 +1156,56 @@
       </Position16>
       <Position17>
         <Filename Value="dbinfo.pas"/>
-        <Caret Line="1" Column="1" TopLine="41"/>
+        <Caret Line="64" Column="21" TopLine="41"/>
       </Position17>
       <Position18>
-        <Filename Value="dbinfo.pas"/>
-        <Caret Line="64" Column="21" TopLine="41"/>
-      </Position18>
-      <Position19>
         <Filename Value="main.pas"/>
         <Caret Line="421" Column="3" TopLine="408"/>
+      </Position18>
+      <Position19>
+        <Filename Value="systables.pas"/>
+        <Caret Line="689" Column="3" TopLine="684"/>
       </Position19>
       <Position20>
         <Filename Value="systables.pas"/>
-        <Caret Line="689" Column="3" TopLine="684"/>
+        <Caret Line="104" Column="25" TopLine="99"/>
       </Position20>
       <Position21>
-        <Filename Value="systables.pas"/>
-        <Caret Line="104" Column="25" TopLine="99"/>
-      </Position21>
-      <Position22>
         <Filename Value="dbinfo.pas"/>
         <Caret Line="64" Column="21" TopLine="41"/>
+      </Position21>
+      <Position22>
+        <Filename Value="main.pas"/>
+        <Caret Line="486" Column="70" TopLine="469"/>
       </Position22>
       <Position23>
         <Filename Value="main.pas"/>
-        <Caret Line="486" Column="70" TopLine="469"/>
+        <Caret Line="426" Column="65" TopLine="409"/>
       </Position23>
       <Position24>
-        <Filename Value="main.pas"/>
-        <Caret Line="426" Column="65" TopLine="409"/>
-      </Position24>
-      <Position25>
         <Filename Value="systables.pas"/>
         <Caret Line="736" Column="25" TopLine="705"/>
+      </Position24>
+      <Position25>
+        <Filename Value="dbinfo.pas"/>
+        <Caret Line="64" Column="21" TopLine="41"/>
       </Position25>
       <Position26>
         <Filename Value="dbinfo.pas"/>
-        <Caret Line="64" Column="21" TopLine="41"/>
+        <Caret Line="43" Column="8" TopLine="33"/>
       </Position26>
       <Position27>
         <Filename Value="dbinfo.pas"/>
-        <Caret Line="43" Column="8" TopLine="33"/>
+        <Caret Line="81" Column="1" TopLine="73"/>
       </Position27>
       <Position28>
         <Filename Value="dbinfo.pas"/>
-        <Caret Line="81" Column="1" TopLine="73"/>
+        <Caret Line="56" Column="21" TopLine="24"/>
       </Position28>
       <Position29>
         <Filename Value="dbinfo.pas"/>
-        <Caret Line="56" Column="21" TopLine="24"/>
-      </Position29>
-      <Position30>
-        <Filename Value="dbinfo.pas"/>
         <Caret Line="129" Column="1" TopLine="99"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -1227,8 +1222,11 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <GenerateDebugInfo Value="False"/>
         <UseLineInfoUnit Value="False"/>
+        <StripSymbols Value="True"/>
       </Debugging>
+      <LinkSmart Value="True"/>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>

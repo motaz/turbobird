@@ -25,7 +25,7 @@ uses
   sysutils, Comparison;
 
 const
-  Version = '0.9.7';
+  Version = '0.9.8';
   VersionDate = '2010 - Jan 2013';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
