@@ -13,7 +13,7 @@ object fmQueryWindow: TfmQueryWindow
   OnShow = FormShow
   PopupMenu = pmTab
   Position = poScreenCenter
-  LCLVersion = '1.0.4.0'
+  LCLVersion = '1.0.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 60

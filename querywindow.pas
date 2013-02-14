@@ -144,7 +144,7 @@ type
     fStartLine: Integer;
     fList: TStringList;
     fQuery: string;
-    fQueryType: Integer;
+    fOrigQueryType: Integer;
     fFinished: Boolean;
     fQT: TQueryThread;
     fQueryPart: string;
@@ -624,11 +624,12 @@ var
   Command: string;
   IsDDL: Boolean;
   Affected: Integer;
+  fQueryType: Integer;
 begin
   try
 
     // Script
-    if (fQueryType = 3) then
+    if (fOrigQueryType = 3) then
     begin
       ExecuteScript(fQuery);
       Inc(fModifyCount);
@@ -646,9 +647,9 @@ begin
         Exit;
       end;
 
-      if EndLine < fStartLine then
+      {if EndLine < fStartLine then
         fStartLine:= fStartLine + 1
-      else
+      else}
         fStartLine:= EndLine + 1;
 
       if Trim(fQueryPart) <> '' then   // Select
@@ -784,6 +785,8 @@ begin
               fmeResult.Lines.Add('Rows affected: ' + Format('%3.0n', [Affected / 1]));
 
             end;
+            fmeResult.Lines.Add('----');
+            fmeResult.Lines.Add(fQueryPart);
 
           except
           on e: exception do
@@ -803,12 +806,30 @@ begin
         end
         else  // Script
         begin
+          try
           if ExecuteScript(fQueryPart) then
           begin
             Inc(fModifyCount);
             SqlType:= GetSQLType(fQueryPart, Command);
             fmMain.AddToSQLHistory(RegRec.Title, SqlType, fQueryPart);
           end;
+
+          except
+          on e: exception do
+          begin
+            if Assigned(fTab) then
+              fTab.TabVisible:= False;
+            fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+            PageControl1.ActivePage:= fTab;
+            fmeResult.Text:= e.message;
+            fmeResult.Lines.Add(fQueryPart);
+            fmeResult.Lines.Add('--------');
+            fmeResult.Font.Color:= clRed;
+            fTab.Font.Color:= clRed;
+            fTab.ImageIndex:= 3;
+          end;
+        end;
+
         end;
         if (fModifyCount > 50) then
         if (MessageDlg('Commit', 'There are too many transactions, did you want to commit',
@@ -834,6 +855,7 @@ begin
     PageControl1.ActivePage:= fTab;
 
     fmeResult.Text:= e.message;
+    fmeResult.Lines.Add('--------');
     fmeResult.Lines.Add(fQueryPart);
     fmeResult.Font.Color:= clRed;
     fFinished:= True;
@@ -860,6 +882,8 @@ begin
     Result:= True;
     meResult.Lines.Text:= FormatDateTime('hh:nn:ss.z', Now) + ' - Script Executed. It takes (H:M:S.MS) ' +
       FormatDateTime('HH:nn:ss.z', Now - StartTime);
+    meResult.Lines.Add('--------');
+    meResult.Lines.Add(Script);
 
   except
   on e: exception do
@@ -870,6 +894,7 @@ begin
     ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
     PageControl1.ActivePage:= ATab;
     meResult.Text:= e.Message;
+    meResult.Lines.Add('--------');
     meResult.Lines.Add(Script);
     meResult.Font.Color:= clRed;
     ATab.Font.Color:= clRed;
@@ -956,7 +981,7 @@ begin
   MultiComment:= False;
   SQLSegment:= '';
   RealStartLine:= StartLine;
-  SecondRealStart:= -1;
+  SecondRealStart:= RealStartLine;
   Result:= False;
 
   // Remove comment
@@ -995,11 +1020,11 @@ begin
   // remove empty lines
   for i:= RealStartLine to QueryList.Count - 1 do
   begin
-     if Trim(QueryList[i]) <> '' then
-     begin
-       SecondRealStart:= i;
-       Break;
-     end;
+    if Trim(QueryList[i]) <> '' then
+    begin
+      SecondRealStart:= i;
+      Break;
+    end;
   end;
 
   // Get SQL type
@@ -1024,44 +1049,44 @@ begin
   // Concatinate
   SQLSegment:= '';
   BeginExist:= False;
-    for i:= SecondRealStart to QueryList.Count - 1 do
+  for i:= SecondRealStart to QueryList.Count - 1 do
+  begin
+    if Pos('begin', Trim(LowerCase(QueryList[i]))) > 0 then
+      BeginExist:= True;
+
+    SQLSegment:= SQLSegment + QueryList[i] + #10;
+
+    if (QueryType in [1, 2]) and
+      (((Pos(';', QueryList[i]) > 0) and (Not BeginExist)) or
+      ((Pos('end', LowerCase(Trim(QueryList[i]))) = 1) and BeginExist)
+      or (i = QueryList.Count - 1)) then
     begin
-      if Pos('begin', Trim(LowerCase(QueryList[i]))) > 0 then
-        BeginExist:= True;
-
-      SQLSegment:= SQLSegment + QueryList[i] + #10;
-
-      if (QueryType in [1, 2]) and
-        (((Pos(';', QueryList[i]) > 0) and (Not BeginExist)) or
-        ((Pos('end', LowerCase(Trim(QueryList[i]))) = 1) and BeginExist)
-        or (i = QueryList.Count - 1)) then
+      Result:= True;
+      if (not BeginExist) and (Pos(';', QueryList[i]) > 0) then
       begin
-        Result:= True;
-        if (not BeginExist) and (Pos(';', QueryList[i]) > 0) then
-        begin
-          QueryList[i]:= Trim(Copy(QueryList[i],  Pos(';', QueryList[i]) + 1, Length(QueryList[i])));
-          if QueryList[i] = '' then
-           EndLine:= i
-          else
-          begin
-            EndLine:= i - 1;
-            SQLSegment:= Trim(Copy(SQLSegment, 1, Pos(';',  SQLSegment)));
-          end;
-
-        end
+        QueryList[i]:= Trim(Copy(QueryList[i],  Pos(';', QueryList[i]) + 1, Length(QueryList[i])));
+        if QueryList[i] = '' then
+        EndLine:= i
         else
-          EndLine:= i;
-        Break;
+        begin
+          EndLine:= i - 1;
+          SQLSegment:= Trim(Copy(SQLSegment, 1, Pos(';',  SQLSegment)));
+        end;
       end
       else
-      if (QueryType = 3) and (i > SecondRealStart) and (Pos('setterm', LowerCase(StringReplace(QueryList[i],
-        ' ', '', [rfReplaceAll]))) > 0) then
-      begin
-        Result:= True;
         EndLine:= i;
-        Break;
-      end;
+
+      Break;
+    end
+    else
+    if (QueryType = 3) and ((i > SecondRealStart) and (Pos('setterm', LowerCase(StringReplace(QueryList[i],
+      ' ', '', [rfReplaceAll]))) > 0)) or (i = QueryList.Count - 1) then
+    begin
+      Result:= True;
+      EndLine:= i;
+      Break;
     end;
+  end;
 
 end;
 
@@ -1075,21 +1100,24 @@ end;
 procedure TfmQueryWindow.DBGrid1DblClick(Sender: TObject);
 begin
   if (Sender as TDBGrid).SelectedField.DataType in [ftBlob, ftMemo] then
-    ShowMessage((Sender as TDBGrid).SelectedField.AsString);
+    ShowMessage((Sender as TDBGrid).SelectedField.AsString)
+  else
+    ShowMessage((Sender as TDBGrid).SelectedField.KeyFields);
 end;
 
 procedure TfmQueryWindow.DBGridTitleClick(column: TColumn);
-var   SqlQuery: TSQLQuery;
+var
+  SqlQuery: TSQLQuery;
 //    indexoption : TIndexOptions;
 begin
-SqlQuery:= FindSqlQuery;
-if  SqlQuery <> Nil then
- if SqlQuery.IndexFieldNames = Column.Field.FieldName then
-  SqlQuery.IndexFieldNames := Column.Field.FieldName //+ 'DESC'
-//   indexoption :=[ixDescending];
-//   SqlQuery.AddIndex('',Column.Field.FieldName,indexoption,'');
- else
-  SqlQuery.IndexFieldNames := Column.Field.FieldName
+  SqlQuery:= FindSqlQuery;
+  if  SqlQuery <> Nil then
+  if SqlQuery.IndexFieldNames = Column.Field.FieldName then
+    SqlQuery.IndexFieldNames := Column.Field.FieldName //+ 'DESC'
+  //   indexoption :=[ixDescending];
+  //   SqlQuery.AddIndex('',Column.Field.FieldName,indexoption,'');
+  else
+    SqlQuery.IndexFieldNames := Column.Field.FieldName
 
 end;
 
@@ -1427,9 +1455,9 @@ begin
 
   // Get initial query type, it could be changed later in the next parts
   if aQueryType = 0 then // Auto
-    fQueryType:= GetQueryType(fQuery)
+    fOrigQueryType:= GetQueryType(fQuery)
   else
-    fQueryType:= aQueryType;
+    fOrigQueryType:= aQueryType;
 
   // Call execute query for each parts until finished
   fCnt:= 0;
