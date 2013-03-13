@@ -3475,8 +3475,8 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Select first 1000 from ' + SelNode.Text);
-    QWindow.meQuery.Lines.Text:= 'select first 1000 * from ' + SelNode.Text;
+    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Select first 1000 from "' + SelNode.Text + '"');
+    QWindow.meQuery.Lines.Text:= 'select first 1000 * from "' + SelNode.Text + '"';
     QWindow.bbRunClick(nil);
     QWindow.Show;
   end;
