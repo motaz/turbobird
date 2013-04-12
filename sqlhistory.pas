@@ -63,10 +63,19 @@ end;
 procedure TfmSQLHistory.bbInsertClick(Sender: TObject);
 var
   SQLStatement: string;
+  i: Integer;
+  aStatement: string;
 begin
-  SQLStatement:= (fmMain.mdsHistory.FieldByName('SQLStatement').AsString);
-  if Pos(';', SQLStatement) = 0 then
-    SQLStatement:= SQLStatement + ';';
+//  SQLStatement:= (fmMain.mdsHistory.FieldByName('SQLStatement').AsString);
+  for i:=0 to DBGrid1.SelectedRows.Count - 1 do
+  begin
+    Datasource1.DataSet.GotoBookmark(DBGrid1.SelectedRows.Items[i]);
+    aStatement := fmMain.mdsHistory.FieldByName('SQLStatement').AsString;
+    if Pos(';', aStatement) = 0 then
+      aStatement:= aStatement + ';';
+    SQLStatement += aStatement;
+
+  end;
 
   if cxOverwrite.Checked then
     (fQueryForm as TfmQueryWindow).meQuery.Lines.Clear;

@@ -35,6 +35,7 @@ type
       constructor Create(aType: string);
   end;
 
+
   { TfmQueryWindow }
 
   TfmQueryWindow = class(TForm)
@@ -155,9 +156,21 @@ type
     faText: string;
     fModifyCount: Integer;
     fCnt: Integer;
+    ModifiedRecords: array of array of Integer;
 
+    procedure EnableCommitButton;
     procedure ExecuteQuery;
     function GetNewTabNum: string;
+    procedure FinishCellEditing(DataSet: TDataSet);
+    function GetRecordSet(TabIndex: Integer): TSQLQuery;
+    procedure StartEdit(Sender: TObject; const Field: TField;
+      var Value: string);
+    procedure InsertModifiedRecord(RecordNo, TabIndex: Integer);
+    procedure ApplyClick(Sender: TObject);
+    procedure EnableApplyButton;
+    function GetTableName(SQLText: string): string;
+    function GetCurrentSQLText: string;
+    procedure CommitResultClick(Sender: TObject);
   public
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
@@ -190,6 +203,245 @@ implementation
 uses main, SQLHistory;
 
 { TQueryThread }
+
+procedure TfmQueryWindow.FinishCellEditing(DataSet: TDataSet);
+begin
+  InsertModifiedRecord(Dataset.RecNo, PageControl1.TabIndex);
+end;
+
+procedure TfmQueryWindow.StartEdit(Sender: TObject; const Field: TField;
+  var Value: string);
+begin
+  ShowMessage('Editing started: ' + Value);
+end;
+
+procedure TfmQueryWindow.InsertModifiedRecord(RecordNo, TabIndex: Integer);
+var
+  i: Integer;
+  Exist: Boolean;
+begin
+  Exist:= False;
+  if TabIndex > High(ModifiedRecords) then // Insert new tab
+  begin
+    SetLength(ModifiedRecords, TabIndex + 1);
+  end;
+
+  // check if record already inserted
+  for i:= 0 to High(ModifiedRecords[TabIndex]) do
+  if ModifiedRecords[TabIndex][i] = RecordNo then
+  begin
+    Exist:= True;
+    Break;
+  end;
+
+  if not Exist then  // Insert record pointer
+  begin
+    setLength(ModifiedRecords[TabIndex], Length(ModifiedRecords[TabIndex]) + 1);
+    ModifiedRecords[TabIndex][High(ModifiedRecords[TabIndex])]:= RecordNo;
+  end;
+
+  // Enable apply/save button
+  if Length(ModifiedRecords[TabIndex]) = 1 then
+  begin
+    EnableApplyButton;
+  end;
+
+end;
+
+procedure TfmQueryWindow.ApplyClick(Sender: TObject);
+var
+  i, x: Integer;
+  aTableName: string;
+  aQuery: TSQLQuery;
+  PKName: string;
+  ConstraintName: string;
+  KeyList, FieldsList: TStringList;
+  WhereClause: string;
+  RecordSet: TSQLQuery;
+  TabIndex: Integer;
+  FieldsSQL: string;
+begin
+  try
+    TabIndex:= PageControl1.TabIndex;
+    aTableName:= GetTableName(GetCurrentSQLText);
+    RecordSet:= GetRecordSet(TabIndex);
+
+    // Get primary key name
+    PKName:= fmMain.GetPrimaryKeyIndexName(fdbIndex, ATableName, ConstraintName);
+    if PKName <> '' then
+    begin
+
+      aQuery:= TSQLQuery.Create(nil);
+      aQuery.DataBase:= ibConnection;
+      aQuery.Transaction:= SqlTrans;
+      KeyList:= TStringList.Create;
+      Fieldslist:= tstringList.Create;
+
+      // Get primary key fields
+      fmMain.GetIndexFields(ATableName, PKName, aQuery, KeyList);
+      fmMain.GetFields(fdbIndex, ATableName, FieldsList);
+      WhereClause:= 'where ';
+
+      RecordSet.DisableControls;
+      // Check modified fields
+      for i:= 0 to High(ModifiedRecords[TabIndex]) do
+      begin
+        FieldsSQL:= '';
+        RecordSet.RecNo:= ModifiedRecords[TabIndex][i];
+        for x:= 0 to RecordSet.Fields.Count - 1 do
+        if FieldsList.IndexOf(RecordSet.Fields[x].FieldName) <> -1 then // Field exist in origional table
+
+        if (RecordSet.Fields[x].NewValue <> RecordSet.Fields[x].OldValue) then // field data has been modified
+        begin
+         if FieldsSQL <> '' then
+             FieldsSQL += ',';
+           FieldsSQL += RecordSet.Fields[x].FieldName + '=';
+
+           // Typecast field values according to thier main type
+           case RecordSet.Fields[x].DataType of
+            ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
+            ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);
+            ftTime, ftTimeStamp, ftDate, ftDateTime: FieldsSQL += '''' + FormatDateTime('yyyy-mm-dd HH:nn:ss:zz',
+              RecordSet.Fields[x].NewValue) + '''';
+
+           else // Other types like string
+              FieldsSQL += '''' + RecordSet.Fields[x].NewValue + '''';
+
+         end;
+        end;
+
+
+        // Update current record
+        if FieldsSQL <> '' then
+        begin
+          aQuery.Close;
+          aQuery.SQL.Text:= 'update ' + aTableName + ' set ' + FieldsSQL;
+
+          WhereClause:= 'where ';
+          // where clause
+          for x:= 0 to KeyList.Count - 1 do
+          if Trim(KeyList[x]) <> '' then
+          begin
+            WhereClause += KeyList[x] + ' = ';
+
+            // Typecase index values
+            case RecordSet.Fields[x].DataType of
+             ftInteger, ftSmallint: WhereClause += IntToStr(RecordSet.Fields[x].OldValue);
+             ftFloat: WhereClause += FloatToStr(RecordSet.Fields[x].OldValue);
+            else
+               WhereClause += '''' + RecordSet.Fields[x].OldValue + '''';
+            end;
+            if x < KeyList.Count - 1 then
+              WhereClause += ' and ';
+          end;
+
+          aQuery.SQL.Add(WhereClause);
+          aQuery.ExecSQL;
+          (Sender as TBitBtn).Visible:= False;
+          EnableCommitButton;
+        end;
+      end;
+
+      // Reset ModifedRecords pointer
+      ModifiedRecords[TabIndex]:= nil;
+
+      RecordSet.EnableControls;
+      FieldsList.Free;
+      KeyList.Free;
+      aQuery.Free;
+    end
+    else
+      ShowMessage('There is no primary key on the table: ' + aTableName);
+
+
+  except
+  on e: exception do
+  begin
+    ShowMessage('Error in save data: ' + e.Message);
+  end;
+
+  end;
+
+
+end;
+
+procedure TfmQueryWindow.EnableApplyButton;
+var
+  i: Integer;
+begin
+  for i:= 0 to High(ResultControls) do
+  if (ResultControls[i] is TBitBtn) and ((ResultControls[i] as TBitBtn).Tag = PageControl1.TabIndex) and
+    ((ResultControls[i] as TBitBtn).Caption = 'Apply') then
+  begin
+    (ResultControls[i] as TBitBtn).Visible:= True;
+    Break;
+  end;
+end;
+
+procedure TfmQueryWindow.EnableCommitButton;
+var
+  i: Integer;
+begin
+  for i:= 0 to High(ResultControls) do
+  if (ResultControls[i] is TBitBtn) and ((ResultControls[i] as TBitBtn).Tag = PageControl1.TabIndex)
+    and ((ResultControls[i] as TBitBtn).Caption = 'Commit') then
+  begin
+    (ResultControls[i] as TBitBtn).Visible:= True;
+    Break;
+  end;
+end;
+
+function TfmQueryWindow.GetTableName(SQLText: string): string;
+begin
+  SQLText:= Trim(Copy(SQLText, Pos('from', LowerCase(SQLText)) + 4, Length(SQLText)));
+  if Pos('"', SQLText) = 1 then
+  begin
+    Delete(SQLText, 1, 1);
+    Result:= Copy(SQLText, 1, Pos('"', SQLText) - 1);
+  end
+  else
+  begin
+    if Pos(' ', SQLText) > 0 then
+      Result:= Copy(SQLText, 1, Pos(' ', SQLText) - 1)
+    else
+      Result:= SQLText;
+  end;
+  if Pos(';', Result) > 0 then
+    Delete(Result, Pos(';', Result), 1);
+
+end;
+
+function TfmQueryWindow.GetCurrentSQLText: string;
+var
+  i: Integer;
+begin
+  for i:= 0 to High(ResultControls) do
+  if (ResultControls[i] is TDBGrid) and ((ResultControls[i] as TDBGrid).Tag = PageControl1.TabIndex) then
+  begin
+    Result:= ((ResultControls[i] as TDBGrid).DataSource.DataSet as TSQLQuery).SQL.Text;
+    Break;
+  end;
+
+end;
+
+procedure TfmQueryWindow.CommitResultClick(Sender: TObject);
+begin
+  SqlTrans.CommitRetaining;
+  (Sender as TBitBtn).Visible:= False;
+end;
+
+function TfmQueryWindow.GetRecordSet(TabIndex: Integer): TSQLQuery;
+var
+  i: Integer;
+begin
+  for i:= 0 to High(ResultControls) do
+  if (ResultControls[i] is TSQLQuery) and ((ResultControls[i] as TSQLQuery).Tag = TabIndex) then
+  begin
+    Result:= ResultControls[i] as TSQLQuery;
+    Break;
+  end;
+
+end;
 
 procedure TQueryThread.DoJob;
 begin
@@ -528,6 +780,8 @@ var
   StatusBar: TStatusBar;
   Nav: TDBNavigator;
   Pan: TPanel;
+  Apply: TBitBtn;
+  Commit: TBitBtn;
 begin
   ATab:= TTabSheet.Create(nil);
   Result:= ATab;
@@ -541,6 +795,8 @@ begin
     aSqlQuery.Transaction:= SqlTrans;
     aSqlQuery.AfterScroll:= @QueryAfterScroll;
     AddResultControl(ATab, aSqlQuery);
+    aSqlQuery.AfterPost:= @FinishCellEditing;
+    aSqlQuery.Tag:= ATab.TabIndex;
 
 
     // Status Bar
@@ -566,13 +822,15 @@ begin
     DBGrid.DataSource:= DataSource;
     DBGrid.Align:= alClient;
     DBGrid.OnDblClick:= @DBGrid1DblClick;
+
+    DBGrid.OnFieldEditMask:= @StartEdit;
+    DBGrid.Tag:= ATab.TabIndex;
     DBGrid.ReadOnly:= False;
-    DBGrid.AutoEdit:= False;
+    DBGrid.AutoEdit:= True;
 
     DBGrid.PopupMenu:= pmGrid;
     DBGrid.TitleStyle:= tsNative;
-    DBGrid.Options:= DBGrid.Options + [dgAutoSizeColumns,dgHeaderHotTracking, dgHeaderPushedLook, dgAnyButtonCanSelect];
-    DBGrid.Options:= DBGrid.Options - [dgEditing];
+    DBGrid.Options:= DBGrid.Options + [dgAutoSizeColumns, dgHeaderHotTracking, dgHeaderPushedLook, dgAnyButtonCanSelect];
 
     DBGrid.OnTitleClick:= @DBGridTitleClick;
     AddResultControl(ATab, DBGrid);
@@ -580,9 +838,29 @@ begin
     // Navigator
     Nav:= TDBNavigator.Create(nil);
     Nav.Parent:= Pan;
-    Nav.VisibleButtons:= [nbFirst, nbNext, nbPrior, nbLast, nbRefresh];
+    Nav.VisibleButtons:= [nbFirst, nbNext, nbPrior, nbLast];
     Nav.DataSource:= DataSource;
     AddResultControl(ATab, Nav);
+
+    // Apply button
+    Apply:= TBitBtn.Create(nil);
+    Apply.Parent:= Pan;
+    Apply.Caption:= 'Apply';
+    Apply.Left:= 300;
+    Apply.Visible:= False;
+    Apply.OnClick:= @ApplyClick;
+    Apply.Tag:= ATab.TabIndex;
+    AddResultControl(ATab, Apply);
+
+    // Commit button
+    Commit:= TBitBtn.Create(nil);
+    Commit.Parent:= Pan;
+    Commit.Caption:= 'Commit';
+    Commit.Left:= 400;
+    Commit.Visible:= False;
+    Commit.OnClick:= @CommitResultClick;
+    Commit.Tag:= ATab.TabIndex;
+    AddResultControl(ATab, Commit);
 
   end
   else

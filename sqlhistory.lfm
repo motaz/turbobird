@@ -1,7 +1,7 @@
 object fmSQLHistory: TfmSQLHistory
-  Left = 565
+  Left = 463
   Height = 492
-  Top = 354
+  Top = 293
   Width = 873
   Caption = 'SQL History'
   ClientHeight = 492
@@ -9,9 +9,9 @@ object fmSQLHistory: TfmSQLHistory
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.0.2.0'
+  LCLVersion = '1.0.8.0'
   object DBGrid1: TDBGrid
-    Left = 8
+    Left = 0
     Height = 404
     Top = 8
     Width = 852
@@ -20,7 +20,7 @@ object fmSQLHistory: TfmSQLHistory
     Color = clWindow
     Columns = <>
     DataSource = Datasource1
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiselect]
     ReadOnly = True
     TabOrder = 0
     OnDblClick = DBGrid1DblClick
