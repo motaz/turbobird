@@ -301,8 +301,9 @@ begin
            case RecordSet.Fields[x].DataType of
             ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
             ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);
-            ftTime, ftTimeStamp, ftDate, ftDateTime: FieldsSQL += '''' + FormatDateTime('yyyy-mm-dd HH:nn:ss:zz',
-              RecordSet.Fields[x].NewValue) + '''';
+            ftTimeStamp, ftDateTime: FieldsSQL += '''' + DateTimeToStr(RecordSet.Fields[x].NewValue) + '''';
+            ftTime: FieldsSQL += '''' + TimeToStr(RecordSet.Fields[x].NewValue) + '''';
+            ftDate: FieldsSQL += '''' + DateToStr(RecordSet.Fields[x].NewValue) + '''';
 
            else // Other types like string
               FieldsSQL += '''' + RecordSet.Fields[x].NewValue + '''';
