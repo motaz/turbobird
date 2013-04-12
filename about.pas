@@ -48,10 +48,12 @@ type
     laWebSite: TLabel;
     Label6: TLabel;
     laVersionDate: TLabel;
+    laUpdate: TLabel;
     Shape1: TShape;
     procedure BitBtn1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure Label6Click(Sender: TObject);
+    procedure laUpdateClick(Sender: TObject);
     procedure laWebSiteClick(Sender: TObject);
   private
     { private declarations }
@@ -67,7 +69,7 @@ implementation
 
 { TfmAbout }
 
-uses Main;
+uses Main, Update;
 
 procedure TfmAbout.laWebSiteClick(Sender: TObject);
 begin
@@ -84,6 +86,13 @@ end;
 procedure TfmAbout.Label6Click(Sender: TObject);
 begin
   OpenURL('http://lazarus.freepascal.org');
+end;
+
+procedure TfmAbout.laUpdateClick(Sender: TObject);
+begin
+  fmUpdate:= TfmUpdate.Create(nil);
+  fmUpdate.Init(fmMain.Major, fmMain.Minor, fmMain.ReleaseVersion);
+  fmUpdate.Show;
 end;
 
 procedure TfmAbout.FormClose(Sender: TObject; var CloseAction: TCloseAction);

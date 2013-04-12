@@ -22,10 +22,13 @@ uses
   NewDomain, SysTables, NewConstraint, NewEditField, Calen, Scriptdb,
   UserPermissions, TableManage, BackupRestore, CreateUser, ChangePass,
   PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo,
-  sysutils, Comparison;
+  sysutils, Comparison, Update;
 
 const
-  Version = '0.9.10';
+  Major = 0;
+  Minor = 9;
+  Release = 10;
+
   VersionDate = '2010 - Apr 2013';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
@@ -64,6 +67,12 @@ begin
   Application.ProcessMessages;
   SAbout.Update;
   Application.CreateForm(TfmMain, fmMain);
+  fmMain.Version:= Format('%d.%d.%d', [Major, Minor, Release]);
+  fmMain.StatusBar1.Panels[1].Text:= 'Version: ' + fmMain.Version;
+  fmMain.VersionDate:= VersionDate;
+  fmMain.Major:= Major;
+  fmMain.Minor:= Minor;
+  fmMain.ReleaseVersion:= Release;
   Application.CreateForm(TfmCreateDB, fmCreateDB);
   Application.CreateForm(TfmReg, fmReg);
   Application.CreateForm(TfmNewGen, fmNewGen);
@@ -81,8 +90,6 @@ begin
   Application.CreateForm(TfmChangePass, fmChangePass);
   Application.CreateForm(TfmSQLHistory, fmSQLHistory);
   Application.CreateForm(TfmCopyTable, fmCopyTable);
-  fmMain.Version:= Version;
-  fmMain.VersionDate:= VersionDate;
   SAbout.Free;
   InitialiseIBase60;
   Application.Run;

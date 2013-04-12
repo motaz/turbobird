@@ -9,6 +9,32 @@ uses
   Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
   ExtCtrls, Buttons, StdCtrls, TableManage;
 
+const
+  {$IFDEF LINUX}
+   Target = 'Linux';
+  {$ENDIF}
+
+  {$IFDEF WINDOWS}
+   Target = 'Win';
+  {$ENDIF}
+
+  {$IFDEF MAC}
+   Target = 'Mac';
+  {$ENDIF}
+
+  {$IFDEF BSD}
+   Target = 'BSD';
+  {$ENDIF}
+
+  {$ifDEF CPU32}
+   Arch = '32';
+  {$ENDIF}
+
+  {$ifDEF CPU64}
+   Arch = '64';
+  {$ENDIF}
+
+
 type
 
   TDatabaseRec = record
@@ -102,6 +128,7 @@ type
     pmDatabase: TPopupMenu;
     Splitter1: TSplitter;
     SQLQuery1: TSQLQuery;
+    StatusBar1: TStatusBar;
     TabSheet1: TTabSheet;
     tvMain: TTreeView;
     procedure FormActivate(Sender: TObject);
@@ -194,6 +221,7 @@ type
     RegisteredDatabases: array of TDatabaseRec;
     Version: string;
     VersionDate: string;
+    Major, Minor, ReleaseVersion: word;
     function GetServerName(DBName: string): string;
     function RetreiveInputParamFromSP(Body: string): string;
     function LoadRegisteredDatabases: Boolean;
@@ -250,6 +278,7 @@ begin
   Application.OnException:= @GlobalException;
   fActivated:= False;
   LoadRegisteredDatabases;
+  StatusBar1.Panels[0].Text:= 'TurboBird for ' + Target + '-' + Arch;
 end;
 
 (*****************  Add New user  ***********************)

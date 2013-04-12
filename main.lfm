@@ -14,10 +14,10 @@ object fmMain: TfmMain
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.0.6.0'
+  LCLVersion = '1.0.8.0'
   object tvMain: TTreeView
     Left = 0
-    Height = 617
+    Height = 596
     Top = 0
     Width = 360
     Align = alLeft
@@ -37,14 +37,14 @@ object fmMain: TfmMain
   end
   object Splitter1: TSplitter
     Left = 360
-    Height = 617
+    Height = 596
     Top = 0
     Width = 14
     Beveled = True
   end
   object PageControl1: TPageControl
     Left = 377
-    Height = 610
+    Height = 589
     Top = 3
     Width = 644
     ActivePage = TabSheet1
@@ -64,7 +64,7 @@ object fmMain: TfmMain
     object TabSheet1: TTabSheet
       BorderWidth = 1
       Caption = 'Main'
-      ClientHeight = 580
+      ClientHeight = 559
       ClientWidth = 640
       Font.Color = clNavy
       Font.Name = 'Arial'
@@ -502,6 +502,20 @@ object fmMain: TfmMain
         TabOrder = 2
       end
     end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 21
+    Top = 596
+    Width = 1024
+    Panels = <    
+      item
+        Width = 250
+      end    
+      item
+        Width = 200
+      end>
+    SimplePanel = False
   end
   object MainMenu1: TMainMenu
     left = 63

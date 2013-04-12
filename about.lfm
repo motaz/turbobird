@@ -12,7 +12,7 @@ object fmAbout: TfmAbout
   Color = 15792364
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '1.0.4.0'
+  LCLVersion = '1.0.8.0'
   object Shape1: TShape
     Left = 9
     Height = 294
@@ -223,5 +223,17 @@ object fmAbout: TfmAbout
     Font.Color = 3487029
     ParentColor = False
     ParentFont = False
+  end
+  object laUpdate: TLabel
+    Cursor = crHandPoint
+    Left = 240
+    Height = 18
+    Top = 88
+    Width = 116
+    Caption = 'Check for update'
+    Font.Color = clBlack
+    ParentColor = False
+    ParentFont = False
+    OnClick = laUpdateClick
   end
 end
