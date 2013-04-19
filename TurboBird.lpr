@@ -27,7 +27,7 @@ uses
 const
   Major = 0;
   Minor = 9;
-  Release = 10;
+  Release = 11;
 
   VersionDate = '2010 - Apr 2013';
 {$IFDEF Unix}

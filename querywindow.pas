@@ -119,6 +119,8 @@ type
     procedure lmUndoClick(Sender: TObject);
     procedure lmFindClick(Sender: TObject);
     procedure lmFindAgainClick(Sender: TObject);
+    procedure meQueryKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+
     procedure SQLScript1Exception(Sender: TObject; Statement: TStrings;
       TheException: Exception; var Continue: boolean);
     procedure tbCloseClick(Sender: TObject);
@@ -163,6 +165,14 @@ type
     function GetNewTabNum: string;
     procedure FinishCellEditing(DataSet: TDataSet);
     function GetRecordSet(TabIndex: Integer): TSQLQuery;
+    function getQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer;
+      var IsDDL: Boolean): Integer;
+    procedure NewCommitButton(const Pan: TPanel; var ATab: TTabSheet);
+    procedure RemoveComments(QueryList: TStringList; StartLine: Integer;
+      var RealStartLine: Integer);
+    procedure RemoveAllSingleLineComments(QueryList: TStringList);
+    procedure removeEmptyLines(QueryList: TStringList;
+      var SecondRealStart: Integer; const RealStartLine: Integer);
     procedure StartEdit(Sender: TObject; const Field: TField;
       var Value: string);
     procedure InsertModifiedRecord(RecordNo, TabIndex: Integer);
@@ -180,6 +190,7 @@ type
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
     function ExecuteScript(Script: string): Boolean;
     procedure AddResultControl(ParentControl: TObject; AControl: TObject);
+    procedure NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
     procedure RemoveControls;
     function FindSqlQuery: TSqlQuery;
     function GetSQLType(Query: string; var Command: string): string;
@@ -201,6 +212,91 @@ implementation
 { TfmQueryWindow }
 
 uses main, SQLHistory;
+
+procedure TfmQueryWindow.NewCommitButton(const Pan: TPanel; var ATab: TTabSheet);
+var
+  Commit: TBitBtn;
+begin
+  Commit:= TBitBtn.Create(nil);
+  Commit.Parent:= Pan;
+  Commit.Caption:= 'Commit';
+  Commit.Left:= 400;
+  Commit.Visible:= False;
+  Commit.OnClick:= @CommitResultClick;
+  Commit.Tag:= ATab.TabIndex;
+  AddResultControl(ATab, Commit);
+end;
+
+procedure TfmQueryWindow.RemoveComments(QueryList: TStringList; StartLine: Integer; var RealStartLine: Integer);
+var
+  Comment: Boolean;
+  i: Integer;
+  MultiComment: Boolean;
+begin
+  MultiComment:= False;
+  for i:= StartLine to QueryList.Count - 1 do
+  begin
+    if Pos('/*', Trim(QueryList[i])) = 1 then
+    begin
+      MultiComment:= True;
+      Comment:= False;
+    end;
+
+    if not MultiComment then
+      Comment:= Pos('--', Trim(QueryList[i])) = 1;
+
+    if (Trim(QueryList[i]) <> '') and (not Comment) and (not MultiComment) then
+    begin
+      RealStartLine:= i;
+      Break;
+    end;
+
+    if MultiComment and (Pos('*/', QueryList[i]) > 0) then // End of multi-line comment
+    begin
+      QueryList[i]:= Trim(Copy(QueryList[i], Pos('*/', QueryList[i]) + 2, Length
+        (QueryList[i])));
+      RealStartLine:= i;
+      MultiComment:= False;
+      Comment:= False;
+      if (i = QueryList.Count - 1) or
+         ((Trim(QueryList[i + 1]) <> '') and  (Pos('/*', Trim(QueryList[i + 1])
+           ) <> 1) and
+         (Pos('--', Trim(QueryList[i + 1])) <> 1)) then
+          Break;
+    end;
+
+  end;
+end;
+
+procedure TfmQueryWindow.RemoveAllSingleLineComments(QueryList: TStringList);
+var
+  i: Integer;
+begin
+  for i:= QueryList.Count - 1 downto 0 do
+  if Pos('--', QueryList[i]) > 0 then
+  begin
+    if Pos('--', Trim(QueryList[i])) = 1 then
+      QueryList.Delete(i)
+    else
+      QueryList[i]:= Copy(QueryList[i], 1, Pos('--', QueryList[i]) - 1);
+  end;
+
+end;
+
+procedure TfmQueryWindow.removeEmptyLines(QueryList: TStringList; var SecondRealStart: Integer;
+  const RealStartLine: Integer);
+var
+  i: integer;
+begin
+  for i:= RealStartLine to QueryList.Count - 1 do
+  begin
+    if Trim(QueryList[i]) <> '' then
+    begin
+      SecondRealStart:= i;
+      Break;
+    end;
+  end;
+end;
 
 { TQueryThread }
 
@@ -442,6 +538,31 @@ begin
     Break;
   end;
 
+end;
+
+function TfmQueryWindow.getQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): Integer;
+var
+  SQLSegment: string;
+begin
+  IsDDL:= False;
+  if SecondRealStart < QueryList.Count then
+  begin
+    SQLSegment:= SQLSegment + QueryList[SecondRealStart];
+
+    if (Pos('select', LowerCase(Trim(SQLSegment))) = 1) then
+      Result:= 1 // Selectable
+    else
+    if Pos('setterm', LowerCase(StringReplace(SQLSegment, ' ', '', [rfReplaceAll
+      ]))) = 1 then
+      Result:= 3 // Script
+    else
+    begin
+      Result:= 2; // Executable
+      IsDDL:= (Pos('create', lowerCase(Trim(SQLSegment))) = 1) or (Pos('alter',
+        lowerCase(Trim(SQLSegment))) = 1) or
+         (Pos('modify', lowerCase(Trim(SQLSegment))) = 1);
+    end;
+  end;
 end;
 
 procedure TQueryThread.DoJob;
@@ -781,8 +902,6 @@ var
   StatusBar: TStatusBar;
   Nav: TDBNavigator;
   Pan: TPanel;
-  Apply: TBitBtn;
-  Commit: TBitBtn;
 begin
   ATab:= TTabSheet.Create(nil);
   Result:= ATab;
@@ -844,25 +963,10 @@ begin
     AddResultControl(ATab, Nav);
 
     // Apply button
-    Apply:= TBitBtn.Create(nil);
-    Apply.Parent:= Pan;
-    Apply.Caption:= 'Apply';
-    Apply.Left:= 300;
-    Apply.Visible:= False;
-    Apply.OnClick:= @ApplyClick;
-    Apply.Tag:= ATab.TabIndex;
-    AddResultControl(ATab, Apply);
+    NewApplyButton(Pan, ATab);
 
     // Commit button
-    Commit:= TBitBtn.Create(nil);
-    Commit.Parent:= Pan;
-    Commit.Caption:= 'Commit';
-    Commit.Left:= 400;
-    Commit.Visible:= False;
-    Commit.OnClick:= @CommitResultClick;
-    Commit.Tag:= ATab.TabIndex;
-    AddResultControl(ATab, Commit);
-
+    NewCommitButton(Pan, ATab);
   end
   else
   if QueryType in [2, 3] then
@@ -1191,6 +1295,20 @@ begin
   ParentResultControls[High(ParentResultControls)]:= ParentControl;
 end;
 
+procedure TfmQueryWindow.NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
+var
+  Apply: TBitBtn;
+begin
+  Apply:= TBitBtn.Create(nil);
+  Apply.Parent:= Pan;
+  Apply.Caption:= 'Apply';
+  Apply.Left:= 300;
+  Apply.Visible:= False;
+  Apply.OnClick:= @ApplyClick;
+  Apply.Tag:= ATab.TabIndex;
+  AddResultControl(ATab, Apply);
+end;
+
 procedure TfmQueryWindow.RemoveControls;
 var
   i: Integer;
@@ -1252,78 +1370,25 @@ var
   i: Integer;
   RealStartLine: Integer;
   SecondRealStart: Integer;
-  MultiComment: Boolean;
-  Comment: Boolean;
   BeginExist: Boolean;
 begin
   // Get start
-  MultiComment:= False;
   SQLSegment:= '';
   RealStartLine:= StartLine;
   SecondRealStart:= RealStartLine;
   Result:= False;
 
-  // Remove comment
-  for i:= StartLine to QueryList.Count - 1 do
-  begin
-    if Pos('/*', Trim(QueryList[i])) = 1 then
-    begin
-      MultiComment:= True;
-      Comment:= False;
-    end;
-
-    if not MultiComment then
-      Comment:= Pos('--', Trim(QueryList[i])) = 1;
-
-    if (Trim(QueryList[i]) <> '') and (not Comment) and (not MultiComment) then
-    begin
-      RealStartLine:= i;
-      Break;
-    end;
-
-    if MultiComment and (Pos('*/', QueryList[i]) > 0) then // End of multi-line comment
-    begin
-      QueryList[i]:= Trim(Copy(QueryList[i], Pos('*/', QueryList[i]) + 2, Length(QueryList[i])));
-      RealStartLine:= i;
-      MultiComment:= False;
-      Comment:= False;
-      if (i = QueryList.Count - 1) or
-         ((Trim(QueryList[i + 1]) <> '') and  (Pos('/*', Trim(QueryList[i + 1])) <> 1) and
-         (Pos('--', Trim(QueryList[i + 1])) <> 1)) then
-          Break;
-    end;
-
-  end;
+  // Remove comments
+  RemoveAllSingleLineComments(QueryList);
+  RemoveComments(QueryList, StartLine, RealStartLine);
 
   SecondRealStart:= RealStartLine;
+
   // remove empty lines
-  for i:= RealStartLine to QueryList.Count - 1 do
-  begin
-    if Trim(QueryList[i]) <> '' then
-    begin
-      SecondRealStart:= i;
-      Break;
-    end;
-  end;
+  removeEmptyLines(QueryList, SecondRealStart, RealStartLine);
 
   // Get SQL type
-  IsDDL:= False;
-  if SecondRealStart < QueryList.Count then
-  begin
-    SQLSegment:= SQLSegment + QueryList[SecondRealStart];
-
-    if (Pos('select', LowerCase(Trim(SQLSegment))) = 1) then
-      QueryType:= 1 // Selectable
-    else
-    if Pos('setterm', LowerCase(StringReplace(SQLSegment, ' ', '', [rfReplaceAll]))) = 1 then
-      QueryType:= 3 // Script
-    else
-    begin
-      QueryType:= 2; // Executable
-      IsDDL:= (Pos('create', lowerCase(Trim(SQLSegment))) = 1) or (Pos('alter', lowerCase(Trim(SQLSegment))) = 1) or
-         (Pos('modify', lowerCase(Trim(SQLSegment))) = 1);
-    end;
-  end;
+  QueryType:= getQuerySQLType(QueryList, SecondRealStart, IsDDL);
 
   // Concatinate
   SQLSegment:= '';
@@ -1680,6 +1745,17 @@ end;
 procedure TfmQueryWindow.lmFindAgainClick(Sender: TObject);
 begin
   meQuery.SearchReplace(FindDialog1.FindText, '', fOptions);
+end;
+
+procedure TfmQueryWindow.meQueryKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  // Execute query by pressing Ctrl + Enter
+  if (ssCtrl in shift) and (key = 13) then
+  begin
+    CallExecuteQuery(0);
+    key:= 0;
+  end;
 end;
 
 

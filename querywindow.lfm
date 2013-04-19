@@ -224,6 +224,7 @@ object fmQueryWindow: TfmQueryWindow
     ParentFont = False
     PopupMenu = pmMemo
     TabOrder = 0
+    OnKeyDown = meQueryKeyDown
     BorderStyle = bsNone
     Gutter.Color = 16183798
     Gutter.Width = 61
