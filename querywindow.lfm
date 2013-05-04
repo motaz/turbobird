@@ -10,10 +10,11 @@ object fmQueryWindow: TfmQueryWindow
   Color = clForm
   Menu = MainMenu1
   OnClose = FormClose
+  OnCreate = FormCreate
   OnShow = FormShow
   PopupMenu = pmTab
   Position = poScreenCenter
-  LCLVersion = '1.0.8.0'
+  LCLVersion = '1.0.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 60
@@ -782,7 +783,7 @@ object fmQueryWindow: TfmQueryWindow
       object TSynGutterSeparator
         Width = 2
         MouseActions = <>
-        MarkupInfo.Background = clWhite
+	MarkupInfo.Background = clWhite
         MarkupInfo.Foreground = clGray
       end
       object TSynGutterCodeFolding
@@ -2650,5 +2651,19 @@ object fmQueryWindow: TfmQueryWindow
       Caption = 'Export Grid as HTML'
       OnClick = lmExportAsHTMLClick
     end
+  end
+  object SynCompletion1: TSynCompletion
+    Position = 0
+    LinesInWindow = 6
+    SelectedColor = clHighlight
+    CaseSensitive = False
+    Width = 262
+    ShortCut = 16416
+    EndOfTokenChr = '()[].'
+    OnCodeCompletion = SynCompletion1CodeCompletion
+    ExecCommandID = ecSynCompletionExecute
+    Editor = meQuery
+    left = 455
+    top = 166
   end
 end
