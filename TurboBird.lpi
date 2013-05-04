@@ -60,7 +60,6 @@
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TurboBird"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -118,14 +117,15 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="QueryWindow"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1509"/>
-        <CursorPos X="1" Y="1533"/>
+        <TopLine Value="1896"/>
+        <CursorPos X="3" Y="920"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
-          <Item0 X="3" Y="1007" ID="0"/>
-          <Item1 X="3" Y="1829" ID="1"/>
+          <Item0 X="3" Y="1032" ID="0"/>
+          <Item1 X="3" Y="1857" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -1106,123 +1106,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="1866" Column="10" TopLine="1861"/>
       </Position1>
       <Position2>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="11" Column="25" TopLine="1"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="82" Column="30" TopLine="51"/>
+        <Caret Line="89" Column="13" TopLine="58"/>
       </Position3>
       <Position4>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="128" Column="38" TopLine="97"/>
+        <Caret Line="91" Column="13" TopLine="60"/>
       </Position4>
       <Position5>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="642" Column="49" TopLine="610"/>
+        <Caret Line="132" Column="23" TopLine="101"/>
       </Position5>
       <Position6>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="646" Column="11" TopLine="614"/>
+        <Caret Line="133" Column="23" TopLine="102"/>
       </Position6>
       <Position7>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="737" Column="23" TopLine="705"/>
+        <Caret Line="168" Column="27" TopLine="137"/>
       </Position7>
       <Position8>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1070" Column="42" TopLine="1039"/>
+        <Caret Line="175" Column="24" TopLine="145"/>
       </Position8>
       <Position9>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1126" Column="39" TopLine="1095"/>
+        <Caret Line="188" Column="21" TopLine="158"/>
       </Position9>
       <Position10>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1153" Column="39" TopLine="1122"/>
+        <Caret Line="190" Column="13" TopLine="159"/>
       </Position10>
       <Position11>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1522" Column="27" TopLine="1499"/>
+        <Caret Line="221" Column="35" TopLine="204"/>
       </Position11>
       <Position12>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1527" Column="13" TopLine="1499"/>
+        <Caret Line="223" Column="9" TopLine="204"/>
       </Position12>
       <Position13>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="225" Column="9" TopLine="204"/>
       </Position13>
       <Position14>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1522" Column="13" TopLine="1490"/>
+        <Caret Line="226" Column="9" TopLine="204"/>
       </Position14>
       <Position15>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1568" Column="15" TopLine="1536"/>
+        <Caret Line="227" Column="27" TopLine="204"/>
       </Position15>
       <Position16>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1690" Column="15" TopLine="1658"/>
+        <Caret Line="228" Column="9" TopLine="204"/>
       </Position16>
       <Position17>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="229" Column="9" TopLine="204"/>
       </Position17>
       <Position18>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1522" Column="13" TopLine="1490"/>
+        <Caret Line="230" Column="27" TopLine="204"/>
       </Position18>
       <Position19>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1568" Column="15" TopLine="1536"/>
+        <Caret Line="231" Column="9" TopLine="204"/>
       </Position19>
       <Position20>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1690" Column="15" TopLine="1658"/>
+        <Caret Line="232" Column="32" TopLine="204"/>
       </Position20>
       <Position21>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="443" Column="23" TopLine="412"/>
       </Position21>
       <Position22>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1522" Column="13" TopLine="1490"/>
+        <Caret Line="483" Column="38" TopLine="451"/>
       </Position22>
       <Position23>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="489" Column="58" TopLine="457"/>
       </Position23>
       <Position24>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="103" Column="15" TopLine="85"/>
+        <Caret Line="529" Column="32" TopLine="497"/>
       </Position24>
       <Position25>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="849" Column="9" TopLine="826"/>
+        <Caret Line="531" Column="18" TopLine="499"/>
       </Position25>
       <Position26>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1840" Column="14" TopLine="1808"/>
+        <Caret Line="585" Column="23" TopLine="553"/>
       </Position26>
       <Position27>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1897" Column="5" TopLine="1863"/>
+        <Caret Line="586" Column="20" TopLine="554"/>
       </Position27>
       <Position28>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="588" Column="23" TopLine="556"/>
       </Position28>
       <Position29>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="1531" Column="26" TopLine="1493"/>
+        <Caret Line="589" Column="20" TopLine="557"/>
       </Position29>
       <Position30>
         <Filename Value="querywindow.pas"/>
-        <Caret Line="191" Column="15" TopLine="160"/>
+        <Caret Line="655" Column="34" TopLine="623"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

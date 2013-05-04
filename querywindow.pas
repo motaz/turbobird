@@ -663,31 +663,38 @@ begin
   RemoveControls;
   ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create('commit');
-  QT.Trans:= SqlTrans;
-  ATab.ImageIndex:= 6;
-  QT.Resume;
-  repeat
-    application.ProcessMessages;
-  until QT.fTerminated;
+  try
+    QT.Trans:= SqlTrans;
+    ATab.ImageIndex:= 6;
 
-  if QT.Error then
-  begin
-    ATab.ImageIndex:= 3;
-    meResult.Lines.Text:= QT.ErrorMsg;
-    meResult.Font.Color:= clRed;
-  end
-  else
-  begin
-    ATab.ImageIndex:= 4;
-    meResult.Lines.Add('Commited');
-    meResult.Font.Color:= clGreen;
+    // Run thread
+    QT.Resume;
+    repeat
+      application.ProcessMessages;
+    until QT.fTerminated;
 
-    // Call OnCommit procedure if assigned, it is used to refresh table management view
-    if OnCommit <> nil then
-      OnCommit(self);
-    OnCommit:= nil;
+    if QT.Error then
+    begin
+      ATab.ImageIndex:= 3;
+      meResult.Lines.Text:= QT.ErrorMsg;
+      meResult.Font.Color:= clRed;
+    end
+    else
+    begin
+      ATab.ImageIndex:= 4;
+      meResult.Lines.Add('Commited');
+      meResult.Font.Color:= clGreen;
+
+      // Call OnCommit procedure if assigned, it is used to refresh table management view
+      if OnCommit <> nil then
+        OnCommit(self);
+      OnCommit:= nil;
+    end;
+
+  finally
+    QT.Free;
   end;
-  QT.Free;
+
 end;
 
 procedure TfmQueryWindow.tbCommitRetainingClick(Sender: TObject);
@@ -695,23 +702,28 @@ var
   QT: TQueryThread;
 begin
   QT:= TQueryThread.Create('commitret');
-  QT.Trans:= SqlTrans;
-  QT.Resume;
-  repeat
-    application.ProcessMessages;
-  until QT.fTerminated;
+  try
+    QT.Trans:= SqlTrans;
 
-  if QT.Error then
-    ShowMessage(QT.ErrorMsg)
-  else
-  begin
-    // Call OnCommit procedure if assigned, it is used to refresh table management view
-    if OnCommit <> nil then
-      OnCommit(self);
-    OnCommit:= nil;
+    // Run thread
+    QT.Resume;
+    repeat
+      application.ProcessMessages;
+    until QT.fTerminated;
 
+    if QT.Error then
+      ShowMessage(QT.ErrorMsg)
+    else
+    begin
+      // Call OnCommit procedure if assigned, it is used to refresh table management view
+      if OnCommit <> nil then
+        OnCommit(self);
+      OnCommit:= nil;
+    end;
+
+  finally
+    QT.Free;
   end;
-  QT.Free;
 end;
 
 procedure TfmQueryWindow.tbHistoryClick(Sender: TObject);
@@ -758,30 +770,34 @@ begin
   RemoveControls;
   ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create('rollback');
-  QT.Trans:= SqlTrans;
-  ATab.ImageIndex:= 6;
-  QT.Resume;
-  repeat
-    application.ProcessMessages;
-  until QT.fTerminated;
+  try
+    QT.Trans:= SqlTrans;
+    ATab.ImageIndex:= 6;
+    QT.Resume;
+    repeat
+      application.ProcessMessages;
+    until QT.fTerminated;
 
-  if QT.Error then
-  begin
-    ATab.ImageIndex:= 3;
-    meResult.Lines.Text:= QT.ErrorMsg;
-    meResult.Font.Color:= clRed;
-  end
-  else
-  begin
-    ATab.ImageIndex:= 4;
-    meResult.Lines.Add('Rollback');
-    meResult.Font.Color:= clGreen;
-    if OnCommit <> nil then
-      OnCommit(self);
-    OnCommit:= nil;
-    meResult.Font.Color:= $AA6666;
+    if QT.Error then
+    begin
+      ATab.ImageIndex:= 3;
+      meResult.Lines.Text:= QT.ErrorMsg;
+      meResult.Font.Color:= clRed;
+    end
+    else
+    begin
+      ATab.ImageIndex:= 4;
+      meResult.Lines.Add('Rollback');
+      meResult.Font.Color:= clGreen;
+      if OnCommit <> nil then
+        OnCommit(self);
+      OnCommit:= nil;
+      meResult.Font.Color:= $AA6666;
+    end;
+
+  finally
+    QT.Free;
   end;
-  QT.Free;
 end;
 
 procedure TfmQueryWindow.tbRollbackRetainingClick(Sender: TObject);
@@ -789,14 +805,19 @@ var
   QT: TQueryThread;
 begin
   QT:= TQueryThread.Create('rollbackret');
-  QT.Trans:= SqlTrans;
-  QT.Resume;
-  repeat
-    application.ProcessMessages;
-  until QT.fTerminated or (fCanceled);
-  if QT.Error then
-    ShowMessage(QT.ErrorMsg);
-  QT.Free;
+  try
+    QT.Trans:= SqlTrans;
+
+    QT.Resume;
+    repeat
+      application.ProcessMessages;
+    until QT.fTerminated or (fCanceled);
+    if QT.Error then
+      ShowMessage(QT.ErrorMsg);
+
+  finally
+    QT.Free;
+  end;
 
 end;
 
@@ -859,43 +880,47 @@ var
   StartPos, EndPos: Integer;
 begin
   List:= TStringList.Create;
-  List.Text:= AQuery;
+  try
+    List.Text:= AQuery;
 
-  Result:= 2; // Default Execute
+    Result:= 2; // Default Execute
 
-  for i:= 0 to List.Count - 1 do
-  begin
-    Line:= List[i];
-    // Remove comments
-    if Pos('--', Line) > 0 then
-      Line:= Copy(Line, 1, Pos('--', Line) - 1);
-    if (Pos('/*', Line) > 0) and (Pos('*/', Line) > 0) then
+    for i:= 0 to List.Count - 1 do
     begin
-      StartPos:= (Pos('/*', Line));
-      EndPos:= (Pos('*/', Line));
-      Delete(Line, StartPos, EndPos - StartPos + 1);
+      Line:= List[i];
+      // Remove comments
+      if Pos('--', Line) > 0 then
+        Line:= Copy(Line, 1, Pos('--', Line) - 1);
+      if (Pos('/*', Line) > 0) and (Pos('*/', Line) > 0) then
+      begin
+        StartPos:= (Pos('/*', Line));
+        EndPos:= (Pos('*/', Line));
+        Delete(Line, StartPos, EndPos - StartPos + 1);
+      end;
+
+      if (Pos('select', LowerCase(Trim(Line))) = 1) then
+      begin
+        Result:= 1; // Selectable
+        Break;
+      end
+      else
+      if Pos('setterm', LowerCase(StringReplace(Line, ' ', '', [rfReplaceAll]))) = 1 then
+      begin
+        Result:= 3;
+        Break;
+      end;
+
+      if Trim(Line) <> '' then
+      begin
+        Result:= 2; // Executable
+        Break;
+      end;
+
     end;
 
-    if (Pos('select', LowerCase(Trim(Line))) = 1) then
-    begin
-      Result:= 1; // Selectable
-      Break;
-    end
-    else
-    if Pos('setterm', LowerCase(StringReplace(Line, ' ', '', [rfReplaceAll]))) = 1 then
-    begin
-      Result:= 3;
-      Break;
-    end;
-
-    if Trim(Line) <> '' then
-    begin
-      Result:= 2; // Executable
-      Break;
-    end;
-
+  finally
+    List.Free;
   end;
-  List.Free;
 end;
 
 function TfmQueryWindow.GetQuery: string;
@@ -1517,12 +1542,12 @@ end;
 
 procedure TfmQueryWindow.FormCreate(Sender: TObject);
 var
-F:TextFile;
-str:string;
+  F:TextFile;
+  str:string;
 begin
-  if FileExists('querycomplition.txt') then
+  if FileExists('querycompletion.txt') then
   begin
-    AssignFile(F,'querycomplition.txt');
+    AssignFile(F,'querycompletion.txt');
     Reset(F);
     while not EOF(F) do
     begin
@@ -1532,7 +1557,10 @@ begin
     CloseFile(F);
   end
   else
+  begin
     SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
+    SynCompletion1.ItemList.SaveToFile('querycompletion.txt');
+  end;
 
 end;
 
