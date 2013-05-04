@@ -203,7 +203,6 @@ type
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
     procedure QueryAfterScroll(DataSet: TDataSet);
     procedure CallExecuteQuery(aQueryType: Integer);
-    procedure sortsyncompletion;
     procedure ThreadTerminated(Sender: TObject);
     procedure EnableButtons;
 
@@ -869,7 +868,6 @@ begin
   // Get current database tables to be hilighted in SQL query editor
   SynSQLSyn1.TableNames.CommaText:= fmMain.GetTableNames(dbIndex);
   SynCompletion1.ItemList.AddStrings(SynSQLSyn1.TableNames);
-  sortsyncompletion;
 end;
 
 (************* Is Selectable (Check statement type Select, Update, Alter, etc) *******************)
@@ -1563,7 +1561,7 @@ begin
     SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
     SynCompletion1.ItemList.SaveToFile('querycompletion.txt');
   end;
-    sortsyncompletion;
+
 end;
 
 procedure TfmQueryWindow.FormShow(Sender: TObject);
@@ -1885,20 +1883,6 @@ begin
     ExecuteQuery;
   until fFinished;
   EnableButtons;
-end;
-
-procedure TfmQueryWindow.sortsyncompletion;
-var
-  sortinglis:TStringList;
-  i:Integer;
-begin
-  sortinglis:=TStringList.Create;
-    for i:=0 to SynCompletion1.ItemList.Count-1 do
-        sortinglis.Add(SynCompletion1.ItemList.Strings[i]);
-    sortinglis.Sort;
-    SynCompletion1.ItemList.Clear;
-    for i:=0 to sortinglis.Count-1 do
-    SynCompletion1.ItemList.Add(sortinglis.Strings[i]);
 end;
 
 procedure TfmQueryWindow.ThreadTerminated(Sender: TObject);
