@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, IBConnection, sqldb, db, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg, sqlscript,
-  SynEditTypes, Clipbrd, grids, DbCtrls;
+  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType;
 
 type
 
@@ -79,6 +79,7 @@ type
     SaveDialog1: TSaveDialog;
     Splitter1: TSplitter;
     meQuery: TSynEdit;
+    SynCompletion1: TSynCompletion;
     SynSQLSyn1: TSynSQLSyn;
     ToolBar1: TToolBar;
     tbNew: TToolButton;
@@ -99,6 +100,7 @@ type
     procedure DBGridTitleClick(column: TColumn);
     procedure FindDialog1Find(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure lmCloseTabClick(Sender: TObject);
     procedure lmCommaDelemitedClick(Sender: TObject);
@@ -123,6 +125,9 @@ type
 
     procedure SQLScript1Exception(Sender: TObject; Statement: TStrings;
       TheException: Exception; var Continue: boolean);
+    procedure SynCompletion1CodeCompletion(var Value: string;
+      SourceValue: string; var SourceStart, SourceEnd: TPoint;
+      KeyChar: TUTF8Char; Shift: TShiftState);
     procedure tbCloseClick(Sender: TObject);
     procedure tbCommitClick(Sender: TObject);
     procedure tbCommitRetainingClick(Sender: TObject);
@@ -632,6 +637,13 @@ procedure TfmQueryWindow.SQLScript1Exception(Sender: TObject;
   Statement: TStrings; TheException: Exception; var Continue: boolean);
 begin
   ShowMessage(TheException.Message);
+end;
+
+procedure TfmQueryWindow.SynCompletion1CodeCompletion(var Value: string;
+  SourceValue: string; var SourceStart, SourceEnd: TPoint; KeyChar: TUTF8Char;
+  Shift: TShiftState);
+begin
+  SynCompletion1.Deactivate;
 end;
 
 procedure TfmQueryWindow.tbCloseClick(Sender: TObject);
@@ -1500,6 +1512,21 @@ begin
   end;
   IBConnection.Close;
   CloseAction:= caFree;
+end;
+
+procedure TfmQueryWindow.FormCreate(Sender: TObject);
+var
+F:TextFile;
+str:string;
+begin
+  AssignFile(F,'querycomplition.txt');
+  Reset(F);
+  while not EOF(F) do
+  begin
+    ReadLn(F,str);
+  SynCompletion1.ItemList.Add(str);
+  end;
+  CloseFile(F);
 end;
 
 procedure TfmQueryWindow.FormShow(Sender: TObject);
