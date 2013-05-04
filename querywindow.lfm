@@ -14,7 +14,7 @@ object fmQueryWindow: TfmQueryWindow
   OnShow = FormShow
   PopupMenu = pmTab
   Position = poScreenCenter
-  LCLVersion = '1.0.2.0'
+  LCLVersion = '1.0.8.0'
   object Panel1: TPanel
     Left = 0
     Height = 60
@@ -783,7 +783,7 @@ object fmQueryWindow: TfmQueryWindow
       object TSynGutterSeparator
         Width = 2
         MouseActions = <>
-	MarkupInfo.Background = clWhite
+        MarkupInfo.Background = clWhite
         MarkupInfo.Foreground = clGray
       end
       object TSynGutterCodeFolding

@@ -846,6 +846,7 @@ begin
 
   // Get current database tables to be hilighted in SQL query editor
   SynSQLSyn1.TableNames.CommaText:= fmMain.GetTableNames(dbIndex);
+  SynCompletion1.ItemList.AddStrings(SynSQLSyn1.TableNames);
 end;
 
 (************* Is Selectable (Check statement type Select, Update, Alter, etc) *******************)
@@ -1519,14 +1520,20 @@ var
 F:TextFile;
 str:string;
 begin
-  AssignFile(F,'querycomplition.txt');
-  Reset(F);
-  while not EOF(F) do
+  if FileExists('querycomplition.txt') then
   begin
-    ReadLn(F,str);
-  SynCompletion1.ItemList.Add(str);
-  end;
-  CloseFile(F);
+    AssignFile(F,'querycomplition.txt');
+    Reset(F);
+    while not EOF(F) do
+    begin
+      ReadLn(F,str);
+      SynCompletion1.ItemList.Add(str);
+    end;
+    CloseFile(F);
+  end
+  else
+    SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
+
 end;
 
 procedure TfmQueryWindow.FormShow(Sender: TObject);
