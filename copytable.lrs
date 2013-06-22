@@ -1,5 +1,3 @@
-{ This is an automatically generated lazarus resource file }
-
 LazarusResources.Add('TfmCopyTable','FORMDATA',[
   'TPF0'#12'TfmCopyTable'#11'fmCopyTable'#4'Left'#3'`'#1#6'Height'#3#253#1#3'To'
   +'p'#3#207#0#5'Width'#3'b'#2#7'Caption'#6#10'Copy Table'#12'ClientHeight'#3

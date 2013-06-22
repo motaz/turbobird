@@ -1547,14 +1547,8 @@ var
   F:TextFile;
   str:string;
 begin
-  if FileExists('querycompletion.txt') then
-    SynCompletion1.ItemList.LoadFromFile('querycompletion.txt')
-  else
-  begin
-    SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
-    SynCompletion1.ItemList.SaveToFile('querycompletion.txt');
-  end;
-      sortsyncompletion;
+  SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
+  Sortsyncompletion;
 end;
 
 procedure TfmQueryWindow.FormShow(Sender: TObject);

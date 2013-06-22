@@ -1,5 +1,3 @@
-{ This is an automatically generated lazarus resource file }
-
 LazarusResources.Add('TfmCreateDB','FORMDATA',[
   'TPF0'#11'TfmCreateDB'#10'fmCreateDB'#4'Left'#3#151#1#6'Height'#3#11#1#3'Top'
   +#3#201#0#5'Width'#3#225#1#13'ActiveControl'#7#8'btBrowse'#7'Caption'#6#28'Cr'

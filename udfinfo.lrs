@@ -1,5 +1,3 @@
-{ This is an automatically generated lazarus resource file }
-
 LazarusResources.Add('TfmUDFInfo','FORMDATA',[
   'TPF0'#10'TfmUDFInfo'#9'fmUDFInfo'#4'Left'#3'J'#1#6'Height'#3#21#1#3'Top'#3
   +#216#0#5'Width'#3#233#1#13'ActiveControl'#7#6'meBody'#7'Caption'#6#9'fmUDFIn'
