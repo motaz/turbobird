@@ -178,8 +178,6 @@ type
     procedure RemoveAllSingleLineComments(QueryList: TStringList);
     procedure removeEmptyLines(QueryList: TStringList;
       var SecondRealStart: Integer; const RealStartLine: Integer);
-    procedure StartEdit(Sender: TObject; const Field: TField;
-      var Value: string);
     procedure InsertModifiedRecord(RecordNo, TabIndex: Integer);
     procedure ApplyClick(Sender: TObject);
     procedure EnableApplyButton;
@@ -219,6 +217,9 @@ implementation
 
 uses main, SQLHistory;
 
+
+{ NewCommitButton: Create commit button for editable query result }
+
 procedure TfmQueryWindow.NewCommitButton(const Pan: TPanel; var ATab: TTabSheet);
 var
   Commit: TBitBtn;
@@ -232,6 +233,9 @@ begin
   Commit.Tag:= ATab.TabIndex;
   AddResultControl(ATab, Commit);
 end;
+
+
+{ RemoveComments: Remove comments from Query window }
 
 procedure TfmQueryWindow.RemoveComments(QueryList: TStringList; StartLine: Integer; var RealStartLine: Integer);
 var
@@ -274,6 +278,9 @@ begin
   end;
 end;
 
+
+{ RemoveAllSingleLineComments: remove single line comments from query }
+
 procedure TfmQueryWindow.RemoveAllSingleLineComments(QueryList: TStringList);
 var
   i: Integer;
@@ -289,7 +296,10 @@ begin
 
 end;
 
-procedure TfmQueryWindow.removeEmptyLines(QueryList: TStringList; var SecondRealStart: Integer;
+
+{ RemoveEmptyLines: remove empty lines in query }
+
+procedure TfmQueryWindow.RemoveEmptyLines(QueryList: TStringList; var SecondRealStart: Integer;
   const RealStartLine: Integer);
 var
   i: integer;
@@ -306,16 +316,17 @@ end;
 
 { TQueryThread }
 
+
+{ FinishCellEditing: Insert current been edited record in ModifiedRecords array }
+
 procedure TfmQueryWindow.FinishCellEditing(DataSet: TDataSet);
 begin
   InsertModifiedRecord(Dataset.RecNo, PageControl1.TabIndex);
 end;
 
-procedure TfmQueryWindow.StartEdit(Sender: TObject; const Field: TField;
-  var Value: string);
-begin
-  ShowMessage('Editing started: ' + Value);
-end;
+
+
+{ InsertMOdifiedRecord: insert modified query record in ModifiedRecords array }
 
 procedure TfmQueryWindow.InsertModifiedRecord(RecordNo, TabIndex: Integer);
 var
@@ -349,6 +360,9 @@ begin
   end;
 
 end;
+
+
+{ ApplyClick: Save Updates for the query }
 
 procedure TfmQueryWindow.ApplyClick(Sender: TObject);
 var
@@ -468,6 +482,9 @@ begin
 
 end;
 
+
+{ EnableApplyButton: enable save updates button when records has been modified }
+
 procedure TfmQueryWindow.EnableApplyButton;
 var
   i: Integer;
@@ -481,6 +498,9 @@ begin
   end;
 end;
 
+
+{ EnableCommitButton: enable commit button after applying updates }
+
 procedure TfmQueryWindow.EnableCommitButton;
 var
   i: Integer;
@@ -493,6 +513,9 @@ begin
     Break;
   end;
 end;
+
+
+{ GetTableName: get table name from query text }
 
 function TfmQueryWindow.GetTableName(SQLText: string): string;
 begin
@@ -514,6 +537,9 @@ begin
 
 end;
 
+
+{ GetCurrentSQLText: return current SQL query text }
+
 function TfmQueryWindow.GetCurrentSQLText: string;
 var
   i: Integer;
@@ -527,11 +553,17 @@ begin
 
 end;
 
+
+{ CommitResultClick: commit current transaction }
+
 procedure TfmQueryWindow.CommitResultClick(Sender: TObject);
 begin
   SqlTrans.CommitRetaining;
   (Sender as TBitBtn).Visible:= False;
 end;
+
+
+{ GetRecordSet: return result recordset of a page tab }
 
 function TfmQueryWindow.GetRecordSet(TabIndex: Integer): TSQLQuery;
 var
@@ -546,6 +578,9 @@ begin
 
 end;
 
+
+{ GetQuerySQLType: get query type: select, script, execute from current string list }
+
 function TfmQueryWindow.getQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): Integer;
 var
   SQLSegment: string;
@@ -558,8 +593,7 @@ begin
     if (Pos('select', LowerCase(Trim(SQLSegment))) = 1) then
       Result:= 1 // Selectable
     else
-    if Pos('setterm', LowerCase(StringReplace(SQLSegment, ' ', '', [rfReplaceAll
-      ]))) = 1 then
+    if Pos('setterm', LowerCase(StringReplace(SQLSegment, ' ', '', [rfReplaceAll]))) = 1 then
       Result:= 3 // Script
     else
     begin
@@ -570,6 +604,9 @@ begin
     end;
   end;
 end;
+
+
+{ DoJob: Execute thread job: open query, execute, commit, rollback, etc }
 
 procedure TQueryThread.DoJob;
 begin
@@ -609,6 +646,9 @@ begin
 
 end;
 
+
+{ Execute: Query thread main loop }
+
 procedure TQueryThread.Execute;
 begin
   try
@@ -627,6 +667,9 @@ begin
   end;
 end;
 
+
+{ Create query thread }
+
 constructor TQueryThread.Create(aType: string);
 begin
   inherited Create(True);
@@ -634,11 +677,15 @@ begin
   FreeOnTerminate:= False;
 end;
 
+
+{ Display SQL script exception message }
+
 procedure TfmQueryWindow.SQLScript1Exception(Sender: TObject;
   Statement: TStrings; TheException: Exception; var Continue: boolean);
 begin
   ShowMessage(TheException.Message);
 end;
+
 
 procedure TfmQueryWindow.SynCompletion1CodeCompletion(var Value: string;
   SourceValue: string; var SourceStart, SourceEnd: TPoint; KeyChar: TUTF8Char;
@@ -647,11 +694,17 @@ begin
   SynCompletion1.Deactivate;
 end;
 
+
+{ Close button pressed: close current Query window and free parent page tab }
+
 procedure TfmQueryWindow.tbCloseClick(Sender: TObject);
 begin
   Close;
   Parent.Free;
 end;
+
+
+{ Commit current transaction }
 
 procedure TfmQueryWindow.tbCommitClick(Sender: TObject);
 var
@@ -698,6 +751,9 @@ begin
 
 end;
 
+
+{ Commit retaining for current transaction }
+
 procedure TfmQueryWindow.tbCommitRetainingClick(Sender: TObject);
 var
   QT: TQueryThread;
@@ -727,16 +783,25 @@ begin
   end;
 end;
 
+
+{HistoryClick: show SQL history form }
+
 procedure TfmQueryWindow.tbHistoryClick(Sender: TObject);
 begin
   fmSQLHistory.Init(RegRec.Title, Self);
   fmSQLHistory.Show;
 end;
 
+
+{ Display popup menu }
+
 procedure TfmQueryWindow.tbMenuClick(Sender: TObject);
 begin
   pmTab.PopUp;
 end;
+
+
+{ display New SQL Window tab }
 
 procedure TfmQueryWindow.tbNewClick(Sender: TObject);
 var
@@ -753,12 +818,18 @@ begin
   end;
 end;
 
+
+{ Read SQL query from text file }
+
 procedure TfmQueryWindow.tbOpenClick(Sender: TObject);
 begin
   OpenDialog1.DefaultExt:= '.sql';
   if OpenDialog1.Execute then
     meQuery.Lines.LoadFromFile(OpenDialog1.FileName);
 end;
+
+
+{ RollBack current transaction }
 
 procedure TfmQueryWindow.tbRollbackClick(Sender: TObject);
 var
@@ -801,6 +872,9 @@ begin
   end;
 end;
 
+
+{ Rollback retaning for current transaction }
+
 procedure TfmQueryWindow.tbRollbackRetainingClick(Sender: TObject);
 var
   QT: TQueryThread;
@@ -822,10 +896,16 @@ begin
 
 end;
 
+
+{ Run current SQL, 0 for auto-detect type }
+
 procedure TfmQueryWindow.tbRunClick(Sender: TObject);
 begin
   CallExecuteQuery(0);
 end;
+
+
+{ Save current SQL in a text file }
 
 procedure TfmQueryWindow.tbSaveClick(Sender: TObject);
 begin
@@ -833,6 +913,9 @@ begin
   if SaveDialog1.Execute then
     meQuery.Lines.SaveToFile(SaveDialog1.FileName);
 end;
+
+
+{GetNewTabNum: get last tab number and increase result by one }
 
 function TfmQueryWindow.GetNewTabNum: string;
 var
@@ -845,6 +928,9 @@ begin
    Inc(Cnt);
   Result:= IntToStr(Cnt);
 end;
+
+
+{ Initialize query window: fill connection parameters from selected registered database }
 
 procedure TfmQueryWindow.Init(dbIndex: Integer);
 begin
@@ -925,12 +1011,18 @@ begin
   end;
 end;
 
+
+{ GetQuery: get query text from editor }
+
 function TfmQueryWindow.GetQuery: string;
 begin
   Result:= meQuery.SelText;
   if Result = '' then
     Result:= meQuery.Lines.Text;
 end;
+
+
+{ Create new result tab depending on query type }
 
 function TfmQueryWindow.CreateResultTab(QueryType: Byte;
   var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript; var meResult: TMemo;
@@ -983,7 +1075,6 @@ begin
     DBGrid.Align:= alClient;
     DBGrid.OnDblClick:= @DBGrid1DblClick;
 
-    DBGrid.OnFieldEditMask:= @StartEdit;
     DBGrid.Tag:= ATab.TabIndex;
     DBGrid.ReadOnly:= False;
     DBGrid.AutoEdit:= True;
@@ -1287,6 +1378,9 @@ begin
 
 end;
 
+
+{ Execute script }
+
 function TfmQueryWindow.ExecuteScript(Script: string): Boolean;
 var
   StartTime: TDateTime;
@@ -1327,6 +1421,9 @@ begin
   end;
 end;
 
+
+{ AddResultControl: add new tab for query part result in current Query window }
+
 procedure TfmQueryWindow.AddResultControl(ParentControl: TObject; AControl: TObject);
 begin
   SetLength(ResultControls, Length(ResultControls) + 1);
@@ -1334,6 +1431,9 @@ begin
   ResultControls[High(ParentResultControls)]:= AControl;
   ParentResultControls[High(ParentResultControls)]:= ParentControl;
 end;
+
+
+{ Display new Save/Apply button for current query result been edited }
 
 procedure TfmQueryWindow.NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
 var
@@ -1348,6 +1448,9 @@ begin
   Apply.Tag:= ATab.TabIndex;
   AddResultControl(ATab, Apply);
 end;
+
+
+{ Remove all run-time controls from current Query window }
 
 procedure TfmQueryWindow.RemoveControls;
 var
@@ -1371,6 +1474,9 @@ begin
   SetLength(ParentResultControls, 0);
 end;
 
+
+{ FindSQLQuery: Return current TSQLQuery component from current query window }
+
 function TfmQueryWindow.FindSqlQuery: TSqlQuery;
 var
   i: Integer;
@@ -1389,6 +1495,9 @@ begin
 
 end;
 
+
+{ GetSQLType: get SQL type of current SQL text }
+
 function TfmQueryWindow.GetSQLType(Query: string; var Command: string): string;
 begin
   Query:= Trim(Query);
@@ -1403,6 +1512,9 @@ begin
       Result:= 'DML';
   end;
 end;
+
+
+{ GetSQLSeqment: read part of SQL end by ; }
 
 function TfmQueryWindow.GetSQLSegment(QueryList: TStringList; StartLine: Integer; var QueryType, EndLine: Integer;
   var SQLSegment: string; var IsDDL: Boolean): Boolean;
@@ -1475,11 +1587,16 @@ begin
 end;
 
 
+
+{ Run query, 0 for auto-detect query type }
+
 procedure TfmQueryWindow.bbRunClick(Sender: TObject);
 begin
   CallExecuteQuery(0);
 end;
 
+
+{ Display Blob contents in a message box }
 
 procedure TfmQueryWindow.DBGrid1DblClick(Sender: TObject);
 begin
@@ -1488,6 +1605,9 @@ begin
   else
     ShowMessage((Sender as TDBGrid).SelectedField.KeyFields);
 end;
+
+
+{ Sort by columns }
 
 procedure TfmQueryWindow.DBGridTitleClick(column: TColumn);
 var
@@ -1504,6 +1624,9 @@ begin
     SqlQuery.IndexFieldNames := Column.Field.FieldName
 
 end;
+
+
+{ Find text }
 
 procedure TfmQueryWindow.FindDialog1Find(Sender: TObject);
 begin
@@ -1525,6 +1648,8 @@ begin
 end;
 
 
+{ QueryWindow onClose event, commit active transaction, remove controls }
+
 procedure TfmQueryWindow.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
@@ -1542,6 +1667,9 @@ begin
   CloseAction:= caFree;
 end;
 
+
+{ Initialize auto-completion text in QueryWindow OnCreate event }
+
 procedure TfmQueryWindow.FormCreate(Sender: TObject);
 var
   F:TextFile;
@@ -1551,10 +1679,16 @@ begin
   Sortsyncompletion;
 end;
 
+
+{ focus on Query SQL window editor on form show }
+
 procedure TfmQueryWindow.FormShow(Sender: TObject);
 begin
   meQuery.SetFocus;
 end;
+
+
+{ Close current Query window }
 
 procedure TfmQueryWindow.lmCloseTabClick(Sender: TObject);
 begin
@@ -1566,6 +1700,8 @@ begin
   end;
 end;
 
+
+{ Save query result in a comma delemited file }
 
 procedure TfmQueryWindow.lmCommaDelemitedClick(Sender: TObject);
 var
@@ -1616,6 +1752,9 @@ begin
 
 end;
 
+
+{ Copy query result in Clipboard }
+
 procedure TfmQueryWindow.lmCopyAllClick(Sender: TObject);
 var
    Grid: TDBGrid;
@@ -1663,31 +1802,47 @@ begin
   grid.DataSource.DataSet.EnableControls;
 end;
 
+
+{ Copy cell in clipboard }
+
 procedure TfmQueryWindow.lmCopyCellClick(Sender: TObject);
 begin
   Clipboard.AsText:= TdbGrid(pmGrid.PopupComponent).SelectedField.AsString;
 end;
+
+
+{ Copy query text into clipboard }
 
 procedure TfmQueryWindow.lmCopyClick(Sender: TObject);
 begin
   meQuery.CopyToClipboard;
 end;
 
+
+{ Cut query text into clipboard}
+
 procedure TfmQueryWindow.lmCutClick(Sender: TObject);
 begin
   meQuery.CutToClipboard;
 end;
+
+
+{ Export to comma delimeted file }
 
 procedure TfmQueryWindow.lmExportAsCommaClick(Sender: TObject);
 begin
   lmCommaDelemitedClick(nil);
 end;
 
+{ Export as HTML }
+
 procedure TfmQueryWindow.lmExportAsHTMLClick(Sender: TObject);
 begin
   lmHTMLClick(nil);
 end;
 
+
+{ Save query result as HTML }
 
 procedure TfmQueryWindow.lmHTMLClick(Sender: TObject);
 var
@@ -1744,35 +1899,55 @@ end;
 
 
 
+{ Paste from clipboard into SQL editor }
+
 procedure TfmQueryWindow.lmPasteClick(Sender: TObject);
 begin
   meQuery.PasteFromClipboard;
 end;
+
+
+{ SQL Editor Redo }
 
 procedure TfmQueryWindow.lmRedoClick(Sender: TObject);
 begin
   meQuery.Redo;
 end;
 
+
+{ Run Query, auto type detection }
+
 procedure TfmQueryWindow.lmRunClick(Sender: TObject);
 begin
   CallExecuteQuery(0);
 end;
+
+
+{ Run query and force its type as executable statement}
 
 procedure TfmQueryWindow.lmRunExecClick(Sender: TObject);
 begin
   CallExecuteQuery(2);
 end;
 
+
+{ Run query, and fore its type as script }
+
 procedure TfmQueryWindow.lmRunScriptClick(Sender: TObject);
 begin
   CallExecuteQuery(3);
 end;
 
+
+{ Run query, force its type as select statement }
+
 procedure TfmQueryWindow.lmRunSelectClick(Sender: TObject);
 begin
   CallExecuteQuery(1);
 end;
+
+
+{ select all in SQL Editor }
 
 procedure TfmQueryWindow.lmSelectAllClick(Sender: TObject);
 begin
@@ -1780,21 +1955,31 @@ begin
 end;
 
 
+{ SQL Editor undo }
+
 procedure TfmQueryWindow.lmUndoClick(Sender: TObject);
 begin
   meQuery.Undo;
 end;
 
 
+{ Search in SQL Editor }
+
 procedure TfmQueryWindow.lmFindClick(Sender: TObject);
 begin
   FindDialog1.Execute;
 end;
 
+
+{ Find again }
+
 procedure TfmQueryWindow.lmFindAgainClick(Sender: TObject);
 begin
   meQuery.SearchReplace(FindDialog1.FindText, '', fOptions);
 end;
+
+
+{ Run query by pressing Ktrl + Enter }
 
 procedure TfmQueryWindow.meQueryKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
@@ -1807,6 +1992,8 @@ begin
   end;
 end;
 
+
+{ Scrolling in query result recordset }
 
 procedure TfmQueryWindow.QueryAfterScroll(DataSet: TDataSet);
 var
@@ -1837,6 +2024,9 @@ begin
   end;
 
 end;
+
+
+{ Execute query according to passed query ype }
 
 procedure TfmQueryWindow.CallExecuteQuery(aQueryType: Integer);
 begin
@@ -1872,6 +2062,9 @@ begin
   EnableButtons;
 end;
 
+
+{ sort auto completion options }
+
 procedure TfmQueryWindow.sortsyncompletion;
 var
   sortinglis:TStringList;
@@ -1886,6 +2079,9 @@ begin
     SynCompletion1.ItemList.Add(sortinglis.Strings[i]);
 
 end;
+
+
+{ SQL thread termination }
 
 procedure TfmQueryWindow.ThreadTerminated(Sender: TObject);
 begin
@@ -1919,6 +2115,8 @@ begin
     ExecuteQuery;
 
 end;
+
+{ Enable SQL buttons: Run, Commit, Rollbak after thread termination }
 
 procedure TfmQueryWindow.EnableButtons;
 begin

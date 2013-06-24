@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      : 22.Jun.2013                                          }
+{  Last updated      : 24.Jun.2013                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
@@ -27,7 +27,7 @@ uses
 const
   Major = 0;
   Minor = 9;
-  Release = 11;
+  Release = 12;
 
   VersionDate = '2010 - June 2013';
 {$IFDEF Unix}
@@ -49,6 +49,8 @@ var
 begin
   Application.Initialize;
   IBaseLibraryHandle:= LoadLibrary(fbclib);
+
+  // search for all compatible FireBird libraries in Windows
   {$IFDEF Windows}
   if IBaseLibraryHandle = NilHandle then
     IBaseLibraryHandle:= LoadLibrary(seclib);
