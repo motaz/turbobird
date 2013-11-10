@@ -855,6 +855,7 @@ begin
   ibConnection:= TIBConnection.Create(nil);
   SqlTrans:= TSQLTransaction.Create(nil);
   SqlTrans.DataBase:= ibConnection;
+  SqlTrans.Params.Add('isc_tpb_read_commited');
 
   // Set connection parameters to IBConnection
   with fmMain.RegisteredDatabases[dbIndex] do

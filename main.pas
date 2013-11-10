@@ -3824,6 +3824,7 @@ begin
             Index:= FilePos(F) - 1;
             IBConnection:= TIBConnection.Create(nil);
             SQLTrans:= TSQLTransaction.Create(nil);
+            SQLTrans.Params.Add('isc_tpb_read_commited');
             IBConnection.Transaction:= SQLTrans;
             SQLTrans.DataBase:= IBConnection;
             IBConnection.DatabaseName:= Rec.DatabaseName;
