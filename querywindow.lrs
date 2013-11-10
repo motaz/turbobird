@@ -6,7 +6,11 @@ LazarusResources.Add('TfmQueryWindow','FORMDATA',[
   +'fmQueryWindow'#12'ClientHeight'#3'Y'#2#11'ClientWidth'#3#208#2#5'Color'#7#6
   +'clForm'#4'Menu'#7#9'MainMenu1'#7'OnClose'#7#9'FormClose'#8'OnCreate'#7#10'F'
   +'ormCreate'#6'OnShow'#7#8'FormShow'#9'PopupMenu'#7#5'pmTab'#8'Position'#7#14
+<<<<<<< HEAD
   +'poScreenCenter'#10'LCLVersion'#6#8'1.0.12.0'#0#6'TPanel'#6'Panel1'#4'Left'#2
+=======
+  +'poScreenCenter'#10'LCLVersion'#6#8'1.0.10.0'#0#6'TPanel'#6'Panel1'#4'Left'#2
+>>>>>>> 0947e5f7346cf9e3551b602a5e5ebf7ca64098aa
   +#0#6'Height'#2'<'#3'Top'#2#0#5'Width'#3#208#2#5'Align'#7#5'alTop'#12'ClientH'
   +'eight'#2'<'#11'ClientWidth'#3#208#2#5'Color'#7#6'clForm'#11'ParentColor'#8#8
   +'TabOrder'#2#1#0#7'TBitBtn'#7'bbClose'#4'Left'#3#180#2#6'Height'#2#24#3'Top'

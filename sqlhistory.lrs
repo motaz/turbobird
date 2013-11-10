@@ -1,5 +1,3 @@
-{ This is an automatically generated lazarus resource file }
-
 LazarusResources.Add('TfmSQLHistory','FORMDATA',[
   'TPF0'#13'TfmSQLHistory'#12'fmSQLHistory'#4'Left'#3#207#1#6'Height'#3#236#1#3
   +'Top'#3'%'#1#5'Width'#3'i'#3#7'Caption'#6#11'SQL History'#12'ClientHeight'#3
