@@ -940,8 +940,8 @@ begin
   // Initialize new instance of IBConnection and SQLTransaction to the current Query Window
   ibConnection:= TIBConnection.Create(nil);
   SqlTrans:= TSQLTransaction.Create(nil);
-  SqlTrans.DataBase:= ibConnection;
   SqlTrans.Params.Add('isc_tpb_read_commited');
+  SqlTrans.DataBase:= ibConnection;
 
   // Set connection parameters to IBConnection
   with fmMain.RegisteredDatabases[dbIndex] do
