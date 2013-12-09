@@ -252,6 +252,12 @@ type
     function SaveAndCloseSQLHistory: Boolean;
     function OpenSQLHistory(DatabaseTitle: string): Boolean;
     function ConnectToDBAs(dbIndex: Integer): Boolean;
+    function IsLinux: Boolean;
+    function IsWindows: Boolean;
+    function IsUnix: Boolean;
+    function Is64bit: Boolean;
+    function Is32bit: Boolean;
+    function getConfigurationDirectory: string;
   end;
 
 var
@@ -700,6 +706,46 @@ begin
         Result:= True;
       end;
   end;
+end;
+
+function TfmMain.IsLinux: Boolean;
+begin
+  Result := Target = 'Linux';
+end;
+
+function TfmMain.IsWindows: Boolean;
+begin
+  Result := Target = 'Win';
+end;
+
+function TfmMain.IsUnix: Boolean;
+begin
+end;
+
+function TfmMain.Is64bit: Boolean;
+begin
+  result := Arch = '64';
+end;
+
+function TfmMain.Is32bit: Boolean;
+begin
+  result := Arch = '32';
+end;
+
+function TfmMain.getConfigurationDirectory: string;
+var
+  ConfigDir: string;
+begin
+  if IsLinux then
+  begin
+    ConfigDir:= GetEnvironmentVariable('HOME') + DirectorySeparator + '.turbobird' + DirectorySeparator;
+
+    if not DirectoryExists(ConfigDir) then
+      CreateDir(ConfigDir);
+    Result:= ConfigDir;
+  end
+  else
+    ExtractFilePath(ParamStr(0));
 end;
 
 (****************  Fill and show constraints form ************************)
@@ -1412,7 +1458,7 @@ var
   i: Integer;
 begin
   try
-    AFileName:= ExtractFilePath(ParamStr(0)) + LowerCase(RemoveSpecialChars(DatabaseTitle)) + '.history';
+    AFileName:= getConfigurationDirectory + LowerCase(RemoveSpecialChars(DatabaseTitle)) + '.history';
 
     // Different opened history file
     if mdsHistory.Active and (AFileName <> CurrentHistoryFile) then
@@ -3805,7 +3851,14 @@ begin
   try
     tvMain.Items.Clear;
     ReleaseRegisteredDatabases;
-    FileName:= ChangeFileExt(ParamStr(0), '.reg');
+    FileName:= getConfigurationDirectory + 'turbobird.reg';
+
+    // Copy old configuration file
+    if not FileExists(FileName) and (FileExists(ChangeFileExt(ParamStr(0), '.reg'))) then
+    begin
+      CopyFile(ChangeFileExt(ParamStr(0), '.reg'), FileName);
+    end;
+
     AssignFile(F, FileName);
     if FileExists(FileName) then
     begin
@@ -3965,20 +4018,21 @@ var
   FileName: string;
 begin
   Result:= False;
-    FileName:= ChangeFileExt(ParamStr(0), '.reg');
-    AssignFile(F, FileName);
-    if FileExists(FileName) then
-    begin
-      FileMode:= 2;
-      Reset(F);
-      Seek(F, Index);
-      Read(F, Rec);
-      Rec.Deleted:= True;
-      Seek(F, Index);
-      Write(F, Rec);
-      CloseFile(F);
-      Result:= True;
-    end;
+  FileName:= getConfigurationDirectory + 'turbobird.reg';
+
+  AssignFile(F, FileName);
+  if FileExists(FileName) then
+  begin
+    FileMode:= 2;
+    Reset(F);
+    Seek(F, Index);
+    Read(F, Rec);
+    Rec.Deleted:= True;
+    Seek(F, Index);
+    Write(F, Rec);
+    CloseFile(F);
+    Result:= True;
+  end;
 end;
 
 (**************  Get Firebird Type name  *****************)

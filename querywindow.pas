@@ -482,7 +482,6 @@ begin
 
 end;
 
-
 { EnableApplyButton: enable save updates button when records has been modified }
 
 procedure TfmQueryWindow.EnableApplyButton;
@@ -1449,7 +1448,6 @@ begin
   Apply.Tag:= ATab.TabIndex;
   AddResultControl(ATab, Apply);
 end;
-
 
 { Remove all run-time controls from current Query window }
 

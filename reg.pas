@@ -112,7 +112,9 @@ var
   FileName: string;
 begin
   try
-    FileName:= ChangeFileExt(ParamStr(0), '.reg');
+
+    FileName:= fmMain.getConfigurationDirectory + 'turbobird.reg';
+
     AssignFile(F, FileName);
     if FileExists(FileName) then
     begin
@@ -162,7 +164,8 @@ var
   FileName: string;
 begin
   try
-    FileName:= ChangeFileExt(ParamStr(0), '.reg');
+    FileName:= fmMain.getConfigurationDirectory + 'turbobird.reg';
+
     AssignFile(F, FileName);
     FileMode:= 2;
     Reset(F);
@@ -221,7 +224,9 @@ var
   F: file of TRegisteredDatabase;
 begin
   Result:= -1;
-  FileName:= ChangeFileExt(ParamStr(0), '.reg');
+
+  FileName:= fmMain.getConfigurationDirectory + 'turbobird.reg';
+
   AssignFile(F, FileName);
   if FileExists(FileName) then
   begin
@@ -247,8 +252,8 @@ var
 begin
   try
     Sort;
+    FileName:= fmMain.getConfigurationDirectory + 'turbobird.reg';
 
-    FileName:= ChangeFileExt(ParamStr(0), '.reg');
     AssignFile(F, FileName);
     FileMode:= 2;
     Rewrite(F);

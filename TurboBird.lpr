@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      : 10.Nov.2013                                          }
+{  Last updated      :  9.Dec.2013                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
@@ -29,7 +29,7 @@ const
   Minor = 9;
   Release = 12;
 
-  VersionDate = '2010 - Novumber 2013';
+  VersionDate = '2010 - December 2013';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
     fbclib = 'libfbclient.' + sharedsuffix;

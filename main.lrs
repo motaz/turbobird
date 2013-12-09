@@ -1,14 +1,16 @@
+{ This is an automatically generated lazarus resource file }
+
 LazarusResources.Add('TfmMain','FORMDATA',[
   'TPF0'#7'TfmMain'#6'fmMain'#4'Left'#3#244#0#6'Height'#3#128#2#3'Top'#3#139#0#5
   +'Width'#3#0#4#13'ActiveControl'#7#6'tvMain'#7'Caption'#6#28'TurboBird Admin '
   +'for FireBird'#12'ClientHeight'#3'i'#2#11'ClientWidth'#3#0#4#5'Color'#7#7'cl'
   +'White'#9'Font.Name'#6#4'Sans'#4'Menu'#7#9'MainMenu1'#10'OnActivate'#7#12'Fo'
   +'rmActivate'#7'OnClose'#7#9'FormClose'#8'OnCreate'#7#10'FormCreate'#8'Positi'
-  +'on'#7#14'poScreenCenter'#10'LCLVersion'#6#7'1.0.8.0'#0#9'TTreeView'#6'tvMai'
-  +'n'#4'Left'#2#0#6'Height'#3'T'#2#3'Top'#2#0#5'Width'#3'h'#1#5'Align'#7#6'alL'
-  +'eft'#15'BackgroundColor'#7#7'clWhite'#5'Color'#7#7'clCream'#13'HideSelectio'
-  +'n'#8#6'Images'#7#10'ImageList1'#6'Indent'#2#25#8'ReadOnly'#9#16'RightClickS'
-  +'elect'#9#9'ShowLines'#8#8'TabOrder'#2#0#10'OnDblClick'#7#14'tvMainDblClick'
+  +'on'#7#14'poScreenCenter'#10'LCLVersion'#6#8'1.0.14.0'#0#9'TTreeView'#6'tvMa'
+  +'in'#4'Left'#2#0#6'Height'#3'T'#2#3'Top'#2#0#5'Width'#3'h'#1#5'Align'#7#6'al'
+  +'Left'#15'BackgroundColor'#7#7'clWhite'#5'Color'#7#7'clCream'#13'HideSelecti'
+  +'on'#8#6'Images'#7#10'ImageList1'#6'Indent'#2#25#8'ReadOnly'#9#16'RightClick'
+  +'Select'#9#9'ShowLines'#8#8'TabOrder'#2#0#10'OnDblClick'#7#14'tvMainDblClick'
   +#10'OnExpanded'#7#14'tvMainExpanded'#7'Options'#11#17'tvoAutoItemHeight'#21
   +'tvoKeepCollapsedNodes'#11'tvoReadOnly'#19'tvoRightClickSelect'#14'tvoShowBu'
   +'ttons'#11'tvoShowRoot'#11'tvoToolTips'#0#15'ExpandSignColor'#7#8'clMaroon'#0
