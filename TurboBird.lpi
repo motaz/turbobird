@@ -243,10 +243,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="About"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="66"/>
-        <CursorPos X="66" Y="94"/>
+        <TopLine Value="67"/>
+        <CursorPos X="66" Y="95"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -1098,13 +1099,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Update"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="271"/>
+        <TopLine Value="1"/>
         <CursorPos X="40" Y="171"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit116>
       <Unit117>
         <Filename Value="querycomplition.txt"/>
@@ -1131,7 +1132,7 @@
         <UsageCount Value="10"/>
       </Unit119>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="querywindow.pas"/>
         <Caret Line="1725" Column="15" TopLine="1701"/>
@@ -1248,6 +1249,10 @@
         <Filename Value="main.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
       </Position29>
+      <Position30>
+        <Filename Value="about.pas"/>
+        <Caret Line="94" Column="66" TopLine="66"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

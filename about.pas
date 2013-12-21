@@ -39,6 +39,7 @@ type
 
   TfmAbout = class(TForm)
     BitBtn1: TBitBtn;
+    Image1: TImage;
     Image2: TImage;
     Label2: TLabel;
     Label5: TLabel;
