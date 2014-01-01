@@ -25,9 +25,9 @@ uses
   sysutils, Comparison, Update;
 
 const
-  Major = 0;
-  Minor = 9;
-  Release = 13;
+  Major = 1;
+  Minor = 0;
+  Release = 0;
 
   VersionDate = '2010 - January 2014';
 {$IFDEF Unix}

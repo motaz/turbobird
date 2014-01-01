@@ -79,7 +79,7 @@ end;
 
 procedure TfmAbout.Init;
 begin
-  laVersion.Caption:= 'Beta Version ' + fmMain.Version;
+  laVersion.Caption:= 'Version ' + fmMain.Version;
   laVersionDate.Caption:= fmMain.VersionDate;
   laTarget.Caption:= 'Target : ' + Target + '-' + Arch;
 end;
