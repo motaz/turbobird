@@ -69,6 +69,8 @@ type
 
     procedure GetTableFields(dbIndex: Integer; ATableName: string; FieldsList: TStringList);
 
+    function GetConstraintsOfTable(ATableName: string; var SqlQuery: TSQLQuery;
+      ConstraintsList: TStringList=nil): Boolean;
 
     { public declarations }
   end; 
@@ -283,6 +285,41 @@ begin
     '  and Refc.RDB$COnstraint_Name = Ind.RDB$Index_Name' +
     '  and Refc.RDB$COnstraint_Name = Seg.RDB$Index_Name' +
     '  and Ind.RDB$Relation_Name = ''' + UpperCase(ATableName) + '''';
+  SqlQuery.Open;
+  Result:= SqlQuery.RecordCount > 0;
+  with SqlQuery do
+  if Result and Assigned(ConstraintsList) then
+  begin
+    ConstraintsList.Clear;
+    while not Eof do
+    begin
+      ConstraintsList.Add(FieldByName('ConstName').AsString);
+      Next;
+    end;
+    First;
+  end;
+
+end;
+
+(**********  Get Constraints for a table Info  ********************)
+
+function TdmSysTables.GetConstraintsOfTable(ATableName: string; var SqlQuery: TSQLQuery;
+   ConstraintsList: TStringList = nil): Boolean;
+begin
+  SqlQuery.Close;
+  SqlQuery.SQL.Text:= 'select Trim(Refc.RDB$Constraint_Name) as ConstName, ' +
+    'Trim(Refc.RDB$CONST_NAME_UQ) as KeyName, ' +
+    'Trim(Ind.RDB$Relation_Name) as CurrentTableName, ' +
+    'Trim(Seg.RDB$Field_name) as CurrentFieldName, ' +
+    'Trim(Con.RDB$Relation_Name) as OtherTableName, ' +
+    'Trim(Ind.RDB$Foreign_key) as OtherFieldName, ' +
+    'RDB$Update_Rule as UpdateRule, RDB$Delete_Rule as DeleteRule ' +
+    'from RDB$RELATION_CONSTRAINTS Con, rdb$REF_Constraints Refc, RDB$INDEX_SEGMENTS Seg, ' +
+    'RDB$INDICES Ind ' +
+    'where Con.RDB$COnstraint_Name = Refc.RDB$Const_Name_UQ ' +
+    '  and Refc.RDB$COnstraint_Name = Ind.RDB$Index_Name' +
+    '  and Refc.RDB$COnstraint_Name = Seg.RDB$Index_Name' +
+    '  and Con.RDB$Relation_Name = ''' + UpperCase(ATableName) + '''';
   SqlQuery.Open;
   Result:= SqlQuery.RecordCount > 0;
   with SqlQuery do

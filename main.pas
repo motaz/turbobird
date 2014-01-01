@@ -1229,6 +1229,7 @@ begin
   end;
   AQuery.Close;
   AQuery.Free;
+
   if Form.sgIndices.RowCount > 1 then
     Form.sgIndices.Row:= 1;
 end;
@@ -2353,6 +2354,7 @@ begin
     // Permissions
     fmTableManage.FillPermissions;
 
+    fmTableManage.bbRefreshReferencesClick(nil);
     fmTableManage.Show;
 
   except

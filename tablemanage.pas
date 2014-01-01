@@ -22,6 +22,7 @@ type
     bbNewConstraint: TBitBtn;
     bbRefresh: TBitBtn;
     bbRefreshConstraint: TBitBtn;
+    bbRefreshReferences: TBitBtn;
     bbRefreshIndices: TBitBtn;
     bbRefreshTriggers: TBitBtn;
     bbNewTrigger: TBitBtn;
@@ -44,6 +45,7 @@ type
     Label3: TLabel;
     Label4: TLabel;
     PageControl1: TPageControl;
+    sgReferences: TStringGrid;
     sgTriggers: TStringGrid;
     sgPermissions: TStringGrid;
     SQLQuery1: TSQLQuery;
@@ -51,6 +53,7 @@ type
     sgFields: TStringGrid;
     sgIndices: TStringGrid;
     sgConstraints: TStringGrid;
+    tsReferences: TTabSheet;
     tsPermissions: TTabSheet;
     tsTriggers: TTabSheet;
     tsIndices: TTabSheet;
@@ -72,6 +75,7 @@ type
     procedure bbRefreshIndicesClick(Sender: TObject);
     procedure bbRefreshPermissionsClick(Sender: TObject);
     procedure bbRefreshTriggersClick(Sender: TObject);
+    procedure bbRefreshReferencesClick(Sender: TObject);
     procedure cbIndexTypeChange(Sender: TObject);
     procedure edDropClick(Sender: TObject);
     procedure edEditPermissionClick(Sender: TObject);
@@ -336,6 +340,29 @@ begin
   ViewTriggers;
   Parent.Show;
   Show;
+end;
+
+procedure TfmTableManage.bbRefreshReferencesClick(Sender: TObject);
+begin
+  SQLTrans.Commit;
+  dmSysTables.Init(fdbIndex);
+  dmSysTables.GetConstraintsOfTable(fTableName, SQLQuery1);
+  sgReferences.RowCount:= 1;
+
+  SQLQuery1.First;
+  with SQLQuery1, sgReferences do
+  while not EOF do
+  begin
+    RowCount:= RowCount + 1;
+    Cells[0, RowCount - 1]:= FieldByName('ConstName').AsString;
+    Cells[1, RowCount - 1]:= FieldByName('CurrentTableName').AsString;
+    Cells[2, RowCount - 1]:= FieldByName('CurrentFieldName').AsString;
+    Cells[3, RowCount - 1]:= FieldByName('OtherFieldName').AsString;
+    Next;
+
+  end;
+  SQLQuery1.Close;
+
 end;
 
 procedure TfmTableManage.cbIndexTypeChange(Sender: TObject);
