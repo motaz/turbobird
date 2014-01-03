@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      :  1.Jan.2014                                          }
+{  Last updated      :  3.Jan.2014                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
@@ -27,7 +27,7 @@ uses
 const
   Major = 1;
   Minor = 0;
-  Release = 0;
+  Release = 1;
 
   VersionDate = '2010 - January 2014';
 {$IFDEF Unix}

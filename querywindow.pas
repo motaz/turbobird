@@ -1192,16 +1192,16 @@ begin
               Sleep(100);
               application.ProcessMessages; // This prevents display freeze
 
-            until fQT.fTerminated;
+          until fQT.fTerminated;
 
-            // Raise exception if an error occured during thread execution (Open)
-            if fQT.Error then
-                raise Exception.Create(fQT.ErrorMsg);
+          // Raise exception if an error occured during thread execution (Open)
+          if fQT.Error then
+              raise Exception.Create(fQT.ErrorMsg);
 
-            fQT.Free;
-            fTab.Caption:= faText;
-            fTab.ImageIndex:= 0;
-            fmMain.AddToSQLHistory(RegRec.Title, 'SELECT', fQueryPart);
+          fQT.Free;
+          fTab.Caption:= faText;
+          fTab.ImageIndex:= 0;
+          fmMain.AddToSQLHistory(RegRec.Title, 'SELECT', fQueryPart);
 
           except
           on e: exception do
@@ -1250,6 +1250,8 @@ begin
               // Raise exception if an error occured during thread execution (ExecProc)
               if fQT.Error then
                 raise Exception.Create(fQT.ErrorMsg);
+
+              fTab.Caption:= faText;
 
               fQT.Free;
             end
