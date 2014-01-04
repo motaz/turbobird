@@ -40,6 +40,7 @@ type
 
   TfmQueryWindow = class(TForm)
     bbClose: TBitBtn;
+    cxAutoCommit: TCheckBox;
     FindDialog1: TFindDialog;
     imTools: TImageList;
     imTabs: TImageList;
@@ -90,6 +91,7 @@ type
     tbRollback: TToolButton;
     tbCommitRetaining: TToolButton;
     tbRollbackRetaining: TToolButton;
+    ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     tbHistory: TToolButton;
@@ -455,7 +457,12 @@ begin
           aQuery.SQL.Add(WhereClause);
           aQuery.ExecSQL;
           (Sender as TBitBtn).Visible:= False;
-          EnableCommitButton;
+
+          // Auto commit
+          if cxAutoCommit.Checked then
+            SqlTrans.CommitRetaining
+          else
+            EnableCommitButton;
         end;
       end;
 
@@ -1253,6 +1260,12 @@ begin
 
               fTab.Caption:= faText;
 
+              // Auto commit
+              if cxAutoCommit.Checked then
+                SqlTrans.Commit;
+
+
+
               fQT.Free;
             end
             else
@@ -1279,6 +1292,10 @@ begin
               // Raise exception if an error occured during thread execution (ExecProc)
               if fQT.Error then
                 raise Exception.Create(fQT.ErrorMsg);
+
+              // Auto commit
+              if cxAutoCommit.Checked then
+                SqlTrans.Commit;
 
               fQT.Free;
               fTab.Caption:= faText;
@@ -1398,6 +1415,11 @@ begin
     ATab.ImageIndex:= 2;
     SQLScript.Script.Text:= Script;
     SQLScript.ExecuteScript;
+
+    // Auto commit
+    if cxAutoCommit.Checked then
+      SqlTrans.Commit;
+
     Result:= True;
     meResult.Lines.Text:= FormatDateTime('hh:nn:ss.z', Now) + ' - Script Executed. It takes (H:M:S.MS) ' +
       FormatDateTime('HH:nn:ss.z', Now - StartTime);
