@@ -1623,10 +1623,7 @@ end;
 
 procedure TfmQueryWindow.DBGrid1DblClick(Sender: TObject);
 begin
-  if (Sender as TDBGrid).SelectedField.DataType in [ftBlob, ftMemo] then
-    ShowMessage((Sender as TDBGrid).SelectedField.AsString)
-  else
-    ShowMessage((Sender as TDBGrid).SelectedField.KeyFields);
+  ShowMessage((Sender as TDBGrid).SelectedField.AsString)
 end;
 
 
