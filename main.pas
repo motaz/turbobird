@@ -258,6 +258,7 @@ type
     function Is64bit: Boolean;
     function Is32bit: Boolean;
     function getConfigurationDirectory: string;
+    procedure setTransactionIsolation(Params: TStringList);
   end;
 
 var
@@ -746,6 +747,14 @@ begin
   end
   else
     ExtractFilePath(ParamStr(0));
+end;
+
+procedure TfmMain.setTransactionIsolation(Params: TStringList);
+begin
+  Params.Clear;
+  Params.Add('isc_tpb_read_commited');
+  Params.Add('isc_tpb_concurrency');
+  Params.Add('isc_tpb_nowait');
 end;
 
 (****************  Fill and show constraints form ************************)
@@ -3733,6 +3742,7 @@ var
   ParentText: string;
 begin
   Node:= tvMain.Selected;
+  if node <> nil then
   if Node.Level = 1 then // Database level, Fill objects
   begin
     // Do nothing
@@ -3822,7 +3832,8 @@ begin
       Node.Collapse(False);
   end
   else  // Expand objects root (Tables, Procedures, etc)
-  if (Node.Parent <> nil) and (Node.Parent.Parent <> nil) and (Node.Parent.Parent.Parent = nil) and (not Node.Expanded) then
+  if (Node.Parent <> nil) and (Node.Parent.Parent <> nil) and
+     (Node.Parent.Parent.Parent = nil) and (not Node.Expanded) then
   begin
     if Node.HasChildren then
     begin
@@ -3879,7 +3890,7 @@ begin
             Index:= FilePos(F) - 1;
             IBConnection:= TIBConnection.Create(nil);
             SQLTrans:= TSQLTransaction.Create(nil);
-            SqlTrans.Params.Add('isc_tpb_read_commited');
+            setTransactionIsolation(SQLTrans.Params);
 
             IBConnection.Transaction:= SQLTrans;
             SQLTrans.DataBase:= IBConnection;
