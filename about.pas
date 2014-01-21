@@ -17,7 +17,7 @@ const
    Target = 'Win';
   {$ENDIF}
 
-  {$IFDEF MAC}
+  {$IFDEF DARWIN}
    Target = 'Mac';
   {$ENDIF}
 

@@ -1,14 +1,16 @@
+{ This is an automatically generated lazarus resource file }
+
 LazarusResources.Add('TfmUpdate','FORMDATA',[
   'TPF0'#9'TfmUpdate'#8'fmUpdate'#4'Left'#3'K'#2#6'Height'#3':'#1#3'Top'#3#9#1#5
   +'Width'#3#245#1#11'BorderStyle'#7#8'bsDialog'#7'Caption'#6#14'Version update'
   +#12'ClientHeight'#3':'#1#11'ClientWidth'#3#245#1#10'OnActivate'#7#12'FormAct'
   +'ivate'#7'OnClose'#7#9'FormClose'#8'Position'#7#14'poScreenCenter'#10'LCLVer'
-  +'sion'#6#7'1.0.8.0'#0#6'TLabel'#6'Label1'#4'Left'#2#8#6'Height'#2#18#3'Top'#2
-  +' '#5'Width'#2'h'#8'BidiMode'#7#13'bdRightToLeft'#7'Caption'#6#15'Current ve'
-  +'rsion'#14'ParentBidiMode'#8#11'ParentColor'#8#0#0#11'TStaticText'#9'stVersi'
-  +'on'#4'Left'#3#152#0#6'Height'#2#19#3'Top'#2' '#5'Width'#3#148#0#7'Caption'#6
-  +#9'stVersion'#5'Color'#7#7'clWhite'#11'ParentColor'#8#8'TabOrder'#2#0#11'Tra'
-  +'nsparent'#8#0#0#7'TBitBtn'#8'bbSearch'#4'Left'#2#8#6'Height'#2#30#3'Top'#2
+  +'sion'#6#8'1.0.14.0'#0#6'TLabel'#6'Label1'#4'Left'#2#8#6'Height'#2#18#3'Top'
+  +#2' '#5'Width'#2'h'#8'BidiMode'#7#13'bdRightToLeft'#7'Caption'#6#15'Current '
+  +'version'#14'ParentBidiMode'#8#11'ParentColor'#8#0#0#11'TStaticText'#9'stVer'
+  +'sion'#4'Left'#3#152#0#6'Height'#2#19#3'Top'#2' '#5'Width'#3#148#0#7'Caption'
+  +#6#9'stVersion'#5'Color'#7#7'clWhite'#11'ParentColor'#8#8'TabOrder'#2#0#11'T'
+  +'ransparent'#8#0#0#7'TBitBtn'#8'bbSearch'#4'Left'#2#8#6'Height'#2#30#3'Top'#2
   +'H'#5'Width'#2'K'#7'Caption'#6#5'Check'#7'OnClick'#7#13'bbSearchClick'#8'Tab'
   +'Order'#2#1#0#0#11'TStaticText'#12'stNewVersion'#4'Left'#3#152#0#6'Height'#2
   +#23#3'Top'#2'H'#5'Width'#3#196#0#7'Caption'#6#1'-'#5'Color'#7#7'clWhite'#11

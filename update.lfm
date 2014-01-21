@@ -10,7 +10,7 @@ object fmUpdate: TfmUpdate
   OnActivate = FormActivate
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '1.0.8.0'
+  LCLVersion = '1.0.14.0'
   object Label1: TLabel
     Left = 8
     Height = 18
