@@ -1187,7 +1187,7 @@ begin
           // Create thread to open dataset
           fQT:= TQueryThread.Create('open');
           fQT.Query:= fSqlQuery;
-         // fQT.OnTerminate:= @ThreadTerminated;
+          // fQT.OnTerminate:= @ThreadTerminated;
           faText:= fTab.Caption;
           fTab.Caption:= 'Running..';
           fQT.Resume;

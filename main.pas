@@ -2373,13 +2373,8 @@ begin
 end;
 
 procedure TfmMain.lmUserPermManagementClick(Sender: TObject);
-var
-  fmPermissions: TfmPermissionManage;
 begin
   lmRolePerManagementClick(nil);
-  fmPermissions:= TfmPermissionManage.Create(nil);
-  fmPermissions.Init(tvMain.Selected.Parent.Parent.OverlayIndex, '', tvMain.Selected.Text, 1);
-  fmPermissions.Show;
 end;
 
 (**********  View Domain info ************)
