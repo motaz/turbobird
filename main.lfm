@@ -2133,11 +2133,6 @@ object fmMain: TfmMain
       }
       OnClick = lmViewFirst1000Click
     end
-    object lmDropTable: TMenuItem
-      Tag = 1
-      Caption = 'Drop Table'
-      OnClick = lmDropTableClick
-    end
     object lmNewTable: TMenuItem
       Tag = 11
       Caption = 'New Table'
@@ -2431,6 +2426,11 @@ object fmMain: TfmMain
         CA5DB9BCBB4F8C918F0A8E939100000000000000000000000000
       }
       OnClick = lmCopyTableClick
+    end
+    object lmDropTable: TMenuItem
+      Tag = 1
+      Caption = 'Drop Table'
+      OnClick = lmDropTableClick
     end
     object lmViewGen: TMenuItem
       Tag = 2
