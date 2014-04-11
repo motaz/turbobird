@@ -1,5 +1,3 @@
-{ This is an automatically generated lazarus resource file }
-
 LazarusResources.Add('TfmUpdate','FORMDATA',[
   'TPF0'#9'TfmUpdate'#8'fmUpdate'#4'Left'#3'K'#2#6'Height'#3':'#1#3'Top'#3#9#1#5
   +'Width'#3#245#1#11'BorderStyle'#7#8'bsDialog'#7'Caption'#6#14'Version update'
