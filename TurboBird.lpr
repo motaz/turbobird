@@ -36,9 +36,9 @@ const
 {$ENDIF}
 {$IFDEF Windows}
   {$DEFINE extdecl:=stdcall}
-   fbclib = 'fbclient.dll';
-   seclib = 'gds32.dll';
-   thirdlib = 'fbembed.dll';
+   fbclib = 'fbembed.dll'; //allows both embedded and client/server access
+   seclib = 'fbclient.dll'; //only client/server access
+   thirdlib = 'gds32.dll'; //could be Firebird, could be old Interbase library...
 {$ENDIF}
 
 {$R *.res}
@@ -58,7 +58,7 @@ begin
     IBaseLibraryHandle:= LoadLibrary(thirdlib);
   {$ENDIF}
 
-  // Check Firebird library existance
+  // Check Firebird library existence
   if (IBaseLibraryHandle = nilhandle) then
     Application.MessageBox('Unable to load Firebird library: ' + fbclib, 'Warning', 0);
 
