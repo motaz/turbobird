@@ -1,7 +1,7 @@
 object fmTableManage: TfmTableManage
-  Left = 322
+  Left = 160
   Height = 448
-  Top = 200
+  Top = 194
   Width = 819
   ActiveControl = PageControl1
   Anchors = [akTop, akLeft, akRight]
@@ -10,7 +10,7 @@ object fmTableManage: TfmTableManage
   ClientWidth = 819
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '1.0.14.0'
+  LCLVersion = '1.3'
   object PageControl1: TPageControl
     Left = 0
     Height = 413
@@ -427,7 +427,7 @@ object fmTableManage: TfmTableManage
         Top = 139
         Width = 607
         Anchors = [akTop, akLeft, akBottom]
-        ClientHeight = 232
+        ClientHeight = 218
         ClientWidth = 603
         TabOrder = 3
         object GroupBox2: TGroupBox
@@ -436,16 +436,16 @@ object fmTableManage: TfmTableManage
           Top = 8
           Width = 585
           Caption = 'Create New Index'
-          ClientHeight = 196
+          ClientHeight = 197
           ClientWidth = 581
           TabOrder = 0
           object cbIndexType: TComboBox
             Left = 125
-            Height = 27
+            Height = 21
             Top = 5
             Width = 150
             Color = 16249563
-            ItemHeight = 0
+            ItemHeight = 13
             ItemIndex = 1
             Items.Strings = (
               'Primary Key'
@@ -481,11 +481,11 @@ object fmTableManage: TfmTableManage
           end
           object cbSortType: TComboBox
             Left = 126
-            Height = 27
+            Height = 21
             Top = 100
             Width = 120
             AutoDropDown = True
-            ItemHeight = 0
+            ItemHeight = 13
             ItemIndex = 0
             Items.Strings = (
               'Ascending'
@@ -540,7 +540,6 @@ object fmTableManage: TfmTableManage
             Width = 232
             ItemHeight = 0
             TabOrder = 5
-            TopIndex = -1
           end
         end
       end
@@ -1194,14 +1193,14 @@ object fmTableManage: TfmTableManage
     end
     object tsReferences: TTabSheet
       Caption = 'References'
-      ClientHeight = 382
-      ClientWidth = 813
+      ClientHeight = 386
+      ClientWidth = 809
       ImageIndex = 5
       object sgReferences: TStringGrid
         Left = 0
-        Height = 278
+        Height = 282
         Top = 0
-        Width = 813
+        Width = 809
         Align = alTop
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 4
@@ -1233,9 +1232,9 @@ object fmTableManage: TfmTableManage
         TabOrder = 0
       end
       object bbRefreshReferences: TBitBtn
-        Left = 697
+        Left = 693
         Height = 43
-        Top = 338
+        Top = 342
         Width = 99
         Anchors = [akRight, akBottom]
         Caption = 'Refresh'

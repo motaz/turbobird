@@ -75,6 +75,7 @@ type
     lmCopyRolePermission: TMenuItem;
     lmCompare: TMenuItem;
     lmGetIncrementGen: TMenuItem;
+    lmDropTable: TMenuItem;
     mnExit: TMenuItem;
     mnCreateDB: TMenuItem;
     mnRegDB: TMenuItem;
@@ -190,6 +191,7 @@ type
     procedure lmViewStoredProcedureClick(Sender: TObject);
     procedure lmViewTriggerClick(Sender: TObject);
     procedure lmViewUDFClick(Sender: TObject);
+    procedure lmDropTableClick(Sender: TObject);
     procedure mnExitClick(Sender: TObject);
     procedure mnCreateDBClick(Sender: TObject);
     procedure mnRegDBClick(Sender: TObject);
@@ -976,7 +978,7 @@ var
   QWindow: TfmQueryWindow;
 begin
   SelNode:= tvMain.Selected;
-  if MessageDlg('Are you sure you want to delete ' + SelNode.Text + ' permenentaly', mtConfirmation,
+  if MessageDlg('Are you sure you want to delete ' + SelNode.Text + ' permanently', mtConfirmation,
     [mbYes, mbNo], 0) = mrYes then
   begin
     QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Drop Exception');
@@ -1126,7 +1128,7 @@ begin
 
     GetViewInfo(SelNode.Parent.Parent.OverlayIndex, AViewName, Columns, ViewBody);
     QWindow.meQuery.Lines.Clear;
-    QWindow.meQuery.Lines.Add('drop view "' + AViewName + '";');
+    QWindow.meQuery.Lines.Add('DROP VIEW "' + AViewName + '";');
     QWindow.meQuery.Lines.Add('');
     QWindow.meQuery.Lines.Add('CREATE VIEW "' + AViewName + '" (' + Columns + ')');
     QWindow.meQuery.Lines.Add('AS');
@@ -3463,6 +3465,25 @@ begin
       meBody.Lines.Add(Params);
       fmUDFInfo.Show;
     end; // with fmUDFInfo
+  end;
+end;
+
+procedure TfmMain.lmDropTableClick(Sender: TObject);
+var
+  SelNode: TTreeNode;
+  QWindow: TfmQueryWindow;
+begin
+  SelNode:= tvMain.Selected;
+  if MessageDlg('Are you sure you want to delete ' + SelNode.Text + ' permanently', mtConfirmation,
+    [mbYes, mbNo], 0) = mrYes then
+  begin
+    // Move selection to tables above so object is not in use when deleting it
+    SelNode.Collapse(true);
+    SelNode.Parent.Selected:=true;
+    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Drop Table');
+    QWindow.meQuery.Lines.Clear;
+    QWindow.meQuery.Lines.Add('DROP TABLE ' + SelNode.Text + ';');
+    QWindow.Show;
   end;
 end;
 

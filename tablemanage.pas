@@ -178,7 +178,7 @@ begin
     ConstName:= sgConstraints.Cells[0, sgConstraints.Row];
     if MessageDlg('Are you sure you want to drop ' + ConstName, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
-      QWindow:= fmMain.ShowQueryWindow(fdbIndex, 'drop constrain: ' + ConstName);
+      QWindow:= fmMain.ShowQueryWindow(fdbIndex, 'drop constraint: ' + ConstName);
       QWindow.meQuery.Lines.Text:= 'ALTER TABLE ' + fTableName + ' DROP CONSTRAINT ' + ConstName;
       fmMain.Show;
       QWindow.OnCommit:= bbRefreshConstraint.OnClick;

@@ -5,7 +5,7 @@ object fmMain: TfmMain
   Width = 1024
   ActiveControl = tvMain
   Caption = 'TurboBird Admin for FireBird'
-  ClientHeight = 617
+  ClientHeight = 621
   ClientWidth = 1024
   Color = clWhite
   Font.Name = 'Sans'
@@ -14,15 +14,16 @@ object fmMain: TfmMain
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.0.14.0'
+  LCLVersion = '1.3'
   object tvMain: TTreeView
     Left = 0
-    Height = 596
+    Height = 601
     Top = 0
     Width = 360
     Align = alLeft
     BackgroundColor = clWhite
     Color = clCream
+    ExpandSignColor = clMaroon
     HideSelection = False
     Images = ImageList1
     Indent = 25
@@ -33,18 +34,17 @@ object fmMain: TfmMain
     OnDblClick = tvMainDblClick
     OnExpanded = tvMainExpanded
     Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoReadOnly, tvoRightClickSelect, tvoShowButtons, tvoShowRoot, tvoToolTips]
-    ExpandSignColor = clMaroon
   end
   object Splitter1: TSplitter
     Left = 360
-    Height = 596
+    Height = 601
     Top = 0
     Width = 14
     Beveled = True
   end
   object PageControl1: TPageControl
     Left = 377
-    Height = 589
+    Height = 594
     Top = 3
     Width = 644
     ActivePage = TabSheet1
@@ -64,8 +64,8 @@ object fmMain: TfmMain
     object TabSheet1: TTabSheet
       BorderWidth = 1
       Caption = 'Main'
-      ClientHeight = 559
-      ClientWidth = 640
+      ClientHeight = 563
+      ClientWidth = 636
       Font.Color = clNavy
       Font.Name = 'Arial'
       ParentFont = False
@@ -505,8 +505,8 @@ object fmMain: TfmMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 21
-    Top = 596
+    Height = 20
+    Top = 601
     Width = 1024
     Panels = <    
       item
@@ -2132,6 +2132,11 @@ object fmMain: TfmMain
         CA5DB9BCBB4F8C918F0A8E939100000000000000000000000000
       }
       OnClick = lmViewFirst1000Click
+    end
+    object lmDropTable: TMenuItem
+      Tag = 1
+      Caption = 'Drop Table'
+      OnClick = lmDropTableClick
     end
     object lmNewTable: TMenuItem
       Tag = 11
