@@ -7,9 +7,11 @@ object fmUserPermissions: TfmUserPermissions
   Caption = 'fmUserPermissions'
   ClientHeight = 363
   ClientWidth = 500
+  KeyPreview = True
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.2.0.3'
   object StringGrid1: TStringGrid
     Left = 0
     Height = 331
@@ -21,17 +23,14 @@ object fmUserPermissions: TfmUserPermissions
     Columns = <    
       item
         Title.Caption = 'Obj Type'
-        Title.PrefixOption = poNone
         Width = 100
       end    
       item
         Title.Caption = 'Object'
-        Title.PrefixOption = poNone
         Width = 200
       end    
       item
         Title.Caption = 'Permission'
-        Title.PrefixOption = poNone
         Width = 200
       end>
     FixedColor = 14539471
@@ -56,17 +55,17 @@ object fmUserPermissions: TfmUserPermissions
   end
   object Label1: TLabel
     Left = 3
-    Height = 18
+    Height = 13
     Top = 12
-    Width = 46
+    Width = 32
     Caption = 'Object'
     ParentColor = False
   end
   object laObject: TLabel
     Left = 62
-    Height = 18
+    Height = 13
     Top = 11
-    Width = 62
+    Width = 47
     Caption = 'laObject'
     Font.Style = [fsBold]
     ParentColor = False

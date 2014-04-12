@@ -48,6 +48,16 @@ var
   IBaseLibraryHandle : TLibHandle;
 begin
   Application.Initialize;
+  {$IFDEF DEBUG}
+  // Requires the build mode to set -dDEBUG in Project Options/Other and
+  // defining -gh/heaptrace on
+  // This avoids interference when running a production/default build without -gh
+
+  // Set up -gh output for the Leakview package:
+  if FileExists('heap.trc') then
+    DeleteFile('heap.trc');
+  SetHeapTraceOutput('heap.trc');
+  {$ENDIF DEBUG}
   IBaseLibraryHandle:= LoadLibrary(fbclib);
 
   // search for all compatible FireBird libraries in Windows
