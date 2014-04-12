@@ -3929,7 +3929,7 @@ begin
             ServerNode.SelectedIndex:= 26;
           end;
 
-          // Put databases
+          // Display databases
           MainNode:= tvMain.Items.AddChild(ServerNode, Rec.Title);
           MainNode.ImageIndex:= 0;
           MainNode.SelectedIndex:= 3;
@@ -3995,13 +3995,12 @@ begin
       tvMain.Items.Add(nil, '');
     end;
     Result:= True;
-
   except
-  on e: exception do
-  begin
-    Result:= False;
-    ShowMessage('Error: ' + e.message);
-  end;
+    on e: exception do
+    begin
+      Result:= False;
+      ShowMessage('Error: ' + e.message);
+    end;
   end;
 end;
 
