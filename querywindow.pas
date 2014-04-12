@@ -12,6 +12,13 @@ uses
 
 type
 
+  QueryTypes = (
+    qtUnknown=0,
+    qtSelectable=1,
+    qtExecute=2,
+    qtScript=3);
+
+
   { TQueryThread }
 
   TQueryThread = class(TThread)
@@ -154,7 +161,7 @@ type
     fStartLine: Integer;
     fList: TStringList;
     fQuery: string;
-    fOrigQueryType: Integer;
+    fOrigQueryType: QueryTypes;
     fFinished: Boolean;
     fQT: TQueryThread;
     fQueryPart: string;
@@ -172,7 +179,7 @@ type
     function GetNewTabNum: string;
     procedure FinishCellEditing(DataSet: TDataSet);
     function GetRecordSet(TabIndex: Integer): TSQLQuery;
-    function getQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer;
+    function GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer;
       var IsDDL: Boolean): Integer;
     procedure NewCommitButton(const Pan: TPanel; var ATab: TTabSheet);
     procedure RemoveComments(QueryList: TStringList; StartLine: Integer;
@@ -189,7 +196,7 @@ type
   public
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
-    function GetQueryType(AQuery: string): Integer;
+    function GetQueryType(AQuery: string): QueryTypes;
     function GetQuery: string;
     function CreateResultTab(QueryType: Byte; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
@@ -202,8 +209,8 @@ type
     function GetSQLSegment(QueryList: TStringList; StartLine: Integer; var QueryType, EndLine: Integer;
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
     procedure QueryAfterScroll(DataSet: TDataSet);
-    procedure CallExecuteQuery(aQueryType: Integer);
-    procedure sortsyncompletion;
+    procedure CallExecuteQuery(aQueryType: QueryTypes);
+    procedure SortSynCompletion;
     procedure ThreadTerminated(Sender: TObject);
     procedure EnableButtons;
 
@@ -319,7 +326,7 @@ end;
 { TQueryThread }
 
 
-{ FinishCellEditing: Insert current been edited record in ModifiedRecords array }
+{ FinishCellEditing: Insert current just edited record in ModifiedRecords array }
 
 procedure TfmQueryWindow.FinishCellEditing(DataSet: TDataSet);
 begin
@@ -328,7 +335,7 @@ end;
 
 
 
-{ InsertMOdifiedRecord: insert modified query record in ModifiedRecords array }
+{ InsertModifiedRecord: insert modified query record in ModifiedRecords array }
 
 procedure TfmQueryWindow.InsertModifiedRecord(RecordNo, TabIndex: Integer);
 var
@@ -486,10 +493,9 @@ begin
 
   end;
 
-
 end;
 
-{ EnableApplyButton: enable save updates button when records has been modified }
+{ EnableApplyButton: enable save updates button when records have been modified }
 
 procedure TfmQueryWindow.EnableApplyButton;
 var
@@ -587,7 +593,7 @@ end;
 
 { GetQuerySQLType: get query type: select, script, execute from current string list }
 
-function TfmQueryWindow.getQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): Integer;
+function TfmQueryWindow.GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): Integer;
 var
   SQLSegment: string;
 begin
@@ -907,7 +913,7 @@ end;
 
 procedure TfmQueryWindow.tbRunClick(Sender: TObject);
 begin
-  CallExecuteQuery(0);
+  CallExecuteQuery(qtUnknown);
 end;
 
 
@@ -962,12 +968,12 @@ begin
   // Get current database tables to be hilighted in SQL query editor
   SynSQLSyn1.TableNames.CommaText:= fmMain.GetTableNames(dbIndex);
   SynCompletion1.ItemList.AddStrings(SynSQLSyn1.TableNames);
-  sortsyncompletion;
+  SortSynCompletion;
 end;
 
 (************* Is Selectable (Check statement type Select, Update, Alter, etc) *******************)
 
-function TfmQueryWindow.GetQueryType(AQuery: string): Integer;
+function TfmQueryWindow.GetQueryType(AQuery: string): QueryTypes;
 var
   List: TStringList;
   i: Integer;
@@ -978,7 +984,7 @@ begin
   try
     List.Text:= AQuery;
 
-    Result:= 2; // Default Execute
+    Result:= qtExecute; // Default Execute
 
     for i:= 0 to List.Count - 1 do
     begin
@@ -995,19 +1001,19 @@ begin
 
       if (Pos('select', LowerCase(Trim(Line))) = 1) then
       begin
-        Result:= 1; // Selectable
+        Result:= qtSelectable; // Selectable
         Break;
       end
       else
       if Pos('setterm', LowerCase(StringReplace(Line, ' ', '', [rfReplaceAll]))) = 1 then
       begin
-        Result:= 3;
+        Result:= qtScript;
         Break;
       end;
 
       if Trim(Line) <> '' then
       begin
-        Result:= 2; // Executable
+        Result:= qtExecute; // Executable
         Break;
       end;
 
@@ -1150,7 +1156,7 @@ begin
   try
 
     // Script
-    if (fOrigQueryType = 3) then
+    if (fOrigQueryType = qtScript) then
     begin
       ExecuteScript(fQuery);
       Inc(fModifyCount);
@@ -1563,7 +1569,7 @@ begin
   removeEmptyLines(QueryList, SecondRealStart, RealStartLine);
 
   // Get SQL type
-  QueryType:= getQuerySQLType(QueryList, SecondRealStart, IsDDL);
+  QueryType:= GetQuerySQLType(QueryList, SecondRealStart, IsDDL);
 
   // Concatinate
   SQLSegment:= '';
@@ -1615,7 +1621,7 @@ end;
 
 procedure TfmQueryWindow.bbRunClick(Sender: TObject);
 begin
-  CallExecuteQuery(0);
+  CallExecuteQuery(qtUnknown);
 end;
 
 
@@ -1696,7 +1702,7 @@ var
   str:string;
 begin
   SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
-  Sortsyncompletion;
+  SortSynCompletion;
 end;
 
 
@@ -1939,7 +1945,7 @@ end;
 
 procedure TfmQueryWindow.lmRunClick(Sender: TObject);
 begin
-  CallExecuteQuery(0);
+  CallExecuteQuery(qtUnknown);
 end;
 
 
@@ -1947,7 +1953,7 @@ end;
 
 procedure TfmQueryWindow.lmRunExecClick(Sender: TObject);
 begin
-  CallExecuteQuery(2);
+  CallExecuteQuery(qtExecute);
 end;
 
 
@@ -1955,7 +1961,7 @@ end;
 
 procedure TfmQueryWindow.lmRunScriptClick(Sender: TObject);
 begin
-  CallExecuteQuery(3);
+  CallExecuteQuery(qtScript);
 end;
 
 
@@ -1963,7 +1969,7 @@ end;
 
 procedure TfmQueryWindow.lmRunSelectClick(Sender: TObject);
 begin
-  CallExecuteQuery(1);
+  CallExecuteQuery(qtSelectable);
 end;
 
 
@@ -2007,7 +2013,7 @@ begin
   // Execute query by pressing Ctrl + Enter
   if (ssCtrl in shift) and (key = 13) then
   begin
-    CallExecuteQuery(0);
+    CallExecuteQuery(qtUnknown);
     key:= 0;
   end;
 end;
@@ -2023,12 +2029,13 @@ begin
   TabSheet:= nil;
   // Get DataSet's TTabsheet
   for i:= 0 to High(ResultControls) do
-  if ResultControls[i] <> nil then
-  if DataSet = ResultControls[i] then
+  if (ResultControls[i] <> nil) and
+    (DataSet = ResultControls[i]) then
   begin
     TabSheet:= ParentResultControls[i] as TTabSheet;
     Break;
   end;
+
 
   // Search for status bar inside current query result TabSheet
   if TabSheet <> nil then
@@ -2036,11 +2043,11 @@ begin
   if ResultControls[i] <> nil then
     if  (ParentResultControls[i] <> nil) and ((ParentResultControls[i] as TTabSheet) = TabSheet)
       and (ResultControls[i] is TStatusBar) then
-      begin
-        // Display current record and number of total records in status bar
-        (ResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
-        ' records fetched. At record # ' + IntToStr(DataSet.RecNo);
-      break;
+    begin
+      // Display current record and number of total records in status bar
+      (ResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
+      ' records fetched. At record # ' + IntToStr(DataSet.RecNo);
+    break;
   end;
 
 end;
@@ -2048,7 +2055,7 @@ end;
 
 { Execute query according to passed query ype }
 
-procedure TfmQueryWindow.CallExecuteQuery(aQueryType: Integer);
+procedure TfmQueryWindow.CallExecuteQuery(aQueryType: QueryTypes);
 begin
   fList:= TStringList.Create;
 
@@ -2068,12 +2075,12 @@ begin
   RemoveControls;
 
   // Get initial query type, it could be changed later in the next parts
-  if aQueryType = 0 then // Auto
+  if aQueryType = qtUnknown then // Auto
     fOrigQueryType:= GetQueryType(fQuery)
   else
     fOrigQueryType:= aQueryType;
 
-  // Call execute query for each parts until finished
+  // Call execute query for each part until finished
   fCnt:= 0;
   fFinished:= False;
   repeat
@@ -2085,7 +2092,7 @@ end;
 
 { sort auto completion options }
 
-procedure TfmQueryWindow.sortsyncompletion;
+procedure TfmQueryWindow.SortSynCompletion;
 var
   sortinglis:TStringList;
   i:Integer;
