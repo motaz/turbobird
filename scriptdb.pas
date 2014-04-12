@@ -32,6 +32,10 @@ procedure RemoveParamClosing(var AParams: string);
 
 implementation
 
+{ to do: add support for dependencies when extracting script; otherwise running the script may fail
+evaluating dependency order:
+http://rosettacode.org/wiki/Topological_sort#Object_Pascal
+}
 uses SysTables, Main;
 
 (********************  Script Roles  ***********************)
@@ -407,6 +411,10 @@ begin
   for i:= 0 to TablesList.Count - 1 do
   with dmSysTables do
   begin
+    { to do: foreign keys are not picked up while FlameRobin does, e.g. this for employee.fdb:
+    ALTER TABLE EMPLOYEE ADD CONSTRAINT INTEG_28
+      FOREIGN KEY (DEPT_NO) REFERENCES DEPARTMENT (DEPT_NO);
+    }
     GetTableConstraints(TablesList[i], sqQuery);
     while not sqQuery.EOF do
     begin
