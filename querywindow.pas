@@ -12,7 +12,7 @@ uses
 
 type
 
-  QueryTypes = (
+  TQueryTypes = (
     qtUnknown=0,
     qtSelectable=1,
     qtExecute=2,
@@ -110,6 +110,7 @@ type
     procedure FindDialog1Find(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure lmCloseTabClick(Sender: TObject);
     procedure lmCommaDelemitedClick(Sender: TObject);
@@ -161,7 +162,7 @@ type
     fStartLine: Integer;
     fList: TStringList;
     fQuery: string;
-    fOrigQueryType: QueryTypes;
+    fOrigQueryType: TQueryTypes;
     fFinished: Boolean;
     fQT: TQueryThread;
     fQueryPart: string;
@@ -196,7 +197,7 @@ type
   public
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
-    function GetQueryType(AQuery: string): QueryTypes;
+    function GetQueryType(AQuery: string): TQueryTypes;
     function GetQuery: string;
     function CreateResultTab(QueryType: Byte; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
@@ -209,7 +210,7 @@ type
     function GetSQLSegment(QueryList: TStringList; StartLine: Integer; var QueryType, EndLine: Integer;
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
     procedure QueryAfterScroll(DataSet: TDataSet);
-    procedure CallExecuteQuery(aQueryType: QueryTypes);
+    procedure CallExecuteQuery(aQueryType: TQueryTypes);
     procedure SortSynCompletion;
     procedure ThreadTerminated(Sender: TObject);
     procedure EnableButtons;
@@ -973,7 +974,7 @@ end;
 
 (************* Is Selectable (Check statement type Select, Update, Alter, etc) *******************)
 
-function TfmQueryWindow.GetQueryType(AQuery: string): QueryTypes;
+function TfmQueryWindow.GetQueryType(AQuery: string): TQueryTypes;
 var
   List: TStringList;
   i: Integer;
@@ -1705,6 +1706,23 @@ begin
   SortSynCompletion;
 end;
 
+procedure TfmQueryWindow.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (ssCtrl in Shift) and
+    ((Key=VK_F4) or (Key=VK_W)) then
+  begin
+    if ((Trim(meQuery.Lines.Text) = '') or
+      (MessageDlg('Do you want to close this query window?', mtConfirmation, [mbNo, mbYes], 0) = mrYes))
+      then
+    begin
+      // Close when pressing Ctrl-W or Ctrl-F4 (Cmd-W/Cmd-F4 on OSX)
+      Close;
+      Parent.Free;
+    end;
+  end;
+end;
+
 
 { focus on Query SQL window editor on form show }
 
@@ -2055,7 +2073,7 @@ end;
 
 { Execute query according to passed query ype }
 
-procedure TfmQueryWindow.CallExecuteQuery(aQueryType: QueryTypes);
+procedure TfmQueryWindow.CallExecuteQuery(aQueryType: TQueryTypes);
 begin
   fList:= TStringList.Create;
 

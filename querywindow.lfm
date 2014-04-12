@@ -8,9 +8,11 @@ object fmQueryWindow: TfmQueryWindow
   ClientHeight = 601
   ClientWidth = 720
   Color = clForm
+  KeyPreview = True
   Menu = MainMenu1
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   OnShow = FormShow
   PopupMenu = pmTab
   Position = poScreenCenter

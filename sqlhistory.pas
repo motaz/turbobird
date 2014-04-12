@@ -28,7 +28,6 @@ type
     procedure bbDeleteClick(Sender: TObject);
     procedure bbExportClick(Sender: TObject);
     procedure bbInsertClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure cxAfterDateClick(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -82,10 +81,6 @@ begin
 
   (fQueryForm as TfmQueryWindow).meQuery.Lines.Text:= (fQueryForm as TfmQueryWindow).meQuery.Lines.Text + SQLStatement;
   Close;
-end;
-
-procedure TfmSQLHistory.Button1Click(Sender: TObject);
-begin
 end;
 
 procedure TfmSQLHistory.cxAfterDateClick(Sender: TObject);
