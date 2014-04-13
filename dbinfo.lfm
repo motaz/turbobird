@@ -6,20 +6,22 @@ object fmDBInfo: TfmDBInfo
   Caption = 'fmDBInfo'
   ClientHeight = 471
   ClientWidth = 701
+  KeyPreview = True
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '1.0.4.0'
+  LCLVersion = '1.2.0.3'
   object Label1: TLabel
     Left = 15
-    Height = 18
+    Height = 13
     Top = 49
-    Width = 65
+    Width = 46
     Caption = 'Database'
     ParentColor = False
   end
   object edName: TEdit
     Left = 144
-    Height = 21
+    Height = 13
     Top = 46
     Width = 479
     Anchors = [akTop, akLeft, akRight]
@@ -33,15 +35,15 @@ object fmDBInfo: TfmDBInfo
   end
   object Label2: TLabel
     Left = 15
-    Height = 18
+    Height = 13
     Top = 79
-    Width = 84
+    Width = 59
     Caption = 'ODS Version'
     ParentColor = False
   end
   object edODSVer: TEdit
     Left = 144
-    Height = 21
+    Height = 13
     Top = 76
     Width = 88
     AutoSelect = False
@@ -54,15 +56,15 @@ object fmDBInfo: TfmDBInfo
   end
   object Label3: TLabel
     Left = 15
-    Height = 18
+    Height = 13
     Top = 110
-    Width = 54
+    Width = 39
     Caption = 'CharSet'
     ParentColor = False
   end
   object edCharset: TEdit
     Left = 144
-    Height = 21
+    Height = 13
     Top = 107
     Width = 88
     AutoSelect = False
@@ -75,15 +77,15 @@ object fmDBInfo: TfmDBInfo
   end
   object Label4: TLabel
     Left = 15
-    Height = 18
+    Height = 13
     Top = 142
-    Width = 94
+    Width = 67
     Caption = 'Creation Date'
     ParentColor = False
   end
   object edCreationDate: TEdit
     Left = 144
-    Height = 21
+    Height = 13
     Top = 139
     Width = 176
     AutoSelect = False
@@ -96,15 +98,15 @@ object fmDBInfo: TfmDBInfo
   end
   object Label5: TLabel
     Left = 15
-    Height = 18
+    Height = 13
     Top = 172
-    Width = 64
+    Width = 46
     Caption = 'Page Size'
     ParentColor = False
   end
   object edPageSize: TEdit
     Left = 144
-    Height = 21
+    Height = 13
     Top = 169
     Width = 88
     AutoSelect = False
@@ -117,7 +119,7 @@ object fmDBInfo: TfmDBInfo
   end
   object edDBSize: TEdit
     Left = 144
-    Height = 21
+    Height = 13
     Top = 201
     Width = 176
     AutoSelect = False
@@ -130,17 +132,17 @@ object fmDBInfo: TfmDBInfo
   end
   object Label6: TLabel
     Left = 15
-    Height = 18
+    Height = 13
     Top = 204
-    Width = 95
+    Width = 68
     Caption = 'Database Size'
     ParentColor = False
   end
   object Label7: TLabel
     Left = 16
-    Height = 18
+    Height = 13
     Top = 270
-    Width = 122
+    Width = 87
     Caption = 'Connected Clients'
     ParentColor = False
   end
@@ -178,7 +180,7 @@ object fmDBInfo: TfmDBInfo
   end
   object edConnections: TEdit
     Left = 144
-    Height = 21
+    Height = 13
     Top = 267
     Width = 112
     AutoSelect = False
@@ -426,15 +428,15 @@ object fmDBInfo: TfmDBInfo
   end
   object Label8: TLabel
     Left = 16
-    Height = 18
+    Height = 13
     Top = 237
-    Width = 78
+    Width = 55
     Caption = 'Server time'
     ParentColor = False
   end
   object edServerTime: TEdit
     Left = 144
-    Height = 21
+    Height = 13
     Top = 234
     Width = 176
     AutoSelect = False

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, ExtCtrls;
+  Buttons, ExtCtrls, LCLType;
 
 type
 
@@ -36,6 +36,7 @@ type
     procedure bbCloseClick(Sender: TObject);
     procedure bbRefreshClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { private declarations }
     fdbIndex: Integer;
@@ -69,6 +70,18 @@ end;
 procedure TfmDBInfo.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
+end;
+
+procedure TfmDBInfo.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (ssCtrl in Shift) and
+    ((key=VK_F4) or (key=VK_W)) then
+  begin
+    // Close when pressing Ctrl-W or Ctrl-F4 (Cmd-W/Cmd-F4 on OSX)
+    Close;
+    Parent.Free;
+  end;
 end;
 
 procedure TfmDBInfo.Init(dbIndex: Integer);
@@ -127,7 +140,8 @@ begin
     Show;
   end
   else
-    ShowMessage('Unable to get database information' + #10 + ErrorMsg);
+    ShowMessage('Unable to get database information' + LineEnding +
+      ErrorMsg);
 end;
 
 

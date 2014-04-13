@@ -60,7 +60,7 @@
             <CompilerMessages>
               <UseMsgFile Value="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dDEBUG"/>
+            <CustomOptions Value="-dDEBUG -O-1"/>
             <CompilerPath Value="$(CompPath)"/>
           </Other>
         </CompilerOptions>
