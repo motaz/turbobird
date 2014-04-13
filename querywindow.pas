@@ -1812,37 +1812,40 @@ begin
     Grid.DataSource.DataSet.DisableControls;
     Grid.DataSource.DataSet.First;
     List:= TStringList.Create;
-    Line:= '';
-
-    // Copy fields header
-    with Grid.DataSource.DataSet do
-    for i:= 0 to FieldCount - 1 do
-    begin
-      Line:= Line + '"' + Fields[i].FieldName + '"';
-      if i + 1 < FieldCount then
-        Line:= Line + ',';
-    end;
-    List.Add(Line);
-
-    // Copy table data
-    with Grid.DataSource.DataSet do
-    while not Eof do
-    begin
+    try
       Line:= '';
+
+      // Copy fields header
+      with Grid.DataSource.DataSet do
       for i:= 0 to FieldCount - 1 do
       begin
-        Line:= Line + '"' + Trim(Fields[i].AsString) + '"';
+        Line:= Line + '"' + Fields[i].FieldName + '"';
         if i + 1 < FieldCount then
           Line:= Line + ',';
       end;
       List.Add(Line);
-      Next;
-    end;
-   Clipboard.AsText:= List.Text;
 
+      // Copy table data
+      with Grid.DataSource.DataSet do
+      while not Eof do
+      begin
+        Line:= '';
+        for i:= 0 to FieldCount - 1 do
+        begin
+          Line:= Line + '"' + Trim(Fields[i].AsString) + '"';
+          if i + 1 < FieldCount then
+            Line:= Line + ',';
+        end;
+        List.Add(Line);
+        Next;
+      end;
+      Clipboard.AsText:= List.Text;
+    finally
+      List.Free;
+    end;
   except
-  on e: exception do
-    ShowMessage(e.Message);
+    on e: exception do
+      ShowMessage(e.Message);
   end;
   grid.DataSource.DataSet.EnableControls;
 end;
