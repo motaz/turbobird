@@ -153,90 +153,92 @@ begin
   ScriptList.Clear;
   ScriptList.Add('create table ' + ATableName + ' (');
   CalculatedList:= TStringList.Create;
-
-  // Fields
-  with fmMain.SQLQuery1 do
-  while not EOF do
-  begin
-    Skipped:= False;
-    if (FieldByName('Computed_Source').AsString = '') and
-     ((Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
-     (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-     (FieldByName('Field_Collation').IsNull)) then
+  try
+    // Fields
+    with fmMain.SQLQuery1 do
+    while not EOF do
     begin
-      // Field Name
-      FieldLine:= Trim(FieldByName('Field_Name').AsString) + ' ';
-
-      // Field Type
-      if FieldByName('Field_Type_Int').AsInteger in [7, 8, 16] then
-        FieldLine:= FieldLine + fmMain.GetNumericFieldType(FieldByName('Field_Type_Int').AsInteger,
-          FieldByName('Field_SubType').AsInteger, FieldByName('Field_Length').AsInteger,
-          FieldByName('Field_Scale').AsInteger)
-      else
-        FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
-
-      if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
-        FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
-
-      // Default value
-      DefaultValue:= Trim(FieldByName('Field_Default_Value').AsString);
-      if DefaultValue <> '' then
+      Skipped:= False;
+      if (FieldByName('Computed_Source').AsString = '') and
+       ((Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
+       (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
+       (FieldByName('Field_Collation').IsNull)) then
       begin
-        if pos('default', DefaultValue) <> 1 then
-          DefaultValue:= ' default ''' + DefaultValue + '''';
+        // Field Name
+        FieldLine:= Trim(FieldByName('Field_Name').AsString) + ' ';
 
-        FieldLine:= FieldLine + ' ' + DefaultValue;
+        // Field Type
+        if FieldByName('Field_Type_Int').AsInteger in [7, 8, 16] then
+          FieldLine:= FieldLine + fmMain.GetNumericFieldType(FieldByName('Field_Type_Int').AsInteger,
+            FieldByName('Field_SubType').AsInteger, FieldByName('Field_Length').AsInteger,
+            FieldByName('Field_Scale').AsInteger)
+        else
+          FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
+
+        if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
+          FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
+
+        // Default value
+        DefaultValue:= Trim(FieldByName('Field_Default_Value').AsString);
+        if DefaultValue <> '' then
+        begin
+          if pos('default', DefaultValue) <> 1 then
+            DefaultValue:= ' default ''' + DefaultValue + '''';
+
+          FieldLine:= FieldLine + ' ' + DefaultValue;
+        end;
+
+        // Null/Not null
+        if FieldByName('field_not_null_constraint').AsString = '1' then
+           FieldLine:= FieldLine + ' not null ';
+
+      end
+      else
+        Skipped:= True;
+
+      // Computed Fields
+      if FieldByName('Computed_Source').AsString <> '' then
+        CalculatedList.Add('ALTER TABLE ' + ATableName + ' ADD ' +
+          Trim(FieldByName('Field_Name').AsString) + ' COMPUTED BY ' + FieldByName('Computed_Source').AsString + ';');
+
+      Next;
+
+      if not Skipped then
+      begin
+        if not EOF then
+          FieldLine:= FieldLine + ',';
+        ScriptList.Add(FieldLine);
       end;
-
-      // Null/Not null
-      if FieldByName('field_not_null_constraint').AsString = '1' then
-         FieldLine:= FieldLine + ' not null ';
-
-    end
-    else
-      Skipped:= True;
-
-    // Computed Fields
-    if FieldByName('Computed_Source').AsString <> '' then
-      CalculatedList.Add('ALTER TABLE ' + ATableName + ' ADD ' +
-        Trim(FieldByName('Field_Name').AsString) + ' COMPUTED BY ' + FieldByName('Computed_Source').AsString + ';');
-
-    Next;
-
-    if not Skipped then
-    begin
-      if not EOF then
-        FieldLine:= FieldLine + ',';
-      ScriptList.Add(FieldLine);
     end;
-  end;
 
-  if Pos(',', ScriptList[ScriptList.Count - 1]) > 0 then
-    ScriptList[ScriptList.Count - 1]:= Copy(ScriptList[ScriptList.Count - 1], 1,
-      Length(ScriptList[ScriptList.Count - 1]) - 1);
+    if Pos(',', ScriptList[ScriptList.Count - 1]) > 0 then
+      ScriptList[ScriptList.Count - 1]:= Copy(ScriptList[ScriptList.Count - 1], 1,
+        Length(ScriptList[ScriptList.Count - 1]) - 1);
 
-  fmMain.SQLQuery1.Close;
+    fmMain.SQLQuery1.Close;
 
-  // Primary Keys
-  PKFieldsList:= TStringList.Create;
-  PKeyName:= fmMain.GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
-  if PKeyName <> '' then
-  begin
-    fmMain.GetConstraintFields(ATableName, PKeyName, PKFieldsList);
-    FieldLine:= 'constraint ' + PKeyName + ' primary key (';
-    for i:= 0 to PKFieldsList.Count - 1 do
-      FieldLine:= FieldLine + PKFieldsList[i] + ', ';
-    if PKFieldsList.Count > 0 then
+    // Primary Keys
+    PKFieldsList:= TStringList.Create;
+    PKeyName:= fmMain.GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
+    if PKeyName <> '' then
     begin
-      Delete(FieldLine, Length(FieldLine) - 1, 2);
-      FieldLine:= FieldLine + ')';
-      ScriptList.Add(', ' + FieldLine);
+      fmMain.GetConstraintFields(ATableName, PKeyName, PKFieldsList);
+      FieldLine:= 'constraint ' + PKeyName + ' primary key (';
+      for i:= 0 to PKFieldsList.Count - 1 do
+        FieldLine:= FieldLine + PKFieldsList[i] + ', ';
+      if PKFieldsList.Count > 0 then
+      begin
+        Delete(FieldLine, Length(FieldLine) - 1, 2);
+        FieldLine:= FieldLine + ')';
+        ScriptList.Add(', ' + FieldLine);
+      end;
     end;
-  end;
 
-  ScriptList.Add(');');
-  ScriptList.Add(CalculatedList.Text);
-  CalculatedList.Free;
+    ScriptList.Add(');');
+    ScriptList.Add(CalculatedList.Text);
+  finally
+    CalculatedList.Free;
+  end;
 end;
 
 (***************  Script All Tables  ********************)
@@ -250,17 +252,20 @@ var
 begin
   TablesList:= TStringList.Create;
   TableScript:= TStringList.Create;
-  TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
-  List.Clear;
-  for i:= 0 to TablesList.Count - 1 do
-  begin
-    ScriptTableAsCreate(dbIndex, TablesList[i], TableScript);
-    List.Add('');
-    List.AddStrings(TableScript);
+  try
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+    List.Clear;
+    for i:= 0 to TablesList.Count - 1 do
+    begin
+      ScriptTableAsCreate(dbIndex, TablesList[i], TableScript);
+      List.Add('');
+      List.AddStrings(TableScript);
+    end;
+    Result:= TablesList.Count > 0;
+  finally
+    TablesList.Free;
+    TableScript.Free;
   end;
-  Result:= TablesList.Count > 0;
-  TablesList.Free;
-  TableScript.Free;
 end;
 
 (********************  Script Procedure Template  ***********************)
@@ -276,21 +281,24 @@ var
 begin
   ProceduresList:= TStringList.Create;
   ProcedureScript:= TStringList.Create;
-  ProceduresList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 5, Count);
-  List.Clear;
-  for i:= 0 to ProceduresList.Count - 1 do
-  begin
-    ProcedureScript.Text:= fmMain.GetStoredProcBody(dbIndex, ProceduresList[i], SPOwner);
-    ProcedureScript.Insert(0, 'SET TERM ^ ;');
-    ProcedureScript.Insert(1, 'CREATE Procedure ' + ProceduresList[i] + '(');
-    ProcedureScript.Add('^');
-    ProcedureScript.Add('SET TERM ; ^');
-    ProcedureScript.Add('');
-    List.AddStrings(ProcedureScript);
+  try
+    ProceduresList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 5, Count);
+    List.Clear;
+    for i:= 0 to ProceduresList.Count - 1 do
+    begin
+      ProcedureScript.Text:= fmMain.GetStoredProcBody(dbIndex, ProceduresList[i], SPOwner);
+      ProcedureScript.Insert(0, 'SET TERM ^ ;');
+      ProcedureScript.Insert(1, 'CREATE Procedure ' + ProceduresList[i] + '(');
+      ProcedureScript.Add('^');
+      ProcedureScript.Add('SET TERM ; ^');
+      ProcedureScript.Add('');
+      List.AddStrings(ProcedureScript);
+    end;
+    Result:= ProceduresList.Count > 0;
+  finally
+    ProceduresList.Free;
+    ProcedureScript.Free;
   end;
-  Result:= ProceduresList.Count > 0;
-  ProceduresList.Free;
-  ProcedureScript.Free;
 end;
 
 (********************  Script Views   ***********************)
@@ -305,20 +313,23 @@ var
 begin
   ViewsList:= TStringList.Create;
   ViewsBodyList:= TStringList.Create;
-  ViewsList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 4, Count);
-  List.Clear;
-  for i:= 0 to ViewsList.Count - 1 do
-  begin
-    fmMain.GetViewInfo(dbIndex, ViewsList[i], Columns, ViewBody);
-    ViewsBodyList.Text:= Trim(ViewBody);
-    List.Add('CREATE VIEW "' + ViewsList[i] + '" (' + Columns + ')');
-    List.Add('AS');
-    List.AddStrings(ViewsBodyList);
-    List.Add(' ;');
+  try
+    ViewsList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 4, Count);
+    List.Clear;
+    for i:= 0 to ViewsList.Count - 1 do
+    begin
+      fmMain.GetViewInfo(dbIndex, ViewsList[i], Columns, ViewBody);
+      ViewsBodyList.Text:= Trim(ViewBody);
+      List.Add('CREATE VIEW "' + ViewsList[i] + '" (' + Columns + ')');
+      List.Add('AS');
+      List.AddStrings(ViewsBodyList);
+      List.Add(' ;');
+    end;
+    Result:= ViewsList.Count > 0;
+  finally
+    ViewsList.Free;
+    ViewsBodyList.Free;
   end;
-  Result:= ViewsList.Count > 0;
-  ViewsList.Free;
-  ViewsBodyList.Free;
 end;
 
 
@@ -333,18 +344,21 @@ var
 begin
   TriggersList:= TStringList.Create;
   TriggerScript:= TStringList.Create;
-  TriggersList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 3, Count);
-  List.Clear;
-  for i:= 0 to TriggersList.Count - 1 do
-  begin
-    TriggerScript.Clear;
-    dmSysTables.ScriptTrigger(dbIndex, TriggersList[i], TriggerScript, True);
-    List.AddStrings(TriggerScript);
-    List.Add('');
+  try
+    TriggersList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 3, Count);
+    List.Clear;
+    for i:= 0 to TriggersList.Count - 1 do
+    begin
+      TriggerScript.Clear;
+      dmSysTables.ScriptTrigger(dbIndex, TriggersList[i], TriggerScript, True);
+      List.AddStrings(TriggerScript);
+      List.Add('');
+    end;
+    Result:= TriggersList.Count > 0;
+  finally
+    TriggerScript.Free;
+    TriggersList.Free;
   end;
-  Result:= TriggersList.Count > 0;
-  TriggerScript.Free;
-  TriggersList.Free;
 end;
 
 (********************  Script Secondary indices  ***********************)
@@ -361,38 +375,41 @@ var
 begin
   TablesList:= TStringList.Create;
   FieldsList:= TStringList.Create;
-  TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
-  List.Clear;
-  for i:= 0 to TablesList.Count - 1 do
-  begin
-    PKName:= fmMain.GetPrimaryKeyIndexName(dbIndex, TablesList[i], ConstraintName);
-
-    if fmMain.GetIndices(TablesList[i], dmSysTables.sqQuery) then
-    with dmSysTables.sqQuery do
-    while not EOF do
+  try
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+    List.Clear;
+    for i:= 0 to TablesList.Count - 1 do
     begin
-      if PKName <> Trim(FieldByName('RDB$Index_name').AsString) then
+      PKName:= fmMain.GetPrimaryKeyIndexName(dbIndex, TablesList[i], ConstraintName);
+
+      if fmMain.GetIndices(TablesList[i], dmSysTables.sqQuery) then
+      with dmSysTables.sqQuery do
+      while not EOF do
       begin
-        Line:= 'create ';
-        if FieldByName('RDB$Unique_Flag').AsString = '1' then
-          Line:= Line + 'Unique ';
-        if FieldByName('RDB$Index_Type').AsString = '1' then
-          Line:= Line + 'Descending ';
+        if PKName <> Trim(FieldByName('RDB$Index_name').AsString) then
+        begin
+          Line:= 'create ';
+          if FieldByName('RDB$Unique_Flag').AsString = '1' then
+            Line:= Line + 'Unique ';
+          if FieldByName('RDB$Index_Type').AsString = '1' then
+            Line:= Line + 'Descending ';
 
-        Line:= Line + 'index ' + Trim(FieldByName('RDB$Index_name').AsString) + ' on ' + TablesList[i];
+          Line:= Line + 'index ' + Trim(FieldByName('RDB$Index_name').AsString) + ' on ' + TablesList[i];
 
-        fmMain.GetIndexFields(TablesList[i], Trim(FieldByName('RDB$Index_Name').AsString), fmMain.SQLQuery1, FieldsList);
-        Line:= Line + ' (' + FieldsList.CommaText + ') ;';
-        List.Add(Line);
+          fmMain.GetIndexFields(TablesList[i], Trim(FieldByName('RDB$Index_Name').AsString), fmMain.SQLQuery1, FieldsList);
+          Line:= Line + ' (' + FieldsList.CommaText + ') ;';
+          List.Add(Line);
 
+        end;
+        Next;
       end;
-      Next;
     end;
+    dmSysTables.sqQuery.Close;
+    Result:= List.Count > 0;
+  finally
+    TablesList.Free;
+    FieldsList.Free;
   end;
-  dmSysTables.sqQuery.Close;
-  Result:= List.Count > 0;
-  TablesList.Free;
-  FieldsList.Free;
 end;
 
 
@@ -406,32 +423,35 @@ var
   Line: string;
 begin
   TablesList:= TStringList.Create;
-  TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
-  List.Clear;
-  for i:= 0 to TablesList.Count - 1 do
-  with dmSysTables do
-  begin
-    { to do: foreign keys are not picked up while FlameRobin does, e.g. this for employee.fdb:
-    ALTER TABLE EMPLOYEE ADD CONSTRAINT INTEG_28
-      FOREIGN KEY (DEPT_NO) REFERENCES DEPARTMENT (DEPT_NO);
-    }
-    GetTableConstraints(TablesList[i], sqQuery);
-    while not sqQuery.EOF do
+  try
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+    List.Clear;
+    for i:= 0 to TablesList.Count - 1 do
+    with dmSysTables do
     begin
-       Line:= 'alter table ' + TablesList[i] + ' add constraint ' + sqQuery.Fields[0].AsString +
-         ' foreign key (' + sqQuery.Fields[3].AsString + ') references ' +  sqQuery.Fields[4].AsString  +
-         ' (' + dmSysTables.GetConstraintForiegnKeyFields(sqQuery.Fields[5].AsString, fmMain.SQLQuery1) + ') ';
-       if Trim(sqQuery.Fields[6].AsString) <> 'RESTRICT' then
-         Line:= Line + ' on update ' + Trim(sqQuery.Fields[6].AsString);
-       if Trim(sqQuery.Fields[7].AsString) <> 'RESTRICT' then
-         Line:= Line + ' on delete ' + Trim(sqQuery.Fields[7].AsString);
-       List.Add(Line + ';');
-       sqQuery.Next;
+      { to do: foreign keys are not picked up while FlameRobin does, e.g. this for employee.fdb:
+      ALTER TABLE EMPLOYEE ADD CONSTRAINT INTEG_28
+        FOREIGN KEY (DEPT_NO) REFERENCES DEPARTMENT (DEPT_NO);
+      }
+      GetTableConstraints(TablesList[i], sqQuery);
+      while not sqQuery.EOF do
+      begin
+         Line:= 'alter table ' + TablesList[i] + ' add constraint ' + sqQuery.Fields[0].AsString +
+           ' foreign key (' + sqQuery.Fields[3].AsString + ') references ' +  sqQuery.Fields[4].AsString  +
+           ' (' + dmSysTables.GetConstraintForiegnKeyFields(sqQuery.Fields[5].AsString, fmMain.SQLQuery1) + ') ';
+         if Trim(sqQuery.Fields[6].AsString) <> 'RESTRICT' then
+           Line:= Line + ' on update ' + Trim(sqQuery.Fields[6].AsString);
+         if Trim(sqQuery.Fields[7].AsString) <> 'RESTRICT' then
+           Line:= Line + ' on delete ' + Trim(sqQuery.Fields[7].AsString);
+         List.Add(Line + ';');
+         sqQuery.Next;
+      end;
+      sqQuery.Close;
     end;
-    sqQuery.Close;
+    Result:= List.Count > 0;
+  finally
+    TablesList.Free;
   end;
-  Result:= List.Count > 0;
-  TablesList.Free;
 end;
 
 
@@ -450,46 +470,47 @@ begin
     ObjName:= Copy(ObjName, 4, Length(ObjName) - 3);
     Permissions:= dmSysTables.GetObjectUserPermission(dbIndex, ObjName, UserName, ObjType);
     PermissionList:= TstringList.Create;
-    if Permissions <> '' then
-    begin
-      if Pos('<T>', OrigObjName) = 1 then // Table/View
+    try
+      if Permissions <> '' then
       begin
-        PermissionList.Clear;
-        if Pos('S', Permissions) > 0 then
-          PermissionList.Add('Select');
+        if Pos('<T>', OrigObjName) = 1 then // Table/View
+        begin
+          PermissionList.Clear;
+          if Pos('S', Permissions) > 0 then
+            PermissionList.Add('Select');
 
-        if Pos('U', Permissions) > 0 then
-          PermissionList.Add('Update');
+          if Pos('U', Permissions) > 0 then
+            PermissionList.Add('Update');
 
-        if Pos('I', Permissions) > 0 then
-          PermissionList.Add('Insert');
+          if Pos('I', Permissions) > 0 then
+            PermissionList.Add('Insert');
 
-        if Pos('D', Permissions) > 0 then
-          PermissionList.Add('Delete');
+          if Pos('D', Permissions) > 0 then
+            PermissionList.Add('Delete');
 
-        if Pos('R', Permissions) > 0 then
-          PermissionList.Add('References');
-        Line:= 'Grant ' + PermissionList.CommaText + ' on ' + ObjName + ' to ' + NewUser;
-        if Pos('G', Permissions) > 0 then
-          Line:= Line + ' with Grant option';
-        List.Add(Line + ' ;');
-      end
-      else
-      if Pos('<P>', OrigObjName) = 1 then // Procedure
-        List.Add('Grant Execute on procedure ' + ObjName + ' to ' + NewUser + ' ;')
-      else
-      if Pos('<R>', OrigObjName) = 1 then // Role
-        List.Add('Grant ' + ObjName + ' to ' + NewUser + ' ;');
+          if Pos('R', Permissions) > 0 then
+            PermissionList.Add('References');
+          Line:= 'Grant ' + PermissionList.CommaText + ' on ' + ObjName + ' to ' + NewUser;
+          if Pos('G', Permissions) > 0 then
+            Line:= Line + ' with Grant option';
+          List.Add(Line + ' ;');
+        end
+        else
+        if Pos('<P>', OrigObjName) = 1 then // Procedure
+          List.Add('Grant Execute on procedure ' + ObjName + ' to ' + NewUser + ' ;')
+        else
+        if Pos('<R>', OrigObjName) = 1 then // Role
+          List.Add('Grant ' + ObjName + ' to ' + NewUser + ' ;');
 
+      end;
+    finally
+      PermissionList.Free;
     end;
-    PermissionList.Free;
     Result:= True;
-
   except
-  on e: exception do
-    Result:= False;
+    on e: exception do
+      Result:= False;
   end;
-
 end;
 
 (********************  Script All Usesr and Rules permissions ***********************)
@@ -510,35 +531,37 @@ begin
   UsersList:= TStringList.Create;
   ObjectsList:= TStringList.Create;
   PermissionList:= TStringList.Create;
+  try
+    UsersList.CommaText:= dmSysTables.GetDBUsers(dbIndex);
+    List.Clear;
+    for i:= 0 to UsersList.Count - 1 do
+      if Pos('<R>', UsersList[i]) = 1 then
+        List.Add('/* Role ' + Copy(UsersList[i], 4, Length(UsersList[i]) - 3) + ' */')
+      else
+        List.Add('/* User ' + UsersList[i] + ' */');
 
-  UsersList.CommaText:= dmSysTables.GetDBUsers(dbIndex);
-  List.Clear;
-  for i:= 0 to UsersList.Count - 1 do
-    if Pos('<R>', UsersList[i]) = 1 then
-      List.Add('/* Role ' + Copy(UsersList[i], 4, Length(UsersList[i]) - 3) + ' */')
-    else
-      List.Add('/* User ' + UsersList[i] + ' */');
-
-  for i:= 0 to UsersList.Count - 1 do
-  begin
-    ObjectsList.CommaText:= dmSysTables.GetDBObjectsForPermissions(dbIndex);
-    if Pos('<R>', UsersList[i]) = 1 then
-      UserName:= Copy(UsersList[i], 4, Length(UsersList[i]) - 3)
-    else
-      UserName:= UsersList[i];
-
-    List.Add('');
-    List.Add('/* Permissions for: ' + UserName + ' */');
-
-    for j:= 0 to ObjectsList.Count - 1 do
+    for i:= 0 to UsersList.Count - 1 do
     begin
-      Result:= ScriptObjectPermission(dbIndex,  ObjectsList[j], UserName, ObjType, List);
+      ObjectsList.CommaText:= dmSysTables.GetDBObjectsForPermissions(dbIndex);
+      if Pos('<R>', UsersList[i]) = 1 then
+        UserName:= Copy(UsersList[i], 4, Length(UsersList[i]) - 3)
+      else
+        UserName:= UsersList[i];
+
+      List.Add('');
+      List.Add('/* Permissions for: ' + UserName + ' */');
+
+      for j:= 0 to ObjectsList.Count - 1 do
+      begin
+        Result:= ScriptObjectPermission(dbIndex,  ObjectsList[j], UserName, ObjType, List);
+      end;
     end;
+    Result:= UsersList.Count > 0;
+  finally
+    UsersList.Free;
+    ObjectsList.Free;
+    PermissionList.Free;
   end;
-  Result:= UsersList.Count > 0;
-  UsersList.Free;
-  ObjectsList.Free;
-  PermissionList.Free;
 end;
 
 (********************  Script One User or Rule permissions ***********************)
@@ -555,21 +578,23 @@ begin
     NewUser:= UserName;
   UsersList:= TStringList.Create;
   ObjectsList:= TStringList.Create;
+  try
+    UsersList.CommaText:= dmSysTables.GetDBUsers(dbIndex);
+    List.Clear;
 
-  UsersList.CommaText:= dmSysTables.GetDBUsers(dbIndex);
-  List.Clear;
+    ObjectsList.CommaText:= dmSysTables.GetDBObjectsForPermissions(dbIndex);
 
-  ObjectsList.CommaText:= dmSysTables.GetDBObjectsForPermissions(dbIndex);
+    List.Add('');
+    List.Add('/* Permissions for: ' + UserName + ' */');
 
-  List.Add('');
-  List.Add('/* Permissions for: ' + UserName + ' */');
+    for j:= 0 to ObjectsList.Count - 1 do
+      Result:= ScriptObjectPermission(dbIndex,  ObjectsList[j], UserName, ObjType, List, NewUser);
 
-  for j:= 0 to ObjectsList.Count - 1 do
-    Result:= ScriptObjectPermission(dbIndex,  ObjectsList[j], UserName, ObjType, List, NewUser);
-
-  Result:= UsersList.Count > 0;
-  UsersList.Free;
-  ObjectsList.Free;
+    Result:= UsersList.Count > 0;
+  finally
+    UsersList.Free;
+    ObjectsList.Free;
+  end;
 end;
 
 end.

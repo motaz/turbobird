@@ -318,20 +318,22 @@ begin
   if (cbUsers.Text <> '') and (cbTables.ItemIndex <> -1) then
   begin
     List:= TStringList.Create;
+    try
+      if cxAll.Checked then
+        ComposeTablePermissionSQL(cbTables.Text, 'All', cxAll.Checked, cxAllGrant.Checked, List)
+      else
+      begin
+        ComposeTablePermissionSQL(cbTables.Text, 'Select', cxSelect.Checked, cxSelectGrant.Checked, List);
+        ComposeTablePermissionSQL(cbTables.Text, 'Insert', cxInsert.Checked, cxInsertGrant.Checked, List);
+        ComposeTablePermissionSQL(cbTables.Text, 'Update', cxUpdate.Checked, cxUpdateGrant.Checked, List);
+        ComposeTablePermissionSQL(cbTables.Text, 'Delete', cxDelete.Checked, cxDeleteGrant.Checked, List);
+        ComposeTablePermissionSQL(cbTables.Text, 'References', cxReferences.Checked, cxReferencesGrant.Checked, List);
+      end;
 
-    if cxAll.Checked then
-      ComposeTablePermissionSQL(cbTables.Text, 'All', cxAll.Checked, cxAllGrant.Checked, List)
-    else
-    begin
-      ComposeTablePermissionSQL(cbTables.Text, 'Select', cxSelect.Checked, cxSelectGrant.Checked, List);
-      ComposeTablePermissionSQL(cbTables.Text, 'Insert', cxInsert.Checked, cxInsertGrant.Checked, List);
-      ComposeTablePermissionSQL(cbTables.Text, 'Update', cxUpdate.Checked, cxUpdateGrant.Checked, List);
-      ComposeTablePermissionSQL(cbTables.Text, 'Delete', cxDelete.Checked, cxDeleteGrant.Checked, List);
-      ComposeTablePermissionSQL(cbTables.Text, 'References', cxReferences.Checked, cxReferencesGrant.Checked, List);
+      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbTables.Text, List.Text, fOnCommitProcedure);
+    finally
+      List.Free;
     end;
-
-    fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbTables.Text, List.Text, fOnCommitProcedure);
-    List.Free;
     Close;
     Parent.Free;
   end
@@ -346,20 +348,22 @@ begin
   if (cbViewsUsers.Text <> '') and (cbViews.ItemIndex <> -1) then
   begin
     List:= TStringList.Create;
+    try
+      if cxViewAll.Checked then
+        ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'All', cxViewAll.Checked, cxViewAllGrant.Checked, List)
+      else
+      begin
+        ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Select', cxViewSelect.Checked, cxViewSelectGrant.Checked, List);
+        ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Insert', cxViewInsert.Checked, cxViewInsertGrant.Checked, List);
+        ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Update', cxViewUpdate.Checked, cxViewUpdateGrant.Checked, List);
+        ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Delete', cxViewDelete.Checked, cxViewDeleteGrant.Checked, List);
+        ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'References', cxViewReferences.Checked, cxViewReferencesGrant.Checked, List);
+      end;
 
-    if cxViewAll.Checked then
-      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'All', cxViewAll.Checked, cxViewAllGrant.Checked, List)
-    else
-    begin
-      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Select', cxViewSelect.Checked, cxViewSelectGrant.Checked, List);
-      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Insert', cxViewInsert.Checked, cxViewInsertGrant.Checked, List);
-      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Update', cxViewUpdate.Checked, cxViewUpdateGrant.Checked, List);
-      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'Delete', cxViewDelete.Checked, cxViewDeleteGrant.Checked, List);
-      ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'References', cxViewReferences.Checked, cxViewReferencesGrant.Checked, List);
+      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbViews.Text, List.Text, fOnCommitProcedure);
+    finally
+      List.Free;
     end;
-
-    fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbViews.Text, List.Text, fOnCommitProcedure);
-    List.Free;
     Close;
     Parent.Free;
   end
@@ -388,30 +392,33 @@ begin
   if Trim(cbProcUsers.Text) <> '' then
   begin
     List:= TStringList.Create;
-    For i:= 0 to clbProcedures.Items.Count - 1 do
-    begin
-      if clbProcedures.Checked[i] and
-        ((ProcList.IndexOf(clbProcedures.Items[i]) = -1) or (ProcGrant[i] and (not OrigProcGrant[i]))) then // Grant this proc
-        begin
-          Line:= 'grant execute on procedure ' + clbProcedures.Items[i] + ' to ' + cbProcUsers.Text;
-          if ProcGrant[i] then
-            Line:= Line + ' with grant option';
-          List.Add(Line + ';');
+    try
+      For i:= 0 to clbProcedures.Items.Count - 1 do
+      begin
+        if clbProcedures.Checked[i] and
+          ((ProcList.IndexOf(clbProcedures.Items[i]) = -1) or (ProcGrant[i] and (not OrigProcGrant[i]))) then // Grant this proc
+          begin
+            Line:= 'grant execute on procedure ' + clbProcedures.Items[i] + ' to ' + cbProcUsers.Text;
+            if ProcGrant[i] then
+              Line:= Line + ' with grant option';
+            List.Add(Line + ';');
 
-        end;
+          end;
 
-      if (not clbProcedures.Checked[i]) and (ProcList.IndexOf(clbProcedures.Items[i]) <> -1) then // Remove this proc
-        List.Add('Revoke execute on procedure ' + clbProcedures.Items[i] + ' from ' + cbProcUsers.Text + ';');
-    end;
-    if List.Count > 0 then
-    begin
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbProcUsers.Text, List.Text, fOnCommitProcedure);
+        if (not clbProcedures.Checked[i]) and (ProcList.IndexOf(clbProcedures.Items[i]) <> -1) then // Remove this proc
+          List.Add('Revoke execute on procedure ' + clbProcedures.Items[i] + ' from ' + cbProcUsers.Text + ';');
+      end;
+      if List.Count > 0 then
+      begin
+        fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbProcUsers.Text, List.Text, fOnCommitProcedure);
+        Close;
+        Parent.Free;
+      end
+      else
+        ShowMessage('There is no change');
+    finally
       List.Free;
-      Close;
-      Parent.Free;
-    end
-    else
-      ShowMessage('There is no change');
+    end;
   end;
 end;
 
@@ -424,32 +431,34 @@ begin
   if Trim(cbRolesUser.Text) <> '' then
   begin
     List:= TStringList.Create;
-    For i:= 0 to clbRoles.Items.Count - 1 do
-    begin
-      if clbRoles.Checked[i] and
-        ((RoleList.IndexOf(clbRoles.Items[i]) = -1) or (RoleGrant[i] and (not OrigRoleGrant[i]))) then // Grant this Role
+    try
+      For i:= 0 to clbRoles.Items.Count - 1 do
       begin
-        Line:= 'grant ' + clbRoles.Items[i] + ' to ' + cbRolesUser.Text;
-        if RoleGrant[i] then
-          Line:= Line + ' with admin option';
-        List.Add(Line + ';');
+        if clbRoles.Checked[i] and
+          ((RoleList.IndexOf(clbRoles.Items[i]) = -1) or (RoleGrant[i] and (not OrigRoleGrant[i]))) then // Grant this Role
+        begin
+          Line:= 'grant ' + clbRoles.Items[i] + ' to ' + cbRolesUser.Text;
+          if RoleGrant[i] then
+            Line:= Line + ' with admin option';
+          List.Add(Line + ';');
+        end;
+
+        if (not clbRoles.Checked[i]) and (RoleList.IndexOf(clbRoles.Items[i]) <> -1) then // Remove this Role
+          List.Add('Revoke ' + clbRoles.Items[i] + ' from ' + cbRolesUser.Text + ';');
       end;
 
-      if (not clbRoles.Checked[i]) and (RoleList.IndexOf(clbRoles.Items[i]) <> -1) then // Remove this Role
-        List.Add('Revoke ' + clbRoles.Items[i] + ' from ' + cbRolesUser.Text + ';');
-    end;
-
-    if List.Count > 0 then
-    begin
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbRolesUser.Text, List.Text, fOnCommitProcedure);
+      if List.Count > 0 then
+      begin
+        fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbRolesUser.Text, List.Text, fOnCommitProcedure);
+        Close;
+        Parent.Free;
+      end
+      else
+        ShowMessage('There is no change');
+    finally
       List.Free;
-      Close;
-      Parent.Free;
-    end
-    else
-      ShowMessage('There is no change');
+    end;
   end;
-
 end;
 
 procedure TfmPermissionManage.cbProcUsersChange(Sender: TObject);

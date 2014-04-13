@@ -96,52 +96,55 @@ var
 begin
   fdbIndex:= dbIndex;
   ProcessList:= TStringList.Create;
-
-  // Read database info
-  if dmSysTables.GetDatabaseInfo(dbIndex, dbName, ACharSet, CreationDate, ServerTime,
-    MajorVer, MinorVer, Pages, PageSize, ProcessList, ErrorMsg) then
-  begin
-    edName.Text:= dbName;
-    edODSVer.Text:= IntToStr(MajorVer) + '.' + IntToStr(MinorVer);
-    edCharset.Text:= ACharSet;
-    edCreationDate.Text:= CreationDate;
-    edPageSize.Text:= IntToStr(PageSize);
-    edConnections.Text:= IntToStr(ProcessList.Count);
-    dbSize:= Pages * PageSize;
-
-    // Display database size in readable format
-    if dbSize > (1024*1024*1024) then
+  try
+    // Read database info
+    if dmSysTables.GetDatabaseInfo(dbIndex, dbName, ACharSet, CreationDate, ServerTime,
+      MajorVer, MinorVer, Pages, PageSize, ProcessList, ErrorMsg) then
     begin
-      dbSize:= ((dbSize / 1024) / 1024) / 1024;
-      AType:= 'Giga bytes';
+      edName.Text:= dbName;
+      edODSVer.Text:= IntToStr(MajorVer) + '.' + IntToStr(MinorVer);
+      edCharset.Text:= ACharSet;
+      edCreationDate.Text:= CreationDate;
+      edPageSize.Text:= IntToStr(PageSize);
+      edConnections.Text:= IntToStr(ProcessList.Count);
+      dbSize:= Pages * PageSize;
+
+      // Display database size in readable format
+      if dbSize > (1024*1024*1024) then
+      begin
+        dbSize:= ((dbSize / 1024) / 1024) / 1024;
+        AType:= 'Giga bytes';
+      end
+      else
+      if dbSize > (1024*1024) then
+      begin
+        dbSize:= ((dbSize / 1024) / 1024);
+        AType:= 'Mega bytes';
+      end
+      else
+      if dbSize > 1024 then
+      begin
+        dbSize:= (dbSize / 1024);
+        AType:= 'Kilo bytes';
+      end
+      else
+      begin
+        AType:= 'Bytes';
+      end;
+
+      edDBSize.Text:= Format('%3.1n %s', [dbSize, AType]);
+      fmDBInfo.edServerTime.Text:= ServerTime;
+      meClients.Lines.Text:= ProcessList.Text;
+      meClients.Lines.Insert(0, '');
+      Show;
     end
     else
-    if dbSize > (1024*1024) then
-    begin
-      dbSize:= ((dbSize / 1024) / 1024);
-      AType:= 'Mega bytes';
-    end
-    else
-    if dbSize > 1024 then
-    begin
-      dbSize:= (dbSize / 1024);
-      AType:= 'Kilo bytes';
-    end
-    else
-    begin
-      AType:= 'Bytes';
-    end;
-
-    edDBSize.Text:= Format('%3.1n %s', [dbSize, AType]);
-    fmDBInfo.edServerTime.Text:= ServerTime;
-    meClients.Lines.Text:= ProcessList.Text;
-    meClients.Lines.Insert(0, '');
+      ShowMessage('Unable to get database information' + LineEnding +
+        ErrorMsg);
+  finally
     ProcessList.Free;
-    Show;
-  end
-  else
-    ShowMessage('Unable to get database information' + LineEnding +
-      ErrorMsg);
+  end;
+
 end;
 
 

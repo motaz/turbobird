@@ -55,10 +55,13 @@ var
 begin
   // Get foriegn table fields
   FieldsList:= TStringList.Create;
-  fmMain.GetFields(DatabaseIndex, cbTables.Text, FieldsList);
-  clxForFields.Clear;
-  clxForFields.Items.AddStrings(FieldsList);
-  FieldsList.Free;
+  try
+    fmMain.GetFields(DatabaseIndex, cbTables.Text, FieldsList);
+    clxForFields.Clear;
+    clxForFields.Items.AddStrings(FieldsList);
+  finally
+    FieldsList.Free;
+  end;
   fmMain.SQLQuery1.Close;
 end;
 

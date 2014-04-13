@@ -116,37 +116,40 @@ var
 begin
   try
     http:= THTTPSend.Create;
+    try
+      with fmUpdate do
+      if cxProxy.Checked then
+      begin
+        http.ProxyHost:= edProxy.Text;
+        http.ProxyPort:= edPort.Text;
+        http.ProxyUser:= edUser.Text;
+        http.ProxyPass:= edPassword.Text;
+      end;
 
-    with fmUpdate do
-    if cxProxy.Checked then
-    begin
-      http.ProxyHost:= edProxy.Text;
-      http.ProxyPort:= edPort.Text;
-      http.ProxyUser:= edUser.Text;
-      http.ProxyPass:= edPassword.Text;
+      fSuccess:= http.HTTPMethod('GET', fURL);
+      if fSuccess then
+      if http.Document.Size > 10000 then  // Actual file has been downloaded
+        http.Document.SaveToFile(ExtractFilePath(ParamStr(0)) + fFileName)
+      else
+      begin // Error HTML response
+        List:= TStringList.Create;
+        try
+          List.LoadFromStream(http.Document);
+          fSuccess:= False;
+          fErrorMessage:= List.Text;
+        finally
+          List.Free;
+        end;
+      end;
+    finally
+      http.Free
     end;
-
-    fSuccess:= http.HTTPMethod('GET', fURL);
-    if fSuccess then
-    if http.Document.Size > 10000 then  // Actual file has been downloaded
-      http.Document.SaveToFile(ExtractFilePath(ParamStr(0)) + fFileName)
-    else
-    begin // Error HTML response
-      List:= TStringList.Create;
-      List.LoadFromStream(http.Document);
-      fSuccess:= False;
-      fErrorMessage:= List.Text;
-      List.Free;
-    end;
-
-    http.Free
-
   except
-  on e: exception do
-  begin
-    fSuccess:= False;
-    fErrorMessage:= e.Message;
-  end;
+    on e: exception do
+    begin
+      fSuccess:= False;
+      fErrorMessage:= e.Message;
+    end;
   end;
 
 end;
@@ -262,44 +265,46 @@ var
   ServerMinor: Word;
   VerStr: string;
 begin
-  List:= TStringList.Create;
-
-  OS:= Target + Arch + '-';
   try
-    http:= THTTPSend.Create;
+    List:= TStringList.Create;
+    try
+      OS:= Target + Arch + '-';
+        http:= THTTPSend.Create;
+        try
+          if cxProxy.Checked then
+          begin
+            http.ProxyHost:= edProxy.Text;
+            http.ProxyPort:= edPort.Text;
+            http.ProxyUser:= edUser.Text;
+            http.ProxyPass:= edPassword.Text;
+          end;
 
-    if cxProxy.Checked then
-    begin
-      http.ProxyHost:= edProxy.Text;
-      http.ProxyPort:= edPort.Text;
-      http.ProxyUser:= edUser.Text;
-      http.ProxyPass:= edPassword.Text;
+          http.HTTPMethod('GET', 'http://code-sd.com/turbobird/releases/' + OS + IntToStr(Major));
+          // Linux64-0
+          List.LoadFromStream(http.Document);
+          VerStr:= Trim(List.Text);
+          ServerMinor:= StrToInt(Copy(VerStr, 1, Pos('.', VerStr) - 1));
+          Delete(VerStr, 1, Pos('.', VerStr));
+          ServerRelease:= StrToInt(VerStr);
+          NewVersion:= (Minor < ServerMinor) or (ServerRelease > ReleaseVersion);
+
+          Version:= IntToStr(Major) + '.' + IntToStr(ServerMinor) + '.' + IntToStr(ServerRelease);
+          AFileName:= 'TurboBird-' + OS + IntToStr(Major) + '.zip';
+          // TurboBird-Linux32-1.zip
+          Result:= True;
+        finally
+          http.free;
+        end;
+    finally
+      List.Free;
     end;
-
-    http.HTTPMethod('GET', 'http://code-sd.com/turbobird/releases/' + OS + IntToStr(Major));
-    // Linux64-0
-    List.LoadFromStream(http.Document);
-    VerStr:= Trim(List.Text);
-    ServerMinor:= StrToInt(Copy(VerStr, 1, Pos('.', VerStr) - 1));
-    Delete(VerStr, 1, Pos('.', VerStr));
-    ServerRelease:= StrToInt(VerStr);
-    NewVersion:= (Minor < ServerMinor) or (ServerRelease > ReleaseVersion);
-
-    Version:= IntToStr(Major) + '.' + IntToStr(ServerMinor) + '.' + IntToStr(ServerRelease);
-    AFileName:= 'TurboBird-' + OS + IntToStr(Major) + '.zip';
-    // TurboBird-Linux32-1.zip
-    Result:= True;
-    List.Free;
-    http.Free
-
   except
-  on e: exception do
-  begin
-    Result:= False;
-    ResMsg:= e.Message;
+    on e: exception do
+    begin
+      Result:= False;
+      ResMsg:= e.Message;
+    end;
   end;
-  end;
-
 end;
 
 function TfmUpdate.DownloadNewVersion: Boolean;

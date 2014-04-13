@@ -396,91 +396,92 @@ begin
     PKName:= fmMain.GetPrimaryKeyIndexName(fdbIndex, ATableName, ConstraintName);
     if PKName <> '' then
     begin
-
-      aQuery:= TSQLQuery.Create(nil);
-      aQuery.DataBase:= ibConnection;
-      aQuery.Transaction:= SqlTrans;
       KeyList:= TStringList.Create;
       Fieldslist:= tstringList.Create;
+      aQuery:= TSQLQuery.Create(nil);
+      try
+        aQuery.DataBase:= ibConnection;
+        aQuery.Transaction:= SqlTrans;
 
-      // Get primary key fields
-      fmMain.GetIndexFields(ATableName, PKName, aQuery, KeyList);
-      fmMain.GetFields(fdbIndex, ATableName, FieldsList);
-      WhereClause:= 'where ';
+        // Get primary key fields
+        fmMain.GetIndexFields(ATableName, PKName, aQuery, KeyList);
+        fmMain.GetFields(fdbIndex, ATableName, FieldsList);
+        WhereClause:= 'where ';
 
-      RecordSet.DisableControls;
-      // Check modified fields
-      for i:= 0 to High(ModifiedRecords[TabIndex]) do
-      begin
-        FieldsSQL:= '';
-        RecordSet.RecNo:= ModifiedRecords[TabIndex][i];
-        for x:= 0 to RecordSet.Fields.Count - 1 do
-        if FieldsList.IndexOf(RecordSet.Fields[x].FieldName) <> -1 then // Field exist in origional table
-
-        if (RecordSet.Fields[x].NewValue <> RecordSet.Fields[x].OldValue) then // field data has been modified
+        RecordSet.DisableControls;
+        // Check modified fields
+        for i:= Low(ModifiedRecords[TabIndex]) to High(ModifiedRecords[TabIndex]) do
         begin
+         FieldsSQL:= '';
+         RecordSet.RecNo:= ModifiedRecords[TabIndex][i];
+         for x:= 0 to RecordSet.Fields.Count - 1 do
+         if FieldsList.IndexOf(RecordSet.Fields[x].FieldName) <> -1 then // Field exist in origional table
+
+         if (RecordSet.Fields[x].NewValue <> RecordSet.Fields[x].OldValue) then // field data has been modified
+         begin
+          if FieldsSQL <> '' then
+              FieldsSQL += ',';
+            FieldsSQL += RecordSet.Fields[x].FieldName + '=';
+
+            // Typecast field values according to thier main type
+            case RecordSet.Fields[x].DataType of
+             ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
+             ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);
+             ftTimeStamp, ftDateTime: FieldsSQL += '''' + DateTimeToStr(RecordSet.Fields[x].NewValue) + '''';
+             ftTime: FieldsSQL += '''' + TimeToStr(RecordSet.Fields[x].NewValue) + '''';
+             ftDate: FieldsSQL += '''' + DateToStr(RecordSet.Fields[x].NewValue) + '''';
+
+            else // Other types like string
+               FieldsSQL += '''' + RecordSet.Fields[x].NewValue + '''';
+
+          end;
+         end;
+
+
+         // Update current record
          if FieldsSQL <> '' then
-             FieldsSQL += ',';
-           FieldsSQL += RecordSet.Fields[x].FieldName + '=';
+         begin
+           aQuery.Close;
+           aQuery.SQL.Text:= 'update ' + aTableName + ' set ' + FieldsSQL;
 
-           // Typecast field values according to thier main type
-           case RecordSet.Fields[x].DataType of
-            ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
-            ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);
-            ftTimeStamp, ftDateTime: FieldsSQL += '''' + DateTimeToStr(RecordSet.Fields[x].NewValue) + '''';
-            ftTime: FieldsSQL += '''' + TimeToStr(RecordSet.Fields[x].NewValue) + '''';
-            ftDate: FieldsSQL += '''' + DateToStr(RecordSet.Fields[x].NewValue) + '''';
+           WhereClause:= 'where ';
+           // where clause
+           for x:= 0 to KeyList.Count - 1 do
+           if Trim(KeyList[x]) <> '' then
+           begin
+             WhereClause += KeyList[x] + ' = ';
 
-           else // Other types like string
-              FieldsSQL += '''' + RecordSet.Fields[x].NewValue + '''';
+             // Typecase index values
+             case RecordSet.Fields[x].DataType of
+              ftInteger, ftSmallint: WhereClause += IntToStr(RecordSet.Fields[x].OldValue);
+              ftFloat: WhereClause += FloatToStr(RecordSet.Fields[x].OldValue);
+             else
+                WhereClause += '''' + RecordSet.Fields[x].OldValue + '''';
+             end;
+             if x < KeyList.Count - 1 then
+               WhereClause += ' and ';
+           end;
 
+           aQuery.SQL.Add(WhereClause);
+           aQuery.ExecSQL;
+           (Sender as TBitBtn).Visible:= False;
+
+           // Auto commit
+           if cxAutoCommit.Checked then
+             SqlTrans.CommitRetaining
+           else
+             EnableCommitButton;
          end;
         end;
 
-
-        // Update current record
-        if FieldsSQL <> '' then
-        begin
-          aQuery.Close;
-          aQuery.SQL.Text:= 'update ' + aTableName + ' set ' + FieldsSQL;
-
-          WhereClause:= 'where ';
-          // where clause
-          for x:= 0 to KeyList.Count - 1 do
-          if Trim(KeyList[x]) <> '' then
-          begin
-            WhereClause += KeyList[x] + ' = ';
-
-            // Typecase index values
-            case RecordSet.Fields[x].DataType of
-             ftInteger, ftSmallint: WhereClause += IntToStr(RecordSet.Fields[x].OldValue);
-             ftFloat: WhereClause += FloatToStr(RecordSet.Fields[x].OldValue);
-            else
-               WhereClause += '''' + RecordSet.Fields[x].OldValue + '''';
-            end;
-            if x < KeyList.Count - 1 then
-              WhereClause += ' and ';
-          end;
-
-          aQuery.SQL.Add(WhereClause);
-          aQuery.ExecSQL;
-          (Sender as TBitBtn).Visible:= False;
-
-          // Auto commit
-          if cxAutoCommit.Checked then
-            SqlTrans.CommitRetaining
-          else
-            EnableCommitButton;
-        end;
+        // Reset ModifedRecords pointer
+        ModifiedRecords[TabIndex]:= nil;
+        RecordSet.EnableControls;
+      finally
+        FieldsList.Free;
+        KeyList.Free;
+        aQuery.Free;
       end;
-
-      // Reset ModifedRecords pointer
-      ModifiedRecords[TabIndex]:= nil;
-
-      RecordSet.EnableControls;
-      FieldsList.Free;
-      KeyList.Free;
-      aQuery.Free;
     end
     else
       ShowMessage('There is no primary key on the table: ' + aTableName);
@@ -1487,7 +1488,7 @@ var
   i: Integer;
   CannotFree: Boolean;
 begin
-  for i:= High(ResultControls) downto  0 do
+  for i:= High(ResultControls) downto Low(ResultControls) do
   begin
     if ResultControls[i] is TSQLQuery then
     begin

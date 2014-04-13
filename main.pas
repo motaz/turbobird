@@ -438,9 +438,12 @@ begin
     UserName:= tvMain.Selected.Text;
     dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
     List:= TStringList.Create;
-    Scriptdb.ScriptUserAllPermissions(dbIndex, UserName, List, NewUser);
-    ShowCompleteQueryWindow(dbIndex, 'Script permissions for : ' + UserName, List.Text);
-    List.Free;
+    try
+      Scriptdb.ScriptUserAllPermissions(dbIndex, UserName, List, NewUser);
+      ShowCompleteQueryWindow(dbIndex, 'Script permissions for : ' + UserName, List.Text);
+    finally
+      List.Free;
+    end;
   end;
 end;
 
@@ -1165,93 +1168,98 @@ var
   ConstraintName: string;
   Form: TfmTableManage;
 begin
-
   Form:= AForm as TfmTableManage;
   Rec:= RegisteredDatabases[DatabaseIndex];
   AQuery:= TSQLQuery.Create(nil);
-  AQuery.Close;
+  try
+    AQuery.Close;
 
-  if ibConnection <> RegisteredDatabases[DatabaseIndex].IBConnection then
-  begin
-    ibConnection:= RegisteredDatabases[DatabaseIndex].IBConnection;
-    sqlTransaction:= RegisteredDatabases[DatabaseIndex].SQLTrans;
-  end;
-  AQuery.DataBase:= ibConnection;
-  sqlTransaction.Commit;
-
-  Form.sgIndices.RowCount:= 1;
-
-  // Get primary key index name
-  Form.PKeyName:= GetPrimaryKeyIndexName(DatabaseIndex, ATableName, ConstraintName);
-  Form.ConstraintName:= ConstraintName;
-
-  // Index names
-  if GetIndices(ATableName, AQuery) then
-  with Form do
-  while not AQuery.EOF do
-  begin
-    if Trim(AQuery.FieldByName('RDB$Index_name').AsString) = PKeyName then
+    if ibConnection <> RegisteredDatabases[DatabaseIndex].IBConnection then
     begin
-      sgIndices.InsertColRow(False, 1);
-      CurrentRow:= 1;
-    end
-    else
-    begin
-      sgIndices.RowCount:= sgIndices.RowCount + 1;
-      CurrentRow:= sgIndices.RowCount - 1;
+      ibConnection:= RegisteredDatabases[DatabaseIndex].IBConnection;
+      sqlTransaction:= RegisteredDatabases[DatabaseIndex].SQLTrans;
     end;
-    sgIndices.Cells[0, CurrentRow]:= Trim(AQuery.FieldByName('RDB$Index_Name').AsString);
-    if AQuery.FieldByName('RDB$Unique_Flag').AsString = '1' then
-      sgIndices.Cells[1, CurrentRow]:= '1'
-    else
-      sgIndices.Cells[1, CurrentRow]:= '0';
+    AQuery.DataBase:= ibConnection;
+    sqlTransaction.Commit;
 
-    if AQuery.FieldByName('RDB$Index_Type').AsString = '1' then
-      sgIndices.Cells[2, CurrentRow]:= 'Desc'
-    else
-      sgIndices.Cells[2, CurrentRow]:= 'Asc';
+    Form.sgIndices.RowCount:= 1;
 
-    if Trim(AQuery.FieldByName('RDB$Index_Name').AsString) = Form.PKeyName then
-      sgIndices.Cells[4, CurrentRow]:= '1'
-    else
-      sgIndices.Cells[4, CurrentRow]:= '0';
-    AQuery.Next;
-  end;
+    // Get primary key index name
+    Form.PKeyName:= GetPrimaryKeyIndexName(DatabaseIndex, ATableName, ConstraintName);
+    Form.ConstraintName:= ConstraintName;
 
-  FieldsList:= TStringList.Create;
-
-  // Index fields
-  with Form do
-  for i:= 1 to sgIndices.RowCount - 1 do
-  begin
-    IndexFields:= '';
-    if GetIndexFields(ATableName, sgIndices.Cells[0, i], AQuery, FieldsList) then
+    // Index names
+    if GetIndices(ATableName, AQuery) then
+    with Form do
+    while not AQuery.EOF do
     begin
-      IndexFields:= FieldsList.CommaText;
-      sgIndices.Cells[3, i]:= IndexFields;
-    end;
-  end;
-  FieldsList.Free;
-  Form.edIndexName.Text:= 'IX_' + ATableName + '_' + IntToStr(Form.sgIndices.RowCount);
+      if Trim(AQuery.FieldByName('RDB$Index_name').AsString) = PKeyName then
+      begin
+        sgIndices.InsertColRow(False, 1);
+        CurrentRow:= 1;
+      end
+      else
+      begin
+        sgIndices.RowCount:= sgIndices.RowCount + 1;
+        CurrentRow:= sgIndices.RowCount - 1;
+      end;
+      sgIndices.Cells[0, CurrentRow]:= Trim(AQuery.FieldByName('RDB$Index_Name').AsString);
+      if AQuery.FieldByName('RDB$Unique_Flag').AsString = '1' then
+        sgIndices.Cells[1, CurrentRow]:= '1'
+      else
+        sgIndices.Cells[1, CurrentRow]:= '0';
 
-  // Field names
-  GetFields(DatabaseIndex, ATableName, nil);
-  with Form, Self.SQLQuery1 do
-  begin
-    clbFields.Clear;
-    while not EOF do
-    begin
-      if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
-       (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-       (FieldByName('Field_Collation').IsNull) then
-      if (FieldByName('Field_Type_Str').AsString <> 'BLOB') then
-        clbFields.Items.Add(FieldByName('Field_Name').AsString);
-      Next;
+      if AQuery.FieldByName('RDB$Index_Type').AsString = '1' then
+        sgIndices.Cells[2, CurrentRow]:= 'Desc'
+      else
+        sgIndices.Cells[2, CurrentRow]:= 'Asc';
+
+      if Trim(AQuery.FieldByName('RDB$Index_Name').AsString) = Form.PKeyName then
+        sgIndices.Cells[4, CurrentRow]:= '1'
+      else
+        sgIndices.Cells[4, CurrentRow]:= '0';
+      AQuery.Next;
     end;
-    Self.SQLQuery1.Close;
+
+    FieldsList:= TStringList.Create;
+    try
+      // Index fields
+      with Form do
+      for i:= 1 to sgIndices.RowCount - 1 do
+      begin
+        IndexFields:= '';
+        if GetIndexFields(ATableName, sgIndices.Cells[0, i], AQuery, FieldsList) then
+        begin
+          IndexFields:= FieldsList.CommaText;
+          sgIndices.Cells[3, i]:= IndexFields;
+        end;
+      end;
+    finally
+      FieldsList.Free;
+    end;
+
+    Form.edIndexName.Text:= 'IX_' + ATableName + '_' + IntToStr(Form.sgIndices.RowCount);
+
+    // Field names
+    GetFields(DatabaseIndex, ATableName, nil);
+    with Form, Self.SQLQuery1 do
+    begin
+      clbFields.Clear;
+      while not EOF do
+      begin
+        if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
+         (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
+         (FieldByName('Field_Collation').IsNull) then
+        if (FieldByName('Field_Type_Str').AsString <> 'BLOB') then
+          clbFields.Items.Add(FieldByName('Field_Name').AsString);
+        Next;
+      end;
+      Self.SQLQuery1.Close;
+    end;
+    AQuery.Close;
+  finally
+    AQuery.Free;
   end;
-  AQuery.Close;
-  AQuery.Free;
 
   if Form.sgIndices.RowCount > 1 then
     Form.sgIndices.Row:= 1;
@@ -1698,52 +1706,55 @@ begin
   dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
   UserName:= tvMain.Selected.Text;
   List:= TStringList.Create;
-  List.CommaText:= dmSysTables.GetUserObjects(dbIndex, UserName);
-  Title:= 'Permissions for: ' + UserName;
+  try
+    List.CommaText:= dmSysTables.GetUserObjects(dbIndex, UserName);
+    Title:= 'Permissions for: ' + UserName;
 
-  Form:= FindCustomForm(Title, TfmUserPermissions) as TfmUserPermissions;
-  if Form = nil then
-  begin
-    Form:= TfmUserPermissions.Create(Application);
-    ATab:= TTabSheet.Create(nil);
-    ATab.Parent:= PageControl1;
-    Form.Parent:= ATab;
-    Form.Caption:= Title;
-    ATab.Caption:= Form.Caption;
-    Form.Left:= 0;
-    Form.Top:= 0;
-    Form.BorderStyle:= bsNone;
-    Form.Align:= alClient;
-  end
-  else
-    ATab:= Form.Parent as TTabSheet;
-
-  ATab.Tag:= dbIndex;
-  PageControl1.ActivePage:= ATab;
-  Form.StringGrid1.RowCount:= 1;
-  Form.laObject.Caption:= UserName;
-  with Form do
-  for i:= 0 to List.Count - 1 do
-  begin
-    ObjName:= List[i];
-    if Pos('<G>', ObjName) = 1 then
-      Delete(ObjName, 1, 3);
-    Permission:= dmSysTables.GetObjectUserPermission(dbIndex, ObjName, UserName, ObjType);
-    StringGrid1.RowCount:= StringGrid1.RowCount + 1;
-
-    case ObjType of
-      0: ObjTypeName:= 'Table/View';
-      5: ObjTypeName:= 'Procedure';
-      13: ObjTypeName:= 'Role';
+    Form:= FindCustomForm(Title, TfmUserPermissions) as TfmUserPermissions;
+    if Form = nil then
+    begin
+      Form:= TfmUserPermissions.Create(Application);
+      ATab:= TTabSheet.Create(nil);
+      ATab.Parent:= PageControl1;
+      Form.Parent:= ATab;
+      Form.Caption:= Title;
+      ATab.Caption:= Form.Caption;
+      Form.Left:= 0;
+      Form.Top:= 0;
+      Form.BorderStyle:= bsNone;
+      Form.Align:= alClient;
+    end
     else
-      ObjTypeName:= IntToStr(ObjType);
+      ATab:= Form.Parent as TTabSheet;
+
+    ATab.Tag:= dbIndex;
+    PageControl1.ActivePage:= ATab;
+    Form.StringGrid1.RowCount:= 1;
+    Form.laObject.Caption:= UserName;
+    with Form do
+    for i:= 0 to List.Count - 1 do
+    begin
+      ObjName:= List[i];
+      if Pos('<G>', ObjName) = 1 then
+        Delete(ObjName, 1, 3);
+      Permission:= dmSysTables.GetObjectUserPermission(dbIndex, ObjName, UserName, ObjType);
+      StringGrid1.RowCount:= StringGrid1.RowCount + 1;
+
+      case ObjType of
+        0: ObjTypeName:= 'Table/View';
+        5: ObjTypeName:= 'Procedure';
+        13: ObjTypeName:= 'Role';
+      else
+        ObjTypeName:= IntToStr(ObjType);
+      end;
+      StringGrid1.Cells[0, i + 1]:= ObjTypeName;
+      StringGrid1.Cells[1, i + 1]:= ObjName;
+      StringGrid1.Cells[2, i + 1]:= Permission;
     end;
-    StringGrid1.Cells[0, i + 1]:= ObjTypeName;
-    StringGrid1.Cells[1, i + 1]:= ObjName;
-    StringGrid1.Cells[2, i + 1]:= Permission;
+    Form.Show;
+  finally
+    List.Free;
   end;
-  Form.Show;
-  List.Free;
 end;
 
 (***********  Refresh Click  *************)
@@ -1815,96 +1826,99 @@ var
 begin
   dbIndex:= tvMain.Selected.OverlayIndex;
   QueryWindow:= ShowQueryWindow(dbIndex, 'Database Script');
+  Screen.Cursor:= crSQLWait;
   List:= TStringList.Create;
-  try
-    Screen.Cursor:= crSQLWait;
-    Application.ProcessMessages;
-    with QueryWindow.meQuery do
-    begin
-      ClearAll;
-      Lines.Add('-- ' + tvMain.Selected.Text + ' database script. Generated on: ' + DateTimeToStr(Now) );
+  try //...finally for resource release
+    try //...except for error reporting
+      Application.ProcessMessages;
+      with QueryWindow.meQuery do
+      begin
+        ClearAll;
+        Lines.Add('-- ' + tvMain.Selected.Text + ' database script. Generated on: ' + DateTimeToStr(Now) );
 
-      Lines.Add('');
-      Lines.Add('--      Roles');
-      Lines.Add('');
-      ScriptAllRoles(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--      Roles');
+        Lines.Add('');
+        ScriptAllRoles(dbIndex, List);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('--      Functions (UDF)');
-      Lines.Add('');
-      ScriptAllFunctions(dbIndex, List);
-      List.Text:= StringReplace(List.Text, #10, #13#10, [rfReplaceAll]);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--      Functions (UDF)');
+        Lines.Add('');
+        ScriptAllFunctions(dbIndex, List);
+        List.Text:= StringReplace(List.Text, #10, #13#10, [rfReplaceAll]);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('--     Domains');
-      Lines.Add('');
-      ScriptAllDomains(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--     Domains');
+        Lines.Add('');
+        ScriptAllDomains(dbIndex, List);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('--      Generators');
-      Lines.Add('');
-      ScriptAllGenerators(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--      Generators');
+        Lines.Add('');
+        ScriptAllGenerators(dbIndex, List);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('--      Tables');
-      ScriptAllTables(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--      Tables');
+        ScriptAllTables(dbIndex, List);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('--      Stored Procedures');
-      Lines.Add('');
-      ScriptAllProcedureTemplates(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--      Stored Procedures');
+        Lines.Add('');
+        ScriptAllProcedureTemplates(dbIndex, List);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('/*      Views  */');
-      Lines.Add('');
-      ScriptAllViews(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('/*      Views  */');
+        Lines.Add('');
+        ScriptAllViews(dbIndex, List);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('--      Triggers');
-      Lines.Add('');
-      ScriptAllTriggers(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--      Triggers');
+        Lines.Add('');
+        ScriptAllTriggers(dbIndex, List);
+        Lines.AddStrings(List);
 
 
-      Lines.Add('');
-      Lines.Add('--      Secondary Indices');
-      Lines.Add('');
-      ScriptAllSecIndices(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--      Secondary Indices');
+        Lines.Add('');
+        ScriptAllSecIndices(dbIndex, List);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('--      Constraints');
-      Lines.Add('');
-      ScriptAllConstraints(dbIndex, List);
-      Lines.AddStrings(List);
+        Lines.Add('');
+        Lines.Add('--      Constraints');
+        Lines.Add('');
+        ScriptAllConstraints(dbIndex, List);
+        Lines.AddStrings(List);
 
-      Lines.Add('');
-      Lines.Add('--      Permissions');
-      Lines.Add('');
-      ScriptAllPermissions(dbIndex, List);
-      Lines.AddStrings(List);
-      Lines.Add('');
+        Lines.Add('');
+        Lines.Add('--      Permissions');
+        Lines.Add('');
+        ScriptAllPermissions(dbIndex, List);
+        Lines.AddStrings(List);
+        Lines.Add('');
 
+      end;
+      QueryWindow.Show;
+
+    except
+      on e: exception do
+      begin
+        Screen.Cursor:= crDefault;
+        ShowMessage(e.Message);
+      end;
     end;
-    QueryWindow.Show;
-
-  except
-  on e: exception do
-  begin
+  finally
     Screen.Cursor:= crDefault;
-    ShowMessage(e.Message);
+    List.Free;
   end;
 
-  end;
-  Screen.Cursor:= crDefault;
-  List.Free;
 end;
 
 (**************  Script Exception  ****************)
@@ -2034,114 +2048,115 @@ begin
     ATableName:= SelNode.Text;
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
     ScriptList:= TStringList.Create;
-    ScriptTableAsCreate(dbIndex, ATableName, ScriptList);
-    QWindow:= ShowQueryWindow(dbIndex, 'Script Table as Create: ' + ATableName);
-    QWindow.meQuery.Lines.Clear;
-    QWindow.meQuery.Lines.AddStrings(ScriptList);
+    try
+      ScriptTableAsCreate(dbIndex, ATableName, ScriptList);
+      QWindow:= ShowQueryWindow(dbIndex, 'Script Table as Create: ' + ATableName);
+      QWindow.meQuery.Lines.Clear;
+      QWindow.meQuery.Lines.AddStrings(ScriptList);
 
-    // Script table constraints
-    dmSysTables.sqQuery.Close;
-    SQLQuery1.Close;
-    dmSysTables.GetTableConstraints(ATableName, dmSysTables.sqQuery);
-    with dmSysTables do
-    while not sqQuery.EOF do
-    begin
-       Line:= 'alter table ' + ATableName + ' add constraint ' + sqQuery.Fields[0].AsString +
-         ' foreign key (' + sqQuery.Fields[3].AsString + ') references ' +  sqQuery.Fields[4].AsString  +
-         ' (' + dmSysTables.GetConstraintForiegnKeyFields(sqQuery.Fields[5].AsString, fmMain.SQLQuery1) + ') ';
-       if Trim(sqQuery.Fields[6].AsString) <> 'RESTRICT' then
-         Line:= Line + ' on update ' + Trim(sqQuery.Fields[6].AsString);
-       if Trim(sqQuery.Fields[7].AsString) <> 'RESTRICT' then
-         Line:= Line + ' on delete ' + Trim(sqQuery.Fields[7].AsString);
-       QWindow.meQuery.Lines.Add(Line + ';');
-       sqQuery.Next;
-    end;
-    dmSysTables.sqQuery.Close;
-    SQLQuery1.Close;
-    QWindow.meQuery.Lines.Add('');
-
-    // Script Secondary indices
-    PKName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
-    List:= TStringList.Create;
-
-    with dmSysTables do
-    if fmMain.GetIndices(ATableName, sqQuery) then
-    with sqQuery do
-    while not EOF do
-    begin
-      if PKName <> Trim(FieldByName('RDB$Index_name').AsString) then
+      // Script table constraints
+      dmSysTables.sqQuery.Close;
+      SQLQuery1.Close;
+      dmSysTables.GetTableConstraints(ATableName, dmSysTables.sqQuery);
+      with dmSysTables do
+      while not sqQuery.EOF do
       begin
-        Line:= 'create ';
-        if FieldByName('RDB$Unique_Flag').AsString = '1' then
-          Line:= Line + 'Unique ';
-        if FieldByName('RDB$Index_Type').AsString = '1' then
-          Line:= Line + 'Descending ';
-
-        Line:= Line + 'index ' + Trim(FieldByName('RDB$Index_name').AsString) + ' on ' + ATableName;
-
-        GetIndexFields(ATableName, Trim(FieldByName('RDB$Index_Name').AsString), fmMain.SQLQuery1, List);
-        Line:= Line + ' (' + List.CommaText + ') ;';
-        QWindow.meQuery.Lines.Add(Line);
-
+         Line:= 'alter table ' + ATableName + ' add constraint ' + sqQuery.Fields[0].AsString +
+           ' foreign key (' + sqQuery.Fields[3].AsString + ') references ' +  sqQuery.Fields[4].AsString  +
+           ' (' + dmSysTables.GetConstraintForiegnKeyFields(sqQuery.Fields[5].AsString, fmMain.SQLQuery1) + ') ';
+         if Trim(sqQuery.Fields[6].AsString) <> 'RESTRICT' then
+           Line:= Line + ' on update ' + Trim(sqQuery.Fields[6].AsString);
+         if Trim(sqQuery.Fields[7].AsString) <> 'RESTRICT' then
+           Line:= Line + ' on delete ' + Trim(sqQuery.Fields[7].AsString);
+         QWindow.meQuery.Lines.Add(Line + ';');
+         sqQuery.Next;
       end;
-      Next;
-    end;
-    QWindow.meQuery.Lines.Add('');
-    SQLQuery1.Close;
-    dmSysTables.sqQuery.Close;
+      dmSysTables.sqQuery.Close;
+      SQLQuery1.Close;
+      QWindow.meQuery.Lines.Add('');
 
-    // Script triggers
-    SQLQuery1.Close;
-    SQLQuery1.SQL.Text:= 'SELECT RDB$Trigger_Name, RDB$Trigger_Inactive FROM RDB$TRIGGERS WHERE RDB$SYSTEM_FLAG=0 ' +
-      'and RDB$Relation_Name = ''' + aTableName + '''';
-    SQLQuery1.Open;
-    with SQLQuery1 do
-    while not EOF do
-    begin
-      List.Clear;
-      dmSysTables.ScriptTrigger(dbIndex, Trim(SQLQuery1.Fields[0].AsString), List, True);
-      // Search for generators
-      Line:= '';
-      for i:= 0 to List.Count - 1 do
-        if Pos('gen_id', LowerCase(List[i])) > 0 then
+      // Script Secondary indices
+      PKName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
+      List:= TStringList.Create;
+      try
+        with dmSysTables do
+        if fmMain.GetIndices(ATableName, sqQuery) then
+        with sqQuery do
+        while not EOF do
         begin
-          Line:= Copy(List[i], Pos('gen_id', LowerCase(List[i])), Length(List[i]));
-          System.Delete(Line, 1, Pos('(', Line));
-          Line:= Trim(Copy(Line, 1, Pos(', ', Line) - 1));
+          if PKName <> Trim(FieldByName('RDB$Index_name').AsString) then
+          begin
+            Line:= 'create ';
+            if FieldByName('RDB$Unique_Flag').AsString = '1' then
+              Line:= Line + 'Unique ';
+            if FieldByName('RDB$Index_Type').AsString = '1' then
+              Line:= Line + 'Descending ';
+
+            Line:= Line + 'index ' + Trim(FieldByName('RDB$Index_name').AsString) + ' on ' + ATableName;
+
+            GetIndexFields(ATableName, Trim(FieldByName('RDB$Index_Name').AsString), fmMain.SQLQuery1, List);
+            Line:= Line + ' (' + List.CommaText + ') ;';
+            QWindow.meQuery.Lines.Add(Line);
+
+          end;
+          Next;
         end;
+        QWindow.meQuery.Lines.Add('');
+        SQLQuery1.Close;
+        dmSysTables.sqQuery.Close;
 
-       // Script Generator
-       if Trim(Line) <> '' then
-       begin
-         QWindow.meQuery.Lines.Add('Create Generator ' +Line + ';');
-         QWindow.meQuery.Lines.Add('');
-       end;
+        // Script triggers
+        SQLQuery1.Close;
+        SQLQuery1.SQL.Text:= 'SELECT RDB$Trigger_Name, RDB$Trigger_Inactive FROM RDB$TRIGGERS WHERE RDB$SYSTEM_FLAG=0 ' +
+          'and RDB$Relation_Name = ''' + aTableName + '''';
+        SQLQuery1.Open;
+        with SQLQuery1 do
+        while not EOF do
+        begin
+          List.Clear;
+          dmSysTables.ScriptTrigger(dbIndex, Trim(SQLQuery1.Fields[0].AsString), List, True);
+          // Search for generators
+          Line:= '';
+          for i:= 0 to List.Count - 1 do
+            if Pos('gen_id', LowerCase(List[i])) > 0 then
+            begin
+              Line:= Copy(List[i], Pos('gen_id', LowerCase(List[i])), Length(List[i]));
+              System.Delete(Line, 1, Pos('(', Line));
+              Line:= Trim(Copy(Line, 1, Pos(', ', Line) - 1));
+            end;
 
-      QWindow.meQuery.Lines.AddStrings(List);
+           // Script Generator
+           if Trim(Line) <> '' then
+           begin
+             QWindow.meQuery.Lines.Add('Create Generator ' +Line + ';');
+             QWindow.meQuery.Lines.Add('');
+           end;
 
+          QWindow.meQuery.Lines.AddStrings(List);
+          Next;
+        end;
+        SQLQuery1.Close;
 
-      Next;
+        QWindow.meQuery.Lines.Add('');
+
+        // Script permissions
+        List.CommaText:= dmSysTables.GetDBUsers(dbIndex);
+
+        for i:= 0 to List.Count - 1 do
+        begin
+          if Pos('<R>', List[i]) = 1 then
+            UserName:= Copy(List[i], 4, Length(List[i]) - 3)
+          else
+            UserName:= List[i];
+
+          ScriptObjectPermission(dbIndex, '<T>' + ATableName, UserName, ObjType, QWindow.meQuery.Lines);
+        end;
+      finally
+        List.Free;
+      end;
+    finally
+      ScriptList.Free;
     end;
-    SQLQuery1.Close;
-
-    QWindow.meQuery.Lines.Add('');
-
-    // Script permissions
-    List.CommaText:= dmSysTables.GetDBUsers(dbIndex);
-
-    for i:= 0 to List.Count - 1 do
-    begin
-      if Pos('<R>', List[i]) = 1 then
-        UserName:= Copy(List[i], 4, Length(List[i]) - 3)
-      else
-        UserName:= List[i];
-
-      ScriptObjectPermission(dbIndex, '<T>' + ATableName, UserName, ObjType, QWindow.meQuery.Lines);
-    end;
-
-
-    ScriptList.Free;
-    List.Free;
     QWindow.Show;
   end;
 end;
@@ -2294,35 +2309,36 @@ var
 begin
   dbIndex:= tvMain.Selected.OverlayIndex;
   FireBirdServices:= TFirebirdServices.Create;
-  FireBirdServices.VerboseOutput:= True;
-  with FireBirdServices, RegisteredDatabases[dbIndex] do
-  begin
-    HostName:= GetServerName(RegRec.DatabaseName);
-    AdbName:= RegRec.DatabaseName;
-    if Pos(':', AdbName) > 2 then
-      Delete(AdbName, 1, Pos(':', AdbName));
-    DBName:= AdbName;
-    UserName := RegRec.UserName;
-    Password := RegRec.Password;
-
-    try
-      AttachService;
-      StartSweep;
-      while ServiceQuery(S) do
-        Lines:= Lines + S;
-
-      ShowMessage('Sweep database: ' + AdbName + ' Completed');
-
-    except
-    on e: exception do
+  try
+    FireBirdServices.VerboseOutput:= True;
+    with FireBirdServices, RegisteredDatabases[dbIndex] do
     begin
-      MessageDlg('Error: ' + e.Message, mtError, [mbOK], 0);
-    end;
-    end;
-    DetachService;
-  end;
-  FireBirdServices.Free;
+      HostName:= GetServerName(RegRec.DatabaseName);
+      AdbName:= RegRec.DatabaseName;
+      if Pos(':', AdbName) > 2 then
+        Delete(AdbName, 1, Pos(':', AdbName));
+      DBName:= AdbName;
+      UserName := RegRec.UserName;
+      Password := RegRec.Password;
 
+      try
+        AttachService;
+        StartSweep;
+        while ServiceQuery(S) do
+          Lines:= Lines + S;
+
+        ShowMessage('Sweep database: ' + AdbName + ' Completed');
+      except
+        on e: exception do
+        begin
+          MessageDlg('Error: ' + e.Message, mtError, [mbOK], 0);
+        end;
+      end;
+      DetachService;
+    end;
+  finally
+    FireBirdServices.Free;
+  end;
 end;
 
 
@@ -2530,67 +2546,69 @@ begin
   try
     AProcName:= UpperCase(AProcName);
     BodyList:= TStringList.Create;
-    Rec:= RegisteredDatabases[DatabaseIndex];
-    SetConnection(DatabaseIndex);
-    SQLQuery1.Close;
-    SQLQuery1.SQL.Text:= 'SELECT rdb$parameter_name, rdb$field_type, rdb$field_sub_type, '+
-      'rdb$field_length, rdb$field_scale, rdb$field_precision, '+
-      'rdb$character_length, rdb$parameter_type '+
-      'FROM rdb$procedure_parameters sp_param '+
-      'JOIN rdb$fields fld '+
-      'ON sp_param.rdb$field_source = fld.rdb$field_name '+
-      'WHERE '+
-      'sp_param.rdb$procedure_name =''' + AProcName + ''' ' +
-      'order by rdb$parameter_type, rdb$parameter_number';
+    try
+      Rec:= RegisteredDatabases[DatabaseIndex];
+      SetConnection(DatabaseIndex);
+      SQLQuery1.Close;
+      SQLQuery1.SQL.Text:= 'SELECT rdb$parameter_name, rdb$field_type, rdb$field_sub_type, '+
+        'rdb$field_length, rdb$field_scale, rdb$field_precision, '+
+        'rdb$character_length, rdb$parameter_type '+
+        'FROM rdb$procedure_parameters sp_param '+
+        'JOIN rdb$fields fld '+
+        'ON sp_param.rdb$field_source = fld.rdb$field_name '+
+        'WHERE '+
+        'sp_param.rdb$procedure_name =''' + AProcName + ''' ' +
+        'order by rdb$parameter_type, rdb$parameter_number';
 
-    SQLQuery1.Open;
-    FirstOutput:= False;
+      SQLQuery1.Open;
+      FirstOutput:= False;
 
-    // Get procedure parameters
-      while not SQLQuery1.EOF do
-      begin
-        ParamName:= Trim(SQLQuery1.FieldByName('RDB$Parameter_Name').AsString);
-        ParamType:= SQLQuery1.FieldByName('rdb$parameter_type').AsInteger;
-        Seperator:= False;
-        // Output parameter
-        if (not FirstOutput) and (ParamType = 1) then
+      // Get procedure parameters
+        while not SQLQuery1.EOF do
         begin
-          BodyList.Add(')' + #10 + 'RETURNS (');
-          FirstOutput:= True;
-          Seperator:= True;
+          ParamName:= Trim(SQLQuery1.FieldByName('RDB$Parameter_Name').AsString);
+          ParamType:= SQLQuery1.FieldByName('rdb$parameter_type').AsInteger;
+          Seperator:= False;
+          // Output parameter
+          if (not FirstOutput) and (ParamType = 1) then
+          begin
+            BodyList.Add(')' + #10 + 'RETURNS (');
+            FirstOutput:= True;
+            Seperator:= True;
+          end;
+          Line:= '  ' + ParamName + '    ' +
+            GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger);
+          if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger = 37 then
+            Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
+
+
+          SQLQuery1.Next;
+
+          if (not SQLQuery1.EOF) then
+          if ((FirstOutput) or (SQLQuery1.FieldByName('rdb$parameter_Type').AsInteger = 0)) then
+            Line:= Line + ',';
+
+          BodyList.Add(Line);
         end;
-        Line:= '  ' + ParamName + '    ' +
-          GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger);
-        if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger = 37 then
-          Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
 
+      BodyList.Add(')');
+      BodyList.Add('AS');
 
-        SQLQuery1.Next;
+      SQLQuery1.Close;
 
-        if (not SQLQuery1.EOF) then
-        if ((FirstOutput) or (SQLQuery1.FieldByName('rdb$parameter_Type').AsInteger = 0)) then
-          Line:= Line + ',';
-
-        BodyList.Add(Line);
-      end;
-
-    BodyList.Add(')');
-    BodyList.Add('AS');
-
-    SQLQuery1.Close;
-
-    // Get Procedure body
-    SQLQuery1.SQL.Text:= 'SELECT * FROM rdb$procedures where rdb$Procedure_name =  ''' + AProcName + '''';
-    SQLQuery1.Open;
-    SPOwner:= Trim(SQLQuery1.FieldByName('rdb$Owner_Name').AsString);
-    BodyList.Add(SQLQuery1.FieldByName('rdb$Procedure_Source').AsString);
-    SQLQuery1.Close;
-    Result:= BodyList.Text;
-    BodyList.Free;
-
+      // Get Procedure body
+      SQLQuery1.SQL.Text:= 'SELECT * FROM rdb$procedures where rdb$Procedure_name =  ''' + AProcName + '''';
+      SQLQuery1.Open;
+      SPOwner:= Trim(SQLQuery1.FieldByName('rdb$Owner_Name').AsString);
+      BodyList.Add(SQLQuery1.FieldByName('rdb$Procedure_Source').AsString);
+      SQLQuery1.Close;
+      Result:= BodyList.Text;
+    finally
+      BodyList.Free;
+    end;
   except
-  on e: exception do
-    MessageDlg('Error while getting stored procedure information: ' + e.Message, mtError, [mbOk], 0);
+    on e: exception do
+      MessageDlg('Error while getting stored procedure information: ' + e.Message, mtError, [mbOk], 0);
   end;
 end;
 
@@ -2782,9 +2800,9 @@ begin
   // Search for already opened query window for the same title
   Result:= TfmQueryWindow(FindQueryWindow(ACaption));
 
-  // No opened query window
   if Result = nil then
   begin
+    // No opened query window
     Result:= TfmQueryWindow.Create(Application);
     ATab:= TTabSheet.Create(nil);
     ATab.Parent:= PageControl1;
@@ -2824,205 +2842,202 @@ var
 begin
   DBIndex:= Node.Parent.OverlayIndex;
   Rec:= RegisteredDatabases[DBIndex].RegRec;
-  Objects:= TStringList.Create;
   Screen.Cursor:= crSQLWait;
-  try
+  Objects:= TStringList.Create;
+  try //try..finally for making sure Objects is released
+    try //try..except for error reporting
+      ANodeText:= Node.Text;
+      if Pos('(', ANodeText) > 0 then
+        ANodeText:= Trim(Copy(ANodeText, 1, Pos('(', ANodeText) - 1));
 
-  ANodeText:= Node.Text;
-  if Pos('(', ANodeText) > 0 then
-    ANodeText:= Trim(Copy(ANodeText, 1, Pos('(', ANodeText) - 1));
+      // Tables
+      if ANodeText = 'Tables' then
+      begin
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 1, Count);
+        TableNode:= Node;
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
 
-  // Tables
-  if ANodeText = 'Tables' then
-  begin
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 1, Count);
-    TableNode:= Node;
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        TableNode.DeleteChildren;
 
-    TableNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(TableNode, Objects[i]);
+          Item.ImageIndex:= 4;
+          Item.SelectedIndex:= 4;
+        end;
 
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(TableNode, Objects[i]);
-      Item.ImageIndex:= 4;
-      Item.SelectedIndex:= 4;
+      end
+      else
+        // Generators
+      if ANodeText = 'Generators' then
+      begin
+        GenNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 2, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        GenNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(GenNode, Objects[i]);
+          Item.ImageIndex:= 6;
+          Item.SelectedIndex:= 6;
+        end;
+
+      end
+      else
+        // Triggers
+      if Node.Text = 'Triggers' then
+      begin
+        TrigNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 3, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        TrigNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(TrigNode, Objects[i]);
+          Item.ImageIndex:= 8;
+          Item.SelectedIndex:= 8;
+        end;
+
+      end
+      else
+        // Views
+      if Node.Text = 'Views' then
+      begin
+        ViewsNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 4, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        ViewsNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(ViewsNode, Objects[i]);
+          Item.ImageIndex:= 10;
+          Item.SelectedIndex:= 10;
+        end;
+
+      end
+      else
+        // Stored Procedures
+      if Node.Text = 'Stored Procedures' then
+      begin
+        StoredProcNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 5, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        StoredProcNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(StoredProcNode, Objects[i]);
+          Item.ImageIndex:= 12;
+          Item.SelectedIndex:= 12;
+        end;
+
+      end
+      else
+        // UDF (Functions)
+      if Node.Text = 'Functions' then
+      begin
+        UDFNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 6, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        UDFNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(UDFNode, Objects[i]);
+          Item.ImageIndex:= 14;
+          Item.SelectedIndex:= 14;
+        end;
+
+      end
+      else
+        // System Tables
+      if Node.Text = 'System Tables' then
+      begin
+        SysTableNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 7, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        SysTableNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(SysTableNode, Objects[i]);
+          Item.ImageIndex:= 16;
+          Item.SelectedIndex:= 16;
+        end;
+
+      end
+      else
+        // Domains
+      if Node.Text = 'Domains' then
+      begin
+        DomainsNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 8, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        DomainsNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(DomainsNode, Objects[i]);
+          Item.ImageIndex:= 18;
+          Item.SelectedIndex:= 18;
+        end;
+
+      end
+      else
+        // Roles
+      if Node.Text = 'Roles' then
+      begin
+        RoleNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 9, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        RoleNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(RoleNode, Objects[i]);
+          Item.ImageIndex:= 20;
+          Item.SelectedIndex:= 20;
+        end;
+      end
+      else
+        // Exceptions
+      if Node.Text = 'Exceptions' then
+      begin
+        ExceptionNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 10, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        ExceptionNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(ExceptionNode, Objects[i]);
+          Item.ImageIndex:= 22;
+          Item.SelectedIndex:= 22;
+        end;
+      end
+      else
+        // Users
+      if Node.Text = 'Users' then
+      begin
+        UserNode:= Node;
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 11, Count);
+        Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
+        UserNode.DeleteChildren;
+        for i:= 0 to Objects.Count - 1 do
+        begin
+          Item:= tvMain.Items.AddChild(UserNode, Objects[i]);
+          Item.ImageIndex:= 24;
+          Item.SelectedIndex:= 24;
+        end;
+      end;
+
+      if not Node.Expanded then
+        Node.Expand(False);
+    except
+      on e: exception do
+      begin
+        Screen.Cursor:= crDefault;
+        ShowMessage(e.Message);
+      end;
     end;
-
-  end
-  else
-    // Generators
-  if ANodeText = 'Generators' then
-  begin
-    GenNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 2, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    GenNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(GenNode, Objects[i]);
-      Item.ImageIndex:= 6;
-      Item.SelectedIndex:= 6;
-    end;
-
-  end
-  else
-    // Triggers
-  if Node.Text = 'Triggers' then
-  begin
-    TrigNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 3, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    TrigNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(TrigNode, Objects[i]);
-      Item.ImageIndex:= 8;
-      Item.SelectedIndex:= 8;
-    end;
-
-  end
-  else
-    // Views
-  if Node.Text = 'Views' then
-  begin
-    ViewsNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 4, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    ViewsNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(ViewsNode, Objects[i]);
-      Item.ImageIndex:= 10;
-      Item.SelectedIndex:= 10;
-    end;
-
-  end
-  else
-    // Stored Procedures
-  if Node.Text = 'Stored Procedures' then
-  begin
-    StoredProcNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 5, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    StoredProcNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(StoredProcNode, Objects[i]);
-      Item.ImageIndex:= 12;
-      Item.SelectedIndex:= 12;
-    end;
-
-  end
-  else
-    // UDF (Functions)
-  if Node.Text = 'Functions' then
-  begin
-    UDFNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 6, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    UDFNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(UDFNode, Objects[i]);
-      Item.ImageIndex:= 14;
-      Item.SelectedIndex:= 14;
-    end;
-
-  end
-  else
-    // System Tables
-  if Node.Text = 'System Tables' then
-  begin
-    SysTableNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 7, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    SysTableNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(SysTableNode, Objects[i]);
-      Item.ImageIndex:= 16;
-      Item.SelectedIndex:= 16;
-    end;
-
-  end
-  else
-    // Domains
-  if Node.Text = 'Domains' then
-  begin
-    DomainsNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 8, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    DomainsNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(DomainsNode, Objects[i]);
-      Item.ImageIndex:= 18;
-      Item.SelectedIndex:= 18;
-    end;
-
-  end
-  else
-    // Roles
-  if Node.Text = 'Roles' then
-  begin
-    RoleNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 9, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    RoleNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(RoleNode, Objects[i]);
-      Item.ImageIndex:= 20;
-      Item.SelectedIndex:= 20;
-    end;
-  end
-  else
-    // Exceptions
-  if Node.Text = 'Exceptions' then
-  begin
-    ExceptionNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 10, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    ExceptionNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(ExceptionNode, Objects[i]);
-      Item.ImageIndex:= 22;
-      Item.SelectedIndex:= 22;
-    end;
-  end
-  else
-    // Users
-  if Node.Text = 'Users' then
-  begin
-    UserNode:= Node;
-    Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 11, Count);
-    Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
-    UserNode.DeleteChildren;
-    for i:= 0 to Objects.Count - 1 do
-    begin
-      Item:= tvMain.Items.AddChild(UserNode, Objects[i]);
-      Item.ImageIndex:= 24;
-      Item.SelectedIndex:= 24;
-    end;
-  end;
-
-  if not Node.Expanded then
-    Node.Expand(False);
-
-
-  except
-  on e: exception do
-  begin
+  finally
+    Objects.Free;
     Screen.Cursor:= crDefault;
-    ShowMessage(e.Message);
   end;
-
-  end;
-
-  Objects.Free;
-  Screen.Cursor:= crDefault;
-
 end;
 
 (*************  Get main indices information  ******************)
@@ -3109,23 +3124,23 @@ begin
 
     // Primary Keys
     PKFieldsList:= TStringList.Create;
-    PKeyName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
-    if PKeyName <> '' then
-      GetConstraintFields(ATableName, PKeyName, PKFieldsList);
+    try
+      PKeyName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
+      if PKeyName <> '' then
+        GetConstraintFields(ATableName, PKeyName, PKFieldsList);
 
-    with AStringGrid do
-    for i:= 1 to RowCount - 1 do
-      if PKFieldsList.IndexOf(Cells[1, i]) <> -1 then
-        Cells[0, i]:= '1'
-      else
-        Cells[0, i]:= '0';
-
-    PKFieldsList.Free;
-
+      with AStringGrid do
+      for i:= 1 to RowCount - 1 do
+        if PKFieldsList.IndexOf(Cells[1, i]) <> -1 then
+          Cells[0, i]:= '1'
+        else
+          Cells[0, i]:= '0';
+    finally
+      PKFieldsList.Free;
+    end;
   except
-  on e: exception do
-    MessageDlg('Error while reading table fields: ' + e.Message, mtError, [mbOk], 0);
-
+    on e: exception do
+      MessageDlg('Error while reading table fields: ' + e.Message, mtError, [mbOk], 0);
   end;
 end;
 
@@ -3196,52 +3211,54 @@ begin
 
     // Primary Keys
     PKFieldsList:= TStringList.Create;
-    PKeyName:= GetPrimaryKeyIndexName(dbIndex, Node.Text, ConstraintName);
-    if PKeyName <> '' then
-      GetConstraintFields(Node.Text, PKeyName, PKFieldsList);
+    try
+      PKeyName:= GetPrimaryKeyIndexName(dbIndex, Node.Text, ConstraintName);
+      if PKeyName <> '' then
+        GetConstraintFields(Node.Text, PKeyName, PKFieldsList);
 
-    // Fields
-    FieldsList:= TStringList.Create;
-    GetFields(dbIndex, Node.Text, nil);
-    i:= 1;
-    with SQLQuery1 do
-    while not EOF do
-    begin
-      AFieldName:= Trim(FieldByName('Field_Name').AsString);
-      if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
-       (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-       (FieldByName('Field_Collation').IsNull) then
-       begin
-         if FieldByName('Field_type_int').AsInteger = 37 then
-           LenStr:= FieldByName('Character_Leng').AsString
-         else
-           LenStr:= FieldByName('Field_Length').AsString;
+      // Fields
+      FieldsList:= TStringList.Create;
+      GetFields(dbIndex, Node.Text, nil);
+      i:= 1;
+      with SQLQuery1 do
+      while not EOF do
+      begin
+        AFieldName:= Trim(FieldByName('Field_Name').AsString);
+        if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
+         (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
+         (FieldByName('Field_Collation').IsNull) then
+         begin
+           if FieldByName('Field_type_int').AsInteger = 37 then
+             LenStr:= FieldByName('Character_Leng').AsString
+           else
+             LenStr:= FieldByName('Field_Length').AsString;
 
-        FieldTitle:= AFieldName + '   ' + Trim(FieldByName('Field_Type_str').AsString) + ' ' + LenStr;
-        FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
-        FieldNode.OverlayIndex:= i;
-        if PKFieldsList.IndexOf(AFieldname) <> -1 then // Primary key
-        begin
-          FieldNode.ImageIndex:= 28;
-          FieldNode.SelectedIndex:= 28;
-        end
-        else
-        begin
-          FieldNode.ImageIndex:= 27;
-          FieldNode.SelectedIndex:= 27;
-        end;
-        Inc(i);
+          FieldTitle:= AFieldName + '   ' + Trim(FieldByName('Field_Type_str').AsString) + ' ' + LenStr;
+          FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
+          FieldNode.OverlayIndex:= i;
+          if PKFieldsList.IndexOf(AFieldname) <> -1 then // Primary key
+          begin
+            FieldNode.ImageIndex:= 28;
+            FieldNode.SelectedIndex:= 28;
+          end
+          else
+          begin
+            FieldNode.ImageIndex:= 27;
+            FieldNode.SelectedIndex:= 27;
+          end;
+          Inc(i);
 
-       end;
-      Next;
+         end;
+        Next;
+      end;
+      SQLQuery1.Close;
+      Node.Expand(False);
+    finally
+      PKFieldsList.Free;
     end;
-    SQLQuery1.Close;
-    Node.Expand(False);
-    PKFieldsList.Free;
-
   except
-  on e: exception do
-    ShowMessage(E.Message);
+    on e: exception do
+      ShowMessage(E.Message);
   end;
 
 end;
@@ -4171,57 +4188,58 @@ begin
     if Result then
     begin
       sqPrimaryKey:= TSQLQuery.Create(nil);
-      sqPrimaryKey.DataBase:= IBConnection;
-      GetIndexFields(ATableName, PKName, sqPrimaryKey, KeyList);
-      GetFields(DatabaseIndex, ATableName, FieldsList);
+      try
+        sqPrimaryKey.DataBase:= IBConnection;
+        GetIndexFields(ATableName, PKName, sqPrimaryKey, KeyList);
+        GetFields(DatabaseIndex, ATableName, FieldsList);
 
-      // Update SQL
-      sqQuery.UpdateSQL.Add('update ' + ATableName + ' set ');
-      for i:= 0 to FieldsList.Count - 1 do
-        if KeyList.IndexOf(FieldsList[i]) = -1 then
+        // Update SQL
+        sqQuery.UpdateSQL.Add('update ' + ATableName + ' set ');
+        for i:= 0 to FieldsList.Count - 1 do
+          if KeyList.IndexOf(FieldsList[i]) = -1 then
+          begin
+            sqQuery.UpdateSQL.Add(FieldsList[i] + ' = :' + FieldsList[i]);
+            sqQuery.UpdateSQL.Add(',');
+          end;
+
+        sqQuery.UpdateSQL.Delete(sqQuery.UpdateSQL.Count - 1); // Delete last comma
+
+        // Key where clause
+        WhereClause:= ' where ';
+        for i:= 0 to KeyList.Count - 1 do
         begin
-          sqQuery.UpdateSQL.Add(FieldsList[i] + ' = :' + FieldsList[i]);
-          sqQuery.UpdateSQL.Add(',');
+          WhereClause:= WhereClause + KeyList[i] + ' = :' + KeyList[i];
+          if i + 1 < KeyList.Count then
+            WhereClause:= WhereClause + ' and ';
+        end;
+        sqQuery.UpdateSQL.Add(WhereClause);
+
+        // Insert SQL
+        sqQuery.InsertSQL.Add('insert into ' + ATableName + ' (');
+        for i:= 0 to FieldsList.Count - 1 do
+        begin
+          sqQuery.InsertSQL.Add(FieldsList[i]);
+          if i < FieldsList.Count - 1 then
+            sqQuery.InsertSQL.Add(',')
+          else
+           sqQuery.InsertSQL.Add(') values (');
         end;
 
-      sqQuery.UpdateSQL.Delete(sqQuery.UpdateSQL.Count - 1); // Delete last comma
+        for i:= 0 to FieldsList.Count - 1 do
+        begin
+          sqQuery.InsertSQL.Add(':' + FieldsList[i]);
+          if i < FieldsList.Count - 1 then
+            sqQuery.InsertSQL.Add(',')
+          else
+            sqQuery.InsertSQL.Add(')');
+        end;
 
-      // Key where clause
-      WhereClause:= ' where ';
-      for i:= 0 to KeyList.Count - 1 do
-      begin
-        WhereClause:= WhereClause + KeyList[i] + ' = :' + KeyList[i];
-        if i + 1 < KeyList.Count then
-          WhereClause:= WhereClause + ' and ';
+        // Delete SQL
+        sqQuery.DeleteSQL.Text:= 'delete from ' + ATableName + WhereClause;
+      finally
+        sqPrimaryKey.Free;
       end;
-      sqQuery.UpdateSQL.Add(WhereClause);
-
-      // Insert SQL
-      sqQuery.InsertSQL.Add('insert into ' + ATableName + ' (');
-      for i:= 0 to FieldsList.Count - 1 do
-      begin
-        sqQuery.InsertSQL.Add(FieldsList[i]);
-        if i < FieldsList.Count - 1 then
-          sqQuery.InsertSQL.Add(',')
-        else
-         sqQuery.InsertSQL.Add(') values (');
-      end;
-
-      for i:= 0 to FieldsList.Count - 1 do
-      begin
-        sqQuery.InsertSQL.Add(':' + FieldsList[i]);
-        if i < FieldsList.Count - 1 then
-          sqQuery.InsertSQL.Add(',')
-        else
-          sqQuery.InsertSQL.Add(')');
-      end;
-
-      // Delete SQL
-      sqQuery.DeleteSQL.Text:= 'delete from ' + ATableName + WhereClause;
-
-      sqPrimaryKey.Free;
     end;
-
   finally
     KeyList.Free;
     FieldsList.Free;
