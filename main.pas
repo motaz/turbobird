@@ -135,6 +135,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure lmAddUserClick(Sender: TObject);
     procedure lmBackupClick(Sender: TObject);
     procedure lmChangePasswordClick(Sender: TObject);
@@ -215,6 +216,7 @@ type
     procedure InitNewGen(DatabaseIndex: Integer);
     function GetServerNameNode(ServerName: string): TTreeNode;
     function RemoveSpecialChars(AText: string): string;
+    // Remove RegisteredDatabases and clean up memory held by its objects
     procedure ReleaseRegisteredDatabases;
     procedure SetConnection(Index: Integer);
     procedure SetFocus; override; // solve a bug in Lazarus
@@ -288,6 +290,16 @@ begin
   fActivated:= False;
   LoadRegisteredDatabases;
   StatusBar1.Panels[0].Text:= 'TurboBird for ' + Target + '-' + Arch;
+end;
+
+procedure TfmMain.FormDestroy(Sender: TObject);
+begin
+  // Clean up objects in registered database records
+  try
+    ReleaseRegisteredDatabases;
+  except
+    // Ignore exceptions/errors; just close
+  end;
 end;
 
 (*****************  Add New user  ***********************)

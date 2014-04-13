@@ -281,9 +281,9 @@ begin
     'RDB$Update_Rule as UpdateRule, RDB$Delete_Rule as DeleteRule ' +
     'from RDB$RELATION_CONSTRAINTS Con, rdb$REF_Constraints Refc, RDB$INDEX_SEGMENTS Seg, ' +
     'RDB$INDICES Ind ' +
-    'where Con.RDB$COnstraint_Name = Refc.RDB$Const_Name_UQ ' +
-    '  and Refc.RDB$COnstraint_Name = Ind.RDB$Index_Name' +
-    '  and Refc.RDB$COnstraint_Name = Seg.RDB$Index_Name' +
+    'where Con.RDB$Constraint_Name = Refc.RDB$Const_Name_UQ ' +
+    '  and Refc.RDB$Constraint_Name = Ind.RDB$Index_Name' +
+    '  and Refc.RDB$Constraint_Name = Seg.RDB$Index_Name' +
     '  and Ind.RDB$Relation_Name = ''' + UpperCase(ATableName) + '''';
   SqlQuery.Open;
   Result:= SqlQuery.RecordCount > 0;
@@ -768,11 +768,11 @@ begin
     Result:= True;
 
   except
-  on e: exception do
-  begin
-    ErrorMsg:= e.Message;
-    Result:= False;
-  end;
+    on e: exception do
+    begin
+      ErrorMsg:= e.Message;
+      Result:= False;
+    end;
   end;
 end;
 
