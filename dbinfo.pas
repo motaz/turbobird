@@ -110,19 +110,19 @@ begin
     dbSize:= Pages * PageSize;
 
     // Display database size in readable format
-    if dbSize > 1000000000 then
+    if dbSize > (1024*1024*1024) then
     begin
       dbSize:= ((dbSize / 1024) / 1024) / 1024;
       AType:= 'Giga bytes';
     end
     else
-    if dbSize > 1000000 then
+    if dbSize > (1024*1024) then
     begin
       dbSize:= ((dbSize / 1024) / 1024);
       AType:= 'Mega bytes';
     end
     else
-    if dbSize > 1000 then
+    if dbSize > 1024 then
     begin
       dbSize:= (dbSize / 1024);
       AType:= 'Kilo bytes';
