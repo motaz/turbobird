@@ -9,7 +9,8 @@ uses
   Buttons, ComCtrls, IBConnection, sqldb, QueryWindow;
 
 const
-  dbObjects: array [1 .. 13] of string = ('Tables', 'Generators', 'Triggers', 'Views', 'Stored Procedures', 'UDFs',
+  NumObjects = 13; //number of different objects in array below
+  dbObjects: array [1 .. NumObjects] of string = ('Tables', 'Generators', 'Triggers', 'Views', 'Stored Procedures', 'UDFs',
     'Sys Tables', 'Domains', 'Roles', 'Exceptions', 'Users', 'Indices', 'Constraints');
 
 type
@@ -50,9 +51,9 @@ type
   private
     fdbIndex: Integer;
     DiffCount: Integer;
-    dbObjectsList: array [1 .. 13] of TStringList;
-    dbExistingObjectsList: array [1 .. 13] of TStringList;
-    dbRemovedObjectsList: array [1 .. 13] of TStringList;
+    dbObjectsList: array [1 .. NumObjects] of TStringList;
+    dbExistingObjectsList: array [1 .. NumObjects] of TStringList;
+    dbRemovedObjectsList: array [1 .. NumObjects] of TStringList;
     MissingFieldsList: TStringList;
 
     ExistFieldsList: TStringList;
@@ -339,7 +340,7 @@ begin
 
     fQueryWindow.meQuery.Lines.Add('');
 
-    for x:= 1 to 13 do
+    for x:= 1 to NumObjects do
     begin
       if (x = 1) and cxTables.Checked then // Tables
       for i:= 0 to dbObjectsList[x].Count - 1 do
@@ -1560,7 +1561,7 @@ var
 begin
   FieldsList:= TStringList.Create;
   try
-    for x:= 13 downto 1 do
+    for x:= NumObjects downto 1 do
     begin
       if (x = 1) and cxTables.Checked then
       begin
