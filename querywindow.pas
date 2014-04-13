@@ -2113,17 +2113,20 @@ end;
 
 procedure TfmQueryWindow.SortSynCompletion;
 var
-  sortinglis:TStringList;
+  SortingList:TStringList;
   i:Integer;
 begin
-  sortinglis:=TStringList.Create;
+  SortingList:=TStringList.Create;
+  try
     for i:=0 to SynCompletion1.ItemList.Count-1 do
-        sortinglis.Add(SynCompletion1.ItemList.Strings[i]);
-    sortinglis.Sort;
+       SortingList.Add(SynCompletion1.ItemList.Strings[i]);
+    SortingList.Sort;
     SynCompletion1.ItemList.Clear;
-    for i:=0 to sortinglis.Count-1 do
-    SynCompletion1.ItemList.Add(sortinglis.Strings[i]);
-
+    for i:=0 to SortingList.Count-1 do
+      SynCompletion1.ItemList.Add(SortingList.Strings[i]);
+  finally
+    SortingList.Free;
+  end;
 end;
 
 
