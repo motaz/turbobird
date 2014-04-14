@@ -1,6 +1,0 @@
-create
-table
-Select
-From
-INTEGER
-FLOAT
