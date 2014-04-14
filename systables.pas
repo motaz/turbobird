@@ -307,19 +307,24 @@ function TdmSysTables.GetConstraintsOfTable(ATableName: string; var SqlQuery: TS
    ConstraintsList: TStringList = nil): Boolean;
 begin
   SqlQuery.Close;
-  SqlQuery.SQL.Text:= 'select Trim(Refc.RDB$Constraint_Name) as ConstName, ' +
-    'Trim(Refc.RDB$CONST_NAME_UQ) as KeyName, ' +
-    'Trim(Ind.RDB$Relation_Name) as CurrentTableName, ' +
-    'Trim(Seg.RDB$Field_name) as CurrentFieldName, ' +
-    'Trim(Con.RDB$Relation_Name) as OtherTableName, ' +
-    'Trim(Ind.RDB$Foreign_key) as OtherFieldName, ' +
-    'RDB$Update_Rule as UpdateRule, RDB$Delete_Rule as DeleteRule ' +
-    'from RDB$RELATION_CONSTRAINTS Con, rdb$REF_Constraints Refc, RDB$INDEX_SEGMENTS Seg, ' +
-    'RDB$INDICES Ind ' +
-    'where Con.RDB$COnstraint_Name = Refc.RDB$Const_Name_UQ ' +
-    '  and Refc.RDB$COnstraint_Name = Ind.RDB$Index_Name' +
-    '  and Refc.RDB$COnstraint_Name = Seg.RDB$Index_Name' +
-    '  and Con.RDB$Relation_Name = ''' + UpperCase(ATableName) + '''';
+  SQLQuery.SQL.Text:='select '+
+  'rc.rdb$constraint_name as ConstName, '+
+  'rfc.rdb$const_name_uq as KeyName, '+
+  'rc2.rdb$relation_name as CurrentTableName, '+
+  'flds_pk.rdb$field_name as CurrentFieldName, '+
+  'rc.rdb$relation_name as OtherTableName, '+
+  'flds_fk.rdb$field_name as OtherFieldName, '+
+  'rfc.rdb$update_rule as UpdateRule, '+
+  'rfc.rdb$delete_rule as DeleteRule '+
+  'from rdb$relation_constraints AS rc '+
+  'inner join rdb$ref_constraints as rfc on (rc.rdb$constraint_name = rfc.rdb$constraint_name) '+
+  'inner join rdb$index_segments as flds_fk on (flds_fk.rdb$index_name = rc.rdb$index_name) ' +
+  'inner join rdb$relation_constraints as rc2 on (rc2.rdb$constraint_name = rfc.rdb$const_name_uq) ' +
+  'inner join rdb$index_segments as flds_pk on ' +
+  '((flds_pk.rdb$index_name = rc2.rdb$index_name) and (flds_fk.rdb$field_position = flds_pk.rdb$field_position)) ' +
+  'where rc.rdb$constraint_type = ''FOREIGN KEY'' '+
+  'and rc.rdb$relation_name = ''' + UpperCase(ATableName) + ''' '+
+  'order by rc.rdb$constraint_name, flds_fk.rdb$field_position ';
   SqlQuery.Open;
   Result:= SqlQuery.RecordCount > 0;
   with SqlQuery do
