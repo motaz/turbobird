@@ -6,10 +6,10 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, ComCtrls, IBConnection, sqldb, QueryWindow;
+  Buttons, ComCtrls, IBConnection, sqldb, QueryWindow, LCLType;
 
 const
-  NumObjects = 13; //number of different objects in array below
+  NumObjects = 13; //number of different objects in dbObjects array below
   dbObjects: array [1 .. NumObjects] of string = ('Tables', 'Generators', 'Triggers', 'Views', 'Stored Procedures', 'UDFs',
     'Sys Tables', 'Domains', 'Roles', 'Exceptions', 'Users', 'Indices', 'Constraints');
 
@@ -47,6 +47,7 @@ type
     procedure bbStartClick(Sender: TObject);
     procedure cbComparedDatabaseChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure laScriptClick(Sender: TObject);
   private
     fdbIndex: Integer;
@@ -280,6 +281,21 @@ begin
   RemovedFieldsList.Free;
 
   CloseAction:= caFree;
+end;
+
+procedure TfmComparison.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (ssCtrl in Shift) and
+    ((Key=VK_F4) or (Key=VK_W)) then
+  begin
+    if MessageDlg('Do you want to close this query window?', mtConfirmation, [mbNo, mbYes], 0) = mrYes then
+    begin
+      // Close when pressing Ctrl-W or Ctrl-F4 (Cmd-W/Cmd-F4 on OSX)
+      Close;
+      Parent.Free;
+    end;
+  end;
 end;
 
 procedure TfmComparison.laScriptClick(Sender: TObject);

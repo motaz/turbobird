@@ -142,6 +142,7 @@
         <Filename Value="viewview.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmViewView"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewView"/>
       </Unit5>
@@ -149,6 +150,7 @@
         <Filename Value="viewtrigger.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmViewTrigger"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewTrigger"/>
       </Unit6>
@@ -156,6 +158,7 @@
         <Filename Value="viewsproc.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmViewSProc"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewSProc"/>
       </Unit7>
@@ -163,6 +166,7 @@
         <Filename Value="viewgen.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmViewGen"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewGen"/>
       </Unit8>
@@ -230,6 +234,7 @@
         <Filename Value="udfinfo.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmUDFInfo"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UDFInfo"/>
       </Unit17>
@@ -237,6 +242,7 @@
         <Filename Value="viewdomain.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmViewDomain"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewDomain"/>
       </Unit18>

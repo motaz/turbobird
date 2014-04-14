@@ -53,7 +53,7 @@ procedure TfmNewConstraint.cbTablesChange(Sender: TObject);
 var
   FieldsList: TStringList;
 begin
-  // Get foriegn table fields
+  // Get foreign table fields
   FieldsList:= TStringList.Create;
   try
     fmMain.GetFields(DatabaseIndex, cbTables.Text, FieldsList);
