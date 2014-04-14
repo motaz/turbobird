@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, IBConnection, sqldb, FileUtil, LResources, Forms, Controls,
   Graphics, Dialogs, StdCtrls, Grids, Buttons, ExtCtrls, SynEdit, SynCompletion,
-  SynHighlighterSQL;
+  SynHighlighterSQL, LCLType;
 
 type
 
@@ -32,6 +32,7 @@ type
     procedure cxGrantPermissionChange(Sender: TObject);
     procedure edNewTableKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure StringGrid1KeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure StringGrid1MouseUp(Sender: TObject; Button: TMouseButton;
@@ -275,27 +276,28 @@ begin
   if Validate then
   begin
     List:= TStringList.Create;
-    List.Text:= GenerateCreateSQL(KeyField, GeneratorName);
-    if cxCreateGen.Checked then
-    begin;
-      List.Add('');
-      List.Add('-- Generator');
-      List.Add('create generator ' + GeneratorName + ';');
+    try
+      List.Text:= GenerateCreateSQL(KeyField, GeneratorName);
+      if cxCreateGen.Checked then
+      begin;
+        List.Add('');
+        List.Add('-- Generator');
+        List.Add('create generator ' + GeneratorName + ';');
 
-      List.Add('');
-      List.Add('-- Trigger');
-      List.Add('CREATE TRIGGER ' + GeneratorName + ' FOR ' + edNewTable.Text);
-      List.Add('ACTIVE BEFORE INSERT POSITION 0 ');
-      List.Add('AS BEGIN ');
-      List.Add('IF (NEW.' + KeyField + ' IS NULL OR NEW.' + KeyField + ' = 0) THEN ');
-      List.Add('  NEW.' + KeyField + ' = GEN_ID(' + GeneratorName + ', 1);');
-      List.Add('END;');
+        List.Add('');
+        List.Add('-- Trigger');
+        List.Add('CREATE TRIGGER ' + GeneratorName + ' FOR ' + edNewTable.Text);
+        List.Add('ACTIVE BEFORE INSERT POSITION 0 ');
+        List.Add('AS BEGIN ');
+        List.Add('IF (NEW.' + KeyField + ' IS NULL OR NEW.' + KeyField + ' = 0) THEN ');
+        List.Add('  NEW.' + KeyField + ' = GEN_ID(' + GeneratorName + ', 1);');
+        List.Add('END;');
+      end;
+      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create New Table: ' + edNewTable.Text, List.Text);
+    finally
+      List.Free;
     end;
-
-    fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create New Table: ' + edNewTable.Text, List.Text);
-    List.Free;
     bbCloseClick(nil);
-
   end;
 end;
 
@@ -328,6 +330,21 @@ end;
 procedure TfmNewTable.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
+end;
+
+procedure TfmNewTable.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (ssCtrl in Shift) and
+    ((Key=VK_F4) or (Key=VK_W)) then
+  begin
+    if MessageDlg('Do you want to close this query window?', mtConfirmation, [mbNo, mbYes], 0) = mrYes then
+    begin
+      // Close when pressing Ctrl-W or Ctrl-F4 (Cmd-W/Cmd-F4 on OSX)
+      Close;
+      Parent.Free;
+    end;
+  end;
 end;
 
 

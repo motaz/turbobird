@@ -12,6 +12,13 @@ uses
 
 type
 
+  TQueryTypes = (
+    qtUnknown=0,
+    qtSelectable=1,
+    qtExecute=2,
+    qtScript=3);
+
+
   { TQueryThread }
 
   TQueryThread = class(TThread)
@@ -103,6 +110,7 @@ type
     procedure FindDialog1Find(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure lmCloseTabClick(Sender: TObject);
     procedure lmCommaDelemitedClick(Sender: TObject);
@@ -154,7 +162,7 @@ type
     fStartLine: Integer;
     fList: TStringList;
     fQuery: string;
-    fOrigQueryType: Integer;
+    fOrigQueryType: TQueryTypes;
     fFinished: Boolean;
     fQT: TQueryThread;
     fQueryPart: string;
@@ -172,7 +180,7 @@ type
     function GetNewTabNum: string;
     procedure FinishCellEditing(DataSet: TDataSet);
     function GetRecordSet(TabIndex: Integer): TSQLQuery;
-    function getQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer;
+    function GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer;
       var IsDDL: Boolean): Integer;
     procedure NewCommitButton(const Pan: TPanel; var ATab: TTabSheet);
     procedure RemoveComments(QueryList: TStringList; StartLine: Integer;
@@ -189,7 +197,7 @@ type
   public
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
-    function GetQueryType(AQuery: string): Integer;
+    function GetQueryType(AQuery: string): TQueryTypes;
     function GetQuery: string;
     function CreateResultTab(QueryType: Byte; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
@@ -202,8 +210,8 @@ type
     function GetSQLSegment(QueryList: TStringList; StartLine: Integer; var QueryType, EndLine: Integer;
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
     procedure QueryAfterScroll(DataSet: TDataSet);
-    procedure CallExecuteQuery(aQueryType: Integer);
-    procedure sortsyncompletion;
+    procedure CallExecuteQuery(aQueryType: TQueryTypes);
+    procedure SortSynCompletion;
     procedure ThreadTerminated(Sender: TObject);
     procedure EnableButtons;
 
@@ -319,7 +327,7 @@ end;
 { TQueryThread }
 
 
-{ FinishCellEditing: Insert current been edited record in ModifiedRecords array }
+{ FinishCellEditing: Insert current just edited record in ModifiedRecords array }
 
 procedure TfmQueryWindow.FinishCellEditing(DataSet: TDataSet);
 begin
@@ -328,7 +336,7 @@ end;
 
 
 
-{ InsertMOdifiedRecord: insert modified query record in ModifiedRecords array }
+{ InsertModifiedRecord: insert modified query record in ModifiedRecords array }
 
 procedure TfmQueryWindow.InsertModifiedRecord(RecordNo, TabIndex: Integer);
 var
@@ -388,91 +396,92 @@ begin
     PKName:= fmMain.GetPrimaryKeyIndexName(fdbIndex, ATableName, ConstraintName);
     if PKName <> '' then
     begin
-
-      aQuery:= TSQLQuery.Create(nil);
-      aQuery.DataBase:= ibConnection;
-      aQuery.Transaction:= SqlTrans;
       KeyList:= TStringList.Create;
       Fieldslist:= tstringList.Create;
+      aQuery:= TSQLQuery.Create(nil);
+      try
+        aQuery.DataBase:= ibConnection;
+        aQuery.Transaction:= SqlTrans;
 
-      // Get primary key fields
-      fmMain.GetIndexFields(ATableName, PKName, aQuery, KeyList);
-      fmMain.GetFields(fdbIndex, ATableName, FieldsList);
-      WhereClause:= 'where ';
+        // Get primary key fields
+        fmMain.GetIndexFields(ATableName, PKName, aQuery, KeyList);
+        fmMain.GetFields(fdbIndex, ATableName, FieldsList);
+        WhereClause:= 'where ';
 
-      RecordSet.DisableControls;
-      // Check modified fields
-      for i:= 0 to High(ModifiedRecords[TabIndex]) do
-      begin
-        FieldsSQL:= '';
-        RecordSet.RecNo:= ModifiedRecords[TabIndex][i];
-        for x:= 0 to RecordSet.Fields.Count - 1 do
-        if FieldsList.IndexOf(RecordSet.Fields[x].FieldName) <> -1 then // Field exist in origional table
-
-        if (RecordSet.Fields[x].NewValue <> RecordSet.Fields[x].OldValue) then // field data has been modified
+        RecordSet.DisableControls;
+        // Check modified fields
+        for i:= Low(ModifiedRecords[TabIndex]) to High(ModifiedRecords[TabIndex]) do
         begin
+         FieldsSQL:= '';
+         RecordSet.RecNo:= ModifiedRecords[TabIndex][i];
+         for x:= 0 to RecordSet.Fields.Count - 1 do
+         if FieldsList.IndexOf(RecordSet.Fields[x].FieldName) <> -1 then // Field exist in origional table
+
+         if (RecordSet.Fields[x].NewValue <> RecordSet.Fields[x].OldValue) then // field data has been modified
+         begin
+          if FieldsSQL <> '' then
+              FieldsSQL += ',';
+            FieldsSQL += RecordSet.Fields[x].FieldName + '=';
+
+            // Typecast field values according to thier main type
+            case RecordSet.Fields[x].DataType of
+             ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
+             ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);
+             ftTimeStamp, ftDateTime: FieldsSQL += '''' + DateTimeToStr(RecordSet.Fields[x].NewValue) + '''';
+             ftTime: FieldsSQL += '''' + TimeToStr(RecordSet.Fields[x].NewValue) + '''';
+             ftDate: FieldsSQL += '''' + DateToStr(RecordSet.Fields[x].NewValue) + '''';
+
+            else // Other types like string
+               FieldsSQL += '''' + RecordSet.Fields[x].NewValue + '''';
+
+          end;
+         end;
+
+
+         // Update current record
          if FieldsSQL <> '' then
-             FieldsSQL += ',';
-           FieldsSQL += RecordSet.Fields[x].FieldName + '=';
+         begin
+           aQuery.Close;
+           aQuery.SQL.Text:= 'update ' + aTableName + ' set ' + FieldsSQL;
 
-           // Typecast field values according to thier main type
-           case RecordSet.Fields[x].DataType of
-            ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
-            ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);
-            ftTimeStamp, ftDateTime: FieldsSQL += '''' + DateTimeToStr(RecordSet.Fields[x].NewValue) + '''';
-            ftTime: FieldsSQL += '''' + TimeToStr(RecordSet.Fields[x].NewValue) + '''';
-            ftDate: FieldsSQL += '''' + DateToStr(RecordSet.Fields[x].NewValue) + '''';
+           WhereClause:= 'where ';
+           // where clause
+           for x:= 0 to KeyList.Count - 1 do
+           if Trim(KeyList[x]) <> '' then
+           begin
+             WhereClause += KeyList[x] + ' = ';
 
-           else // Other types like string
-              FieldsSQL += '''' + RecordSet.Fields[x].NewValue + '''';
+             // Typecase index values
+             case RecordSet.Fields[x].DataType of
+              ftInteger, ftSmallint: WhereClause += IntToStr(RecordSet.Fields[x].OldValue);
+              ftFloat: WhereClause += FloatToStr(RecordSet.Fields[x].OldValue);
+             else
+                WhereClause += '''' + RecordSet.Fields[x].OldValue + '''';
+             end;
+             if x < KeyList.Count - 1 then
+               WhereClause += ' and ';
+           end;
 
+           aQuery.SQL.Add(WhereClause);
+           aQuery.ExecSQL;
+           (Sender as TBitBtn).Visible:= False;
+
+           // Auto commit
+           if cxAutoCommit.Checked then
+             SqlTrans.CommitRetaining
+           else
+             EnableCommitButton;
          end;
         end;
 
-
-        // Update current record
-        if FieldsSQL <> '' then
-        begin
-          aQuery.Close;
-          aQuery.SQL.Text:= 'update ' + aTableName + ' set ' + FieldsSQL;
-
-          WhereClause:= 'where ';
-          // where clause
-          for x:= 0 to KeyList.Count - 1 do
-          if Trim(KeyList[x]) <> '' then
-          begin
-            WhereClause += KeyList[x] + ' = ';
-
-            // Typecase index values
-            case RecordSet.Fields[x].DataType of
-             ftInteger, ftSmallint: WhereClause += IntToStr(RecordSet.Fields[x].OldValue);
-             ftFloat: WhereClause += FloatToStr(RecordSet.Fields[x].OldValue);
-            else
-               WhereClause += '''' + RecordSet.Fields[x].OldValue + '''';
-            end;
-            if x < KeyList.Count - 1 then
-              WhereClause += ' and ';
-          end;
-
-          aQuery.SQL.Add(WhereClause);
-          aQuery.ExecSQL;
-          (Sender as TBitBtn).Visible:= False;
-
-          // Auto commit
-          if cxAutoCommit.Checked then
-            SqlTrans.CommitRetaining
-          else
-            EnableCommitButton;
-        end;
+        // Reset ModifedRecords pointer
+        ModifiedRecords[TabIndex]:= nil;
+        RecordSet.EnableControls;
+      finally
+        FieldsList.Free;
+        KeyList.Free;
+        aQuery.Free;
       end;
-
-      // Reset ModifedRecords pointer
-      ModifiedRecords[TabIndex]:= nil;
-
-      RecordSet.EnableControls;
-      FieldsList.Free;
-      KeyList.Free;
-      aQuery.Free;
     end
     else
       ShowMessage('There is no primary key on the table: ' + aTableName);
@@ -486,10 +495,9 @@ begin
 
   end;
 
-
 end;
 
-{ EnableApplyButton: enable save updates button when records has been modified }
+{ EnableApplyButton: enable save updates button when records have been modified }
 
 procedure TfmQueryWindow.EnableApplyButton;
 var
@@ -587,7 +595,7 @@ end;
 
 { GetQuerySQLType: get query type: select, script, execute from current string list }
 
-function TfmQueryWindow.getQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): Integer;
+function TfmQueryWindow.GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): Integer;
 var
   SQLSegment: string;
 begin
@@ -907,7 +915,7 @@ end;
 
 procedure TfmQueryWindow.tbRunClick(Sender: TObject);
 begin
-  CallExecuteQuery(0);
+  CallExecuteQuery(qtUnknown);
 end;
 
 
@@ -962,12 +970,12 @@ begin
   // Get current database tables to be hilighted in SQL query editor
   SynSQLSyn1.TableNames.CommaText:= fmMain.GetTableNames(dbIndex);
   SynCompletion1.ItemList.AddStrings(SynSQLSyn1.TableNames);
-  sortsyncompletion;
+  SortSynCompletion;
 end;
 
 (************* Is Selectable (Check statement type Select, Update, Alter, etc) *******************)
 
-function TfmQueryWindow.GetQueryType(AQuery: string): Integer;
+function TfmQueryWindow.GetQueryType(AQuery: string): TQueryTypes;
 var
   List: TStringList;
   i: Integer;
@@ -978,7 +986,7 @@ begin
   try
     List.Text:= AQuery;
 
-    Result:= 2; // Default Execute
+    Result:= qtExecute; // Default Execute
 
     for i:= 0 to List.Count - 1 do
     begin
@@ -995,19 +1003,19 @@ begin
 
       if (Pos('select', LowerCase(Trim(Line))) = 1) then
       begin
-        Result:= 1; // Selectable
+        Result:= qtSelectable; // Selectable
         Break;
       end
       else
       if Pos('setterm', LowerCase(StringReplace(Line, ' ', '', [rfReplaceAll]))) = 1 then
       begin
-        Result:= 3;
+        Result:= qtScript;
         Break;
       end;
 
       if Trim(Line) <> '' then
       begin
-        Result:= 2; // Executable
+        Result:= qtExecute; // Executable
         Break;
       end;
 
@@ -1150,7 +1158,7 @@ begin
   try
 
     // Script
-    if (fOrigQueryType = 3) then
+    if (fOrigQueryType = qtScript) then
     begin
       ExecuteScript(fQuery);
       Inc(fModifyCount);
@@ -1480,7 +1488,7 @@ var
   i: Integer;
   CannotFree: Boolean;
 begin
-  for i:= High(ResultControls) downto  0 do
+  for i:= High(ResultControls) downto Low(ResultControls) do
   begin
     if ResultControls[i] is TSQLQuery then
     begin
@@ -1563,7 +1571,7 @@ begin
   removeEmptyLines(QueryList, SecondRealStart, RealStartLine);
 
   // Get SQL type
-  QueryType:= getQuerySQLType(QueryList, SecondRealStart, IsDDL);
+  QueryType:= GetQuerySQLType(QueryList, SecondRealStart, IsDDL);
 
   // Concatinate
   SQLSegment:= '';
@@ -1615,7 +1623,7 @@ end;
 
 procedure TfmQueryWindow.bbRunClick(Sender: TObject);
 begin
-  CallExecuteQuery(0);
+  CallExecuteQuery(qtUnknown);
 end;
 
 
@@ -1696,7 +1704,24 @@ var
   str:string;
 begin
   SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
-  Sortsyncompletion;
+  SortSynCompletion;
+end;
+
+procedure TfmQueryWindow.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (ssCtrl in Shift) and
+    ((Key=VK_F4) or (Key=VK_W)) then
+  begin
+    if ((Trim(meQuery.Lines.Text) = '') or
+      (MessageDlg('Do you want to close this query window?', mtConfirmation, [mbNo, mbYes], 0) = mrYes))
+      then
+    begin
+      // Close when pressing Ctrl-W or Ctrl-F4 (Cmd-W/Cmd-F4 on OSX)
+      Close;
+      Parent.Free;
+    end;
+  end;
 end;
 
 
@@ -1787,37 +1812,40 @@ begin
     Grid.DataSource.DataSet.DisableControls;
     Grid.DataSource.DataSet.First;
     List:= TStringList.Create;
-    Line:= '';
-
-    // Copy fields header
-    with Grid.DataSource.DataSet do
-    for i:= 0 to FieldCount - 1 do
-    begin
-      Line:= Line + '"' + Fields[i].FieldName + '"';
-      if i + 1 < FieldCount then
-        Line:= Line + ',';
-    end;
-    List.Add(Line);
-
-    // Copy table data
-    with Grid.DataSource.DataSet do
-    while not Eof do
-    begin
+    try
       Line:= '';
+
+      // Copy fields header
+      with Grid.DataSource.DataSet do
       for i:= 0 to FieldCount - 1 do
       begin
-        Line:= Line + '"' + Trim(Fields[i].AsString) + '"';
+        Line:= Line + '"' + Fields[i].FieldName + '"';
         if i + 1 < FieldCount then
           Line:= Line + ',';
       end;
       List.Add(Line);
-      Next;
-    end;
-   Clipboard.AsText:= List.Text;
 
+      // Copy table data
+      with Grid.DataSource.DataSet do
+      while not Eof do
+      begin
+        Line:= '';
+        for i:= 0 to FieldCount - 1 do
+        begin
+          Line:= Line + '"' + Trim(Fields[i].AsString) + '"';
+          if i + 1 < FieldCount then
+            Line:= Line + ',';
+        end;
+        List.Add(Line);
+        Next;
+      end;
+      Clipboard.AsText:= List.Text;
+    finally
+      List.Free;
+    end;
   except
-  on e: exception do
-    ShowMessage(e.Message);
+    on e: exception do
+      ShowMessage(e.Message);
   end;
   grid.DataSource.DataSet.EnableControls;
 end;
@@ -1939,7 +1967,7 @@ end;
 
 procedure TfmQueryWindow.lmRunClick(Sender: TObject);
 begin
-  CallExecuteQuery(0);
+  CallExecuteQuery(qtUnknown);
 end;
 
 
@@ -1947,7 +1975,7 @@ end;
 
 procedure TfmQueryWindow.lmRunExecClick(Sender: TObject);
 begin
-  CallExecuteQuery(2);
+  CallExecuteQuery(qtExecute);
 end;
 
 
@@ -1955,7 +1983,7 @@ end;
 
 procedure TfmQueryWindow.lmRunScriptClick(Sender: TObject);
 begin
-  CallExecuteQuery(3);
+  CallExecuteQuery(qtScript);
 end;
 
 
@@ -1963,7 +1991,7 @@ end;
 
 procedure TfmQueryWindow.lmRunSelectClick(Sender: TObject);
 begin
-  CallExecuteQuery(1);
+  CallExecuteQuery(qtSelectable);
 end;
 
 
@@ -2007,7 +2035,7 @@ begin
   // Execute query by pressing Ctrl + Enter
   if (ssCtrl in shift) and (key = 13) then
   begin
-    CallExecuteQuery(0);
+    CallExecuteQuery(qtUnknown);
     key:= 0;
   end;
 end;
@@ -2023,12 +2051,13 @@ begin
   TabSheet:= nil;
   // Get DataSet's TTabsheet
   for i:= 0 to High(ResultControls) do
-  if ResultControls[i] <> nil then
-  if DataSet = ResultControls[i] then
+  if (ResultControls[i] <> nil) and
+    (DataSet = ResultControls[i]) then
   begin
     TabSheet:= ParentResultControls[i] as TTabSheet;
     Break;
   end;
+
 
   // Search for status bar inside current query result TabSheet
   if TabSheet <> nil then
@@ -2036,11 +2065,11 @@ begin
   if ResultControls[i] <> nil then
     if  (ParentResultControls[i] <> nil) and ((ParentResultControls[i] as TTabSheet) = TabSheet)
       and (ResultControls[i] is TStatusBar) then
-      begin
-        // Display current record and number of total records in status bar
-        (ResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
-        ' records fetched. At record # ' + IntToStr(DataSet.RecNo);
-      break;
+    begin
+      // Display current record and number of total records in status bar
+      (ResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
+      ' records fetched. At record # ' + IntToStr(DataSet.RecNo);
+    break;
   end;
 
 end;
@@ -2048,7 +2077,7 @@ end;
 
 { Execute query according to passed query ype }
 
-procedure TfmQueryWindow.CallExecuteQuery(aQueryType: Integer);
+procedure TfmQueryWindow.CallExecuteQuery(aQueryType: TQueryTypes);
 begin
   fList:= TStringList.Create;
 
@@ -2068,12 +2097,12 @@ begin
   RemoveControls;
 
   // Get initial query type, it could be changed later in the next parts
-  if aQueryType = 0 then // Auto
+  if aQueryType = qtUnknown then // Auto
     fOrigQueryType:= GetQueryType(fQuery)
   else
     fOrigQueryType:= aQueryType;
 
-  // Call execute query for each parts until finished
+  // Call execute query for each part until finished
   fCnt:= 0;
   fFinished:= False;
   repeat
@@ -2085,19 +2114,22 @@ end;
 
 { sort auto completion options }
 
-procedure TfmQueryWindow.sortsyncompletion;
+procedure TfmQueryWindow.SortSynCompletion;
 var
-  sortinglis:TStringList;
+  SortingList:TStringList;
   i:Integer;
 begin
-  sortinglis:=TStringList.Create;
+  SortingList:=TStringList.Create;
+  try
     for i:=0 to SynCompletion1.ItemList.Count-1 do
-        sortinglis.Add(SynCompletion1.ItemList.Strings[i]);
-    sortinglis.Sort;
+       SortingList.Add(SynCompletion1.ItemList.Strings[i]);
+    SortingList.Sort;
     SynCompletion1.ItemList.Clear;
-    for i:=0 to sortinglis.Count-1 do
-    SynCompletion1.ItemList.Add(sortinglis.Strings[i]);
-
+    for i:=0 to SortingList.Count-1 do
+      SynCompletion1.ItemList.Add(SortingList.Strings[i]);
+  finally
+    SortingList.Free;
+  end;
 end;
 
 

@@ -10,12 +10,12 @@ object fmUpdate: TfmUpdate
   OnActivate = FormActivate
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '1.0.14.0'
+  LCLVersion = '1.2.0.3'
   object Label1: TLabel
     Left = 8
-    Height = 18
+    Height = 13
     Top = 32
-    Width = 104
+    Width = 75
     BidiMode = bdRightToLeft
     Caption = 'Current version'
     ParentBidiMode = False
@@ -64,9 +64,9 @@ object fmUpdate: TfmUpdate
   end
   object cxProxy: TCheckBox
     Left = 16
-    Height = 24
+    Height = 17
     Top = 176
-    Width = 177
+    Width = 130
     Caption = 'connect through proxy'
     OnChange = cxProxyChange
     ParentBidiMode = False
@@ -77,38 +77,38 @@ object fmUpdate: TfmUpdate
     Height = 108
     Top = 198
     Width = 472
-    ClientHeight = 104
+    ClientHeight = 90
     ClientWidth = 468
     TabOrder = 5
     Visible = False
     object Label2: TLabel
       Left = 6
-      Height = 18
+      Height = 13
       Top = 11
-      Width = 85
+      Width = 62
       Alignment = taRightJustify
       Caption = 'Proxy server'
       ParentColor = False
     end
     object edProxy: TEdit
       Left = 103
-      Height = 27
+      Height = 21
       Top = 8
       Width = 112
       TabOrder = 0
     end
     object Label3: TLabel
       Left = 7
-      Height = 18
+      Height = 13
       Top = 41
-      Width = 73
+      Width = 51
       Alignment = taRightJustify
       Caption = 'Proxy port'
       ParentColor = False
     end
     object edPort: TEdit
       Left = 103
-      Height = 27
+      Height = 21
       Top = 40
       Width = 69
       TabOrder = 1
@@ -116,32 +116,32 @@ object fmUpdate: TfmUpdate
     end
     object Label4: TLabel
       Left = 6
-      Height = 18
+      Height = 13
       Top = 80
-      Width = 32
+      Width = 22
       Alignment = taRightJustify
       Caption = 'User'
       ParentColor = False
     end
     object edUser: TEdit
       Left = 335
-      Height = 27
+      Height = 21
       Top = 71
       Width = 112
       TabOrder = 2
     end
     object Label5: TLabel
       Left = 247
-      Height = 18
+      Height = 13
       Top = 80
-      Width = 67
+      Width = 46
       Alignment = taRightJustify
       Caption = 'Password'
       ParentColor = False
     end
     object edPassword: TEdit
       Left = 103
-      Height = 27
+      Height = 21
       Top = 71
       Width = 112
       EchoMode = emPassword
@@ -163,9 +163,9 @@ object fmUpdate: TfmUpdate
   end
   object laTime: TLabel
     Left = 408
-    Height = 27
+    Height = 24
     Top = 104
-    Width = 66
+    Width = 54
     Caption = '00:00'
     Color = clCream
     Font.Color = clRed

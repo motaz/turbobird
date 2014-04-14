@@ -2,7 +2,7 @@
 {  TurboBird: FireBird database administration and management tool          }
 {  Developed by: Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      :  5.Apr.2014                                          }
+{  Last updated      : 12.Apr.2014                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
@@ -27,7 +27,7 @@ uses
 const
   Major = 1;
   Minor = 0;
-  Release = 2;
+  Release = 3;
 
   VersionDate = '2010 - April 2014';
 {$IFDEF Unix}
@@ -48,6 +48,16 @@ var
   IBaseLibraryHandle : TLibHandle;
 begin
   Application.Initialize;
+  {$IFDEF DEBUG}
+  // Requires the build mode to set -dDEBUG in Project Options/Other and
+  // defining -gh/heaptrace on
+  // This avoids interference when running a production/default build without -gh
+
+  // Set up -gh output for the Leakview package:
+  if FileExists('heap.trc') then
+    DeleteFile('heap.trc');
+  SetHeapTraceOutput('heap.trc');
+  {$ENDIF DEBUG}
   IBaseLibraryHandle:= LoadLibrary(fbclib);
 
   // search for all compatible FireBird libraries in Windows

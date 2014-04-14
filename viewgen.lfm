@@ -6,28 +6,30 @@ object fmViewGen: TfmViewGen
   Caption = 'fmViewGen'
   ClientHeight = 85
   ClientWidth = 615
+  KeyPreview = True
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.2.0.3'
   object Label1: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 15
-    Width = 70
+    Width = 49
     Caption = 'Generator'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 48
-    Width = 93
+    Width = 66
     Caption = 'Current Value'
     ParentColor = False
   end
   object edGenName: TEdit
     Left = 120
-    Height = 21
+    Height = 13
     Top = 8
     Width = 207
     Anchors = [akTop, akLeft, akRight]
@@ -41,7 +43,7 @@ object fmViewGen: TfmViewGen
   end
   object edValue: TEdit
     Left = 120
-    Height = 21
+    Height = 13
     Top = 40
     Width = 144
     AutoSelect = False

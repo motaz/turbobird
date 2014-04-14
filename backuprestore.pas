@@ -96,33 +96,35 @@ var
   ADatabase: string;
 begin
   FireBirdServices:= TFirebirdServices.Create;
-  FireBirdServices.VerboseOutput:= True;
-  meLog.Clear;
-  with FireBirdServices do
-  begin
-    HostName:= edHost.Text;
-    DBName:= edTargetDatabase.Text;
-    UserName := edUserName.Text;
-    Password := edPassword.Text;
-    BkpName := Trim(edBackup.Text);
+  try
+    FireBirdServices.VerboseOutput:= True;
+    meLog.Clear;
+    with FireBirdServices do
+    begin
+      HostName:= edHost.Text;
+      DBName:= edTargetDatabase.Text;
+      UserName := edUserName.Text;
+      Password := edPassword.Text;
+      BkpName := Trim(edBackup.Text);
 
-    try
-      AttachService;
+      try
+        AttachService;
 
-      if cbOperation.ItemIndex = 0 then
-        StartBackup
-      else
-        StartRestore;
+        if cbOperation.ItemIndex = 0 then
+          StartBackup
+        else
+          StartRestore;
 
-      while ServiceQuery(Res) do
-        meLog.Lines.Add(Res);
-    finally
-      DetachService;
+        while ServiceQuery(Res) do
+          meLog.Lines.Add(Res);
+      finally
+        DetachService;
+      end;
+      meLog.Lines.Add('');
     end;
-    meLog.Lines.Add('');
+  finally
     FireBirdServices.Free;
   end;
-
 end;
 
 

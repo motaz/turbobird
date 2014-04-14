@@ -54,30 +54,33 @@ begin
   begin
     Valid:= True;
     List:= TStringList.Create;
-    List.Add('create generator ' + edGenName.Text + ';');
-    if cxTrigger.Checked then
-    begin
-      Valid:= False;
-      if (cbTables.ItemIndex = -1) or (cbFields.ItemIndex = -1) then
-        MessageDlg('You should select a table and a field', mtError, [mbOk], 0)
-      else
-      if Trim(edGenName.Text) = '' then
-        MessageDlg('You should enter generator name', mtError, [mbOK], 0)
-      else
+    try
+      List.Add('create generator ' + edGenName.Text + ';');
+      if cxTrigger.Checked then
       begin
-        List.Add('CREATE TRIGGER ' + Trim(edGenName.Text) + ' FOR ' + cbTables.Text);
-        List.Add('ACTIVE BEFORE INSERT POSITION 0 ');
-        List.Add('AS BEGIN ');
-        List.Add('IF (NEW.' + cbFields.Text + ' IS NULL OR NEW.' + cbFields.Text + ' = 0) THEN ');
-        List.Add('  NEW.' + cbFields.Text + ' = GEN_ID(' + edGenName.Text + ', 1);');
-        List.Add('END;');
-        Valid:= True;
-      end;
+        Valid:= False;
+        if (cbTables.ItemIndex = -1) or (cbFields.ItemIndex = -1) then
+          MessageDlg('You should select a table and a field', mtError, [mbOk], 0)
+        else
+        if Trim(edGenName.Text) = '' then
+          MessageDlg('You should enter generator name', mtError, [mbOK], 0)
+        else
+        begin
+          List.Add('CREATE TRIGGER ' + Trim(edGenName.Text) + ' FOR ' + cbTables.Text);
+          List.Add('ACTIVE BEFORE INSERT POSITION 0 ');
+          List.Add('AS BEGIN ');
+          List.Add('IF (NEW.' + cbFields.Text + ' IS NULL OR NEW.' + cbFields.Text + ' = 0) THEN ');
+          List.Add('  NEW.' + cbFields.Text + ' = GEN_ID(' + edGenName.Text + ', 1);');
+          List.Add('END;');
+          Valid:= True;
+        end;
 
+      end;
+      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create Generator: ' + edGenName.Text, List.Text);
+      Close;
+    finally
+      List.Free;
     end;
-    fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create Generator: ' + edGenName.Text, List.Text);
-    Close;
-    List.Free;
   end
   else
     MessageDlg('You should write Generator name', mtError, [mbOK], 0);

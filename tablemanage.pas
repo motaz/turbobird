@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, sqldb, IBConnection, FileUtil, LResources, Forms, Controls,
-  Graphics, Dialogs, ComCtrls, Grids, Buttons, StdCtrls, CheckLst;
+  Graphics, Dialogs, ComCtrls, Grids, Buttons, StdCtrls, CheckLst, LCLType;
 
 type
 
@@ -80,6 +80,7 @@ type
     procedure edDropClick(Sender: TObject);
     procedure edEditPermissionClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     fdbIndex: Integer;
     fTableName: string;
@@ -106,6 +107,21 @@ procedure TfmTableManage.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
+end;
+
+procedure TfmTableManage.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (ssCtrl in Shift) and
+    ((Key=VK_F4) or (Key=VK_W)) then
+  begin
+    if (MessageDlg('Do you want to close this query window?', mtConfirmation, [mbNo, mbYes], 0) = mrYes) then
+    begin
+      // Close when pressing Ctrl-W or Ctrl-F4 (Cmd-W/Cmd-F4 on OSX)
+      Close;
+      Parent.Free;
+    end;
+  end;
 end;
 
 
@@ -143,10 +159,13 @@ begin
   if sgTriggers.RowCount > 1 then
   begin
     List:= TStringList.Create;
-    ATriggerName:= sgTriggers.Cells[0, sgTriggers.Row];
-    dmSysTables.ScriptTrigger(fdbIndex, ATriggerName, List);
-    fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Trigger ', List.Text, bbRefreshTriggers.OnClick);
-    List.Free;
+    try
+      ATriggerName:= sgTriggers.Cells[0, sgTriggers.Row];
+      dmSysTables.ScriptTrigger(fdbIndex, ATriggerName, List);
+      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Trigger ', List.Text, bbRefreshTriggers.OnClick);
+    finally
+      List.Free;
+    end;
   end;
 
 end;
@@ -281,10 +300,13 @@ var
 begin
   // Get current fields
   FieldsList:= TStringList.Create;
-  fmMain.GetFields(fdbIndex, fTableName, FieldsList);
-  fmNewConstraint.clxOnFields.Clear;
-  fmNewConstraint.clxOnFields.Items.AddStrings(FieldsList);
-  FieldsList.Free;
+  try
+    fmMain.GetFields(fdbIndex, fTableName, FieldsList);
+    fmNewConstraint.clxOnFields.Clear;
+    fmNewConstraint.clxOnFields.Items.AddStrings(FieldsList);
+  finally
+    FieldsList.Free;
+  end;
   fmMain.SQLQuery1.Close;
   fmNewConstraint.edNewName.Text:= 'FK_' + fTableName + '_' + IntToStr(sgConstraints.RowCount);
 
@@ -481,75 +503,78 @@ var
 begin
   sqlTrans.Commit;
   UsersList:= TStringList.Create;
-  UsersList.CommaText:= dmSysTables.GetDBUsers(fdbIndex, fTableName);
-  sgPermissions.RowCount:= UsersList.Count + 1;
-  for i:= 0 to UsersList.Count - 1 do
-  begin
-    UserName:= UsersList[i];
-    if Pos('<R>', UserName) = 1 then
-      begin
-        sgPermissions.Cells[1, i + 1]:= 'Role';
-        Delete(UserName, 1, 3);
-      end
-    else
-      sgPermissions.Cells[1, i + 1]:= 'User';
+  try
+    UsersList.CommaText:= dmSysTables.GetDBUsers(fdbIndex, fTableName);
+    sgPermissions.RowCount:= UsersList.Count + 1;
+    for i:= 0 to UsersList.Count - 1 do
+    begin
+      UserName:= UsersList[i];
+      if Pos('<R>', UserName) = 1 then
+        begin
+          sgPermissions.Cells[1, i + 1]:= 'Role';
+          Delete(UserName, 1, 3);
+        end
+      else
+        sgPermissions.Cells[1, i + 1]:= 'User';
 
-    sgPermissions.Cells[0, i + 1]:= UserName;
+      sgPermissions.Cells[0, i + 1]:= UserName;
 
-    // Permissions
-    Permissions:= dmSysTables.GetObjectUserPermission(fdbIndex, fTableName, UserName, ObjType);
+      // Permissions
+      Permissions:= dmSysTables.GetObjectUserPermission(fdbIndex, fTableName, UserName, ObjType);
 
-    if Pos('S', Permissions) > 0 then
-      sgPermissions.Cells[2, i + 1]:= '1'
-    else
-      sgPermissions.Cells[2, i + 1]:= '0';
+      if Pos('S', Permissions) > 0 then
+        sgPermissions.Cells[2, i + 1]:= '1'
+      else
+        sgPermissions.Cells[2, i + 1]:= '0';
 
-    if Pos('I', Permissions) > 0 then
-      sgPermissions.Cells[3, i + 1]:= '1'
-    else
-      sgPermissions.Cells[3, i + 1]:= '0';
+      if Pos('I', Permissions) > 0 then
+        sgPermissions.Cells[3, i + 1]:= '1'
+      else
+        sgPermissions.Cells[3, i + 1]:= '0';
 
-    if Pos('U', Permissions) > 0 then
-      sgPermissions.Cells[4, i + 1]:= '1'
-    else
-      sgPermissions.Cells[4, i + 1]:= '0';
+      if Pos('U', Permissions) > 0 then
+        sgPermissions.Cells[4, i + 1]:= '1'
+      else
+        sgPermissions.Cells[4, i + 1]:= '0';
 
-    if Pos('D', Permissions) > 0 then
-      sgPermissions.Cells[5, i + 1]:= '1'
-    else
-      sgPermissions.Cells[5, i + 1]:= '0';
+      if Pos('D', Permissions) > 0 then
+        sgPermissions.Cells[5, i + 1]:= '1'
+      else
+        sgPermissions.Cells[5, i + 1]:= '0';
 
-    if Pos('R', Permissions) > 0 then
-      sgPermissions.Cells[6, i + 1]:= '1'
-    else
-      sgPermissions.Cells[6, i + 1]:= '0';
+      if Pos('R', Permissions) > 0 then
+        sgPermissions.Cells[6, i + 1]:= '1'
+      else
+        sgPermissions.Cells[6, i + 1]:= '0';
 
-    if Pos('SG', Permissions) > 0 then
-      sgPermissions.Cells[7, i + 1]:= '1'
-    else
-      sgPermissions.Cells[7, i + 1]:= '0';
+      if Pos('SG', Permissions) > 0 then
+        sgPermissions.Cells[7, i + 1]:= '1'
+      else
+        sgPermissions.Cells[7, i + 1]:= '0';
 
-    if Pos('IG', Permissions) > 0 then
-      sgPermissions.Cells[8, i + 1]:= '1'
-    else
-      sgPermissions.Cells[8, i + 1]:= '0';
+      if Pos('IG', Permissions) > 0 then
+        sgPermissions.Cells[8, i + 1]:= '1'
+      else
+        sgPermissions.Cells[8, i + 1]:= '0';
 
-    if Pos('UG', Permissions) > 0 then
-      sgPermissions.Cells[9, i + 1]:= '1'
-    else
-      sgPermissions.Cells[9, i + 1]:= '0';
+      if Pos('UG', Permissions) > 0 then
+        sgPermissions.Cells[9, i + 1]:= '1'
+      else
+        sgPermissions.Cells[9, i + 1]:= '0';
 
-    if Pos('DG', Permissions) > 0 then
-      sgPermissions.Cells[10, i + 1]:= '1'
-    else
-      sgPermissions.Cells[10, i + 1]:= '0';
+      if Pos('DG', Permissions) > 0 then
+        sgPermissions.Cells[10, i + 1]:= '1'
+      else
+        sgPermissions.Cells[10, i + 1]:= '0';
 
-    if Pos('RG', Permissions) > 0 then
-      sgPermissions.Cells[11, i + 1]:= '1'
-    else
-      sgPermissions.Cells[11, i + 1]:= '0';
+      if Pos('RG', Permissions) > 0 then
+        sgPermissions.Cells[11, i + 1]:= '1'
+      else
+        sgPermissions.Cells[11, i + 1]:= '0';
+    end;
+  finally
+    UsersList.Free;
   end;
-  UsersList.Free;
 end;
 
 initialization

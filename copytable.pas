@@ -67,9 +67,12 @@ var
   Line: string;
 begin
   List:= TStringList.Create;
-  fmMain.GetFields(fSourceIndex, cbSourceTable.Text, List);
-  Line:= List.CommaText;
-  List.Free;
+  try
+    fmMain.GetFields(fSourceIndex, cbSourceTable.Text, List);
+    Line:= List.CommaText;
+  finally
+    List.Free;
+  end;
   syScript.Lines.Text:= 'select ' + Line;
   syScript.Lines.Add(' from ' + cbSourceTable.Text);
 
@@ -130,37 +133,38 @@ begin
     end;
 
     SQLTarget:= TSQLQuery.Create(nil);
-    SQLTarget.DataBase:= IBConnection;
-    SQLTarget.Transaction:= SQLTrans;
-    SQLTarget.SQL.Text:= Statement;
-
-    // Start copy
     try
-      dmSysTables.sqQuery.First;
-      Num:= 0;
-      with dmSysTables.sqQuery do
-      while not EOF do
-      begin
-        for i:= 0 to Fields.Count - 1 do
-          SQLTarget.Params.ParamByName(Fields[i].FieldName).Value:= Fields[i].Value;
-        SQLTarget.ExecSQL;
-        Inc(Num);
-        Next;
-      end;
-      SQLTrans.Commit;
-      ShowMessage(IntToStr(Num) + ' record(s) has been copied' + #10 + 'Don''t forget to set the Generator to the new value, ' +
-        'if it does exists');
-      dmSysTables.sqQuery.Close;
-      SQLTarget.Free;
-      Close;
+      SQLTarget.DataBase:= IBConnection;
+      SQLTarget.Transaction:= SQLTrans;
+      SQLTarget.SQL.Text:= Statement;
 
-    except
-      on e: exception do
-      begin
-        MessageDlg('Error while copy: ' + e.Message, mtError, [mbOk], 0);
-        SQLTrans.Rollback;
-        SQLTarget.Free;
+      // Start copy
+      try
+        dmSysTables.sqQuery.First;
+        Num:= 0;
+        with dmSysTables.sqQuery do
+        while not EOF do
+        begin
+          for i:= 0 to Fields.Count - 1 do
+            SQLTarget.Params.ParamByName(Fields[i].FieldName).Value:= Fields[i].Value;
+          SQLTarget.ExecSQL;
+          Inc(Num);
+          Next;
+        end;
+        SQLTrans.Commit;
+        ShowMessage(IntToStr(Num) + ' record(s) has been copied' + #10 + 'Don''t forget to set the Generator to the new value, ' +
+          'if it does exists');
+        dmSysTables.sqQuery.Close;
+        Close;
+      except
+        on e: exception do
+        begin
+          MessageDlg('Error while copy: ' + e.Message, mtError, [mbOk], 0);
+          SQLTrans.Rollback;
+        end;
       end;
+    finally
+      SQLTarget.Free;
     end;
   end;
 

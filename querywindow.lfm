@@ -8,13 +8,15 @@ object fmQueryWindow: TfmQueryWindow
   ClientHeight = 601
   ClientWidth = 720
   Color = clForm
+  KeyPreview = True
   Menu = MainMenu1
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   OnShow = FormShow
   PopupMenu = pmTab
   Position = poScreenCenter
-  LCLVersion = '1.0.14.0'
+  LCLVersion = '1.2.0.3'
   object Panel1: TPanel
     Left = 0
     Height = 60
@@ -189,9 +191,9 @@ object fmQueryWindow: TfmQueryWindow
       end
       object cxAutoCommit: TCheckBox
         Left = 396
-        Height = 24
+        Height = 17
         Top = 2
-        Width = 116
+        Width = 81
         Caption = 'Auto Commit'
         Checked = True
         State = cbChecked
@@ -759,23 +761,31 @@ object fmQueryWindow: TfmQueryWindow
       end>
     VisibleSpecialChars = [vscSpace, vscTabAtLast]
     RightEdge = 120
+    SelectedColor.FrameEdges = sfeAround
     SelectedColor.BackPriority = 50
     SelectedColor.ForePriority = 50
     SelectedColor.FramePriority = 50
     SelectedColor.BoldPriority = 50
     SelectedColor.ItalicPriority = 50
     SelectedColor.UnderlinePriority = 50
+    SelectedColor.StrikeOutPriority = 50
+    IncrementColor.FrameEdges = sfeAround
+    HighlightAllColor.FrameEdges = sfeAround
     BracketHighlightStyle = sbhsBoth
     BracketMatchColor.Background = clNone
     BracketMatchColor.Foreground = clNone
+    BracketMatchColor.FrameEdges = sfeAround
     BracketMatchColor.Style = [fsBold]
     FoldedCodeColor.Background = clNone
     FoldedCodeColor.Foreground = clGray
     FoldedCodeColor.FrameColor = clGray
+    FoldedCodeColor.FrameEdges = sfeAround
     MouseLinkColor.Background = clNone
     MouseLinkColor.Foreground = clBlue
+    MouseLinkColor.FrameEdges = sfeAround
     LineHighlightColor.Background = clNone
     LineHighlightColor.Foreground = clNone
+    LineHighlightColor.FrameEdges = sfeAround
     inline TSynGutterPartList
       object TSynGutterMarks
         Width = 24
@@ -786,6 +796,7 @@ object fmQueryWindow: TfmQueryWindow
         MouseActions = <>
         MarkupInfo.Background = 16710387
         MarkupInfo.Foreground = clNone
+        MarkupInfo.FrameEdges = sfeAround
         DigitCount = 2
         ShowOnlyLineNumbersMultiplesOf = 1
         ZeroStart = False
@@ -802,6 +813,7 @@ object fmQueryWindow: TfmQueryWindow
         MouseActions = <>
         MarkupInfo.Background = clWhite
         MarkupInfo.Foreground = clGray
+        MarkupInfo.FrameEdges = sfeAround
       end
       object TSynGutterCodeFolding
         MouseActions = <        
@@ -832,6 +844,7 @@ object fmQueryWindow: TfmQueryWindow
           end>
         MarkupInfo.Background = clNone
         MarkupInfo.Foreground = clGray
+        MarkupInfo.FrameEdges = sfeAround
         MouseActionsExpanded = <        
           item
             ClickCount = ccAny

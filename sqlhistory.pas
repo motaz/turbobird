@@ -28,7 +28,6 @@ type
     procedure bbDeleteClick(Sender: TObject);
     procedure bbExportClick(Sender: TObject);
     procedure bbInsertClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure cxAfterDateClick(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -84,10 +83,6 @@ begin
   Close;
 end;
 
-procedure TfmSQLHistory.Button1Click(Sender: TObject);
-begin
-end;
-
 procedure TfmSQLHistory.cxAfterDateClick(Sender: TObject);
 begin
   DateEdit1.Visible:= cxAfterDate.Checked;
@@ -117,28 +112,31 @@ begin
     DBGrid1.Visible:= False;
     First;
     List:= TStringList.Create;
-    while not Eof do
-    begin
-      if (not cxAfterDate.Checked) or (FieldByName('Time').AsDateTime > DateEdit1.Date) then
+    try
+      while not Eof do
       begin
-        CurrType:= FieldByName('SQLType').AsString;
-        if (cbSQLType.ItemIndex = 0) or
-          ((CurrType = 'DDL') and (cbSQLType.ItemIndex in [1, 2])) or
-          ((CurrType = 'DML') and (cbSQLType.ItemIndex in [1, 3])) or
-          ((CurrType = 'SELECT') and (cbSQLType.ItemIndex = 4)) then
-          begin
-            List.Add('-- ' + FieldByName('Time').AsString);
-            Line:= FieldByName('SQLStatement').AsString;
-            if Pos(';', Line) = 0 then
-              Line:= Line + ';';
-            List.Add(Line);
-          end;
+        if (not cxAfterDate.Checked) or (FieldByName('Time').AsDateTime > DateEdit1.Date) then
+        begin
+          CurrType:= FieldByName('SQLType').AsString;
+          if (cbSQLType.ItemIndex = 0) or
+            ((CurrType = 'DDL') and (cbSQLType.ItemIndex in [1, 2])) or
+            ((CurrType = 'DML') and (cbSQLType.ItemIndex in [1, 3])) or
+            ((CurrType = 'SELECT') and (cbSQLType.ItemIndex = 4)) then
+            begin
+              List.Add('-- ' + FieldByName('Time').AsString);
+              Line:= FieldByName('SQLStatement').AsString;
+              if Pos(';', Line) = 0 then
+                Line:= Line + ';';
+              List.Add(Line);
+            end;
 
+        end;
+        Next;
       end;
-      Next;
+      List.SaveToFile(SaveDialog1.FileName);
+    finally
+      List.Free;
     end;
-    List.SaveToFile(SaveDialog1.FileName);
-    List.Free;
     DBGrid1.Visible:= True;
   end;
 end;

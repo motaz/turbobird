@@ -7,38 +7,40 @@ object fmUDFInfo: TfmUDFInfo
   Caption = 'fmUDFInfo'
   ClientHeight = 277
   ClientWidth = 489
+  KeyPreview = True
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.2.0.3'
   object Label1: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 15
-    Width = 102
+    Width = 71
     Caption = 'Function Name'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 96
-    Width = 35
+    Width = 24
     Caption = 'Body'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 44
-    Width = 52
+    Width = 34
     Caption = 'Module'
     ParentColor = False
   end
   object Label7: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 72
-    Width = 75
+    Width = 53
     Caption = 'Entry Point'
     DragCursor = crAppStart
     ParentColor = False
@@ -55,7 +57,7 @@ object fmUDFInfo: TfmUDFInfo
   end
   object edName: TEdit
     Left = 120
-    Height = 21
+    Height = 13
     Top = 14
     Width = 256
     Anchors = [akTop, akLeft, akRight]
@@ -69,7 +71,7 @@ object fmUDFInfo: TfmUDFInfo
   end
   object edModule: TEdit
     Left = 120
-    Height = 21
+    Height = 13
     Top = 44
     Width = 256
     Anchors = [akTop, akLeft, akRight]
@@ -83,7 +85,7 @@ object fmUDFInfo: TfmUDFInfo
   end
   object edEntry: TEdit
     Left = 120
-    Height = 21
+    Height = 13
     Top = 72
     Width = 256
     Anchors = [akTop, akLeft, akRight]
