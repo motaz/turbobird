@@ -659,7 +659,6 @@ begin
     Result:= 8
   else
     Result:= GetDomainTypeSize(dbIndex, TypeName);
-
 end;
 
 function TdmSysTables.GetDomainTypeSize(dbIndex: Integer; DomainTypeName: string): Integer;
@@ -700,29 +699,41 @@ begin
       '    WHEN 37 THEN ''VARCHAR'' ' +
       '    ELSE ''UNKNOWN'' ' +
       '  END AS field_type_Str, ' +
-      '  f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
-      '  coll.RDB$COLLATION_NAME AS field_collation, ' +
-      '  cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
-      ' f.RDB$COMPUTED_Source AS Computed_Source ' +
+      ' f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
+      ' coll.RDB$COLLATION_NAME AS field_collation, ' +
+      ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
+      ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
+      ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound ' +
       ' FROM RDB$RELATION_FIELDS r ' +
       ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
       ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
       ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
+      ' LEFT JOIN RDB$FIELD_DIMENSIONS dim on f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME '+
       ' WHERE r.RDB$RELATION_NAME=''' + TableName + '''  and Trim(r.RDB$FIELD_NAME) = ''' + UpperCase(FieldName) + ''' ' +
-      ' ORDER BY r.RDB$FIELD_POSITION';
+      ' ORDER BY r.RDB$FIELD_POSITION ';
   sqQuery.Open;
   Result:= sqQuery.RecordCount > 0;
   if Result then
-  with sqQuery do
   begin
-    FieldType:= Trim(FieldByName('Field_Type_Str').AsString);
-    if FieldByName('Field_Type_int').AsInteger = 37 then // VarChar
-      FieldSize:= FieldByName('Character_Leng').AsInteger
-    else
-      FieldSize:= FieldByName('Field_Length').AsInteger;
-    NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';
-    DefaultValue:= FieldByName('Field_Default_Value').AsString;
-    Description:= FieldByName('Field_Description').AsString;
+    with sqQuery do
+    begin
+      FieldType:= Trim(FieldByName('Field_Type_Str').AsString);
+      // Array should really be [lowerbound:upperbound] if dimension is 0
+      // but for now don't bother as arrays are not supported anyway
+      // Assume 0 dimension, 1 lower bound; just fill in upper bound
+      if not(FieldByName('Array_Upper_Bound').IsNull) then
+        FieldType := FieldType +
+          ' [' +
+          FieldByName('Array_Upper_Bound').AsString +
+          ']';
+      if FieldByName('Field_Type_int').AsInteger = 37 then // VarChar
+        FieldSize:= FieldByName('Character_Leng').AsInteger
+      else
+        FieldSize:= FieldByName('Field_Length').AsInteger;
+      NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';
+      DefaultValue:= FieldByName('Field_Default_Value').AsString;
+      Description:= FieldByName('Field_Description').AsString;
+    end;
   end;
   sqQuery.Close;
 end;
@@ -925,6 +936,7 @@ begin
 
     sqQuery.Open;
     FieldsList.Clear;
+    // Todo: add support for array datatype (see other code referencing RDB$FIELD_DIMENSIONS table)
     while not sqQuery.EOF do
     begin
       FieldName:= Trim(sqQuery.FieldByName('field_name').AsString);

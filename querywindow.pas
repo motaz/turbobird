@@ -412,66 +412,66 @@ begin
         // Check modified fields
         for i:= Low(ModifiedRecords[TabIndex]) to High(ModifiedRecords[TabIndex]) do
         begin
-         FieldsSQL:= '';
-         RecordSet.RecNo:= ModifiedRecords[TabIndex][i];
-         for x:= 0 to RecordSet.Fields.Count - 1 do
-         if FieldsList.IndexOf(RecordSet.Fields[x].FieldName) <> -1 then // Field exist in origional table
+          FieldsSQL:= '';
+          RecordSet.RecNo:= ModifiedRecords[TabIndex][i];
+          for x:= 0 to RecordSet.Fields.Count - 1 do
+          begin
+            if (FieldsList.IndexOf(RecordSet.Fields[x].FieldName) <> -1) and  // Field exist in origional table
+              (RecordSet.Fields[x].NewValue <> RecordSet.Fields[x].OldValue) then // field data has been modified
+            begin
+              if FieldsSQL <> '' then
+                FieldsSQL += ',';
+              FieldsSQL += RecordSet.Fields[x].FieldName + '=';
 
-         if (RecordSet.Fields[x].NewValue <> RecordSet.Fields[x].OldValue) then // field data has been modified
-         begin
-          if FieldsSQL <> '' then
-              FieldsSQL += ',';
-            FieldsSQL += RecordSet.Fields[x].FieldName + '=';
-
-            // Typecast field values according to thier main type
-            case RecordSet.Fields[x].DataType of
-             ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
-             ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);
-             ftTimeStamp, ftDateTime: FieldsSQL += '''' + DateTimeToStr(RecordSet.Fields[x].NewValue) + '''';
-             ftTime: FieldsSQL += '''' + TimeToStr(RecordSet.Fields[x].NewValue) + '''';
-             ftDate: FieldsSQL += '''' + DateToStr(RecordSet.Fields[x].NewValue) + '''';
-
-            else // Other types like string
-               FieldsSQL += '''' + RecordSet.Fields[x].NewValue + '''';
-
+              // Typecast field values according to thier main type
+              case RecordSet.Fields[x].DataType of
+                ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
+                ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);
+                ftTimeStamp, ftDateTime: FieldsSQL += '''' + DateTimeToStr(RecordSet.Fields[x].NewValue) + '''';
+                ftTime: FieldsSQL += '''' + TimeToStr(RecordSet.Fields[x].NewValue) + '''';
+                ftDate: FieldsSQL += '''' + DateToStr(RecordSet.Fields[x].NewValue) + '''';
+              else // Other types like string
+                FieldsSQL += '''' + RecordSet.Fields[x].NewValue + '''';
+              end;
+            end;
           end;
-         end;
 
+          // Update current record
+          if FieldsSQL <> '' then
+          begin
+            aQuery.Close;
+            aQuery.SQL.Text:= 'update ' + aTableName + ' set ' + FieldsSQL;
 
-         // Update current record
-         if FieldsSQL <> '' then
-         begin
-           aQuery.Close;
-           aQuery.SQL.Text:= 'update ' + aTableName + ' set ' + FieldsSQL;
+            WhereClause:= 'where ';
+            // where clause
+            for x:= 0 to KeyList.Count - 1 do
+            begin
+              if Trim(KeyList[x]) <> '' then
+              begin
+                WhereClause += KeyList[x] + ' = ';
 
-           WhereClause:= 'where ';
-           // where clause
-           for x:= 0 to KeyList.Count - 1 do
-           if Trim(KeyList[x]) <> '' then
-           begin
-             WhereClause += KeyList[x] + ' = ';
+                // Typecast index values
+                case RecordSet.Fields[x].DataType of
+                  ftInteger, ftSmallint: WhereClause += IntToStr(RecordSet.Fields[x].OldValue);
+                  ftFloat: WhereClause += FloatToStr(RecordSet.Fields[x].OldValue);
+                else
+                  WhereClause += '''' + RecordSet.Fields[x].OldValue + '''';
+                end;
+                if x < KeyList.Count - 1 then
+                  WhereClause += ' and ';
+              end;
+            end;
 
-             // Typecase index values
-             case RecordSet.Fields[x].DataType of
-              ftInteger, ftSmallint: WhereClause += IntToStr(RecordSet.Fields[x].OldValue);
-              ftFloat: WhereClause += FloatToStr(RecordSet.Fields[x].OldValue);
-             else
-                WhereClause += '''' + RecordSet.Fields[x].OldValue + '''';
-             end;
-             if x < KeyList.Count - 1 then
-               WhereClause += ' and ';
-           end;
+            aQuery.SQL.Add(WhereClause);
+            aQuery.ExecSQL;
+            (Sender as TBitBtn).Visible:= False;
 
-           aQuery.SQL.Add(WhereClause);
-           aQuery.ExecSQL;
-           (Sender as TBitBtn).Visible:= False;
-
-           // Auto commit
-           if cxAutoCommit.Checked then
-             SqlTrans.CommitRetaining
-           else
-             EnableCommitButton;
-         end;
+            // Auto commit
+            if cxAutoCommit.Checked then
+              SqlTrans.CommitRetaining
+            else
+              EnableCommitButton;
+          end;
         end;
 
         // Reset ModifedRecords pointer
@@ -485,16 +485,12 @@ begin
     end
     else
       ShowMessage('There is no primary key on the table: ' + aTableName);
-
-
   except
-  on e: exception do
-  begin
-    ShowMessage('Error in save data: ' + e.Message);
+    on e: exception do
+    begin
+      ShowMessage('Error in save data: ' + e.Message);
+    end;
   end;
-
-  end;
-
 end;
 
 { EnableApplyButton: enable save updates button when records have been modified }
@@ -670,14 +666,13 @@ begin
     Error:= False;
     DoJob;
     fTerminated:= True;
-
   except
-  on e: exception do
-  begin
-    Error:= True;
-    ErrorMsg:= e.Message;
-    fTerminated:= True;
-  end;
+    on e: exception do
+    begin
+      Error:= True;
+      ErrorMsg:= e.Message;
+      fTerminated:= True;
+    end;
   end;
 end;
 
