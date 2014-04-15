@@ -1411,11 +1411,10 @@ begin
   if SubType = 0 then
   begin
     case FieldType of
-        7: Result:= 'SMALLINT';
-        8: Result:= 'INTEGER';
-        16: Result:= 'BIGINT';
+      7: Result:= 'SMALLINT';
+      8: Result:= 'INTEGER';
+      16: Result:= 'BIGINT';
     end;
-
   end
   else
   begin
@@ -1425,10 +1424,10 @@ begin
     if SubType = 2 then
       Result:= 'Decimal(';
     case FieldLength of
-        4: Result:= Result + '9,';
-        8: Result:= Result + '18,';
-      else
-        Result:= Result + IntToStr(FieldLength) + ',';
+      4: Result:= Result + '9,';
+      8: Result:= Result + '18,';
+    else
+      Result:= Result + IntToStr(FieldLength) + ',';
     end;
     Result:= Result + IntToStr(Abs(Scale)) + ') ';
   end;
@@ -2507,27 +2506,30 @@ begin
       '  f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
       '  coll.RDB$COLLATION_NAME AS field_collation, ' +
       '  cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
-      ' f.RDB$COMPUTED_Source AS Computed_Source ' +
+      ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
+      ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound ' +
       ' FROM RDB$RELATION_FIELDS r ' +
       ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
       ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
       ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
+      ' LEFT JOIN RDB$FIELD_DIMENSIONS dim ON f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME ' +
       ' WHERE r.RDB$RELATION_NAME=''' + ATableName + '''  ' +
       ' ORDER BY r.RDB$FIELD_POSITION;';
 
-    SQLQuery1.Open;
-    if FieldsList <> nil then
+  SQLQuery1.Open;
+  // Fill field list if needed
+  if FieldsList <> nil then
+  begin
+    FieldsList.Clear;
+    while not SQLQuery1.EOF do
     begin
-      FieldsList.Clear;
-      while not SQLQuery1.EOF do
-      begin
-        FieldName:= Trim(SQLQuery1.FieldByName('field_name').AsString);
-        if FieldsList.IndexOf(FieldName) = -1 then
-          FieldsList.Add(FieldName);
-        SQLQuery1.Next;
-      end;
-      SQLQuery1.First;
+      FieldName:= Trim(SQLQuery1.FieldByName('field_name').AsString);
+      if FieldsList.IndexOf(FieldName) = -1 then
+        FieldsList.Add(FieldName);
+      SQLQuery1.Next;
     end;
+  end;
+  SQLQuery1.First;
 end;
 
 (**********  Get Stored Proc body  ****************)
@@ -3092,6 +3094,16 @@ begin
             FieldByName('Field_Scale').AsInteger)
         else
           Cells[2, RowCount - 1]:= Trim(FieldByName('Field_Type_Str').AsString);
+
+        // Correct field type if it is an array type
+        // Array should really be [upper_bound dim0,upperbound dim1,..]
+        // but for now don't bother as arrays are not supported anyway
+        // Assume dimension 0, just fill in upper bound
+        if not(FieldByName('Array_Upper_Bound').IsNull) then
+          Cells[2, RowCount - 1]:=Cells[2, RowCount - 1] +
+            ' [' +
+            SQLQuery1.FieldByName('Array_Upper_Bound').AsString +
+            ']';
 
         // Computed fields (Calculated)
         if FieldByName('Computed_Source').AsString <> '' then
