@@ -377,9 +377,9 @@ begin
   begin
     RowCount:= RowCount + 1;
     Cells[0, RowCount - 1]:= FieldByName('ConstName').AsString;
-    Cells[1, RowCount - 1]:= FieldByName('CurrentTableName').AsString;
-    Cells[2, RowCount - 1]:= FieldByName('CurrentFieldName').AsString;
-    Cells[3, RowCount - 1]:= FieldByName('OtherFieldName').AsString;
+    Cells[1, RowCount - 1]:= FieldByName('OtherTableName').AsString;
+    Cells[2, RowCount - 1]:= FieldByName('OtherFieldName').AsString;
+    Cells[3, RowCount - 1]:= FieldByName('KeyName').AsString;
     Next;
 
   end;

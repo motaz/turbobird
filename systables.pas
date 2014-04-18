@@ -323,7 +323,7 @@ begin
   'inner join rdb$index_segments as flds_pk on ' +
   '((flds_pk.rdb$index_name = rc2.rdb$index_name) and (flds_fk.rdb$field_position = flds_pk.rdb$field_position)) ' +
   'where rc.rdb$constraint_type = ''FOREIGN KEY'' '+
-  'and rc.rdb$relation_name = ''' + UpperCase(ATableName) + ''' '+
+  'and rc2.rdb$relation_name = ''' + UpperCase(ATableName) + ''' '+
   'order by rc.rdb$constraint_name, flds_fk.rdb$field_position ';
   SqlQuery.Open;
   Result:= SqlQuery.RecordCount > 0;
