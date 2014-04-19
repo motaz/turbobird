@@ -376,12 +376,10 @@ begin
        dmSysTables.sqQuery.ExecSQL;
        dmSysTables.stTrans.Commit;
        MessageDlg('Password has been changed', mtInformation, [mbOk], 0);
-
     except
-    on e: exception do
-      ShowMessage('Error while changing password: ' + e.Message);
+      on e: exception do
+        ShowMessage('Error while changing password: ' + e.Message);
     end;
-
   end;
 end;
 
@@ -393,8 +391,10 @@ var
 begin
   dbIndex:= tvMain.Selected.OverlayIndex;
 
-  if (RegisteredDatabases[dbIndex].RegRec.Password <> '') or
-  ConnectToDBAs(dbIndex) then
+  // Check if password is saved - it may be empty, which can be valid for
+  // e.g. embedded databases
+  if (RegisteredDatabases[dbIndex].RegRec.SavePassword) or
+    ConnectToDBAs(dbIndex) then
   begin
     Title:= RegisteredDatabases[dbIndex].RegRec.Title + ': Database Comparison';
     fmComparison:= FindCustomForm(Title, TfmComparison) as TfmComparison;
@@ -706,23 +706,29 @@ begin
   fmEnterPass.edUser.Text:= Rec.UserName;
   fmEnterPass.edPassword.Clear;
   fmEnterPass.cbRole.Clear;
-  if Rec.Password <> '' then
+  // Use may have saved an empty password, which is valid for embedded dbs
+  // So check SavePassword instead of Password itself.
+  if Rec.SavePassword then
   try
     fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
     fmEnterPass.cbRole.ItemIndex:= -1;
     fmEnterPass.cbRole.Text:= '';
+    Result:= True; //this works, no need to go through a retry attempt below
   except
+    // We don't particularly care which error occurred; we're trying again below.
+    Result:= False;
   end;
-  if fmEnterPass.ShowModal = mrOk then
+  // Only show form if connection failed before
+  if not(Result) and (fmEnterPass.ShowModal = mrOk) then
   begin
     if fmReg.TestConnection(Rec.DatabaseName, fmEnterPass.edUser.Text, fmEnterPass.edPassword.Text,
       Rec.Charset) then
-      begin
-        RegisteredDatabases[dbIndex].RegRec.UserName:= fmEnterPass.edUser.Text;
-        RegisteredDatabases[dbIndex].RegRec.Password:= fmEnterPass.edPassword.Text;
-        RegisteredDatabases[dbIndex].RegRec.Role:= fmEnterPass.cbRole.Text;
-        Result:= True;
-      end;
+    begin
+      RegisteredDatabases[dbIndex].RegRec.UserName:= fmEnterPass.edUser.Text;
+      RegisteredDatabases[dbIndex].RegRec.Password:= fmEnterPass.edPassword.Text;
+      RegisteredDatabases[dbIndex].RegRec.Role:= fmEnterPass.cbRole.Text;
+      Result:= True;
+    end;
   end;
 end;
 
@@ -4025,7 +4031,6 @@ begin
           CNode.SelectedIndex:= 23;
 
           Inc(i);
-
         end;
       end;
       CloseFile(F);

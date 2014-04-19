@@ -50,10 +50,11 @@ type
     procedure bbTestClick(Sender: TObject);
     procedure btBrowseClick(Sender: TObject);
   private
+    { private declarations }
     function EditRegisteration(Index: Integer; Title, DatabaseName, UserName, Password, Charset, Role: string;
       SavePassword: Boolean): Boolean;
-    { private declarations }
   public
+    { public declarations }
     NewReg: Boolean;
     RecPos: Integer;
     function RegisterDatabase(Title, DatabaseName, UserName, Password, Charset, Role: string;
@@ -62,8 +63,7 @@ type
     function GetEmptyRec: Integer;
     function SaveRegistrations: Boolean;
     procedure Sort;
-    { public declarations }
-  end; 
+  end;
 
 var
   fmReg: TfmReg;
@@ -80,13 +80,13 @@ begin
     ShowMessage('You should fill all fields')
   else
   if TestConnection(edDatabaseName.Text, edUserName.Text, edPassword.Text, cbCharset.Text) then
-  if NewReg then  // New regisration
+  if NewReg then  // New registration
   begin
     if RegisterDatabase(edTitle.Text, edDatabaseName.Text, edUserName.Text, edPassword.Text, cbCharset.Text,
       edRole.Text, cxSavePassword.Checked) then
-       ModalResult:= mrOK
-  end // if NewReg, edit registration
-  else
+       ModalResult:= mrOK;
+  end
+  else // if not NewReg, edit registration
     if EditRegisteration(RecPos, edTitle.Text, edDatabaseName.Text, edUserName.Text, edPassword.Text,
       cbCharset.Text, edRole.Text, cxSavePassword.Checked) then
       MOdalResult:= mrOk;
@@ -207,13 +207,18 @@ begin
     IBConnection1.Open;
     IBConnection1.Close;
     Result:= True;
-
   except
-  on e: exception do
-  begin
-    Result:= False;
-    ShowMessage('Unable to connect: ' + e.Message);
-  end;
+    on d: EIBDatabaseError do
+    begin
+      Result:= False;
+      ShowMessage('Unable to connect: '+ d.Message + LineEnding +
+        'Details: GDS error code: '+inttostr(d.GDSErrorCode));
+    end;
+    on e: exception do
+    begin
+      Result:= False;
+      ShowMessage('Unable to connect: ' + e.Message);
+    end;
   end;
 end;
 
@@ -262,14 +267,12 @@ begin
       Write(F, fmMain.RegisteredDatabases[i].OrigRegRec);
     CloseFile(F);
     Result:= True;
-
   except
-  on e: exception do
-  begin
-    Result:= False;
+    on e: exception do
+    begin
+      Result:= False;
+    end;
   end;
-  end;
-
 end;
 
 procedure TfmReg.Sort;
