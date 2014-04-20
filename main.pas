@@ -255,7 +255,9 @@ type
     function AddToSQLHistory(DatabaseTitle: string; SQLType, SQLStatement: string): Boolean;
     function SaveAndCloseSQLHistory: Boolean;
     function OpenSQLHistory(DatabaseTitle: string): Boolean;
-    function ConnectToDBAs(dbIndex: Integer): Boolean;
+    // Connects to database.
+    // If not succesful (or if ForceConnectDialog is true), ask user for credentials and try again
+    function ConnectToDBAs(dbIndex: Integer; ForceConnectDialog: boolean=false): Boolean;
     function IsLinux: Boolean;
     function IsWindows: Boolean;
     function IsUnix: Boolean;
@@ -689,13 +691,13 @@ end;
 
 procedure TfmMain.lmConnectAsClick(Sender: TObject);
 begin
-  if ConnectToDBAs(tvMain.Selected.OverlayIndex) then
+  if ConnectToDBAs(tvMain.Selected.OverlayIndex, True) then
     tvMain.Selected.Expand(False)
   else
     tvMain.Selected.Collapse(False);
 end;
 
-function TfmMain.ConnectToDBAs(dbIndex: Integer): Boolean;
+function TfmMain.ConnectToDBAs(dbIndex: Integer; ForceConnectDialog: boolean=false): Boolean;
 var
   Rec: TRegisteredDatabase;
   Count: Integer;
@@ -708,7 +710,7 @@ begin
   fmEnterPass.cbRole.Clear;
   // Use may have saved an empty password, which is valid for embedded dbs
   // So check SavePassword instead of Password itself.
-  if Rec.SavePassword then
+  if (ForceConnectDialog=false) and Rec.SavePassword then
   try
     fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
     fmEnterPass.cbRole.ItemIndex:= -1;
@@ -719,7 +721,8 @@ begin
     Result:= False;
   end;
   // Only show form if connection failed before
-  if not(Result) and (fmEnterPass.ShowModal = mrOk) then
+  if (ForceConnectDialog or (Result=false)) and
+    (fmEnterPass.ShowModal = mrOk) then
   begin
     if fmReg.TestConnection(Rec.DatabaseName, fmEnterPass.edUser.Text, fmEnterPass.edPassword.Text,
       Rec.Charset) then
