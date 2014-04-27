@@ -182,6 +182,7 @@
         <Filename Value="newgen.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmNewGen"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewGen"/>
       </Unit10>

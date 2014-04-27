@@ -110,6 +110,7 @@ type
     procedure FindDialog1Find(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure lmCloseTabClick(Sender: TObject);
@@ -898,16 +899,13 @@ begin
     until QT.fTerminated or (fCanceled);
     if QT.Error then
       ShowMessage(QT.ErrorMsg);
-
   finally
     QT.Free;
   end;
-
 end;
 
 
 { Run current SQL, 0 for auto-detect type }
-
 procedure TfmQueryWindow.tbRunClick(Sender: TObject);
 begin
   CallExecuteQuery(qtUnknown);
@@ -946,9 +944,7 @@ begin
   fdbIndex:= dbIndex;
   RegRec:= fmMain.RegisteredDatabases[dbIndex].RegRec;
 
-  // Initialize new instance of IBConnection and SQLTransaction to the current Query Window
-  ibConnection:= TIBConnection.Create(nil);
-  SqlTrans:= TSQLTransaction.Create(nil);
+  // Set instances of IBConnection and SQLTransaction for the current Query Window
   fmMain.setTransactionIsolation(SqlTrans.Params);
   SqlTrans.DataBase:= ibConnection;
 
@@ -1698,8 +1694,18 @@ var
   F:TextFile;
   str:string;
 begin
+  // Initialize new instance of IBConnection and SQLTransaction
+  ibConnection:= TIBConnection.Create(nil);
+  SqlTrans:= TSQLTransaction.Create(nil);
   SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
   SortSynCompletion;
+end;
+
+procedure TfmQueryWindow.FormDestroy(Sender: TObject);
+begin
+  // Clean up resources to avoid memory leaks
+  SQLTrans.Free;
+  IBConnection.Free;
 end;
 
 procedure TfmQueryWindow.FormKeyDown(Sender: TObject; var Key: Word;

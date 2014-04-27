@@ -102,7 +102,6 @@ begin
       fmMain.SQLQuery1.Next;
     end;
     fmMain.SQLQuery1.Close;
-
   end;
 end;
 
