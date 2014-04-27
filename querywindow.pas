@@ -1967,7 +1967,7 @@ begin
 end;
 
 
-{ Run query, and fore its type as script }
+{ Run query, and force its type as script }
 
 procedure TfmQueryWindow.lmRunScriptClick(Sender: TObject);
 begin
@@ -2015,13 +2015,13 @@ begin
 end;
 
 
-{ Run query by pressing Ktrl + Enter }
+{ Run query by pressing Ctrl + Enter }
 
 procedure TfmQueryWindow.meQueryKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   // Execute query by pressing Ctrl + Enter
-  if (ssCtrl in shift) and (key = 13) then
+  if (ssCtrl in shift) and (key = VK_RETURN) then
   begin
     CallExecuteQuery(qtUnknown);
     key:= 0;

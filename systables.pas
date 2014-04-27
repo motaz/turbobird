@@ -32,6 +32,10 @@ type
 
     function GetAllConstraints(dbIndex: Integer; ConstraintsList, TablesList: TStringList): Boolean;
 
+    // Returns non-0 if foreign key constraint has a compound index (multiple fields)
+    // Returns 0 otherwise
+    function GetCompoundFKConstraints(TableName, ConstraintName: string): integer;
+
     function GetConstraintInfo(dbIndex: Integer; ATableName, ConstraintName: string; var KeyName,
         CurrentTableName, CurrentFieldName, OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string): Boolean;
 
@@ -120,7 +124,8 @@ end;
 
 (*****  GetDBObjectNames, like Table names, Triggers, Generators, etc according to TVIndex  ****)
 
-function TdmSysTables.GetDBObjectNames(DatabaseIndex, TVIndex: Integer; var count: Integer): string;
+function TdmSysTables.GetDBObjectNames(DatabaseIndex, TVIndex: Integer;
+  var Count: Integer): string;
 begin
   Init(DatabaseIndex);
   sqQuery.Close;
@@ -276,6 +281,26 @@ begin
 // Note that this query differs from the way constraints are
 // presented in GetConstraintsOfTable.
 // to do: find out what the differences are and indicate better in code/comments
+{ Query sample for employee database:
+select trim(rc.rdb$constraint_name) as ConstName,
+trim(rfc.rdb$const_name_uq) as KeyName,
+trim(rc2.rdb$relation_name) as OtherTableName,
+trim(flds_pk.rdb$field_name) as OtherFieldName,
+trim(rc.rdb$relation_name) as CurrentTableName,
+trim(flds_fk.rdb$field_name) as CurrentFieldName,
+trim(rfc.rdb$update_rule) as UpdateRule,
+trim(rfc.rdb$delete_rule) as DeleteRule
+from rdb$relation_constraints AS rc
+inner join rdb$ref_constraints as rfc on (rc.rdb$constraint_name =
+rfc.rdb$constraint_name) inner join rdb$index_segments as flds_fk on (flds_fk.rdb$index_name = rc.rdb$index_name)
+inner join rdb$relation_constraints as rc2 on (rc2.rdb$constraint_name = rfc.rdb$const_name_uq)
+inner join rdb$index_segments as flds_pk on
+((flds_pk.rdb$index_name = rc2.rdb$index_name) and (flds_fk.rdb$field_position = flds_pk.rdb$field_position))
+where rc.rdb$constraint_type = 'FOREIGN KEY' and
+rc.rdb$relation_name = 'EMPLOYEE'
+order by rc.rdb$constraint_name,
+flds_fk.rdb$field_position
+}
   SQLQuery.SQL.Text:='select '+
     'trim(rc.rdb$constraint_name) as ConstName, '+
     'trim(rfc.rdb$const_name_uq) as KeyName, '+
@@ -383,6 +408,46 @@ begin
   end;
   sqQuery.Close;
 
+end;
+
+function TdmSysTables.GetCompoundFKConstraints(TableName,
+  ConstraintName: string): integer;
+const
+  // For specified constraint, returns foreign key constraints and count
+  // if it has a compound key (i.e. multiple foreign key fields).
+  // Based on query in GetTableConstraints
+  CompoundCountSQL =
+   'select trim(rc.rdb$constraint_name) as ConstName, '+
+   'count(rfc.rdb$const_name_uq) as KeyCount '+
+   'from rdb$relation_constraints AS rc '+
+   'inner join rdb$ref_constraints as rfc on (rc.rdb$constraint_name = rfc.rdb$constraint_name) '+
+   'inner join rdb$index_segments as flds_fk on (flds_fk.rdb$index_name = rc.rdb$index_name) '+
+   'inner join rdb$relation_constraints as rc2 on (rc2.rdb$constraint_name = rfc.rdb$const_name_uq) '+
+   'inner join rdb$index_segments as flds_pk on '+
+   '((flds_pk.rdb$index_name = rc2.rdb$index_name) and (flds_fk.rdb$field_position = flds_pk.rdb$field_position)) '+
+   'where rc.rdb$constraint_type = ''FOREIGN KEY'' and '+
+   'upper(rc.rdb$relation_name) = ''%s'' '+
+   'group by rc.rdb$constraint_name '+
+   'having count(rfc.rdb$const_name_uq)>1 '+
+   'and rc.rdb$constraint_name=''%s'' '+
+   'order by rc.rdb$constraint_name ';
+var
+  CompoundQuery: TSQLQuery;
+begin
+  result:= 0;
+  CompoundQuery:=TSQLQuery.Create(nil);
+  try
+    CompoundQuery.DataBase:= ibcDatabase;
+    CompoundQuery.Transaction:= stTrans;
+    CompoundQuery.SQL.Text:=Format(CompoundCountSQL,[TableName,ConstraintName]);
+    CompoundQuery.Open;
+    if not(CompoundQuery.EOF) then
+      Result:= CompoundQuery.FieldByName('KeyCount').AsInteger;
+    CompoundQuery.Close;
+    //todo: check if this fits in with transaction management
+  finally
+    CompoundQuery.Free;
+  end;
 end;
 
 (**********  Get Constraint Info  ********************)

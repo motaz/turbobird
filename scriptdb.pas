@@ -417,8 +417,14 @@ end;
 
 function ScriptAllConstraints(dbIndex: Integer; var List: TStringList): Boolean;
 var
-  Count: Integer;
-  i: Integer;
+  Count: integer;
+  ConstraintName: string;
+  CompoundClauseFK: string;
+  CompoundClauseRef: string;
+  CompoundConstraint: string;
+  CompoundCount: integer;
+  CompoundCounter: integer;
+  TableCounter: integer;
   TablesList: TStringList;
   Line: string;
 begin
@@ -426,7 +432,7 @@ begin
   try
     TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
     List.Clear;
-    for i:= 0 to TablesList.Count - 1 do
+    for TableCounter:= 0 to TablesList.Count - 1 do
     with dmSysTables do
     begin
       {to do: for each constraint that occurs multiple times add the fields in one line eg
@@ -435,23 +441,69 @@ begin
       alter table EMPLOYEE add constraint INTEG_29 foreign key (JOB_COUNTRY) references JOB (JOB_COUNTRY) ;
       should be 1 line
       }
-      GetTableConstraints(TablesList[i], sqQuery);
+      GetTableConstraints(TablesList[TableCounter], sqQuery);
+      CompoundConstraint:= '';
       while not sqQuery.EOF do
       begin
-        // We're using fieldbyname here instead of fields[x] because of maintainability and probably
-        // low performance impact.
-        // If performance is an issue, define field variables outside the loop and reference them instead
-        Line:= 'alter table ' + TablesList[i] +
-          ' add constraint ' + sqQuery.FieldByName('ConstName').AsString +
-          ' foreign key (' + sqQuery.FieldByName('CurrentFieldName').AsString +
-          ') references ' +  sqQuery.FieldByName('OtherTableName').AsString +
-          ' (' + sqQuery.FieldByName('OtherFieldName').AsString +
-          ')';
-        if Trim(sqQuery.FieldByName('UpdateRule').AsString) <> 'RESTRICT' then
-          Line:= Line + ' on update ' + Trim(sqQuery.FieldByName('UpdateRule').AsString);
-        if Trim(sqQuery.FieldByName('DeleteRule').AsString) <> 'RESTRICT' then
-          Line:= Line + ' on delete ' + Trim(sqQuery.FieldByName('DeleteRule').AsString);
-        List.Add(Line + ';');
+        ConstraintName:= sqQuery.FieldByName('ConstName').AsString;
+        CompoundCount:= GetCompoundFKConstraints(TablesList[TableCounter],ConstraintName);
+        if CompoundCount>0 then
+        begin
+          // Multiple columns form a compound foreign key index.
+          if ConstraintName<>CompoundConstraint then
+          begin
+            // A new contraint just started
+            CompoundConstraint:= ConstraintName;
+            CompoundCounter:= 1;
+            CompoundClauseFK:= sqQuery.FieldByName('CurrentFieldName').AsString+', ';
+            CompoundClauseRef:= sqQuery.FieldByName('OtherFieldName').AsString+', ';
+          end
+          else
+          begin
+            inc(CompoundCounter);
+            if CompoundCounter=CompoundCount then
+            begin
+              // Last record for this constraint, so write out
+              CompoundClauseFK:= CompoundClauseFK + sqQuery.FieldByName('CurrentFieldName').AsString;
+              CompoundClauseRef:= CompoundClauseRef + sqQuery.FieldByName('OtherFieldName').AsString;
+              Line:= 'alter table ' + TablesList[TableCounter] +
+                ' add constraint ' + ConstraintName +
+                ' foreign key (' + CompoundClauseFK +
+                ') references ' + sqQuery.FieldByName('OtherTableName').AsString +
+                ' (' + CompoundClauseRef +
+                ')';
+              if Trim(sqQuery.FieldByName('UpdateRule').AsString) <> 'RESTRICT' then
+                Line:= Line + ' on update ' + Trim(sqQuery.FieldByName('UpdateRule').AsString);
+              if Trim(sqQuery.FieldByName('DeleteRule').AsString) <> 'RESTRICT' then
+                Line:= Line + ' on delete ' + Trim(sqQuery.FieldByName('DeleteRule').AsString);
+              List.Add(Line + ';');
+            end
+            else
+            begin
+              // In middle of clause, so keep adding
+              CompoundClauseFK:= CompoundClauseFK + sqQuery.FieldByName('CurrentFieldName').AsString + ', ';
+              CompoundClauseRef:= CompoundClauseRef + sqQuery.FieldByName('OtherFieldName').AsString + ', ';
+            end;
+          end;
+        end
+        else
+        begin
+          // Normal, non-compound foreign key which we can write out based on one record in the query
+          // We're using fieldbyname here instead of fields[x] because of maintainability and probably
+          // low performance impact.
+          // If performance is an issue, define field variables outside the loop and reference them instead
+          Line:= 'alter table ' + TablesList[TableCounter] +
+            ' add constraint ' + ConstraintName +
+            ' foreign key (' + sqQuery.FieldByName('CurrentFieldName').AsString +
+            ') references ' + sqQuery.FieldByName('OtherTableName').AsString +
+            ' (' + sqQuery.FieldByName('OtherFieldName').AsString +
+            ')';
+          if Trim(sqQuery.FieldByName('UpdateRule').AsString) <> 'RESTRICT' then
+            Line:= Line + ' on update ' + Trim(sqQuery.FieldByName('UpdateRule').AsString);
+          if Trim(sqQuery.FieldByName('DeleteRule').AsString) <> 'RESTRICT' then
+            Line:= Line + ' on delete ' + Trim(sqQuery.FieldByName('DeleteRule').AsString);
+          List.Add(Line + ';');
+        end;
         sqQuery.Next;
       end;
       sqQuery.Close;
