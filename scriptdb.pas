@@ -429,22 +429,30 @@ begin
     for i:= 0 to TablesList.Count - 1 do
     with dmSysTables do
     begin
-      { to do: foreign keys are not picked up while FlameRobin does, e.g. this for employee.fdb:
-      ALTER TABLE EMPLOYEE ADD CONSTRAINT INTEG_28
-        FOREIGN KEY (DEPT_NO) REFERENCES DEPARTMENT (DEPT_NO);
+      {to do: for each constraint that occurs multiple times add the fields in one line eg
+      alter table EMPLOYEE add constraint INTEG_29 foreign key (JOB_CODE) references JOB (JOB_CODE) ;
+      alter table EMPLOYEE add constraint INTEG_29 foreign key (JOB_GRADE) references JOB (JOB_GRADE) ;
+      alter table EMPLOYEE add constraint INTEG_29 foreign key (JOB_COUNTRY) references JOB (JOB_COUNTRY) ;
+      should be 1 line
       }
       GetTableConstraints(TablesList[i], sqQuery);
       while not sqQuery.EOF do
       begin
-         Line:= 'alter table ' + TablesList[i] + ' add constraint ' + sqQuery.Fields[0].AsString +
-           ' foreign key (' + sqQuery.Fields[3].AsString + ') references ' +  sqQuery.Fields[4].AsString  +
-           ' (' + dmSysTables.GetConstraintForiegnKeyFields(sqQuery.Fields[5].AsString, fmMain.SQLQuery1) + ') ';
-         if Trim(sqQuery.Fields[6].AsString) <> 'RESTRICT' then
-           Line:= Line + ' on update ' + Trim(sqQuery.Fields[6].AsString);
-         if Trim(sqQuery.Fields[7].AsString) <> 'RESTRICT' then
-           Line:= Line + ' on delete ' + Trim(sqQuery.Fields[7].AsString);
-         List.Add(Line + ';');
-         sqQuery.Next;
+        // We're using fieldbyname here instead of fields[x] because of maintainability and probably
+        // low performance impact.
+        // If performance is an issue, define field variables outside the loop and reference them instead
+        Line:= 'alter table ' + TablesList[i] +
+          ' add constraint ' + sqQuery.FieldByName('ConstName').AsString +
+          ' foreign key (' + sqQuery.FieldByName('CurrentFieldName').AsString +
+          ') references ' +  sqQuery.FieldByName('OtherTableName').AsString +
+          ' (' + sqQuery.FieldByName('OtherFieldName').AsString +
+          ')';
+        if Trim(sqQuery.FieldByName('UpdateRule').AsString) <> 'RESTRICT' then
+          Line:= Line + ' on update ' + Trim(sqQuery.FieldByName('UpdateRule').AsString);
+        if Trim(sqQuery.FieldByName('DeleteRule').AsString) <> 'RESTRICT' then
+          Line:= Line + ' on delete ' + Trim(sqQuery.FieldByName('DeleteRule').AsString);
+        List.Add(Line + ';');
+        sqQuery.Next;
       end;
       sqQuery.Close;
     end;

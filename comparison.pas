@@ -506,7 +506,7 @@ begin
         begin
           Line:= 'alter table ' + ATableName + ' add constraint ' + ConstraintName +
             ' foreign key (' + CurrentFieldName + ') references ' +  OtherTableName  +
-            ' (' + dmSysTables.GetConstraintForiegnKeyFields(OtherFieldName, dmSysTables.sqQuery) + ') ';
+            ' (' + dmSysTables.GetConstraintForeignKeyFields(OtherFieldName, dmSysTables.sqQuery) + ') ';
           if Trim(UpdateRule) <> 'RESTRICT' then
             Line:= Line + ' on update ' + Trim(UpdateRule);
           if Trim(DeleteRule) <> 'RESTRICT' then
@@ -799,14 +799,14 @@ begin
         OtherTablename, OtherFieldName, UpdateRole, DeleteRole));
 
     if Exist then
-      OtherFieldNames:= dmSysTables.GetConstraintForiegnKeyFields(OtherFieldName, dmSysTables.sqQuery);
+      OtherFieldNames:= dmSysTables.GetConstraintForeignKeyFields(OtherFieldName, dmSysTables.sqQuery);
 
     if Exist then
     Exist:= dmSysTables.GetConstraintInfo(cbComparedDatabase.ItemIndex, ATableName, AConstraintName, CKeyName,
       CCurrentTableName, CCurrentFieldName, COtherTablename, COtherFieldName, CUpdateRole, CDeleteRole);
 
     if Exist then
-      COtherFieldNames:= dmSysTables.GetConstraintForiegnKeyFields(COtherFieldName, dmSysTables.sqQuery);
+      COtherFieldNames:= dmSysTables.GetConstraintForeignKeyFields(COtherFieldName, dmSysTables.sqQuery);
 
     if not Exist then
       meLog.Lines.Add(' -- Error: Constraint: ' + AConstraintName + ' not exist on table: ' + ATableName);
@@ -1380,7 +1380,7 @@ begin
 
         Line:= 'alter table ' + ATableName + ' add constraint ' + AConstraintName +
           ' foreign key (' + CurrentFieldName + ') references ' +  OtherTableName  +
-          ' (' + dmSysTables.GetConstraintForiegnKeyFields(OtherFieldName, dmSysTables.sqQuery) + ') ';
+          ' (' + dmSysTables.GetConstraintForeignKeyFields(OtherFieldName, dmSysTables.sqQuery) + ') ';
         if Trim(UpdateRule) <> 'RESTRICT' then
           Line:= Line + ' on update ' + Trim(UpdateRule);
         if Trim(DeleteRule) <> 'RESTRICT' then

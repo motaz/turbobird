@@ -2071,7 +2071,7 @@ begin
       begin
          Line:= 'alter table ' + ATableName + ' add constraint ' + sqQuery.Fields[0].AsString +
            ' foreign key (' + sqQuery.Fields[3].AsString + ') references ' +  sqQuery.Fields[4].AsString  +
-           ' (' + dmSysTables.GetConstraintForiegnKeyFields(sqQuery.Fields[5].AsString, fmMain.SQLQuery1) + ') ';
+           ' (' + dmSysTables.GetConstraintForeignKeyFields(sqQuery.Fields[5].AsString, fmMain.SQLQuery1) + ') ';
          if Trim(sqQuery.Fields[6].AsString) <> 'RESTRICT' then
            Line:= Line + ' on update ' + Trim(sqQuery.Fields[6].AsString);
          if Trim(sqQuery.Fields[7].AsString) <> 'RESTRICT' then

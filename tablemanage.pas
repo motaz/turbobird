@@ -456,17 +456,18 @@ begin
   fdbIndex:= dbIndex;
   sgConstraints.RowCount:= 1;
   with sgConstraints do
+  // SQLQuery1 should have been filled by GetTableConstraints
   while not SQLQuery1.EOF do
   begin
     RowCount:= RowCount + 1;
-    Cells[0, RowCount - 1]:= SQLQuery1.Fields[0].AsString;
-    Cells[1, RowCount - 1]:= SQLQuery1.Fields[1].AsString;
-    Cells[2, RowCount - 1]:= SQLQuery1.Fields[3].AsString;
-    Cells[3, RowCount - 1]:= SQLQuery1.Fields[4].AsString;
-    Cells[4, RowCount - 1]:= dmSysTables.GetConstraintForiegnKeyFields(SQLQuery1.Fields[5].AsString, SQLQuery2);
+    Cells[0, RowCount - 1]:= SQLQuery1.FieldByName('ConstName').AsString;
+    Cells[1, RowCount - 1]:= SQLQuery1.FieldByName('KeyName').AsString;
+    Cells[2, RowCount - 1]:= SQLQuery1.FieldByName('OtherFieldName').AsString;
+    Cells[3, RowCount - 1]:= SQLQuery1.FieldByName('CurrentTableName').AsString;
+    Cells[4, RowCount - 1]:= dmSysTables.GetConstraintForeignKeyFields(SQLQuery1.FieldByName('CurrentFieldName').AsString, SQLQuery2);
 
-    Cells[5, RowCount - 1]:= SQLQuery1.Fields[6].AsString;
-    Cells[6, RowCount - 1]:= SQLQuery1.Fields[7].AsString;
+    Cells[5, RowCount - 1]:= SQLQuery1.FieldByName('UpdateRule').AsString;
+    Cells[6, RowCount - 1]:= SQLQuery1.FieldByName('DeleteRule').AsString;
     SQLQuery1.Next;
   end;
   SQLQuery1.Close;

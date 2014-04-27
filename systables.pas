@@ -26,6 +26,7 @@ type
       var TriggerPosition: Integer): Boolean;
     function ScriptTrigger(dbIndex: Integer; ATriggerName: string; List: TStrings;
       AsCreate: Boolean = False): Boolean;
+    // Used e.g. in scripting foreign keys
     function GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery;
       ConstraintsList: TStringList = nil): Boolean;
 
@@ -37,7 +38,7 @@ type
     function GetExceptionInfo(ExceptionName: string; var Msg, Description, SqlQuery: string): Boolean;
     procedure GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
       var DomainSize: Integer; var DefaultValue: string);
-    function GetConstraintForiegnKeyFields(AIndexName: string; SqlQuery: TSQLQuery): string;
+    function GetConstraintForeignKeyFields(AIndexName: string; SqlQuery: TSQLQuery): string;
 
     function GetDBUsers(dbIndex: Integer; ObjectName: string = ''): string;
     function GetDBObjectsForPermissions(dbIndex: Integer; AObjectType: Integer = -1): string;
@@ -272,19 +273,27 @@ function TdmSysTables.GetTableConstraints(ATableName: string; var SqlQuery: TSQL
    ConstraintsList: TStringList = nil): Boolean;
 begin
   SqlQuery.Close;
-  SqlQuery.SQL.Text:= 'select Trim(Refc.RDB$Constraint_Name) as ConstName, ' +
-    'Trim(Refc.RDB$CONST_NAME_UQ) as KeyName, ' +
-    'Trim(Ind.RDB$Relation_Name) as CurrentTableName, ' +
-    'Trim(Seg.RDB$Field_name) as CurrentFieldName, ' +
-    'Trim(Con.RDB$Relation_Name) as OtherTableName, ' +
-    'Trim(Ind.RDB$Foreign_key) as OtherFieldName, ' +
-    'RDB$Update_Rule as UpdateRule, RDB$Delete_Rule as DeleteRule ' +
-    'from RDB$RELATION_CONSTRAINTS Con, rdb$REF_Constraints Refc, RDB$INDEX_SEGMENTS Seg, ' +
-    'RDB$INDICES Ind ' +
-    'where Con.RDB$Constraint_Name = Refc.RDB$Const_Name_UQ ' +
-    '  and Refc.RDB$Constraint_Name = Ind.RDB$Index_Name' +
-    '  and Refc.RDB$Constraint_Name = Seg.RDB$Index_Name' +
-    '  and Ind.RDB$Relation_Name = ''' + UpperCase(ATableName) + '''';
+// Note that this query differs from the way constraints are
+// presented in GetConstraintsOfTable.
+// to do: find out what the differences are and indicate better in code/comments
+  SQLQuery.SQL.Text:='select '+
+    'trim(rc.rdb$constraint_name) as ConstName, '+
+    'trim(rfc.rdb$const_name_uq) as KeyName, '+
+    'trim(rc2.rdb$relation_name) as OtherTableName, '+
+    'trim(flds_pk.rdb$field_name) as OtherFieldName, '+
+    'trim(rc.rdb$relation_name) as CurrentTableName, '+
+    'trim(flds_fk.rdb$field_name) as CurrentFieldName, '+
+    'trim(rfc.rdb$update_rule) as UpdateRule, '+
+    'trim(rfc.rdb$delete_rule) as DeleteRule '+
+    'from rdb$relation_constraints AS rc '+
+    'inner join rdb$ref_constraints as rfc on (rc.rdb$constraint_name = rfc.rdb$constraint_name) '+
+    'inner join rdb$index_segments as flds_fk on (flds_fk.rdb$index_name = rc.rdb$index_name) ' +
+    'inner join rdb$relation_constraints as rc2 on (rc2.rdb$constraint_name = rfc.rdb$const_name_uq) ' +
+    'inner join rdb$index_segments as flds_pk on ' +
+    '((flds_pk.rdb$index_name = rc2.rdb$index_name) and (flds_fk.rdb$field_position = flds_pk.rdb$field_position)) ' +
+    'where rc.rdb$constraint_type = ''FOREIGN KEY'' '+
+    'and rc.rdb$relation_name = ''' + UpperCase(ATableName) + ''' '+
+    'order by rc.rdb$constraint_name, flds_fk.rdb$field_position ';
   SqlQuery.Open;
   Result:= SqlQuery.RecordCount > 0;
   with SqlQuery do
@@ -298,7 +307,6 @@ begin
     end;
     First;
   end;
-
 end;
 
 (**********  Get Constraints for a table Info  ********************)
@@ -308,14 +316,14 @@ function TdmSysTables.GetConstraintsOfTable(ATableName: string; var SqlQuery: TS
 begin
   SqlQuery.Close;
   SQLQuery.SQL.Text:='select '+
-  'rc.rdb$constraint_name as ConstName, '+
-  'rfc.rdb$const_name_uq as KeyName, '+
-  'rc2.rdb$relation_name as CurrentTableName, '+
-  'flds_pk.rdb$field_name as CurrentFieldName, '+
-  'rc.rdb$relation_name as OtherTableName, '+
-  'flds_fk.rdb$field_name as OtherFieldName, '+
-  'rfc.rdb$update_rule as UpdateRule, '+
-  'rfc.rdb$delete_rule as DeleteRule '+
+  'trim(rc.rdb$constraint_name) as ConstName, '+
+  'trim(rfc.rdb$const_name_uq) as KeyName, '+
+  'trim(rc2.rdb$relation_name) as CurrentTableName, '+
+  'trim(flds_pk.rdb$field_name) as CurrentFieldName, '+
+  'trim(rc.rdb$relation_name) as OtherTableName, '+
+  'trim(flds_fk.rdb$field_name) as OtherFieldName, '+
+  'trim(rfc.rdb$update_rule) as UpdateRule, '+
+  'trim(rfc.rdb$delete_rule) as DeleteRule '+
   'from rdb$relation_constraints AS rc '+
   'inner join rdb$ref_constraints as rfc on (rc.rdb$constraint_name = rfc.rdb$constraint_name) '+
   'inner join rdb$index_segments as flds_fk on (flds_fk.rdb$index_name = rc.rdb$index_name) ' +
@@ -461,7 +469,7 @@ end;
 
 (*************  Get constraint foreign key fields  *************)
 
-function TdmSysTables.GetConstraintForiegnKeyFields(AIndexName: string; SqlQuery: TSQLQuery): string;
+function TdmSysTables.GetConstraintForeignKeyFields(AIndexName: string; SqlQuery: TSQLQuery): string;
 begin
   SQLQuery.Close;
   SQLQuery.SQL.Text:= 'select RDB$Index_Name as IndexName, RDB$Field_name as FieldName from RDB$INDEX_SEGMENTS ' +
