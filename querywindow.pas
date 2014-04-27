@@ -1056,7 +1056,6 @@ begin
     aSqlQuery.AfterPost:= @FinishCellEditing;
     aSqlQuery.Tag:= ATab.TabIndex;
 
-
     // Status Bar
     StatusBar:= TStatusBar.Create(nil);
     StatusBar.Parent:= ATab;
@@ -1113,22 +1112,21 @@ begin
     meResult.ReadOnly:= True;
     meResult.Align:= alClient;
     AddResultControl(ATab, meResult);
-
-    if QueryType = 2 then
-    begin
-      aSqlQuery:= TSQLQuery.Create(nil);
-      aSqlQuery.DataBase:= ibConnection;
-      aSqlQuery.Transaction:= SqlTrans;
-      AddResultControl(ATab, aSqlQuery);
-    end;
-
-
-    if QueryType = 3 then // Script
-    begin
-      aSQLScript:= TSQLScript.Create(nil);
-      aSQLScript.DataBase:= ibConnection;
-      aSQLScript.Transaction:= SqlTrans;
-      AddResultControl(ATab, aSQLScript);
+    case QueryType of
+      2:
+      begin
+        aSqlQuery:= TSQLQuery.Create(nil);
+        aSqlQuery.DataBase:= ibConnection;
+        aSqlQuery.Transaction:= SqlTrans;
+        AddResultControl(ATab, aSqlQuery);
+      end;
+      3: // Script
+      begin
+        aSQLScript:= TSQLScript.Create(nil);
+        aSQLScript.DataBase:= ibConnection;
+        aSQLScript.Transaction:= SqlTrans;
+        AddResultControl(ATab, aSQLScript);
+      end;
     end;
   end;
   AddResultControl(nil, ATab);
@@ -1147,10 +1145,9 @@ var
   fQueryType: Integer;
 begin
   try
-
     // Script
     if (fOrigQueryType = qtScript) then
-    begin
+    begin // script
       ExecuteScript(fQuery);
       Inc(fModifyCount);
       SqlType:= GetSQLType(fQuery, Command);
@@ -1158,7 +1155,7 @@ begin
       fFinished:= True;
       fList.Free;
     end
-    else       // normal statement / Multi statements
+    else  // normal statement / Multi statements
     begin
       Inc(fCnt);
       if not GetSQLSegment(fList, fStartline, fQueryType, EndLine, fQueryPart, IsDDL) then
@@ -1191,13 +1188,10 @@ begin
           fTab.Caption:= 'Running..';
           fQT.Resume;
 
-
           // Wait for the thread to complete
           repeat
-
               Sleep(100);
               application.ProcessMessages; // This prevents display freeze
-
           until fQT.fTerminated;
 
           // Raise exception if an error occured during thread execution (Open)
@@ -1208,9 +1202,8 @@ begin
           fTab.Caption:= faText;
           fTab.ImageIndex:= 0;
           fmMain.AddToSQLHistory(RegRec.Title, 'SELECT', fQueryPart);
-
-          except
-          on e: exception do
+        except
+          on e: Exception do
           begin
             if Assigned(fTab) then
               fTab.TabVisible:= False;
@@ -1225,9 +1218,9 @@ begin
             fTab.Font.Color:= clRed;
             fTab.ImageIndex:= 3;
           end;
-          end;
-        end
-        else  // Execute
+        end;
+      end
+      else  // Execute
         if fQueryType = 2 then
         begin
           fTab:= nil;
@@ -1262,13 +1255,10 @@ begin
               // Auto commit
               if cxAutoCommit.Checked then
                 SqlTrans.Commit;
-
-
-
               fQT.Free;
             end
             else
-            begin   // DML
+            begin // DML
               fSqlQuery.Close;
               fSqlQuery.SQL.Text:= fQueryPart;
               fTab.ImageIndex:= 6;
@@ -1278,25 +1268,27 @@ begin
 
               // Execute the statement in thread
               fQT:= TQueryThread.Create('exec');
-              fQT.Query:= fSqlQuery;
-              fQT.Resume;
-              faText:= fTab.Caption;
-              fTab.Caption:= 'Running..';
+              try
+                fQT.Query:= fSqlQuery;
+                fQT.Resume;
+                faText:= fTab.Caption;
+                fTab.Caption:= 'Running..';
 
-              // Wait for thread completion
-              repeat
-                application.ProcessMessages;
-              until (fQT.fTerminated) or (fCanceled);
+                // Wait for thread completion
+                repeat
+                  application.ProcessMessages;
+                until (fQT.fTerminated) or (fCanceled);
 
-              // Raise exception if an error occured during thread execution (ExecProc)
-              if fQT.Error then
-                raise Exception.Create(fQT.ErrorMsg);
+                // Raise exception if an error occured during thread execution (ExecProc)
+                if fQT.Error then
+                  raise Exception.Create(fQT.ErrorMsg);
 
-              // Auto commit
-              if cxAutoCommit.Checked then
-                SqlTrans.Commit;
-
-              fQT.Free;
+                // Auto commit
+                if cxAutoCommit.Checked then
+                  SqlTrans.Commit;
+              finally
+                fQT.Free;
+              end;
               fTab.Caption:= faText;
               fTab.ImageIndex:= 1;
               Affected:= fsqlQuery.RowsAffected;
@@ -1319,49 +1311,45 @@ begin
             end;
             fmeResult.Lines.Add('----');
             fmeResult.Lines.Add(fQueryPart);
-
           except
-          on e: exception do
-          begin
-            if Assigned(fTab) then
-              fTab.TabVisible:= False;
-            fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
-            PageControl1.ActivePage:= fTab;
-            fmeResult.Text:= e.message;
-            fmeResult.Lines.Add(fQueryPart);
-            fmeResult.Font.Color:= clRed;
-            fTab.Font.Color:= clRed;
-            fTab.ImageIndex:= 3;
+            on e: exception do
+            begin
+              if Assigned(fTab) then
+                fTab.TabVisible:= False;
+              fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+              PageControl1.ActivePage:= fTab;
+              fmeResult.Text:= e.message;
+              fmeResult.Lines.Add(fQueryPart);
+              fmeResult.Font.Color:= clRed;
+              fTab.Font.Color:= clRed;
+              fTab.ImageIndex:= 3;
+            end;
           end;
-          end
-
         end
         else  // Script
         begin
           try
-          if ExecuteScript(fQueryPart) then
-          begin
-            Inc(fModifyCount);
-            SqlType:= GetSQLType(fQueryPart, Command);
-            fmMain.AddToSQLHistory(RegRec.Title, SqlType, fQueryPart);
-          end;
-
+            if ExecuteScript(fQueryPart) then
+            begin
+              Inc(fModifyCount);
+              SqlType:= GetSQLType(fQueryPart, Command);
+              fmMain.AddToSQLHistory(RegRec.Title, SqlType, fQueryPart);
+            end;
           except
-          on e: exception do
-          begin
-            if Assigned(fTab) then
-              fTab.TabVisible:= False;
-            fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
-            PageControl1.ActivePage:= fTab;
-            fmeResult.Text:= e.message;
-            fmeResult.Lines.Add(fQueryPart);
-            fmeResult.Lines.Add('--------');
-            fmeResult.Font.Color:= clRed;
-            fTab.Font.Color:= clRed;
-            fTab.ImageIndex:= 3;
+            on e: exception do
+            begin
+              if Assigned(fTab) then
+                fTab.TabVisible:= False;
+              fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+              PageControl1.ActivePage:= fTab;
+              fmeResult.Text:= e.message;
+              fmeResult.Lines.Add(fQueryPart);
+              fmeResult.Lines.Add('--------');
+              fmeResult.Font.Color:= clRed;
+              fTab.Font.Color:= clRed;
+              fTab.ImageIndex:= 3;
+            end;
           end;
-        end;
-
         end;
         if (fModifyCount > 50) then
         if (MessageDlg('Commit', 'There are too many transactions, did you want to commit',
@@ -1371,29 +1359,28 @@ begin
           fModifyCount:= 0;
         end
         else
+        begin
           fModifyCount:= 0;
-
+        end;
       if fStartLine >= fList.Count then
         fFinished:= True;
     end;
-
   except
-  on e: exception do
-  begin
-    if Assigned(fTab) then
-      fTab.TabVisible:= False;
-    fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
-    fTab.ImageIndex:= 2;
-    PageControl1.ActivePage:= fTab;
+    on e: exception do
+    begin
+      if Assigned(fTab) then
+        fTab.TabVisible:= False;
+      fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+      fTab.ImageIndex:= 2;
+      PageControl1.ActivePage:= fTab;
 
-    fmeResult.Text:= e.message;
-    fmeResult.Lines.Add('--------');
-    fmeResult.Lines.Add(fQueryPart);
-    fmeResult.Font.Color:= clRed;
-    fFinished:= True;
+      fmeResult.Text:= e.message;
+      fmeResult.Lines.Add('--------');
+      fmeResult.Lines.Add(fQueryPart);
+      fmeResult.Font.Color:= clRed;
+      fFinished:= True;
+    end;
   end;
-  end;
-
 end;
 
 
