@@ -10,6 +10,13 @@ uses
 
 type
 
+  // e.g. used for composite foreign key constraints
+  TConstraintCount = record
+    Name: string; // name of constraint
+    Count: integer; // count of occurrences
+  end;
+  TConstraintCounts = array of TConstraintCount;
+
   { TdmSysTables }
 
   TdmSysTables = class(TDataModule)
@@ -19,6 +26,12 @@ type
   public
     ibcDatabase: TIBConnection;
     stTrans: TSQLTransaction;
+    // Fills array with composite (multikey) foreign key constraint names
+    // and field count for specified table
+    // Then use GetCompositeFKConstraint to check this array for a specified
+    // constraint name
+    procedure FillCompositeFKConstraints(const TableName: string;
+      var ConstraintsArray: TConstraintCounts);
     procedure Init(dbIndex: Integer);
     function GetDBObjectNames(DatabaseIndex, TVIndex: Integer; var Count: Integer): string;
     function GetTriggerInfo(DatabaseIndex: Integer; ATriggername: string;
@@ -34,7 +47,8 @@ type
 
     // Returns non-0 if foreign key constraint has a composite index (multiple fields)
     // Returns 0 otherwise
-    function GetCompositeFKConstraints(TableName, ConstraintName: string): integer;
+    // Expects array that has been filled by FillCompositeFKConstraints
+    function GetCompositeFKConstraint(const ConstraintName: string; ConstraintsArray: TConstraintCounts): integer;
 
     function GetConstraintInfo(dbIndex: Integer; ATableName, ConstraintName: string; var KeyName,
         CurrentTableName, CurrentFieldName, OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string): Boolean;
@@ -277,6 +291,9 @@ end;
 function TdmSysTables.GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery;
    ConstraintsList: TStringList = nil): Boolean;
 begin
+  //todo: rewrite this to return an array of record (constraint name, number of columns)
+  //make another function that checks the array and returns the number of columns for a constraint name
+  //this will allow caching, running the query only once per table to fill the array
   SqlQuery.Close;
 // Note that this query differs from the way constraints are
 // presented in GetConstraintsOfTable.
@@ -407,13 +424,12 @@ begin
     end;
   end;
   sqQuery.Close;
-
 end;
 
-function TdmSysTables.GetCompositeFKConstraints(TableName,
-  ConstraintName: string): integer;
+procedure TdmSysTables.FillCompositeFKConstraints(const TableName: string;
+  var ConstraintsArray: TConstraintCounts);
 const
-  // For specified constraint, returns foreign key constraints and count
+  // For specified table, returns foreign key constraints and count
   // if it has a composite key (i.e. multiple foreign key fields).
   // Based on query in GetTableConstraints
   CompositeCountSQL =
@@ -429,24 +445,53 @@ const
    'upper(rc.rdb$relation_name) = ''%s'' '+
    'group by rc.rdb$constraint_name '+
    'having count(rfc.rdb$const_name_uq)>1 '+
-   'and rc.rdb$constraint_name=''%s'' '+
    'order by rc.rdb$constraint_name ';
 var
   CompositeQuery: TSQLQuery;
+  i:integer;
 begin
-  result:= 0;
-  CompositeQuery:=TSQLQuery.Create(nil);
+  CompositeQuery:= TSQLQuery.Create(nil);
   try
     CompositeQuery.DataBase:= ibcDatabase;
     CompositeQuery.Transaction:= stTrans;
-    CompositeQuery.SQL.Text:=Format(CompositeCountSQL,[TableName,ConstraintName]);
+    CompositeQuery.SQL.Text:= Format(CompositeCountSQL,[TableName]);
     CompositeQuery.Open;
-    if not(CompositeQuery.EOF) then
-      Result:= CompositeQuery.FieldByName('KeyCount').AsInteger;
+    CompositeQuery.Last; //needed for accurate recordcount
+    if CompositeQuery.RecordCount=0 then
+    begin
+      SetLength(ConstraintsArray,0);
+    end
+    else
+    begin
+      SetLength(ConstraintsArray,CompositeQuery.RecordCount);
+      i:= 0;
+      CompositeQuery.First;
+      while not(CompositeQuery.EOF) do
+      begin
+        ConstraintsArray[i].Name:= CompositeQuery.FieldByName('ConstName').AsString;
+        ConstraintsArray[i].Count:= CompositeQuery.FieldByName('KeyCount').AsInteger;
+        CompositeQuery.Next;
+        inc(i);
+      end;
+    end;
     CompositeQuery.Close;
-    //todo: check if this fits in with transaction management
   finally
     CompositeQuery.Free;
+  end;
+end;
+
+function TdmSysTables.GetCompositeFKConstraint(const ConstraintName: string; ConstraintsArray: TConstraintCounts): integer;
+var
+  i: integer;
+begin
+  result:= 0;
+  for i:= low(ConstraintsArray) to high(ConstraintsArray) do
+  begin
+    if ConstraintsArray[i].Name=ConstraintName then
+    begin
+      result:= ConstraintsArray[i].Count;
+      break;
+    end;
   end;
 end;
 

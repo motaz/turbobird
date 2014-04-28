@@ -418,6 +418,7 @@ end;
 function ScriptAllConstraints(dbIndex: Integer; var List: TStringList): Boolean;
 var
   Count: integer;
+  ConstraintArray: TConstraintCounts;
   ConstraintName: string;
   CompositeClauseFK: string;
   CompositeClauseRef: string;
@@ -459,17 +460,18 @@ begin
     with dmSysTables do
     begin
       GetTableConstraints(TablesList[TableCounter], sqQuery);
+      FillCompositeFKConstraints(TablesList[TableCounter],ConstraintArray);
       CompositeConstraint:= '';
       while not sqQuery.EOF do
       begin
         ConstraintName:= sqQuery.FieldByName('ConstName').AsString;
-        CompositeCount:= GetCompositeFKConstraints(TablesList[TableCounter],ConstraintName);
+        CompositeCount:= GetCompositeFKConstraint(ConstraintName, ConstraintArray);
         if CompositeCount>0 then
         begin
           // Multiple columns form a composite foreign key index.
           if ConstraintName<>CompositeConstraint then
           begin
-            // A new contraint just started
+            // A new constraint just started
             CompositeConstraint:= ConstraintName;
             CompositeCounter:= 1;
             CompositeClauseFK:= sqQuery.FieldByName('CurrentFieldName').AsString+', ';
