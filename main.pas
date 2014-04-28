@@ -227,13 +227,15 @@ type
     VersionDate: string;
     Major, Minor, ReleaseVersion: word;
     function GetServerName(DBName: string): string;
-    function RetreiveInputParamFromSP(Body: string): string;
+    function RetrieveInputParamFromSP(Body: string): string;
     function LoadRegisteredDatabases: Boolean;
     function FindQueryWindow(ATitle: string): TComponent;
     function DeleteRegistration(Index: Integer): Boolean;
-    // Returns field type DDL given a RDB$FIELD_TYPE value
-    // todo: extend this to include subtype when necessary; replace subtype code everywhere
-    function GetFBTypeName(Index: Integer): string;
+    // Returns field type DDL given a RDB$FIELD_TYPE value as well
+    // as subtype/length/scale (use -1 for empty/unknown values)
+    function GetFBTypeName(Index: Integer;
+      SubType: integer=-1; FieldLength: integer=-1;
+      Scale: integer=-1): string;
     function GetPrimaryKeyIndexName(DatabaseIndex: Integer; ATableName: string; var ConstraintName: string): string;
     function GetConstraintFields(ATableName, AIndexName: string; var List: TStringList): Boolean;
     // Get fields information for specified table
@@ -255,8 +257,6 @@ type
     function ChangeQueryToBIDirectional(DatabaseIndex: Integer; ATableName: string; sqQuery: TSQLQuery): Boolean;
     function GetTableNames(dbIndex: Integer): string;
     function CreateNewTrigger(dbIndex: Integer; ATableName: string; OnCommitProcedure: TNotifyEvent = nil): Boolean;
-    // Get field type DDL given Firebird field type and subtype etc info
-    function GetNumericFieldType(FieldType, SubType, FieldLength, Scale: Integer): string;
     function AddToSQLHistory(DatabaseTitle: string; SQLType, SQLStatement: string): Boolean;
     function SaveAndCloseSQLHistory: Boolean;
     function OpenSQLHistory(DatabaseTitle: string): Boolean;
@@ -632,7 +632,7 @@ begin
   begin
     AProcName:= SelNode.Text;
     Body:= GetStoredProcBody(SelNode.Parent.Parent.OverlayIndex, AProcName, SPOwner);
-    Params:= RetreiveInputParamFromSP(Body);
+    Params:= RetrieveInputParamFromSP(Body);
     withParams:= Params <> '';
     with fmCallProc do
     begin
@@ -1418,34 +1418,6 @@ begin
     inherited SetFocus;
 end;
 
-function TfmMain.GetNumericFieldType(FieldType, SubType, FieldLength,
-  Scale: Integer): string;
-begin
-  if SubType = 0 then
-  begin
-    case FieldType of
-      7: Result:= 'SMALLINT';
-      8: Result:= 'INTEGER';
-      16: Result:= 'BIGINT';
-    end;
-  end
-  else
-  begin
-    if SubType = 1 then
-      Result:= 'Numeric('
-    else
-    if SubType = 2 then
-      Result:= 'Decimal(';
-    case FieldLength of
-      4: Result:= Result + '9,';
-      8: Result:= Result + '18,';
-    else
-      Result:= Result + IntToStr(FieldLength) + ',';
-    end;
-    Result:= Result + IntToStr(Abs(Scale)) + ') ';
-  end;
-end;
-
 
 (* Insert SQL query into database history file *)
 
@@ -1546,7 +1518,7 @@ end;
 
 (* Get input parameters from stored procedure body *)
 
-function TfmMain.RetreiveInputParamFromSP(Body: string): string;
+function TfmMain.RetrieveInputParamFromSP(Body: string): string;
 var
   i: Integer;
   SizeStarted: Boolean;
@@ -2483,7 +2455,7 @@ begin
   Rec:= RegisteredDatabases[DatabaseIndex];
   SetConnection(DatabaseIndex);
   sqlTransaction.Commit;
-  //todo: add Firebird 3.0 beta BOOLEAN datatype number
+  //todo: check all occurrences and rewrite field_type_str with fmMain.GetFBTypeName function
   SQLQuery1.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
       '  r.RDB$DESCRIPTION AS field_description, ' +
       '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
@@ -2548,7 +2520,7 @@ var
   ParamName: string;
   FirstOutput: Boolean;
   ParamType: Byte;
-  Seperator: Boolean;
+  Separator: Boolean;
   BodyList: TStringList;
 begin
   try
@@ -2572,36 +2544,34 @@ begin
       FirstOutput:= False;
 
       // Get procedure parameters
-        while not SQLQuery1.EOF do
+      while not SQLQuery1.EOF do
+      begin
+        ParamName:= Trim(SQLQuery1.FieldByName('RDB$Parameter_Name').AsString);
+        ParamType:= SQLQuery1.FieldByName('rdb$parameter_type').AsInteger;
+        Separator:= False;
+        // Output parameter
+        if (not FirstOutput) and (ParamType = 1) then
         begin
-          ParamName:= Trim(SQLQuery1.FieldByName('RDB$Parameter_Name').AsString);
-          ParamType:= SQLQuery1.FieldByName('rdb$parameter_type').AsInteger;
-          Seperator:= False;
-          // Output parameter
-          if (not FirstOutput) and (ParamType = 1) then
-          begin
-            BodyList.Add(')' + #10 + 'RETURNS (');
-            FirstOutput:= True;
-            Seperator:= True;
-          end;
-          Line:= '  ' + ParamName + '    ' +
-            GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger);
-          if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger = 37 then
-            Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
-
-
-          SQLQuery1.Next;
-
-          if (not SQLQuery1.EOF) then
-          if ((FirstOutput) or (SQLQuery1.FieldByName('rdb$parameter_Type').AsInteger = 0)) then
-            Line:= Line + ',';
-
-          BodyList.Add(Line);
+          BodyList.Add(')' + #10 + 'RETURNS (');
+          FirstOutput:= True;
+          Separator:= True;
         end;
+        //todo: verify if getfbtypename needs more parameters here
+        Line:= '  ' + ParamName + '    ' +
+          GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger);
+        if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger = 37 then
+          Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
+        SQLQuery1.Next;
+
+        if (not SQLQuery1.EOF) then
+        if ((FirstOutput) or (SQLQuery1.FieldByName('rdb$parameter_Type').AsInteger = 0)) then
+          Line:= Line + ',';
+
+        BodyList.Add(Line);
+      end;
 
       BodyList.Add(')');
       BodyList.Add('AS');
-
       SQLQuery1.Close;
 
       // Get Procedure body
@@ -2756,6 +2726,7 @@ begin
     while not SQLQuery1.EOF do
     begin
       Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger);
+      //todo: verify if getfbtypename needs more parameters here
       if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [14, 37, 40] then
         Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
       SQLQuery1.Next;
@@ -2774,6 +2745,7 @@ begin
     while not SQLQuery1.EOF do
     begin
       Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger);
+      //todo: verify if getfbtypename needs more parameters here
       if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [14, 37, 40] then
         Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
       SQLQuery1.Next;
@@ -3092,12 +3064,10 @@ begin
         Cells[1, RowCount - 1]:= Trim(FieldByName('Field_Name').AsString);
 
         // Field Type
-        if FieldByName('Field_Type_Int').AsInteger in [7, 8, 16] then
-          Cells[2, RowCount - 1]:= GetNumericFieldType(FieldByName('Field_Type_Int').AsInteger,
-            FieldByName('Field_SubType').AsInteger, FieldByName('Field_Length').AsInteger,
-            FieldByName('Field_Scale').AsInteger)
-        else
-          Cells[2, RowCount - 1]:= Trim(FieldByName('Field_Type_Str').AsString);
+        Cells[2, RowCount - 1]:= GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
+          FieldByName('Field_SubType').AsInteger,
+          FieldByName('Field_Length').AsInteger,
+          FieldByName('Field_Scale').AsInteger);
 
         // Correct field type if it is an array type
         // Array should really be [upper_bound dim0,upperbound dim1,..]
@@ -4108,8 +4078,12 @@ end;
 
 (**************  Get Firebird Type name  *****************)
 
-function TfmMain.GetFBTypeName(Index: Integer): string;
+function TfmMain.GetFBTypeName(Index: Integer;
+  SubType: integer=-1; FieldLength: integer=-1;
+  Scale: integer=-1
+  ): string;
 begin
+  //todo: add Firebird 3.0 beta BOOLEAN datatype number
   case Index of
     // See also
     // http://firebirdsql.org/manual/migration-mssql-data-types.html
@@ -4117,19 +4091,46 @@ begin
     261 : Result:= 'BLOB';
     14 : Result:= 'CHAR';
     40 : Result:= 'CSTRING';
+    12 : Result:= 'DATE';
     11 : Result:= 'D_FLOAT';
-    16 : Result:= 'BIGINT'; // depending on subtype, BIGINT, NUMERIC or DECIMAL. Probably int64 in Interbase
+    16 : Result:= 'BIGINT'; // Probably int64 in Interbase. Further processed below
     27 : Result:= 'DOUBLE';
     10 : Result:= 'FLOAT';
-    8  : Result:= 'INTEGER';
+    8  : Result:= 'INTEGER'; // further processed below
     9  : Result:= 'QUAD';
-    7  : Result:= 'SMALLINT';
-    12 : Result:= 'DATE';
+    7  : Result:= 'SMALLINT'; // further processed below
     13 : Result:= 'TIME';
     35 : Result:= 'TIMESTAMP';
     37 : Result:= 'VARCHAR';
   else
     Result:= 'Unknown Type';
+  end;
+  // Subtypes for numeric types
+  if Index in [7, 8, 16] then
+  begin
+    if SubType = 0 then
+    begin
+      case Index of
+        7: Result:= 'SMALLINT';
+        8: Result:= 'INTEGER';
+        16: Result:= 'BIGINT';
+      end;
+    end
+    else
+    begin
+      if SubType = 1 then
+        Result:= 'Numeric('
+      else
+      if SubType = 2 then
+        Result:= 'Decimal(';
+      case FieldLength of
+        4: Result:= Result + '9,';
+        8: Result:= Result + '18,';
+      else
+        Result:= Result + IntToStr(FieldLength) + ',';
+      end;
+      Result:= Result + IntToStr(Abs(Scale)) + ') ';
+    end;
   end;
 end;
 

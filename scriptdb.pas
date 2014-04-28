@@ -123,6 +123,7 @@ begin
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 8, Count);
   for i:= 0 to List.Count - 1 do
   begin
+    // todo: add support for numeric field types (e.g.
     dmSysTables.GetDomainInfo(dbIndex, List[i], DomainType, DomainSize, DefaultValue);
 
     List[i]:= 'Create Domain ' + List[i] + ' as ' + DomainType;
@@ -168,13 +169,11 @@ begin
         // Field Name
         FieldLine:= Trim(FieldByName('Field_Name').AsString) + ' ';
 
-        // Field Type
-        if FieldByName('Field_Type_Int').AsInteger in [7, 8, 16] then
-          FieldLine:= FieldLine + fmMain.GetNumericFieldType(FieldByName('Field_Type_Int').AsInteger,
-            FieldByName('Field_SubType').AsInteger, FieldByName('Field_Length').AsInteger,
-            FieldByName('Field_Scale').AsInteger)
-        else
-          FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
+        // Field type
+        FieldLine:= FieldLine + fmMain.GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
+          FieldByName('Field_SubType').AsInteger,
+          FieldByName('Field_Length').AsInteger,
+          FieldByName('Field_Scale').AsInteger);
 
         if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
           FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';

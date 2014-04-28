@@ -291,9 +291,6 @@ end;
 function TdmSysTables.GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery;
    ConstraintsList: TStringList = nil): Boolean;
 begin
-  //todo: rewrite this to return an array of record (constraint name, number of columns)
-  //make another function that checks the array and returns the number of columns for a constraint name
-  //this will allow caching, running the query only once per table to fill the array
   SqlQuery.Close;
 // Note that this query differs from the way constraints are
 // presented in GetConstraintsOfTable.
@@ -567,7 +564,10 @@ begin
 
   if sqQuery.RecordCount > 0 then
   begin
-    DomainType:= fmMain.GetFBTypeName(sqQuery.FieldByName('RDB$FIELD_TYPE').AsInteger);
+    DomainType:= fmMain.GetFBTypeName(sqQuery.FieldByName('RDB$FIELD_TYPE').AsInteger,
+      sqQuery.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
+      sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger,
+      sqQuery.FieldByName('RDB$FIELD_SCALE').AsInteger);
     DomainSize:= sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger;
     DefaultValue:= sqQuery.FieldByName('RDB$DEFAULT_SOURCE').AsString;
   end
@@ -805,7 +805,7 @@ begin
       '    WHEN 14 THEN ''CHAR'' ' +
       '    WHEN 40 THEN ''CSTRING''  ' +
       '    WHEN 11 THEN ''D_FLOAT'' ' +
-      '    WHEN 27 THEN ''DOUBLE Precision'' ' +
+      '    WHEN 27 THEN ''DOUBLE'' ' +
       '    WHEN 10 THEN ''FLOAT'' ' +
       '    WHEN 16 THEN ''BIGINT'' ' +
       '    WHEN 8 THEN ''INTEGER'' ' +
@@ -835,6 +835,7 @@ begin
   begin
     with sqQuery do
     begin
+      // to do: rewrite using function
       FieldType:= Trim(FieldByName('Field_Type_Str').AsString);
       // Array should really be [lowerbound:upperbound] (if dimension is 0)
       // but for now don't bother as arrays are not supported anyway
@@ -1016,6 +1017,8 @@ var
   FieldName: string;
 begin
   Init(dbIndex);
+  //todo: check all references to this query and rewrite using function for field type
+  //instead of field_type_str
   sqQuery.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
       '  r.RDB$DESCRIPTION AS field_description, ' +
       '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
@@ -1028,14 +1031,14 @@ begin
       '    WHEN 261 THEN ''BLOB'' ' +
       '    WHEN 14 THEN ''CHAR'' ' +
       '    WHEN 40 THEN ''CSTRING''  ' +
+      '    WHEN 12 THEN ''DATE'' ' +
       '    WHEN 11 THEN ''D_FLOAT'' ' +
-      '    WHEN 27 THEN ''DOUBLE Precision'' ' +
+      '    WHEN 27 THEN ''DOUBLE'' ' +
       '    WHEN 10 THEN ''FLOAT'' ' +
       '    WHEN 16 THEN ''BIGINT'' ' +
       '    WHEN 8 THEN ''INTEGER'' ' +
       '    WHEN 9 THEN ''QUAD'' ' +
       '    WHEN 7 THEN ''SMALLINT'' ' +
-      '    WHEN 12 THEN ''DATE'' ' +
       '    WHEN 13 THEN ''TIME'' ' +
       '    WHEN 35 THEN ''TIMESTAMP'' ' +
       '    WHEN 37 THEN ''VARCHAR'' ' +
@@ -1051,18 +1054,17 @@ begin
       ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
       ' WHERE r.RDB$RELATION_NAME=''' + ATableName + '''  ' +
       ' ORDER BY r.RDB$FIELD_POSITION;';
-
-    sqQuery.Open;
-    FieldsList.Clear;
-    // Todo: add support for array datatype (see other code referencing RDB$FIELD_DIMENSIONS table)
-    while not sqQuery.EOF do
-    begin
-      FieldName:= Trim(sqQuery.FieldByName('field_name').AsString);
-      if FieldsList.IndexOf(FieldName) = -1 then
-        FieldsList.Add(FieldName);
-      sqQuery.Next;
-    end;
-    sqQuery.Close;
+  sqQuery.Open;
+  FieldsList.Clear;
+  // Todo: add support for array datatype (see other code referencing RDB$FIELD_DIMENSIONS table)
+  while not sqQuery.EOF do
+  begin
+    FieldName:= Trim(sqQuery.FieldByName('field_name').AsString);
+    if FieldsList.IndexOf(FieldName) = -1 then
+      FieldsList.Add(FieldName);
+    sqQuery.Next;
+  end;
+  sqQuery.Close;
 end;
 
 initialization

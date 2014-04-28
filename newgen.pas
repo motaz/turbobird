@@ -97,7 +97,7 @@ begin
     while not fmMain.SQLQuery1.EOF do
     begin
       FType:= Trim(fmMain.SQLQuery1.FieldByName('Field_Type_Str').AsString);
-      if (FType = 'INTEGER') or (FType = 'INT64') or (FType = 'SMALLINT') then
+      if (FType = 'INTEGER') or (FType = 'BIGINT') or (FType = 'SMALLINT') then
         cbFields.Items.Add(Trim(fmMain.SQLQuery1.FieldByName('Field_Name').AsString));
       fmMain.SQLQuery1.Next;
     end;
