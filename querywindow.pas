@@ -424,7 +424,7 @@ begin
                 FieldsSQL += ',';
               FieldsSQL += RecordSet.Fields[x].FieldName + '=';
 
-              // Typecast field values according to thier main type
+              // Typecast field values according to their main type
               case RecordSet.Fields[x].DataType of
                 ftInteger, ftSmallint: FieldsSQL += IntToStr(RecordSet.Fields[x].NewValue);
                 ftFloat: FieldsSQL += FloatToStr(RecordSet.Fields[x].NewValue);

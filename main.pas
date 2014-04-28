@@ -234,6 +234,8 @@ type
     function GetFBTypeName(Index: Integer): string;
     function GetPrimaryKeyIndexName(DatabaseIndex: Integer; ATableName: string; var ConstraintName: string): string;
     function GetConstraintFields(ATableName, AIndexName: string; var List: TStringList): Boolean;
+    // Get fields information for specified table
+    // Fills SQLQuery1 with details
     procedure GetFields(DatabaseIndex: Integer; ATableName: string; FieldsList: TStringList);
     function GetStoredProcBody(DatabaseIndex: Integer; AProcName: string; var SPOwner: string): string;
     function GetViewInfo(DatabaseIndex: Integer; AViewName: string; var Columns, Body: string): Boolean;
@@ -2486,6 +2488,7 @@ begin
   Rec:= RegisteredDatabases[DatabaseIndex];
   SetConnection(DatabaseIndex);
   sqlTransaction.Commit;
+  //todo: add Firebird 3.0 beta BOOLEAN datatype number
   SQLQuery1.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
       '  r.RDB$DESCRIPTION AS field_description, ' +
       '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
@@ -2524,7 +2527,6 @@ begin
       ' LEFT JOIN RDB$FIELD_DIMENSIONS dim ON f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME ' +
       ' WHERE r.RDB$RELATION_NAME=''' + ATableName + '''  ' +
       ' ORDER BY r.RDB$FIELD_POSITION;';
-
   SQLQuery1.Open;
   // Fill field list if needed
   if FieldsList <> nil then

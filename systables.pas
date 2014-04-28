@@ -836,7 +836,7 @@ begin
     with sqQuery do
     begin
       FieldType:= Trim(FieldByName('Field_Type_Str').AsString);
-      // Array should really be [lowerbound:upperbound] if dimension is 0
+      // Array should really be [lowerbound:upperbound] (if dimension is 0)
       // but for now don't bother as arrays are not supported anyway
       // Assume 0 dimension, 1 lower bound; just fill in upper bound
       if not(FieldByName('Array_Upper_Bound').IsNull) then

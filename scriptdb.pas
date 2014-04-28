@@ -12,6 +12,7 @@ function ScriptAllRoles(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllFunctions(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllDomains(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllGenerators(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts a single table as CREATE TABLE DDL
 procedure ScriptTableAsCreate(dbIndex: Integer; ATableName: string; ScriptList: TStringList);
 function ScriptAllTables(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllProcedureTemplates(dbIndex: Integer; var List: TStringList): Boolean;
@@ -146,7 +147,7 @@ var
   FieldLine: string;
   Skipped: Boolean;
   ConstraintName: string;
-  CalculatedList: TStringList;
+  CalculatedList: TStringList; // for calculated fields
   DefaultValue: string;
 begin
   fmMain.GetFields(dbIndex, ATableName, nil);
@@ -178,23 +179,27 @@ begin
         if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
           FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
 
+        // Rudimentary support for array datatypes (only covers 0 dimension types):
+        if not(FieldByName('Array_Upper_Bound').IsNull) then
+          FieldLine:= FieldLine + ' [' + FieldByName('Array_Upper_Bound').AsString + '] ';
+
         // Default value
         DefaultValue:= Trim(FieldByName('Field_Default_Value').AsString);
         if DefaultValue <> '' then
         begin
           if pos('default', DefaultValue) <> 1 then
             DefaultValue:= ' default ''' + DefaultValue + '''';
-
           FieldLine:= FieldLine + ' ' + DefaultValue;
         end;
 
         // Null/Not null
         if FieldByName('field_not_null_constraint').AsString = '1' then
            FieldLine:= FieldLine + ' not null ';
-
       end
       else
+      begin
         Skipped:= True;
+      end;
 
       // Computed Fields
       if FieldByName('Computed_Source').AsString <> '' then
@@ -399,7 +404,6 @@ begin
           fmMain.GetIndexFields(TablesList[i], Trim(FieldByName('RDB$Index_Name').AsString), fmMain.SQLQuery1, FieldsList);
           Line:= Line + ' (' + FieldsList.CommaText + ') ;';
           List.Add(Line);
-
         end;
         Next;
       end;
