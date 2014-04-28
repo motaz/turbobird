@@ -1464,7 +1464,6 @@ end;
 procedure TfmQueryWindow.RemoveControls;
 var
   i: Integer;
-  CannotFree: Boolean;
 begin
   for i:= High(ResultControls) downto Low(ResultControls) do
   begin
@@ -1677,9 +1676,6 @@ end;
 { Initialize auto-completion text in QueryWindow OnCreate event }
 
 procedure TfmQueryWindow.FormCreate(Sender: TObject);
-var
-  F:TextFile;
-  str:string;
 begin
   // Initialize new instance of IBConnection and SQLTransaction
   ibConnection:= TIBConnection.Create(nil);
