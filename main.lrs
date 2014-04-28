@@ -7,7 +7,7 @@ LazarusResources.Add('TfmMain','FORMDATA',[
   +'White'#9'Font.Name'#6#4'Sans'#4'Menu'#7#9'MainMenu1'#10'OnActivate'#7#12'Fo'
   +'rmActivate'#7'OnClose'#7#9'FormClose'#8'OnCreate'#7#10'FormCreate'#9'OnDest'
   +'roy'#7#11'FormDestroy'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6#7
-  +'1.2.0.3'#0#9'TTreeView'#6'tvMain'#4'Left'#2#0#6'Height'#3'Y'#2#3'Top'#2#0#5
+  +'1.2.2.0'#0#9'TTreeView'#6'tvMain'#4'Left'#2#0#6'Height'#3'Y'#2#3'Top'#2#0#5
   +'Width'#3'h'#1#5'Align'#7#6'alLeft'#15'BackgroundColor'#7#7'clWhite'#5'Color'
   +#7#7'clCream'#15'ExpandSignColor'#7#8'clMaroon'#13'HideSelection'#8#6'Images'
   +#7#10'ImageList1'#6'Indent'#2#25#8'ReadOnly'#9#16'RightClickSelect'#9#9'Show'

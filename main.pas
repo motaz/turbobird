@@ -231,6 +231,8 @@ type
     function LoadRegisteredDatabases: Boolean;
     function FindQueryWindow(ATitle: string): TComponent;
     function DeleteRegistration(Index: Integer): Boolean;
+    // Returns field type DDL given a RDB$FIELD_TYPE value
+    // todo: extend this to include subtype when necessary; replace subtype code everywhere
     function GetFBTypeName(Index: Integer): string;
     function GetPrimaryKeyIndexName(DatabaseIndex: Integer; ATableName: string; var ConstraintName: string): string;
     function GetConstraintFields(ATableName, AIndexName: string; var List: TStringList): Boolean;
@@ -253,6 +255,7 @@ type
     function ChangeQueryToBIDirectional(DatabaseIndex: Integer; ATableName: string; sqQuery: TSQLQuery): Boolean;
     function GetTableNames(dbIndex: Integer): string;
     function CreateNewTrigger(dbIndex: Integer; ATableName: string; OnCommitProcedure: TNotifyEvent = nil): Boolean;
+    // Get field type DDL given Firebird field type and subtype etc info
     function GetNumericFieldType(FieldType, SubType, FieldLength, Scale: Integer): string;
     function AddToSQLHistory(DatabaseTitle: string; SQLType, SQLStatement: string): Boolean;
     function SaveAndCloseSQLHistory: Boolean;
@@ -342,11 +345,10 @@ begin
     end;
 
   except
-  on e: exception do
-  begin
-    MessageDlg('Error while creating new user: ' + e.Message, mtError, [mbOk], 0);
-  end;
-
+    on e: exception do
+    begin
+      MessageDlg('Error while creating new user: ' + e.Message, mtError, [mbOk], 0);
+    end;
   end;
 end;
 
@@ -1463,12 +1465,11 @@ begin
     end;
 
   except
-  on e: exception do
-  begin
-    Result:= False;
-    ShowMessage(e.Message);
-  end;
-
+    on e: exception do
+    begin
+      Result:= False;
+      ShowMessage(e.Message);
+    end;
   end;
 end;
 
@@ -1482,12 +1483,11 @@ begin
     Result:= True;
 
   except
-  on e: exception do
-  begin
-    Result:= False;
-    ShowMessage(e.Message)
-  end;
-
+    on e: exception do
+    begin
+      Result:= False;
+      ShowMessage(e.Message)
+    end;
   end;
 end;
 
@@ -1515,10 +1515,9 @@ begin
     begin
       try
         mdsHistory.LoadFromFile(AFileName);
-
       except
-      on e: exception do
-        mdsHistory.SaveToFile(AFileName);
+        on e: exception do
+          mdsHistory.SaveToFile(AFileName);
       end;
     end
     else
@@ -1535,14 +1534,12 @@ begin
     end;
     CurrentHistoryFile:= AFileName;
     Result:= True;
-
   except
-  on e: exception do
-  begin
-    Result:= False;
-    ShowMessage(e.Message);
-  end;
-
+    on e: exception do
+    begin
+      Result:= False;
+      ShowMessage(e.Message);
+    end;
   end;
 end;
 
@@ -1916,7 +1913,6 @@ begin
 
       end;
       QueryWindow.Show;
-
     except
       on e: exception do
       begin
@@ -1928,7 +1924,6 @@ begin
     Screen.Cursor:= crDefault;
     List.Free;
   end;
-
 end;
 
 (**************  Script Exception  ****************)
@@ -2407,8 +2402,8 @@ begin
     fmTableManage.Show;
 
   except
-  on e: exception do
-    MessageDlg('Error while opening Table Management: ' + e.Message, mtError, [mbOk], 0);
+    on e: exception do
+      MessageDlg('Error while opening Table Management: ' + e.Message, mtError, [mbOk], 0);
   end;
 end;
 
@@ -2696,11 +2691,11 @@ begin
     AddToSQLHistory(Rec.RegRec.Title, 'DDL', SQLQuery1.SQL.Text);
 
   except
-  on e: exception do
-  begin
-    ShowMessage('Error: ' + e.Message);
-    Result:= False;
-  end;
+    on e: exception do
+    begin
+      ShowMessage('Error: ' + e.Message);
+      Result:= False;
+    end;
   end;
 end;
 
@@ -2770,7 +2765,7 @@ begin
     SQLQuery1.Close;
     Params:= Params + ')' + #10 + #10 + 'Returns ';
 
-    {todo: return values cann't be determined}
+    {todo: return values can't be determined}
 
     // Result Params
     SQLQuery1.SQL.Text:= 'SELECT * FROM RDB$FUNCTION_ARGUMENTS where RDB$FUNCTION_Name = ''' +
@@ -2787,15 +2782,13 @@ begin
     end;
     SQLQuery1.Close;
     Result:= True;
-
   except
-  on e: exception do
-  begin
-    ShowMessage(e.Message);
-    IBConnection.Close;
-    Result:= False;
-  end;
-
+    on e: exception do
+    begin
+      ShowMessage(e.Message);
+      IBConnection.Close;
+      Result:= False;
+    end;
   end;
 end;
 
@@ -3283,7 +3276,6 @@ begin
     on e: exception do
       ShowMessage(E.Message);
   end;
-
 end;
 
 
@@ -4119,20 +4111,23 @@ end;
 function TfmMain.GetFBTypeName(Index: Integer): string;
 begin
   case Index of
-     261 : Result:= 'BLOB';
-      14 : Result:= 'CHAR';
-      40 : Result:= 'CSTRING';
-      11 : Result:= 'D_FLOAT';
-      27 : Result:= 'DOUBLE Precision';
-      10 : Result:= 'FLOAT';
-      16 : Result:= 'INT64';
-      8  : Result:= 'INTEGER';
-      9  : Result:= 'QUAD';
-      7  : Result:= 'SMALLINT';
-      12 : Result:= 'DATE';
-      13 : Result:= 'TIME';
-      35 : Result:= 'TIMESTAMP';
-      37 : Result:= 'VARCHAR';
+    // See also
+    // http://firebirdsql.org/manual/migration-mssql-data-types.html
+    // http://stackoverflow.com/questions/12070162/how-can-i-get-the-table-description-fields-and-types-from-firebird-with-dbexpr
+    261 : Result:= 'BLOB';
+    14 : Result:= 'CHAR';
+    40 : Result:= 'CSTRING';
+    11 : Result:= 'D_FLOAT';
+    16 : Result:= 'BIGINT'; // depending on subtype, BIGINT, NUMERIC or DECIMAL. Probably int64 in Interbase
+    27 : Result:= 'DOUBLE';
+    10 : Result:= 'FLOAT';
+    8  : Result:= 'INTEGER';
+    9  : Result:= 'QUAD';
+    7  : Result:= 'SMALLINT';
+    12 : Result:= 'DATE';
+    13 : Result:= 'TIME';
+    35 : Result:= 'TIMESTAMP';
+    37 : Result:= 'VARCHAR';
   else
     Result:= 'Unknown Type';
   end;
