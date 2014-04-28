@@ -32,9 +32,9 @@ type
 
     function GetAllConstraints(dbIndex: Integer; ConstraintsList, TablesList: TStringList): Boolean;
 
-    // Returns non-0 if foreign key constraint has a compound index (multiple fields)
+    // Returns non-0 if foreign key constraint has a composite index (multiple fields)
     // Returns 0 otherwise
-    function GetCompoundFKConstraints(TableName, ConstraintName: string): integer;
+    function GetCompositeFKConstraints(TableName, ConstraintName: string): integer;
 
     function GetConstraintInfo(dbIndex: Integer; ATableName, ConstraintName: string; var KeyName,
         CurrentTableName, CurrentFieldName, OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string): Boolean;
@@ -410,13 +410,13 @@ begin
 
 end;
 
-function TdmSysTables.GetCompoundFKConstraints(TableName,
+function TdmSysTables.GetCompositeFKConstraints(TableName,
   ConstraintName: string): integer;
 const
   // For specified constraint, returns foreign key constraints and count
-  // if it has a compound key (i.e. multiple foreign key fields).
+  // if it has a composite key (i.e. multiple foreign key fields).
   // Based on query in GetTableConstraints
-  CompoundCountSQL =
+  CompositeCountSQL =
    'select trim(rc.rdb$constraint_name) as ConstName, '+
    'count(rfc.rdb$const_name_uq) as KeyCount '+
    'from rdb$relation_constraints AS rc '+
@@ -432,21 +432,21 @@ const
    'and rc.rdb$constraint_name=''%s'' '+
    'order by rc.rdb$constraint_name ';
 var
-  CompoundQuery: TSQLQuery;
+  CompositeQuery: TSQLQuery;
 begin
   result:= 0;
-  CompoundQuery:=TSQLQuery.Create(nil);
+  CompositeQuery:=TSQLQuery.Create(nil);
   try
-    CompoundQuery.DataBase:= ibcDatabase;
-    CompoundQuery.Transaction:= stTrans;
-    CompoundQuery.SQL.Text:=Format(CompoundCountSQL,[TableName,ConstraintName]);
-    CompoundQuery.Open;
-    if not(CompoundQuery.EOF) then
-      Result:= CompoundQuery.FieldByName('KeyCount').AsInteger;
-    CompoundQuery.Close;
+    CompositeQuery.DataBase:= ibcDatabase;
+    CompositeQuery.Transaction:= stTrans;
+    CompositeQuery.SQL.Text:=Format(CompositeCountSQL,[TableName,ConstraintName]);
+    CompositeQuery.Open;
+    if not(CompositeQuery.EOF) then
+      Result:= CompositeQuery.FieldByName('KeyCount').AsInteger;
+    CompositeQuery.Close;
     //todo: check if this fits in with transaction management
   finally
-    CompoundQuery.Free;
+    CompositeQuery.Free;
   end;
 end;
 
