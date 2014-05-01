@@ -15,6 +15,7 @@ function ScriptAllGenerators(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts a single table as CREATE TABLE DDL
 procedure ScriptTableAsCreate(dbIndex: Integer; ATableName: string; ScriptList: TStringList);
 function ScriptAllTables(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts all stored procedures
 function ScriptAllProcedureTemplates(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllViews(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllTriggers(dbIndex: Integer; var List: TStringList): Boolean;
@@ -293,7 +294,7 @@ begin
     begin
       ProcedureScript.Text:= fmMain.GetStoredProcBody(dbIndex, ProceduresList[i], SPOwner);
       ProcedureScript.Insert(0, 'SET TERM ^ ;');
-      ProcedureScript.Insert(1, 'CREATE Procedure ' + ProceduresList[i] + '(');
+      ProcedureScript.Insert(1, 'CREATE Procedure ' + ProceduresList[i]);
       ProcedureScript.Add('^');
       ProcedureScript.Add('SET TERM ; ^');
       ProcedureScript.Add('');

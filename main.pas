@@ -33,10 +33,12 @@ const
   {$ifDEF CPU64}
    Arch = '64';
   {$ENDIF}
-
+  // Some field types used in e.g. RDB$FIELDS
+  CharType = 14;
+  CStringType = 40; //verify if Firebird not interbase only
+  VarCharType = 37;
 
 type
-
   TDatabaseRec = record
     Index: Integer;
     RegRec: TRegisteredDatabase;
@@ -241,6 +243,8 @@ type
     // Get fields information for specified table
     // Fills SQLQuery1 with details
     procedure GetFields(DatabaseIndex: Integer; ATableName: string; FieldsList: TStringList);
+    // Get body of a stored procedure (without SET TERM... clauses)
+    // Fills SQLQuery1 with details
     function GetStoredProcBody(DatabaseIndex: Integer; AProcName: string; var SPOwner: string): string;
     function GetViewInfo(DatabaseIndex: Integer; AViewName: string; var Columns, Body: string): Boolean;
     function ChangeTriggerActivity(DatabaseIndex: Integer; ATriggerName: string; ActiveState: Boolean): Boolean;
@@ -1070,7 +1074,7 @@ begin
     QWindow:= ShowQueryWindow(DBIndex, 'Edit stored procedure ' + AProcName);
     QWindow.meQuery.Lines.Clear;
   //  QWindow.meQuery.Lines.Add('SET TERM ^ ;');
-    QWindow.meQuery.Lines.Add('ALTER PROCEDURE ' + AProcName + '(');
+    QWindow.meQuery.Lines.Add('ALTER PROCEDURE ' + AProcName);
     QWindow.meQuery.Text:= QWindow.meQuery.Text + Trim(spBody) + ';';
    // QWindow.meQuery.Lines.Add('SET TERM ; ^');
 
@@ -1523,6 +1527,7 @@ var
   i: Integer;
   SizeStarted: Boolean;
 begin
+  //todo: verify if this still works after the scripting fixes
   SizeStarted:= False;
   if (Pos('(', Body) > 0) and (Pos('(', Body) < Pos(')', Body)) then
   for i:= 1 to Length(Body) do
@@ -2513,15 +2518,27 @@ end;
 (**********  Get Stored Proc body  ****************)
 
 function TfmMain.GetStoredProcBody(DatabaseIndex: Integer; AProcName: string; var SPOwner: string): string;
+const
+  BodyTemplate=
+    'SELECT * FROM rdb$procedures where rdb$Procedure_name =  ''%s'' ';
+  ParamTemplate=
+   'SELECT rdb$parameter_name, rdb$field_type, rdb$field_sub_type, '+
+   'rdb$field_length, rdb$field_scale, rdb$field_precision, '+
+   'rdb$character_length, rdb$parameter_type '+
+   'FROM rdb$procedure_parameters sp_param '+
+   'JOIN rdb$fields fld '+
+   'ON sp_param.rdb$field_source = fld.rdb$field_name '+
+   'WHERE '+
+   'sp_param.rdb$procedure_name =''%s'' ' +
+   'order by rdb$parameter_type, rdb$parameter_number';
 var
   Rec: TDatabaseRec;
   i: Integer;
+  InputParams: integer; //count of input parameters
   Line: string;
   ParamName: string;
-  FirstOutput: Boolean;
-  ParamType: Byte;
-  Separator: Boolean;
-  BodyList: TStringList;
+  OutputParams: integer; //count of output params
+  BodyList: TStringList; // procedure body
 begin
   try
     AProcName:= UpperCase(AProcName);
@@ -2529,55 +2546,83 @@ begin
     try
       Rec:= RegisteredDatabases[DatabaseIndex];
       SetConnection(DatabaseIndex);
+
+      // Get number of input and output parameters
       SQLQuery1.Close;
-      SQLQuery1.SQL.Text:= 'SELECT rdb$parameter_name, rdb$field_type, rdb$field_sub_type, '+
-        'rdb$field_length, rdb$field_scale, rdb$field_precision, '+
-        'rdb$character_length, rdb$parameter_type '+
-        'FROM rdb$procedure_parameters sp_param '+
-        'JOIN rdb$fields fld '+
-        'ON sp_param.rdb$field_source = fld.rdb$field_name '+
-        'WHERE '+
-        'sp_param.rdb$procedure_name =''' + AProcName + ''' ' +
-        'order by rdb$parameter_type, rdb$parameter_number';
-
+      SQLQuery1.SQL.Text:= format(BodyTemplate,[AProcName]);
       SQLQuery1.Open;
-      FirstOutput:= False;
+      // Null will result in 0 which is fine here
+      InputParams:= SQLQuery1.FieldByName('rdb$procedure_inputs').AsInteger;
+      OutputParams:= SQLQuery1.FieldByName('rdb$procedure_outputs').AsInteger;
 
-      // Get procedure parameters
-      while not SQLQuery1.EOF do
+      SQLQuery1.Close;
+      SQLQuery1.SQL.Text:= format(ParamTemplate,[AProcName]);
+      SQLQuery1.Open;
+
+      // Get input parameters
+      if InputParams>0 then
       begin
-        ParamName:= Trim(SQLQuery1.FieldByName('RDB$Parameter_Name').AsString);
-        ParamType:= SQLQuery1.FieldByName('rdb$parameter_type').AsInteger;
-        Separator:= False;
-        // Output parameter
-        if (not FirstOutput) and (ParamType = 1) then
+        BodyList.Add('(');
+        i:= 1;
+        while (not SQLQuery1.EOF) and (i<=InputParams) do
         begin
-          BodyList.Add(')' + #10 + 'RETURNS (');
-          FirstOutput:= True;
-          Separator:= True;
+          // Check for input parameter type:
+          if (SQLQuery1.FieldByName('rdb$parameter_type').AsInteger=0) then
+          begin
+            ParamName:= Trim(SQLQuery1.FieldByName('rdb$parameter_name').AsString);
+            Line:= '  ' + ParamName + '    ' +
+              GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger,
+              SQLQuery1.FieldByName('rdb$field_sub_type').AsInteger,
+              SQLQuery1.FieldByName('rdb$field_length').AsInteger,
+              SQLQuery1.FieldByName('rdb$field_scale').AsInteger);
+            if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger in [CharType,CStringType,VarCharType] then
+              Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
+            if (InputParams>1) and (i<InputParams) then
+              Line:= Line + ',';
+            BodyList.Add(Line);
+            inc(i);
+          end;
+          SQLQuery1.Next;
         end;
-        //todo: verify if getfbtypename needs more parameters here
-        Line:= '  ' + ParamName + '    ' +
-          GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger);
-        if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger = 37 then
-          Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
-        SQLQuery1.Next;
-
-        if (not SQLQuery1.EOF) then
-        if ((FirstOutput) or (SQLQuery1.FieldByName('rdb$parameter_Type').AsInteger = 0)) then
-          Line:= Line + ',';
-
-        BodyList.Add(Line);
+        BodyList.Add(')' + #10);
       end;
 
-      BodyList.Add(')');
-      BodyList.Add('AS');
+      // Get output parameters
+      if OutputParams>0 then
+      begin
+        BodyList.Add('RETURNS (');
+        i:= 1;
+        while (not SQLQuery1.EOF) and (i<=OutputParams) do
+        begin
+          // Check for input parameter type:
+          if (SQLQuery1.FieldByName('rdb$parameter_type').AsInteger=1) then
+          begin
+            ParamName:= Trim(SQLQuery1.FieldByName('rdb$parameter_name').AsString);
+            Line:= '  ' + ParamName + '    ' +
+              GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger,
+              SQLQuery1.FieldByName('rdb$field_sub_type').AsInteger,
+              SQLQuery1.FieldByName('rdb$field_length').AsInteger,
+              SQLQuery1.FieldByName('rdb$field_scale').AsInteger);
+            if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger in [CharType,CStringType,VarCharType] then
+              Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
+            if (OutputParams>1) and (i<OutputParams) then
+              Line:= Line + ',';
+            BodyList.Add(Line);
+            inc(i);
+          end;
+          SQLQuery1.Next;
+        end;
+        BodyList.Add(')' + #10);
+      end;
       SQLQuery1.Close;
 
-      // Get Procedure body
-      SQLQuery1.SQL.Text:= 'SELECT * FROM rdb$procedures where rdb$Procedure_name =  ''' + AProcName + '''';
+      BodyList.Add('AS');
+
+      // Get Procedure body (using the same query as before)
+      SQLQuery1.SQL.Text:= format(BodyTemplate,[AProcName]);
       SQLQuery1.Open;
       SPOwner:= Trim(SQLQuery1.FieldByName('rdb$Owner_Name').AsString);
+      // Actual body text:
       BodyList.Add(SQLQuery1.FieldByName('rdb$Procedure_Source').AsString);
       SQLQuery1.Close;
       Result:= BodyList.Text;
@@ -2744,8 +2789,8 @@ begin
     SQLQuery1.Open;
     while not SQLQuery1.EOF do
     begin
-      Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger);
       //todo: verify if getfbtypename needs more parameters here
+      Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger);
       if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [14, 37, 40] then
         Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
       SQLQuery1.Next;
@@ -3084,6 +3129,7 @@ begin
           Cells[2, RowCount - 1]:= FieldByName('Computed_Source').AsString;
 
         // Field Size
+        // todo: shouldn't char and cstring - types 14,40 be included? investigate
         if FieldByName('Field_Type_Int').AsInteger in [37] then
           Cells[3, RowCount - 1]:= FieldByName('Character_Leng').AsString
         else
@@ -3214,6 +3260,7 @@ begin
          (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
          (FieldByName('Field_Collation').IsNull) then
          begin
+           // todo: shouldn't char and cstring - types 14,40 be included? investigate
            if FieldByName('Field_type_int').AsInteger = 37 then
              LenStr:= FieldByName('Character_Leng').AsString
            else

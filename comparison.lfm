@@ -10,7 +10,7 @@ object fmComparison: TfmComparison
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '1.2.0.3'
+  LCLVersion = '1.2.2.0'
   object Label1: TLabel
     Left = 15
     Height = 13

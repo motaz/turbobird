@@ -406,7 +406,7 @@ begin
       begin
         ScriptList.Text:= fmMain.GetStoredProcBody(fdbIndex, dbObjectsList[x].Strings[i], SPOwner);
         ScriptList.Insert(0, 'SET TERM ^ ;');
-        ScriptList.Insert(1, 'CREATE Procedure ' + dbObjectsList[x].Strings[i] + '(');
+        ScriptList.Insert(1, 'CREATE Procedure ' + dbObjectsList[x].Strings[i]);
         ScriptList.Add('^');
         ScriptList.Add('SET TERM ; ^');
         ScriptList.Add('');
@@ -1474,7 +1474,7 @@ begin
     begin
       ProcName:= ModifiedProceduresList[i];
       Body:= fmMain.GetStoredProcBody(fdbIndex, ProcName, SOwner);
-      fQueryWindow.meQuery.Lines.Add('alter procedure ' + ProcName + '(');
+      fQueryWindow.meQuery.Lines.Add('alter procedure ' + ProcName);
       List.Text:= Body + ';';
       fQueryWindow.meQuery.Lines.AddStrings(List);
 
