@@ -1267,6 +1267,7 @@ begin
         if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
          (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
          (FieldByName('Field_Collation').IsNull) then
+         //todo: use fieldtype const instead of field_type_str
         if (FieldByName('Field_Type_Str').AsString <> 'BLOB') then
           clbFields.Items.Add(FieldByName('Field_Name').AsString);
         Next;
@@ -1958,6 +1959,7 @@ begin
         ParamNames:= ParamNames + ':' + Trim(FieldByName('Field_Name').AsString);
         FieldLine:= Trim(FieldByName('Field_Name').AsString) + ' ';
         FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
+        //todo: verify if cstring fields also should be included
         if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
           FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
       end
@@ -1976,7 +1978,6 @@ begin
         end;
         QWindow.meQuery.Lines.Add(FieldLine);
       end;
-
     end;
     SQLQuery1.Close;
 
@@ -2003,7 +2004,6 @@ begin
     QWindow.meQuery.Lines.Add('end;');
 
     QWindow.Show;
-
   end;
 end;
 
@@ -2460,7 +2460,6 @@ begin
   Rec:= RegisteredDatabases[DatabaseIndex];
   SetConnection(DatabaseIndex);
   sqlTransaction.Commit;
-  //todo: check all occurrences and rewrite field_type_str with fmMain.GetFBTypeName function
   SQLQuery1.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
       '  r.RDB$DESCRIPTION AS field_description, ' +
       '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
@@ -2475,7 +2474,7 @@ begin
       '    WHEN 14 THEN ''CHAR'' ' +
       '    WHEN 40 THEN ''CSTRING''  ' +
       '    WHEN 11 THEN ''D_FLOAT'' ' +
-      '    WHEN 27 THEN ''DOUBLE Precision'' ' +
+      '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +
       '    WHEN 10 THEN ''FLOAT'' ' +
       '    WHEN 16 THEN ''BIGINT'' ' +
       '    WHEN 8 THEN ''INTEGER'' ' +
@@ -4261,11 +4260,13 @@ begin
         // Update SQL
         sqQuery.UpdateSQL.Add('update ' + ATableName + ' set ');
         for i:= 0 to FieldsList.Count - 1 do
+        begin
           if KeyList.IndexOf(FieldsList[i]) = -1 then
           begin
             sqQuery.UpdateSQL.Add(FieldsList[i] + ' = :' + FieldsList[i]);
             sqQuery.UpdateSQL.Add(',');
           end;
+        end;
 
         sqQuery.UpdateSQL.Delete(sqQuery.UpdateSQL.Count - 1); // Delete last comma
 

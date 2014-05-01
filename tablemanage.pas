@@ -310,7 +310,7 @@ begin
   fmMain.SQLQuery1.Close;
   fmNewConstraint.edNewName.Text:= 'FK_' + fTableName + '_' + IntToStr(sgConstraints.RowCount);
 
-  // Foriegn tables
+  // Foreign tables
   fmNewConstraint.cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 1, Count);
   fmNewConstraint.DatabaseIndex:= fdbIndex;
 

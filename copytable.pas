@@ -75,7 +75,6 @@ begin
   end;
   syScript.Lines.Text:= 'select ' + Line;
   syScript.Lines.Add(' from ' + cbSourceTable.Text);
-
 end;
 
 procedure TfmCopyTable.bbCloseClick(Sender: TObject);

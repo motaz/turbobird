@@ -732,7 +732,7 @@ end;
 
 procedure TdmSysTables.GetBasicTypes(List: TStrings);
 begin
-  List.CommaText:= List.CommaText + 'SMALLINT,INTEGER,BIGINT,VARCHAR,FLOAT,"DOUBLE Precision",CHAR,DATE,TIME,' +
+  List.CommaText:= List.CommaText + 'SMALLINT,INTEGER,BIGINT,VARCHAR,FLOAT,"DOUBLE PRECISION",CHAR,DATE,TIME,' +
     'TIMESTAMP,CSTRING,D_FLOAT,QUAD,BLOB';
 end;
 
