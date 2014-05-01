@@ -803,7 +803,7 @@ begin
       '  CASE f.RDB$FIELD_TYPE ' +
       '    WHEN 261 THEN ''BLOB'' ' +
       '    WHEN 14 THEN ''CHAR'' ' +
-      '    WHEN 40 THEN ''CSTRING''  ' +
+      '    WHEN 40 THEN ''CSTRING''  ' + // probably null-terminated string used for UDFs
       '    WHEN 11 THEN ''D_FLOAT'' ' +
       '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +
       '    WHEN 10 THEN ''FLOAT'' ' +
@@ -1030,7 +1030,7 @@ begin
       '  CASE f.RDB$FIELD_TYPE ' +
       '    WHEN 261 THEN ''BLOB'' ' +
       '    WHEN 14 THEN ''CHAR'' ' +
-      '    WHEN 40 THEN ''CSTRING''  ' +
+      '    WHEN 40 THEN ''CSTRING''  ' + // probably null-terminated string used for UDFs
       '    WHEN 12 THEN ''DATE'' ' +
       '    WHEN 11 THEN ''D_FLOAT'' ' +
       '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +

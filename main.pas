@@ -34,8 +34,9 @@ const
    Arch = '64';
   {$ENDIF}
   // Some field types used in e.g. RDB$FIELDS
+  BlobType = 261;
   CharType = 14;
-  CStringType = 40; //verify if Firebird not interbase only
+  CStringType = 40; // probably null-terminated string used for UDFs
   VarCharType = 37;
 
 type
@@ -1267,9 +1268,10 @@ begin
         if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
          (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
          (FieldByName('Field_Collation').IsNull) then
-         //todo: use fieldtype const instead of field_type_str
-        if (FieldByName('Field_Type_Str').AsString <> 'BLOB') then
-          clbFields.Items.Add(FieldByName('Field_Name').AsString);
+        begin
+          if (FieldByName('Field_Type_Int').AsInteger <> BlobType) then
+            clbFields.Items.Add(FieldByName('Field_Name').AsString);
+        end;
         Next;
       end;
       Self.SQLQuery1.Close;
@@ -2472,7 +2474,7 @@ begin
       '  CASE f.RDB$FIELD_TYPE ' +
       '    WHEN 261 THEN ''BLOB'' ' +
       '    WHEN 14 THEN ''CHAR'' ' +
-      '    WHEN 40 THEN ''CSTRING''  ' +
+      '    WHEN 40 THEN ''CSTRING''  ' +  // probably null-terminated string used for UDFs
       '    WHEN 11 THEN ''D_FLOAT'' ' +
       '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +
       '    WHEN 10 THEN ''FLOAT'' ' +
@@ -4136,7 +4138,7 @@ begin
     // http://stackoverflow.com/questions/12070162/how-can-i-get-the-table-description-fields-and-types-from-firebird-with-dbexpr
     261 : Result:= 'BLOB';
     14 : Result:= 'CHAR';
-    40 : Result:= 'CSTRING';
+    40 : Result:= 'CSTRING'; // probably null-terminated string used for UDFs
     12 : Result:= 'DATE';
     11 : Result:= 'D_FLOAT';
     16 : Result:= 'BIGINT'; // Probably int64 in Interbase. Further processed below
