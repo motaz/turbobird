@@ -4094,7 +4094,7 @@ begin
     12 : Result:= 'DATE';
     11 : Result:= 'D_FLOAT';
     16 : Result:= 'BIGINT'; // Probably int64 in Interbase. Further processed below
-    27 : Result:= 'DOUBLE';
+    27 : Result:= 'DOUBLE PRECISION';
     10 : Result:= 'FLOAT';
     8  : Result:= 'INTEGER'; // further processed below
     9  : Result:= 'QUAD';

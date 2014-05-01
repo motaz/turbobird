@@ -805,7 +805,7 @@ begin
       '    WHEN 14 THEN ''CHAR'' ' +
       '    WHEN 40 THEN ''CSTRING''  ' +
       '    WHEN 11 THEN ''D_FLOAT'' ' +
-      '    WHEN 27 THEN ''DOUBLE'' ' +
+      '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +
       '    WHEN 10 THEN ''FLOAT'' ' +
       '    WHEN 16 THEN ''BIGINT'' ' +
       '    WHEN 8 THEN ''INTEGER'' ' +
@@ -1033,7 +1033,7 @@ begin
       '    WHEN 40 THEN ''CSTRING''  ' +
       '    WHEN 12 THEN ''DATE'' ' +
       '    WHEN 11 THEN ''D_FLOAT'' ' +
-      '    WHEN 27 THEN ''DOUBLE'' ' +
+      '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +
       '    WHEN 10 THEN ''FLOAT'' ' +
       '    WHEN 16 THEN ''BIGINT'' ' +
       '    WHEN 8 THEN ''INTEGER'' ' +

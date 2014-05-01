@@ -179,6 +179,7 @@ begin
           FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
 
         // Rudimentary support for array datatypes (only covers 0 dimension types):
+        // todo: expand to proper array type detection (low priority)
         if not(FieldByName('Array_Upper_Bound').IsNull) then
           FieldLine:= FieldLine + ' [' + FieldByName('Array_Upper_Bound').AsString + '] ';
 
@@ -186,7 +187,7 @@ begin
         DefaultValue:= Trim(FieldByName('Field_Default_Value').AsString);
         if DefaultValue <> '' then
         begin
-          if pos('default', DefaultValue) <> 1 then
+          if pos('default', LowerCase(DefaultValue)) <> 1 then
             DefaultValue:= ' default ''' + DefaultValue + '''';
           FieldLine:= FieldLine + ' ' + DefaultValue;
         end;
