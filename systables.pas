@@ -792,51 +792,36 @@ function TdmSysTables.GetFieldInfo(dbIndex: Integer; TableName, FieldName: strin
 begin
   Init(dbIndex);
   sqQuery.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
-      '  r.RDB$DESCRIPTION AS field_description, ' +
-      '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
-      '  r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
-      '  f.RDB$FIELD_LENGTH AS field_length, ' +
-      '  f.RDB$Character_LENGTH AS Character_leng, ' +
-      '  f.RDB$FIELD_PRECISION AS field_precision, ' +
-      '  f.RDB$FIELD_SCALE AS field_scale, ' +
-      '  f.RDB$FIELD_TYPE as Field_Type_Int, ' +
-      '  CASE f.RDB$FIELD_TYPE ' +
-      '    WHEN 261 THEN ''BLOB'' ' +
-      '    WHEN 14 THEN ''CHAR'' ' +
-      '    WHEN 40 THEN ''CSTRING''  ' + // probably null-terminated string used for UDFs
-      '    WHEN 11 THEN ''D_FLOAT'' ' +
-      '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +
-      '    WHEN 10 THEN ''FLOAT'' ' +
-      '    WHEN 16 THEN ''BIGINT'' ' +
-      '    WHEN 8 THEN ''INTEGER'' ' +
-      '    WHEN 9 THEN ''QUAD'' ' +
-      '    WHEN 7 THEN ''SMALLINT'' ' +
-      '    WHEN 12 THEN ''DATE'' ' +
-      '    WHEN 13 THEN ''TIME'' ' +
-      '    WHEN 35 THEN ''TIMESTAMP'' ' +
-      '    WHEN 37 THEN ''VARCHAR'' ' +
-      '    ELSE ''UNKNOWN'' ' +
-      '  END AS field_type_Str, ' +
-      ' f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
-      ' coll.RDB$COLLATION_NAME AS field_collation, ' +
-      ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
-      ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
-      ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound ' +
-      ' FROM RDB$RELATION_FIELDS r ' +
-      ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
-      ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
-      ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
-      ' LEFT JOIN RDB$FIELD_DIMENSIONS dim on f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME '+
-      ' WHERE r.RDB$RELATION_NAME=''' + TableName + '''  and Trim(r.RDB$FIELD_NAME) = ''' + UpperCase(FieldName) + ''' ' +
-      ' ORDER BY r.RDB$FIELD_POSITION ';
+    ' r.RDB$DESCRIPTION AS field_description, ' +
+    ' r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
+    ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
+    ' f.RDB$FIELD_LENGTH AS field_length, ' +
+    ' f.RDB$Character_LENGTH AS Character_length, ' +
+    ' f.RDB$FIELD_PRECISION AS field_precision, ' +
+    ' f.RDB$FIELD_SCALE AS field_scale, ' +
+    ' f.RDB$FIELD_TYPE as Field_Type_Int, ' +
+    ' f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
+    ' coll.RDB$COLLATION_NAME AS field_collation, ' +
+    ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
+    ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
+    ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound ' +
+    ' FROM RDB$RELATION_FIELDS r ' +
+    ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
+    ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
+    ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
+    ' LEFT JOIN RDB$FIELD_DIMENSIONS dim on f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME '+
+    ' WHERE r.RDB$RELATION_NAME=''' + TableName + '''  and Trim(r.RDB$FIELD_NAME) = ''' + UpperCase(FieldName) + ''' ' +
+    ' ORDER BY r.RDB$FIELD_POSITION ';
   sqQuery.Open;
   Result:= sqQuery.RecordCount > 0;
   if Result then
   begin
     with sqQuery do
     begin
-      // to do: rewrite using function
-      FieldType:= Trim(FieldByName('Field_Type_Str').AsString);
+      FieldType:= fmMain.GetFBTypeName(FieldByName('Field_Type').AsInteger,
+        FieldByName('field_sub_type').AsInteger,
+        FieldByName('field_length').AsInteger,
+        FieldByName('field_scale').AsInteger);
       // Array should really be [lowerbound:upperbound] (if dimension is 0)
       // but for now don't bother as arrays are not supported anyway
       // Assume 0 dimension, 1 lower bound; just fill in upper bound
@@ -845,8 +830,8 @@ begin
           ' [' +
           FieldByName('Array_Upper_Bound').AsString +
           ']';
-      if FieldByName('Field_Type_int').AsInteger = 37 then // VarChar
-        FieldSize:= FieldByName('Character_Leng').AsInteger
+      if FieldByName('Field_Type_int').AsInteger = VarCharType then
+        FieldSize:= FieldByName('Character_Length').AsInteger
       else
         FieldSize:= FieldByName('Field_Length').AsInteger;
       NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';
@@ -1017,36 +1002,17 @@ var
   FieldName: string;
 begin
   Init(dbIndex);
-  //todo: check all references to this query and rewrite using function for field type
-  //instead of field_type_str
   sqQuery.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
-      '  r.RDB$DESCRIPTION AS field_description, ' +
-      '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
-      '  r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
-      '  f.RDB$FIELD_LENGTH AS field_length, ' +
-      '  f.RDB$FIELD_PRECISION AS field_precision, ' +
-      '  f.RDB$FIELD_SCALE AS field_scale, ' +
-      '  f.RDB$FIELD_TYPE as Field_Type_Int, ' +
-      '  CASE f.RDB$FIELD_TYPE ' +
-      '    WHEN 261 THEN ''BLOB'' ' +
-      '    WHEN 14 THEN ''CHAR'' ' +
-      '    WHEN 40 THEN ''CSTRING''  ' + // probably null-terminated string used for UDFs
-      '    WHEN 12 THEN ''DATE'' ' +
-      '    WHEN 11 THEN ''D_FLOAT'' ' +
-      '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +
-      '    WHEN 10 THEN ''FLOAT'' ' +
-      '    WHEN 16 THEN ''BIGINT'' ' +
-      '    WHEN 8 THEN ''INTEGER'' ' +
-      '    WHEN 9 THEN ''QUAD'' ' +
-      '    WHEN 7 THEN ''SMALLINT'' ' +
-      '    WHEN 13 THEN ''TIME'' ' +
-      '    WHEN 35 THEN ''TIMESTAMP'' ' +
-      '    WHEN 37 THEN ''VARCHAR'' ' +
-      '    ELSE ''UNKNOWN'' ' +
-      '  END AS field_type_Str, ' +
-      '  f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
-      '  coll.RDB$COLLATION_NAME AS field_collation, ' +
-      '  cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
+      ' r.RDB$DESCRIPTION AS field_description, ' +
+      ' r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
+      ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
+      ' f.RDB$FIELD_LENGTH AS field_length, ' +
+      ' f.RDB$FIELD_PRECISION AS field_precision, ' +
+      ' f.RDB$FIELD_SCALE AS field_scale, ' +
+      ' f.RDB$FIELD_TYPE as Field_Type_Int, ' +
+      ' f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
+      ' coll.RDB$COLLATION_NAME AS field_collation, ' +
+      ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
       ' f.RDB$COMPUTED_Source AS Computed_Source ' +
       ' FROM RDB$RELATION_FIELDS r ' +
       ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +

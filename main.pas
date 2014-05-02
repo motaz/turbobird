@@ -1265,7 +1265,7 @@ begin
       clbFields.Clear;
       while not EOF do
       begin
-        if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
+        if (not(FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType])) or
          (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
          (FieldByName('Field_Collation').IsNull) then
         begin
@@ -1925,7 +1925,6 @@ var
   SelNode: TTreeNode;
   QWindow: TfmQueryWindow;
   ATableName: string;
-  i: Integer;
   ConstraintsList: TStringList;
   PKFieldsList: TStringList;
   FieldLine: string;
@@ -1952,18 +1951,21 @@ begin
     while not EOF do
     begin
       Skipped:= False;
-      if (FieldByName('Computed_Source').AsString = '') and
-          ((Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
+      if (FieldByName('Computed_Source').AsString = '') and { any of the following conditions }
+          ((not(FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType])) or
           (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
           (FieldByName('Field_Collation').IsNull)) then
       begin
         FieldNames:= FieldNames + Trim(FieldByName('Field_Name').AsString);
         ParamNames:= ParamNames + ':' + Trim(FieldByName('Field_Name').AsString);
         FieldLine:= Trim(FieldByName('Field_Name').AsString) + ' ';
-        FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
-        //todo: verify if cstring fields also should be included
-        if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
-          FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
+        FieldLine:= FieldLine +
+          GetFBTypeName(SQLQuery1.FieldByName('Field_Type_Int').AsInteger,
+            SQLQuery1.FieldByName('field_sub_type').AsInteger,
+            SQLQuery1.FieldByName('field_length').AsInteger,
+            SQLQuery1.FieldByName('field_scale').AsInteger);
+        if FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType] then
+          FieldLine:= FieldLine + '(' + FieldByName('Character_Length').AsString + ') ';
       end
       else
         Skipped:= True;
@@ -2180,17 +2182,20 @@ begin
     while not EOF do
     begin
       Skipped:= False;
-      if (FieldByName('Computed_Source').AsString = '') and
-         ((Pos('CHAR', FieldByName('Field_Type_Str').AsString) = 0) or
-          (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-          (FieldByName('Field_Collation').IsNull)) then
+      if (FieldByName('Computed_Source').AsString = '') and {any of the following conditions }
+         ((not(FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType])) or
+         (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
+         (FieldByName('Field_Collation').IsNull)) then
       begin
         AFieldName:= Trim(SQLQuery1.FieldByName('Field_Name').AsString);
         ParamAndValue:= ParamAndValue + AFieldName + ' = :' + AFieldName;
         FieldLine:= AFieldName + ' ';
-        FieldLine:= FieldLine + Trim(FieldByName('Field_Type_Str').AsString);
-        if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
-          FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
+        FieldLine:= FieldLine + GetFBTypeName(SQLQuery1.FieldByName('Field_Type_Int').AsInteger,
+          SQLQuery1.FieldByName('field_sub_type').AsInteger,
+          SQLQuery1.FieldByName('field_length').AsInteger,
+          SQLQuery1.FieldByName('field_scale').AsInteger);
+        if FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType] then
+          FieldLine:= FieldLine + '(' + FieldByName('Character_Length').AsString + ') ';
       end
       else
         Skipped:= True;
@@ -2463,43 +2468,26 @@ begin
   SetConnection(DatabaseIndex);
   sqlTransaction.Commit;
   SQLQuery1.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
-      '  r.RDB$DESCRIPTION AS field_description, ' +
-      '  r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
-      '  r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
-      '  f.RDB$FIELD_LENGTH AS field_length, ' +
-      '  f.RDB$Character_LENGTH AS character_leng, ' +
-      '  f.RDB$FIELD_PRECISION AS field_precision, ' +
-      '  f.RDB$FIELD_SCALE AS field_scale, ' +
-      '  f.RDB$FIELD_TYPE as Field_Type_Int, ' +
-      '  CASE f.RDB$FIELD_TYPE ' +
-      '    WHEN 261 THEN ''BLOB'' ' +
-      '    WHEN 14 THEN ''CHAR'' ' +
-      '    WHEN 40 THEN ''CSTRING''  ' +  // probably null-terminated string used for UDFs
-      '    WHEN 11 THEN ''D_FLOAT'' ' +
-      '    WHEN 27 THEN ''DOUBLE PRECISION'' ' +
-      '    WHEN 10 THEN ''FLOAT'' ' +
-      '    WHEN 16 THEN ''BIGINT'' ' +
-      '    WHEN 8 THEN ''INTEGER'' ' +
-      '    WHEN 9 THEN ''QUAD'' ' +
-      '    WHEN 7 THEN ''SMALLINT'' ' +
-      '    WHEN 12 THEN ''DATE'' ' +
-      '    WHEN 13 THEN ''TIME'' ' +
-      '    WHEN 35 THEN ''TIMESTAMP'' ' +
-      '    WHEN 37 THEN ''VARCHAR'' ' +
-      '    ELSE ''UNKNOWN'' ' +
-      '  END AS field_type_Str, ' +
-      '  f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
-      '  coll.RDB$COLLATION_NAME AS field_collation, ' +
-      '  cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
-      ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
-      ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound ' +
-      ' FROM RDB$RELATION_FIELDS r ' +
-      ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
-      ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
-      ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
-      ' LEFT JOIN RDB$FIELD_DIMENSIONS dim ON f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME ' +
-      ' WHERE r.RDB$RELATION_NAME=''' + ATableName + '''  ' +
-      ' ORDER BY r.RDB$FIELD_POSITION;';
+    ' r.RDB$DESCRIPTION AS field_description, ' +
+    ' r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
+    ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
+    ' f.RDB$FIELD_LENGTH AS field_length, ' +
+    ' f.RDB$Character_LENGTH AS character_length, ' +
+    ' f.RDB$FIELD_PRECISION AS field_precision, ' +
+    ' f.RDB$FIELD_SCALE AS field_scale, ' +
+    ' f.RDB$FIELD_TYPE as Field_Type_Int, ' +
+    ' f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
+    ' coll.RDB$COLLATION_NAME AS field_collation, ' +
+    ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
+    ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
+    ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound ' +
+    ' FROM RDB$RELATION_FIELDS r ' +
+    ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
+    ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
+    ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
+    ' LEFT JOIN RDB$FIELD_DIMENSIONS dim ON f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME ' +
+    ' WHERE r.RDB$RELATION_NAME=''' + ATableName + '''  ' +
+    ' ORDER BY r.RDB$FIELD_POSITION;';
   SQLQuery1.Open;
   // Fill field list if needed
   if FieldsList <> nil then
@@ -2771,9 +2759,11 @@ begin
     Params:= '';
     while not SQLQuery1.EOF do
     begin
-      Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger);
-      //todo: verify if getfbtypename needs more parameters here
-      if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [14, 37, 40] then
+      Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger,
+        SQLQuery1.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
+        SQLQuery1.FieldByName('RDB$FIELD_LENGTH').AsInteger,
+        SQLQuery1.FieldByName('RDB$FIELD_SCALE').AsInteger);
+      if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [CharType, CStringType, VarCharType] then
         Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
       SQLQuery1.Next;
       if not SQLQuery1.EOF then
@@ -2790,9 +2780,11 @@ begin
     SQLQuery1.Open;
     while not SQLQuery1.EOF do
     begin
-      //todo: verify if getfbtypename needs more parameters here
-      Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger);
-      if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [14, 37, 40] then
+      Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger,
+        SQLQuery1.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
+        SQLQuery1.FieldByName('RDB$FIELD_LENGTH').AsInteger,
+        SQLQuery1.FieldByName('RDB$FIELD_SCALE').AsInteger);
+      if SQLQuery1.FieldByName('Field_Type_Int').AsInteger in [CharType, CStringType, VarCharType] then
         Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
       SQLQuery1.Next;
       if not SQLQuery1.EOF then
@@ -3100,7 +3092,7 @@ begin
     with AStringGrid, SQLQuery1 do
     while not EOF do
     begin
-      if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
+      if (not (FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType])) or
        (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
        (FieldByName('Field_Collation').IsNull) then
       begin
@@ -3130,9 +3122,8 @@ begin
           Cells[2, RowCount - 1]:= FieldByName('Computed_Source').AsString;
 
         // Field Size
-        // todo: shouldn't char and cstring - types 14,40 be included? investigate
-        if FieldByName('Field_Type_Int').AsInteger in [37] then
-          Cells[3, RowCount - 1]:= FieldByName('Character_Leng').AsString
+        if FieldByName('Field_Type_Int').AsInteger in [CharType,CStringType,VarCharType] then
+          Cells[3, RowCount - 1]:= FieldByName('Character_Length').AsString
         else
           Cells[3, RowCount - 1]:= FieldByName('Field_Length').AsString;
 
@@ -3257,17 +3248,21 @@ begin
       while not EOF do
       begin
         AFieldName:= Trim(FieldByName('Field_Name').AsString);
-        if (Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
+        if (not (FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType])) or
          (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
          (FieldByName('Field_Collation').IsNull) then
          begin
-           // todo: shouldn't char and cstring - types 14,40 be included? investigate
-           if FieldByName('Field_type_int').AsInteger = 37 then
-             LenStr:= FieldByName('Character_Leng').AsString
+           if (FieldByName('Field_Type_Int').AsInteger) in [CharType, CStringType, VarCharType] then
+             LenStr:= FieldByName('Character_Length').AsString
            else
              LenStr:= FieldByName('Field_Length').AsString;
 
-          FieldTitle:= AFieldName + '   ' + Trim(FieldByName('Field_Type_str').AsString) + ' ' + LenStr;
+          FieldTitle:= AFieldName + '   ' +
+            GetFBTypeName(SQLQuery1.FieldByName('Field_Type_Int').AsInteger,
+              SQLQuery1.FieldByName('field_sub_type').AsInteger,
+              SQLQuery1.FieldByName('field_length').AsInteger,
+              SQLQuery1.FieldByName('field_scale').AsInteger) +
+            ' ' + LenStr;
           FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
           FieldNode.OverlayIndex:= i;
           if PKFieldsList.IndexOf(AFieldname) <> -1 then // Primary key
@@ -4136,9 +4131,9 @@ begin
     // See also
     // http://firebirdsql.org/manual/migration-mssql-data-types.html
     // http://stackoverflow.com/questions/12070162/how-can-i-get-the-table-description-fields-and-types-from-firebird-with-dbexpr
-    261 : Result:= 'BLOB';
+    BlobType : Result:= 'BLOB';
     14 : Result:= 'CHAR';
-    40 : Result:= 'CSTRING'; // probably null-terminated string used for UDFs
+    CStringType : Result:= 'CSTRING'; // probably null-terminated string used for UDFs
     12 : Result:= 'DATE';
     11 : Result:= 'D_FLOAT';
     16 : Result:= 'BIGINT'; // Probably int64 in Interbase. Further processed below
@@ -4149,7 +4144,7 @@ begin
     7  : Result:= 'SMALLINT'; // further processed below
     13 : Result:= 'TIME';
     35 : Result:= 'TIMESTAMP';
-    37 : Result:= 'VARCHAR';
+    VarCharType : Result:= 'VARCHAR';
   else
     Result:= 'Unknown Type';
   end;

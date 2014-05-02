@@ -14,6 +14,7 @@ function ScriptAllDomains(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllGenerators(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts a single table as CREATE TABLE DDL
 procedure ScriptTableAsCreate(dbIndex: Integer; ATableName: string; ScriptList: TStringList);
+// Scripts all tables calling ScriptTableAsCreate for each table
 function ScriptAllTables(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts all stored procedures
 function ScriptAllProcedureTemplates(dbIndex: Integer; var List: TStringList): Boolean;
@@ -162,8 +163,8 @@ begin
     while not EOF do
     begin
       Skipped:= False;
-      if (FieldByName('Computed_Source').AsString = '') and
-       ((Pos('CHAR', Trim(FieldByName('Field_Type_Str').AsString)) = 0) or
+      if (FieldByName('Computed_Source').AsString = '') and {any of the following }
+       ((not (FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType])) or
        (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
        (FieldByName('Field_Collation').IsNull)) then
       begin
@@ -176,11 +177,12 @@ begin
           FieldByName('Field_Length').AsInteger,
           FieldByName('Field_Scale').AsInteger);
 
-        if Pos('char', LowerCase(FieldByName('Field_Type_Str').AsString)) > 0 then
-          FieldLine:= FieldLine + '(' + FieldByName('Character_Leng').AsString + ') ';
+        if (FieldByName('Field_Type_Int').AsInteger) in [CharType, CStringType, VarCharType] then
+          FieldLine:= FieldLine + '(' + FieldByName('Character_Length').AsString + ') ';
 
         // Rudimentary support for array datatypes (only covers 0 dimension types):
-        // todo: expand to proper array type detection (low priority)
+        // todo: expand to proper array type detection (low priority as arrays are
+        // virtually unused)
         if not(FieldByName('Array_Upper_Bound').IsNull) then
           FieldLine:= FieldLine + ' [' + FieldByName('Array_Upper_Bound').AsString + '] ';
 
