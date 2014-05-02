@@ -2469,7 +2469,7 @@ const
     ' f.RDB$FIELD_PRECISION AS field_precision, ' +
     ' f.RDB$FIELD_SCALE AS field_scale, ' +
     ' f.RDB$FIELD_TYPE as Field_Type_Int, ' +
-    ' f.RDB$FIELD_SUB_TYPE AS field_subtype, ' +
+    ' f.RDB$FIELD_SUB_TYPE AS field_sub_type, ' +
     ' coll.RDB$COLLATION_NAME AS field_collation, ' +
     ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
     ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
@@ -3105,7 +3105,7 @@ begin
 
         // Field Type
         Cells[2, RowCount - 1]:= GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
-          FieldByName('Field_SubType').AsInteger,
+          FieldByName('Field_Sub_Type').AsInteger,
           FieldByName('Field_Length').AsInteger,
           FieldByName('Field_Scale').AsInteger);
 
