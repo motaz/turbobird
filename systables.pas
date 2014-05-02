@@ -796,7 +796,7 @@ begin
     ' r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
     ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
     ' f.RDB$FIELD_LENGTH AS field_length, ' +
-    ' f.RDB$Character_LENGTH AS Character_length, ' +
+    ' f.RDB$Character_LENGTH AS Characterlength, ' + {character_length seems a reserved word }
     ' f.RDB$FIELD_PRECISION AS field_precision, ' +
     ' f.RDB$FIELD_SCALE AS field_scale, ' +
     ' f.RDB$FIELD_TYPE as Field_Type_Int, ' +
@@ -831,7 +831,7 @@ begin
           FieldByName('Array_Upper_Bound').AsString +
           ']';
       if FieldByName('Field_Type_int').AsInteger = VarCharType then
-        FieldSize:= FieldByName('Character_Length').AsInteger
+        FieldSize:= FieldByName('CharacterLength').AsInteger
       else
         FieldSize:= FieldByName('Field_Length').AsInteger;
       NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';

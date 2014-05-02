@@ -178,7 +178,7 @@ begin
           FieldByName('Field_Scale').AsInteger);
 
         if (FieldByName('Field_Type_Int').AsInteger) in [CharType, CStringType, VarCharType] then
-          FieldLine:= FieldLine + '(' + FieldByName('Character_Length').AsString + ') ';
+          FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
 
         // Rudimentary support for array datatypes (only covers 0 dimension types):
         // todo: expand to proper array type detection (low priority as arrays are

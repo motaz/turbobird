@@ -1965,7 +1965,7 @@ begin
             SQLQuery1.FieldByName('field_length').AsInteger,
             SQLQuery1.FieldByName('field_scale').AsInteger);
         if FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType] then
-          FieldLine:= FieldLine + '(' + FieldByName('Character_Length').AsString + ') ';
+          FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
       end
       else
         Skipped:= True;
@@ -2195,7 +2195,7 @@ begin
           SQLQuery1.FieldByName('field_length').AsInteger,
           SQLQuery1.FieldByName('field_scale').AsInteger);
         if FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType] then
-          FieldLine:= FieldLine + '(' + FieldByName('Character_Length').AsString + ') ';
+          FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
       end
       else
         Skipped:= True;
@@ -2459,20 +2459,13 @@ end;
 (********************  Get Fields  **************************)
 
 procedure TfmMain.GetFields(DatabaseIndex: Integer; ATableName: string; FieldsList: TStringList);
-var
-  Rec: TDatabaseRec;
-  FieldName: string;
-begin
-  SQLQuery1.Close;
-  Rec:= RegisteredDatabases[DatabaseIndex];
-  SetConnection(DatabaseIndex);
-  sqlTransaction.Commit;
-  SQLQuery1.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
+const
+  QueryTemplate= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
     ' r.RDB$DESCRIPTION AS field_description, ' +
     ' r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
     ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
     ' f.RDB$FIELD_LENGTH AS field_length, ' +
-    ' f.RDB$Character_LENGTH AS character_length, ' +
+    ' f.RDB$CHARACTER_LENGTH AS characterlength, ' + {character_length seems a reserved word}
     ' f.RDB$FIELD_PRECISION AS field_precision, ' +
     ' f.RDB$FIELD_SCALE AS field_scale, ' +
     ' f.RDB$FIELD_TYPE as Field_Type_Int, ' +
@@ -2486,8 +2479,17 @@ begin
     ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
     ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
     ' LEFT JOIN RDB$FIELD_DIMENSIONS dim ON f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME ' +
-    ' WHERE r.RDB$RELATION_NAME=''' + ATableName + '''  ' +
+    ' WHERE r.RDB$RELATION_NAME=''%s'' ' +
     ' ORDER BY r.RDB$FIELD_POSITION;';
+var
+  Rec: TDatabaseRec;
+  FieldName: string;
+begin
+  SQLQuery1.Close;
+  Rec:= RegisteredDatabases[DatabaseIndex];
+  SetConnection(DatabaseIndex);
+  sqlTransaction.Commit;
+  SQLQuery1.SQL.Text:= format(QueryTemplate,[ATableName]);
   SQLQuery1.Open;
   // Fill field list if needed
   if FieldsList <> nil then
@@ -3123,7 +3125,7 @@ begin
 
         // Field Size
         if FieldByName('Field_Type_Int').AsInteger in [CharType,CStringType,VarCharType] then
-          Cells[3, RowCount - 1]:= FieldByName('Character_Length').AsString
+          Cells[3, RowCount - 1]:= FieldByName('CharacterLength').AsString
         else
           Cells[3, RowCount - 1]:= FieldByName('Field_Length').AsString;
 
@@ -3253,7 +3255,7 @@ begin
          (FieldByName('Field_Collation').IsNull) then
          begin
            if (FieldByName('Field_Type_Int').AsInteger) in [CharType, CStringType, VarCharType] then
-             LenStr:= FieldByName('Character_Length').AsString
+             LenStr:= FieldByName('CharacterLength').AsString
            else
              LenStr:= FieldByName('Field_Length').AsString;
 
