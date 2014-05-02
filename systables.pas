@@ -34,6 +34,9 @@ type
       var ConstraintsArray: TConstraintCounts);
     procedure Init(dbIndex: Integer);
     function GetDBObjectNames(DatabaseIndex, TVIndex: Integer; var Count: Integer): string;
+    // Returns object list (list of object names, i.e. tables, views) sorted by dependency
+    // Limits sorting within one category (e.g. views)
+    procedure SortDependencies(var ObjectList: TStringList);
     function GetTriggerInfo(DatabaseIndex: Integer; ATriggername: string;
       var AfterBefor, OnTable, Event, Body: string; var TriggerEnabled: Boolean;
       var TriggerPosition: Integer): Boolean;
@@ -99,7 +102,7 @@ var
 
 implementation
 
-uses Main;
+uses Main,topologicalsort;
 
 function DecToBin(Dec, Len: Byte): string;
 var
@@ -189,6 +192,54 @@ begin
   end;
   Count:= sqQuery.RecordCount;
   sqQuery.Close;
+end;
+
+procedure TdmSysTables.SortDependencies(var ObjectList: TStringList);
+const
+  QueryTemplate=
+    'select rdb$dependent_name, ' +
+    ' rdb$depended_on_name, ' +
+    ' rdb$dependent_type, '+
+    ' rdb$depended_on_type '+
+    ' from rdb$dependencies ';
+var
+  i: integer;
+  TopSort: TTopologicalSort;
+begin
+  TopSort:= TTopologicalSort.Create;
+  try
+    sqQuery.SQL.Text:= QueryTemplate;
+    sqQuery.Open;
+    // First add all objects that should end up as results without any depdencies
+    for i:=0 to ObjectList.Count-1 do
+    begin
+      TopSort.AddNode(ObjectList[i]);
+    end;
+    // Now add dependencies:
+    while not sqQuery.EOF do
+    begin
+      for i:=0 to ObjectList.Count-1 do
+      begin
+        if trim(sqQuery.FieldByName('rdb$dependent_name').AsString)=uppercase(ObjectList[i]) then
+          begin
+            // Get kind of object using dependency type in query;
+            // limit to same category (i.e. all views or all stored procedures)
+            if sqQuery. FieldByName('rdb$dependent_type').AsInteger=
+              sqQuery. FieldByName('rdb$depended_on_type').AsInteger then
+              TopSort.AddDependency(
+                trim(sqQuery.FieldByName('rdb$dependent_name').AsString),
+                trim(sqQuery.FieldByName('rdb$depended_on_name').AsString));
+          end;
+      end;
+      sqQuery.Next;
+    end;
+    sqQuery.Close;
+    // Resulting sorted list should end up in ObjectList:
+    ObjectList.Clear;
+    TopSort.Sort(ObjectList);
+  finally
+    TopSort.Free;
+  end;
 end;
 
 (***********  Get Trigger Info  ***************)

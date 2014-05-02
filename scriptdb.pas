@@ -35,10 +35,6 @@ procedure RemoveParamClosing(var AParams: string);
 
 implementation
 
-{ to do: add support for dependencies when extracting script; otherwise running the script may fail
-evaluating dependency order:
-http://rosettacode.org/wiki/Topological_sort#Object_Pascal
-}
 uses SysTables, Main;
 
 (********************  Script Roles  ***********************)
@@ -291,6 +287,8 @@ begin
   ProcedureScript:= TStringList.Create;
   try
     ProceduresList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 5, Count);
+    // Get procedures in dependency order:
+    dmSysTables.SortDependencies(ProceduresList);
     List.Clear;
     for i:= 0 to ProceduresList.Count - 1 do
     begin
