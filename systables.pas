@@ -937,7 +937,6 @@ begin
     ServerTime:= sqQuery.Fields[0].AsString;
     sqQuery.Close;
     Result:= True;
-
   except
     on e: exception do
     begin

@@ -100,7 +100,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="37">
+    <Units Count="38">
       <Unit0>
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -384,6 +384,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Update"/>
       </Unit36>
+      <Unit37>
+        <Filename Value="topologicalsort.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="topologicalsort"/>
+      </Unit37>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

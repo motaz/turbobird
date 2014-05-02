@@ -247,6 +247,8 @@ type
     // Get body of a stored procedure (without SET TERM... clauses)
     // Fills SQLQuery1 with details
     function GetStoredProcBody(DatabaseIndex: Integer; AProcName: string; var SPOwner: string): string;
+    // Get body and output parameters of a view
+    // Does *not* fill SQLQuery1 with details
     function GetViewInfo(DatabaseIndex: Integer; AViewName: string; var Columns, Body: string): Boolean;
     function ChangeTriggerActivity(DatabaseIndex: Integer; ATriggerName: string; ActiveState: Boolean): Boolean;
     function GetIndices(ATableName: string; AQuery: TSQLQuery): Boolean;
@@ -2629,6 +2631,20 @@ end;
 (******************  Get View Info (SQL Source) ***************)
 
 function TfmMain.GetViewInfo(DatabaseIndex: Integer; AViewName: string; var Columns, Body: string): Boolean;
+const
+  BodyTemplate= 'SELECT RDB$VIEW_SOURCE ' +
+    ' FROM RDB$RELATIONS ' +
+    ' WHERE RDB$VIEW_SOURCE IS NOT NULL ' +
+    ' AND UPPER(RDB$RELATION_NAME) = ''%s'';';
+  ColumnsTemplate= 'select r.rdb$field_name '+
+    ' from rdb$relation_fields r ' +
+    ' inner join rdb$fields f on ' +
+    ' r.rdb$field_source=f.rdb$field_name ' +
+    ' inner join rdb$types t on ' +
+    ' f.rdb$field_type=t.rdb$type ' +
+    ' where upper(r.rdb$relation_name)=''%s'' and ' +
+    ' t.rdb$field_name=''RDB$FIELD_TYPE'' ' +
+    ' order by r.RDB$FIELD_POSITION ';
 var
   Rec: TDatabaseRec;
 begin
@@ -2637,32 +2653,19 @@ begin
 
   // View Body
   SQLQuery1.Close;
-  SQLQuery1.SQL.Text:= 'SELECT RDB$VIEW_SOURCE ' +
-    'FROM RDB$RELATIONS ' +
-    'WHERE RDB$VIEW_SOURCE IS NOT NULL ' +
-    'AND UPPER(RDB$RELATION_NAME) = ''' + UpperCase(AViewName) + ''';';
+  SQLQuery1.SQL.Text:= format(BodyTemplate, [UpperCase(AViewName)]);
 
   SQLQuery1.Open;
   Body:= SQLQuery1.Fields[0].AsString;
 
   // View Columns
   SQLQuery1.Close;
-  SQLQuery1.SQL.Text:= 'SELECT d.RDB$DEPENDENT_NAME AS view_name, '+
-    'r.RDB$FIELD_NAME AS field_name, '+
-    'd.RDB$DEPENDED_ON_NAME AS depended_on_table, '+
-    'd.RDB$FIELD_NAME AS depended_on_field '+
-    'FROM RDB$DEPENDENCIES d '+
-    'LEFT JOIN RDB$RELATION_FIELDS r ON d.RDB$DEPENDENT_NAME = r.RDB$RELATION_NAME '+
-    '     AND d.RDB$FIELD_NAME = r.RDB$BASE_FIELD '+
-    'WHERE UPPER(d.RDB$DEPENDENT_NAME)=''' + UpperCase(AViewName) + ''' '+
-    '  AND r.RDB$SYSTEM_FLAG = 0 '+
-    '  AND d.RDB$DEPENDENT_TYPE = 1 '+
-    'ORDER BY r.RDB$FIELD_POSITION ';
+  SQLQuery1.SQL.Text:= format(ColumnsTemplate, [UpperCase(AViewName)]);
   Columns:= '';
   SQLQuery1.Open;
   while not SQLQuery1.EOF do
   begin
-    Columns:= Columns + Trim(SQLQuery1.FieldByName('Field_Name').AsString);
+    Columns:= Columns + Trim(SQLQuery1.FieldByName('rdb$field_name').AsString);
     SQLQuery1.Next;
     if not SQLQuery1.EOF then
       Columns:= Columns + ', ';

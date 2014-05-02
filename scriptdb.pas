@@ -321,6 +321,8 @@ begin
   ViewsBodyList:= TStringList.Create;
   try
     ViewsList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 4, Count);
+    // Get procedures in dependency order:
+    dmSysTables.SortDependencies(ViewsList);
     List.Clear;
     for i:= 0 to ViewsList.Count - 1 do
     begin
