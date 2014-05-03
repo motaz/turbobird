@@ -475,7 +475,7 @@ begin
           end;
         end;
 
-        // Reset ModifedRecords pointer
+        // Reset ModifiedRecords pointer
         ModifiedRecords[TabIndex]:= nil;
         RecordSet.EnableControls;
       finally
