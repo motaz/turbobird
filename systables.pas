@@ -33,6 +33,8 @@ type
     procedure FillCompositeFKConstraints(const TableName: string;
       var ConstraintsArray: TConstraintCounts);
     procedure Init(dbIndex: Integer);
+    // Gets list of object names that have type specified by TVIndex
+    // Returns Count of objects in Count
     function GetDBObjectNames(DatabaseIndex, TVIndex: Integer; var Count: Integer): string;
     // Returns object list (list of object names, i.e. tables, views) sorted by dependency
     // Limits sorting within one category (e.g. views)
@@ -56,6 +58,8 @@ type
     function GetConstraintInfo(dbIndex: Integer; ATableName, ConstraintName: string; var KeyName,
         CurrentTableName, CurrentFieldName, OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string): Boolean;
 
+    // Gets information about exception.
+    // Returns CREATE EXCEPTION statement in SQLQuery.
     function GetExceptionInfo(ExceptionName: string; var Msg, Description, SqlQuery: string): Boolean;
     procedure GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
       var DomainSize: Integer; var DefaultValue: string);
@@ -594,10 +598,12 @@ begin
     Msg:= sqQuery.FieldByName('RDB$MESSAGE').AsString;
     Description:= sqQuery.FieldByName('RDB$DESCRIPTION').AsString;
     SqlQuery:= 'CREATE EXCEPTION ' + ExceptionName + #10 +
-               '''' + Msg + ''';' + #10 +
-               'UPDATE RDB$EXCEPTIONS set ' + #10 +
-               'RDB$DESCRIPTION = ''' + Description + ''' ' + #10 +
-               'where RDB$EXCEPTION_NAME = ''' + ExceptionName + ''';';
+      '''' + Msg + ''';';
+    if Description<>'' then
+      SQLQuery:= SQLQuery + #10 +
+        'UPDATE RDB$EXCEPTIONS set ' + #10 +
+        'RDB$DESCRIPTION = ''' + Description + ''' ' + #10 +
+        'where RDB$EXCEPTION_NAME = ''' + ExceptionName + ''';';
   end;
   sqQuery.Close;
 end;

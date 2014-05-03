@@ -1826,13 +1826,19 @@ begin
         Lines.Add('-- ' + tvMain.Selected.Text + ' database script. Generated on: ' + DateTimeToStr(Now) );
 
         Lines.Add('');
-        Lines.Add('--      Roles');
+        Lines.Add('--     Roles');
         Lines.Add('');
         ScriptAllRoles(dbIndex, List);
         Lines.AddStrings(List);
 
         Lines.Add('');
-        Lines.Add('--      Functions (UDF)');
+        Lines.Add('--     Exceptions');
+        Lines.Add('');
+        ScriptAllExceptions(dbIndex, List);
+        Lines.AddStrings(List);
+
+        Lines.Add('');
+        Lines.Add('--     Functions (UDF)');
         Lines.Add('');
         ScriptAllFunctions(dbIndex, List);
         List.Text:= StringReplace(List.Text, #10, #13#10, [rfReplaceAll]);
@@ -1845,7 +1851,7 @@ begin
         Lines.AddStrings(List);
 
         Lines.Add('');
-        Lines.Add('--      Generators');
+        Lines.Add('--      Generators/Sequences');
         Lines.Add('');
         ScriptAllGenerators(dbIndex, List);
         Lines.AddStrings(List);

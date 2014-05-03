@@ -9,8 +9,13 @@ uses
 
 
 function ScriptAllRoles(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts all UDF functions in a database
 function ScriptAllFunctions(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts all domains in a database
 function ScriptAllDomains(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts all defined exceptions in a database
+function ScriptAllExceptions(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts all sequences (old name: generators) in a database
 function ScriptAllGenerators(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts a single table as CREATE TABLE DDL
 procedure ScriptTableAsCreate(dbIndex: Integer; ATableName: string; ScriptList: TStringList);
@@ -18,9 +23,12 @@ procedure ScriptTableAsCreate(dbIndex: Integer; ATableName: string; ScriptList: 
 function ScriptAllTables(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts all stored procedures
 function ScriptAllProcedureTemplates(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts all views in a database
 function ScriptAllViews(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllTriggers(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts all non-primary key indexes for a database
 function ScriptAllSecIndices(dbIndex: Integer; var List: TStringList): Boolean;
+// Scripts all constraints (e.g. foreign key constraints) for tables in a database
 function ScriptAllConstraints(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptObjectPermission(dbIndex: Integer; ObjName, UserName: string; var ObjType: Integer;
    List: TStrings; NewUser: string = ''): Boolean;
@@ -76,6 +84,8 @@ var
 begin
   FunctionsList:= TStringList.Create;
   FunctionsList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 6, Count);
+  // Get functions in dependency order:
+  dmSysTables.SortDependencies(FunctionsList);
   List.Clear;
   for i:= 0 to FunctionsList.Count - 1 do
   begin
@@ -94,7 +104,25 @@ begin
 end;
 
 
-(********************  Script Generators   ***********************)
+(********************  Script Exceptions   ***********************)
+
+function ScriptAllExceptions(dbIndex: Integer; var List: TStringList): Boolean;
+var
+  Count: Integer;
+  CreateStatement: string;
+  Description,Message: string; {not actually used here}
+  i: Integer;
+begin
+  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 10, Count);
+  for i:= 0 to List.Count - 1 do
+  begin
+    dmSysTables.GetExceptionInfo(List[i],Message, Description, CreateStatement);
+    List[i]:= CreateStatement;
+  end;
+  Result:= List.Count > 0;
+end;
+
+(********************  Script Generators/Sequences   ***********************)
 
 function ScriptAllGenerators(dbIndex: Integer; var List: TStringList): Boolean;
 var
@@ -119,9 +147,10 @@ var
   DefaultValue: string;
 begin
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 8, Count);
+  // Get domains in dependency order (if dependencies can exist between domains)
+  dmSysTables.SortDependencies(List);
   for i:= 0 to List.Count - 1 do
   begin
-    // todo: add support for numeric field types (e.g.
     dmSysTables.GetDomainInfo(dbIndex, List[i], DomainType, DomainSize, DefaultValue);
 
     List[i]:= 'Create Domain ' + List[i] + ' as ' + DomainType;
@@ -130,7 +159,6 @@ begin
     else
       List[i]:= List[i] ;
     List[i]:= List[i] + ' ' + DefaultValue + ';';
-
   end;
   Result:= List.Count > 0;
 end;
@@ -462,6 +490,8 @@ begin
   TablesList:= TStringList.Create;
   try
     TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+    // Get tables in dependency order - probably won't matter much in this case:
+    dmSysTables.SortDependencies(TablesList);
     List.Clear;
     for TableCounter:= 0 to TablesList.Count - 1 do
     with dmSysTables do
