@@ -345,32 +345,11 @@ end;
 
 function TdmSysTables.GetTableConstraints(ATableName: string; var SqlQuery: TSQLQuery;
    ConstraintsList: TStringList = nil): Boolean;
-begin
-  SqlQuery.Close;
-// Note that this query differs from the way constraints are
-// presented in GetConstraintsOfTable.
-// to do: find out what the differences are and indicate better in code/comments
-{ Query sample for employee database:
-select trim(rc.rdb$constraint_name) as ConstName,
-trim(rfc.rdb$const_name_uq) as KeyName,
-trim(rc2.rdb$relation_name) as OtherTableName,
-trim(flds_pk.rdb$field_name) as OtherFieldName,
-trim(rc.rdb$relation_name) as CurrentTableName,
-trim(flds_fk.rdb$field_name) as CurrentFieldName,
-trim(rfc.rdb$update_rule) as UpdateRule,
-trim(rfc.rdb$delete_rule) as DeleteRule
-from rdb$relation_constraints AS rc
-inner join rdb$ref_constraints as rfc on (rc.rdb$constraint_name =
-rfc.rdb$constraint_name) inner join rdb$index_segments as flds_fk on (flds_fk.rdb$index_name = rc.rdb$index_name)
-inner join rdb$relation_constraints as rc2 on (rc2.rdb$constraint_name = rfc.rdb$const_name_uq)
-inner join rdb$index_segments as flds_pk on
-((flds_pk.rdb$index_name = rc2.rdb$index_name) and (flds_fk.rdb$field_position = flds_pk.rdb$field_position))
-where rc.rdb$constraint_type = 'FOREIGN KEY' and
-rc.rdb$relation_name = 'EMPLOYEE'
-order by rc.rdb$constraint_name,
-flds_fk.rdb$field_position
-}
-  SQLQuery.SQL.Text:='select '+
+const
+  // Note that this query differs from the way constraints are
+  // presented in GetConstraintsOfTable.
+  // to do: find out what the differences are and indicate better in code/comments
+  Template='select '+
     'trim(rc.rdb$constraint_name) as ConstName, '+
     'trim(rfc.rdb$const_name_uq) as KeyName, '+
     'trim(rc2.rdb$relation_name) as OtherTableName, '+
@@ -386,8 +365,11 @@ flds_fk.rdb$field_position
     'inner join rdb$index_segments as flds_pk on ' +
     '((flds_pk.rdb$index_name = rc2.rdb$index_name) and (flds_fk.rdb$field_position = flds_pk.rdb$field_position)) ' +
     'where rc.rdb$constraint_type = ''FOREIGN KEY'' '+
-    'and rc.rdb$relation_name = ''' + UpperCase(ATableName) + ''' '+
+    'and rc.rdb$relation_name = ''%s'' '+
     'order by rc.rdb$constraint_name, flds_fk.rdb$field_position ';
+begin
+  SqlQuery.Close;
+  SQLQuery.SQL.Text:= format(Template, [UpperCase(ATableName)]);
   SqlQuery.Open;
   Result:= SqlQuery.RecordCount > 0;
   with SqlQuery do

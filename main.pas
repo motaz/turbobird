@@ -239,6 +239,8 @@ type
     function GetFBTypeName(Index: Integer;
       SubType: integer=-1; FieldLength: integer=-1;
       Scale: integer=-1): string;
+    // Get name of index used for primary key
+    // Also returns name of constraint used
     function GetPrimaryKeyIndexName(DatabaseIndex: Integer; ATableName: string; var ConstraintName: string): string;
     function GetConstraintFields(ATableName, AIndexName: string; var List: TStringList): Boolean;
     // Get fields information for specified table
@@ -1032,7 +1034,6 @@ var
   EditForm: TfmEditDataFullRec;
   ATableName: string;
   i: Integer;
-  ConstraintsList: TStringList;
   PKFieldsList: TStringList;
   FieldLine: string;
   dbIndex: Integer;
@@ -1095,7 +1096,6 @@ var
   EditWindow: TfmEditTable;
   ATableName: string;
   i: Integer;
-  ConstraintsList: TStringList;
   PKFieldsList: TStringList;
   FieldLine: string;
   dbIndex: Integer;
@@ -1933,7 +1933,6 @@ var
   SelNode: TTreeNode;
   QWindow: TfmQueryWindow;
   ATableName: string;
-  ConstraintsList: TStringList;
   PKFieldsList: TStringList;
   FieldLine: string;
   FieldNames: string;
@@ -4200,8 +4199,8 @@ begin
   SQLQuery1.Open;
   if SQLQuery1.RecordCount > 0 then
   begin
-    Result:= Trim(SQLQuery1.Fields[0].AsString);
-    ConstraintName:= Trim(SQLQuery1.Fields[1].AsString);
+    Result:= Trim(SQLQuery1.FieldByName('RDB$Index_name').AsString);
+    ConstraintName:= Trim(SQLQuery1.FieldByName('RDB$Constraint_Name').AsString);
   end
   else
     Result:= '';

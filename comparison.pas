@@ -482,7 +482,6 @@ begin
             Line:= Line + 'index ' + AIndexName + ' on ' + ATableName;
 
             Line:= Line + ' (' + FieldsList.CommaText + ') ;';
-
           end;
 
           fQueryWindow.meQuery.Lines.Add(Line);
