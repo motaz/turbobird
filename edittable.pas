@@ -26,7 +26,6 @@ type
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure Panel1Click(Sender: TObject);
     procedure sqEditTableAfterScroll(DataSet: TDataSet);
   private
     ibConnection: TIBConnection;
@@ -59,10 +58,6 @@ begin
   sqlTrans:= nil;
 end;
 
-procedure TfmEditTable.Panel1Click(Sender: TObject);
-begin
-end;
-
 procedure TfmEditTable.bbSaveClick(Sender: TObject);
 begin
   try
@@ -73,17 +68,18 @@ begin
       sqEditTable.ApplyUpdates;
     if SQLTrans.Active then
       SQLTrans.CommitRetaining;
-
   except
-  on e: exception do
-  begin
-    ShowMessage(e.Message);
-  end;
+    on e: exception do
+    begin
+      ShowMessage(e.Message);
+    end;
   end;
 end;
 
 procedure TfmEditTable.DBGrid1TitleClick(Column: TColumn);
 begin
+  //todo: implement sorting a la
+  //http://wiki.lazarus.freepascal.org/Grids_Reference_Page#Sorting_columns_or_rows_in_DBGrid_with_sort_arrows_in_column_header
 { if sqEditTable.IndexFieldNames = Column.Field.FieldName then
    sqEditTable.IndexFieldNames := Column.Field.FieldName //+ 'DESC'
  else
@@ -106,14 +102,13 @@ begin
     sqEditTable.DataBase:= ibConnection;
   end;
 
-  bbSave.Visible:= fmMain.ChangeQueryToBIDirectional(dbIndex, ATableName, sqEditTable);
+  bbSave.Visible:= fmMain.ChangeQueryToUpdatable(dbIndex, ATableName, sqEditTable);
   if not bbSave.Visible then
-    ShowMessage('Primary key is not found on this table. It can not be edited');
+    ShowMessage('Primary key is not found for this table. It can not be edited.');
 
   sqEditTable.Close;
   sqEditTable.SQL.Text:= 'select * from ' + ATableName;
   sqEditTable.Open;
-
 end;
 
 initialization

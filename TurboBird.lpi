@@ -100,7 +100,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="39">
+    <Units Count="40">
       <Unit0>
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -394,6 +394,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitFirebirdServices"/>
       </Unit38>
+      <Unit39>
+        <Filename Value="turbocommon.inc"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Unit1"/>
+      </Unit39>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

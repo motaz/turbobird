@@ -94,9 +94,9 @@ begin
 
   sqEditTable.SQL.Text:= 'select * from ' +  ATableName;
 
-  bbSave.Visible:= fmMain.ChangeQueryToBIDirectional(dbIndex, ATableName, sqEditTable);
+  bbSave.Visible:= fmMain.ChangeQueryToUpdatable(dbIndex, ATableName, sqEditTable);
   if not bbSave.Visible then
-    ShowMessage('Primary key is not exist, table can not be edited');
+    ShowMessage('Primary key does not exist; table can not be edited');
   sqEditTable.Open;
 
   ATop:= 70;

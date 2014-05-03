@@ -10,7 +10,7 @@ object fmEditTable: TfmEditTable
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.2.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -21,20 +21,19 @@ object fmEditTable: TfmEditTable
     ClientWidth = 568
     ParentColor = False
     TabOrder = 0
-    OnClick = Panel1Click
     object Label1: TLabel
       Left = 258
-      Height = 18
+      Height = 13
       Top = 27
-      Width = 62
+      Width = 45
       Caption = 'Record #'
       ParentColor = False
     end
     object laPos: TLabel
       Left = 326
-      Height = 18
+      Height = 13
       Top = 27
-      Width = 9
+      Width = 6
       Caption = '0'
       Font.Color = 11610912
       ParentColor = False
@@ -86,7 +85,7 @@ object fmEditTable: TfmEditTable
     TitleStyle = tsNative
     OnTitleClick = DBGrid1TitleClick
   end
-  object Datasource1: TDatasource
+  object Datasource1: TDataSource
     DataSet = sqEditTable
     left = 472
     top = 48

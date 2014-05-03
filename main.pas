@@ -9,31 +9,11 @@ uses
   Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
   ExtCtrls, Buttons, StdCtrls, TableManage;
 
+{$i turbocommon.inc}
+
 const
-  {$IFDEF LINUX}
-   Target = 'Linux';
-  {$ENDIF}
-
-  {$IFDEF WINDOWS}
-   Target = 'Win';
-  {$ENDIF}
-
-  {$IFDEF DARWIN}
-   Target = 'Mac';
-  {$ENDIF}
-
-  {$IFDEF BSD}
-   Target = 'BSD';
-  {$ENDIF}
-
-  {$ifDEF CPU32}
-   Arch = '32';
-  {$ENDIF}
-
-  {$ifDEF CPU64}
-   Arch = '64';
-  {$ENDIF}
   // Some field types used in e.g. RDB$FIELDS
+  //todo: perhaps move to enumeration with fixed constant values
   BlobType = 261;
   CharType = 14;
   CStringType = 40; // probably null-terminated string used for UDFs
@@ -263,7 +243,8 @@ type
       OnCommitProcedure: TNotifyEvent = nil);
     procedure ViewTableFields(ATableName: string; dbIndex: Integer; AStringGrid: TStringGrid);
     procedure ShowIndicesManagement(AForm: TForm; DatabaseIndex: Integer; ATableName: string);
-    function ChangeQueryToBIDirectional(DatabaseIndex: Integer; ATableName: string; sqQuery: TSQLQuery): Boolean;
+    // Taking a normal query, try to make sure the UpdateSQL and InsertSQL work.
+    function ChangeQueryToUpdatable(DatabaseIndex: Integer; ATableName: string; sqQuery: TSQLQuery): Boolean;
     function GetTableNames(dbIndex: Integer): string;
     function CreateNewTrigger(dbIndex: Integer; ATableName: string; OnCommitProcedure: TNotifyEvent = nil): Boolean;
     function AddToSQLHistory(DatabaseTitle: string; SQLType, SQLStatement: string): Boolean;
@@ -4193,7 +4174,7 @@ begin
 end;
 
 
-function TfmMain.ChangeQueryToBIDirectional(DatabaseIndex: Integer; ATableName: string; sqQuery: TSQLQuery): Boolean;
+function TfmMain.ChangeQueryToUpdatable(DatabaseIndex: Integer; ATableName: string; sqQuery: TSQLQuery): Boolean;
 var
   KeyList, FieldsList: TStringList;
   PKName: string;
@@ -4202,6 +4183,7 @@ var
   WhereClause: string;
   ConstraintName: string;
 begin
+  Result:= false;
   SetConnection(DatabaseIndex);
 
   sqQuery.UpdateSQL.Clear;
@@ -4212,8 +4194,7 @@ begin
   FieldsList:= TStringList.Create;
   try
     PKName:= fmMain.GetPrimaryKeyIndexName(DatabaseIndex, ATableName, ConstraintName);
-    Result:= PKName <> '';
-    if Result then
+    if (PKName <> '') then
     begin
       sqPrimaryKey:= TSQLQuery.Create(nil);
       try
@@ -4231,7 +4212,6 @@ begin
             sqQuery.UpdateSQL.Add(',');
           end;
         end;
-
         sqQuery.UpdateSQL.Delete(sqQuery.UpdateSQL.Count - 1); // Delete last comma
 
         // Key where clause
@@ -4269,6 +4249,7 @@ begin
       finally
         sqPrimaryKey.Free;
       end;
+      Result:= true;
     end;
   finally
     KeyList.Free;
