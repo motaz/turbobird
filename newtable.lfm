@@ -1,7 +1,7 @@
 object fmNewTable: TfmNewTable
-  Left = 535
+  Left = 347
   Height = 618
-  Top = 192
+  Top = 86
   Width = 594
   ActiveControl = edNewTable
   Caption = 'New Table'
@@ -11,7 +11,7 @@ object fmNewTable: TfmNewTable
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '1.2.0.3'
+  LCLVersion = '1.2.2.0'
   object Label1: TLabel
     Left = 18
     Height = 13
@@ -66,7 +66,7 @@ object fmNewTable: TfmNewTable
       end>
     FixedColor = 14539471
     FixedCols = 0
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goAlwaysShowEditor, goSmoothScroll]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goAutoAddRows, goAlwaysShowEditor, goSmoothScroll]
     RowCount = 3
     TabOrder = 1
     OnEditingDone = StringGrid1PickListSelect
@@ -74,7 +74,7 @@ object fmNewTable: TfmNewTable
     OnMouseUp = StringGrid1MouseUp
     OnPickListSelect = StringGrid1PickListSelect
   end
-  object BitBtn2: TBitBtn
+  object bbCancel: TBitBtn
     Left = 448
     Height = 46
     Top = 560
@@ -85,7 +85,7 @@ object fmNewTable: TfmNewTable
     Color = 16249563
     Kind = bkCancel
     ModalResult = 2
-    OnClick = BitBtn2Click
+    OnClick = bbCancelClick
     TabOrder = 2
   end
   object bbScript: TBitBtn

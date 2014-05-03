@@ -112,7 +112,6 @@ var
   FileName: string;
 begin
   try
-
     FileName:= fmMain.getConfigurationDirectory + 'turbobird.reg';
 
     AssignFile(F, FileName);

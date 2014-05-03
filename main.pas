@@ -3796,72 +3796,60 @@ var
 begin
   Node:= tvMain.Selected;
   if node <> nil then
-  if Node.Level = 1 then // Database level, Fill objects
   begin
-    // Do nothing
-  end
-  else
-  if Node.Level = 2 then // Objects Type Level
-  begin
-    if tvMain.Selected.Text = 'Query Window' then
-    begin
-      QWindow:= ShowQueryWindow(tvMain.Selected.Parent.OverlayIndex, 'Query Window');
-      QWindow.Show;
-    end
-    else  // Expand object
-    begin
-      tvMainExpanded(nil, Node);
-      Rec:= RegisteredDatabases[Node.Parent.OverlayIndex].RegRec;
+    case Node.Level of
+      1: // Database level: fill objects;
+      begin
+        // do nothing
+      end;
+      2: // Objects Type Level
+      begin
+        if tvMain.Selected.Text = 'Query Window' then
+        begin
+          QWindow:= ShowQueryWindow(tvMain.Selected.Parent.OverlayIndex, 'Query Window');
+          QWindow.Show;
+        end
+        else  // Expand object
+        begin
+          tvMainExpanded(nil, Node);
+          Rec:= RegisteredDatabases[Node.Parent.OverlayIndex].RegRec;
+        end;
+      end;
+      3: // Object Item Level, like some tables, procedures.
+      begin
+        ParentText:= Node.Parent.Text;
+        if Pos('(', ParentText) > 0 then
+          ParentText:= Trim(Copy(ParentText, 1, Pos('(', ParentText) - 1));
+
+        case ParentText of
+          'Tables':
+          begin
+            lmViewFieldsClick(nil);
+            lmViewFirst1000Click(nil);
+          end;
+          'Generators': lmViewGenClick(nil);
+          'Triggers': lmViewTriggerClick(nil);
+          'Views': lmDisplay1000VClick(nil);
+          'Stored Procedures': lmViewStoredProcedureClick(nil);
+          'Functions': lmViewUDFClick(nil);
+          'System Tables': lmOpenSystemTableClick(nil);
+          'Domains': lmViewDomainClick(nil);
+          'Roles': lmPermissionsClick(nil);
+          'Exceptions': lmScriptExceptionClick(nil);
+          'Users': lmPermissionsClick(nil);
+          else ShowMessage('Error in TurboBird code tVMainDblClick level 3. Please correct.');
+        end;
+      end;
+      4: // Table fields (Edit)
+      begin
+        lmEditFieldClick(nil);
+      end;
+      else
+      begin
+        // do nothing; ignore
+      end;
     end;
-  end
-  else
-  if Node.Level = 3 then  // Object Item Level, like some tables, procedures.
-  begin
-    ParentText:= Node.Parent.Text;
-    if Pos('(', ParentText) > 0 then
-    ParentText:= Trim(Copy(ParentText, 1, Pos('(', ParentText) - 1));
-
-    if ParentText = 'Tables' then
-    begin
-      lmViewFieldsClick(nil);
-      lmViewFirst1000Click(nil);
-    end
-    else
-    if ParentText = 'Generators' then
-      lmViewGenClick(nil)
-    else
-    if ParentText = 'Triggers' then
-      lmViewTriggerClick(nil)
-    else
-    if ParentText = 'Views' then
-      lmDisplay1000VClick(nil)
-    else
-    if ParentText = 'Stored Procedures' then
-      lmViewStoredProcedureClick(nil)
-    else
-    if ParentText = 'Functions' then
-      lmViewUDFClick(nil)
-    else
-    if ParentText = 'System Tables' then
-      lmOpenSystemTableClick(nil)
-    else
-    if ParentText = 'Domains' then
-      lmViewDomainClick(nil)
-    else
-    if ParentText = 'Roles' then
-      lmPermissionsClick(nil)
-    else
-    if ParentText = 'Exceptions' then
-      lmScriptExceptionClick(nil)
-    else
-    if ParentText = 'Users' then
-      lmPermissionsClick(nil)
-
-  end
-  else
-  if Node.Level = 4 then // Table fields (Edit)
-    lmEditFieldClick(nil);
-
+  end;
 end;
 
 (**************    Expanded     *****************)

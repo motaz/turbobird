@@ -16,7 +16,7 @@ type
   TfmNewTable = class(TForm)
     bbClose: TBitBtn;
     bbScript: TBitBtn;
-    BitBtn2: TBitBtn;
+    bbCancel: TBitBtn;
     cbPermission: TComboBox;
     cbRolesUsers: TComboBox;
     cxGrantPermission: TCheckBox;
@@ -28,7 +28,7 @@ type
     StringGrid1: TStringGrid;
     procedure bbCloseClick(Sender: TObject);
     procedure bbScriptClick(Sender: TObject);
-    procedure BitBtn2Click(Sender: TObject);
+    procedure bbCancelClick(Sender: TObject);
     procedure cxGrantPermissionChange(Sender: TObject);
     procedure edNewTableKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -215,10 +215,8 @@ begin
         Result:= False;
         MessageDlg('Warning', 'There is no primary key', mtWarning, [mbOk], 0);
       end;
-
     end;
   end;
-
 end;
 
 function TfmNewTable.GetFieldsCount: Integer;
@@ -227,10 +225,13 @@ var
 begin
   Result:= 0;
   with StringGrid1 do
-  for i:= 1 to RowCount - 1 do
-  if Trim(Cells[0, i]) <> '' then
-    Inc(Result);
-
+  begin
+    for i:= 1 to RowCount - 1 do
+    begin
+      if Trim(Cells[0, i]) <> '' then
+        Inc(Result);
+    end;
+  end;
 end;
 
 function TfmNewTable.GetClosestType(ATypePart: string): string;
@@ -262,7 +263,6 @@ begin
         Break;
       end;
     end;
-
   end;
 end;
 
@@ -280,6 +280,7 @@ begin
       List.Text:= GenerateCreateSQL(KeyField, GeneratorName);
       if cxCreateGen.Checked then
       begin;
+        //todo: move this to a utility function somewhere
         List.Add('');
         List.Add('-- Generator');
         List.Add('create generator ' + GeneratorName + ';');
@@ -301,7 +302,7 @@ begin
   end;
 end;
 
-procedure TfmNewTable.BitBtn2Click(Sender: TObject);
+procedure TfmNewTable.bbCancelClick(Sender: TObject);
 begin
   bbCloseClick(nil);
 end;
@@ -311,13 +312,12 @@ begin
   cbPermission.Enabled:= cxGrantPermission.Checked;
   laPermission.Visible:= cxGrantPermission.Checked;
   cbRolesUsers.Visible:= cxGrantPermission.Checked;
-
 end;
 
 procedure TfmNewTable.edNewTableKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if key = 13 then
+  if key = VK_RETURN then
     StringGrid1.SetFocus;
 end;
 
@@ -354,7 +354,7 @@ var
   aType: string;
 begin
   with StringGrid1 do
-  if Key = 40 then // Key down
+  if Key = VK_DOWN then // Cursor down
   if Trim(Cells[0, RowCount - 1]) <> '' then
   begin
     RowCount:= RowCount + 1;
@@ -363,18 +363,18 @@ begin
     Cells[4, Row]:= '0';
   end
   else
-  if Key = 45 then // Insert
+  if Key = VK_INSERT then // Insert
   begin
     InsertColRow(False, Row);
   end
   else
-  if Key = 46 then // Delete
+  if Key = VK_DELETE then // Delete
   begin
     if RowCount > 1 then
       DeleteColRow(False, Row);
   end
   else
-  if key = 13 then // Enter
+  if key = VK_RETURN then // Enter
   begin
     if (Row + 1 = RowCount) and (Col > 1) then
     begin

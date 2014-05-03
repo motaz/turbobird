@@ -1,23 +1,25 @@
+{ This is an automatically generated lazarus resource file }
+
 LazarusResources.Add('TfmReg','FORMDATA',[
   'TPF0'#6'TfmReg'#5'fmReg'#4'Left'#3#151#1#6'Height'#3'\'#1#3'Top'#3#201#0#5'W'
   +'idth'#3'P'#2#13'ActiveControl'#7#7'edTitle'#7'Caption'#6#26'Register Firebi'
   +'rd Database'#12'ClientHeight'#3'\'#1#11'ClientWidth'#3'P'#2#5'Color'#7#7'cl'
-  +'White'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6#7'1.0.4.0'#0#6'TLa'
-  +'bel'#6'Label1'#4'Left'#2#13#6'Height'#2#18#3'Top'#2'F'#5'Width'#2'n'#7'Capt'
+  +'White'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6#7'1.2.2.0'#0#6'TLa'
+  +'bel'#6'Label1'#4'Left'#2#13#6'Height'#2#13#3'Top'#2'F'#5'Width'#2'P'#7'Capt'
   +'ion'#6#15'server:database'#11'ParentColor'#8#0#0#6'TLabel'#6'Label2'#4'Left'
-  +#2#13#6'Height'#2#18#3'Top'#2'u'#5'Width'#2'H'#7'Caption'#6#9'User name'#11
-  +'ParentColor'#8#0#0#6'TLabel'#6'Label3'#4'Left'#2#13#6'Height'#2#18#3'Top'#3
-  +#165#0#5'Width'#2'C'#7'Caption'#6#8'Password'#11'ParentColor'#8#0#0#6'TLabel'
-  +#6'Label4'#4'Left'#2#13#6'Height'#2#18#3'Top'#2#19#5'Width'#2#31#7'Caption'#6
+  +#2#13#6'Height'#2#13#3'Top'#2'u'#5'Width'#2'3'#7'Caption'#6#9'User name'#11
+  +'ParentColor'#8#0#0#6'TLabel'#6'Label3'#4'Left'#2#13#6'Height'#2#13#3'Top'#3
+  +#165#0#5'Width'#2'.'#7'Caption'#6#8'Password'#11'ParentColor'#8#0#0#6'TLabel'
+  +#6'Label4'#4'Left'#2#13#6'Height'#2#13#3'Top'#2#19#5'Width'#2#20#7'Caption'#6
   +#5'Title'#11'ParentColor'#8#0#0#6'TLabel'#6'Label5'#4'Left'#2#13#6'Height'#2
-  +#18#3'Top'#3#211#0#5'Width'#2'5'#7'Caption'#6#7'Charset'#11'ParentColor'#8#0
-  +#0#6'TLabel'#6'Label6'#4'Left'#2#13#6'Height'#2#18#3'Top'#3#248#0#5'Width'#2
-  +#31#7'Caption'#6#4'Role'#11'ParentColor'#8#0#0#5'TEdit'#14'edDatabaseName'#4
-  +'Left'#2'~'#6'Height'#2#27#3'Top'#2'@'#5'Width'#3'!'#1#8'TabOrder'#2#1#0#0#7
+  +#13#3'Top'#3#211#0#5'Width'#2'&'#7'Caption'#6#7'Charset'#11'ParentColor'#8#0
+  +#0#6'TLabel'#6'Label6'#4'Left'#2#13#6'Height'#2#13#3'Top'#3#248#0#5'Width'#2
+  +#21#7'Caption'#6#4'Role'#11'ParentColor'#8#0#0#5'TEdit'#14'edDatabaseName'#4
+  +'Left'#2'~'#6'Height'#2#21#3'Top'#2'@'#5'Width'#3'!'#1#8'TabOrder'#2#1#0#0#7
   +'TButton'#8'btBrowse'#4'Left'#3#168#1#6'Height'#2#25#3'Top'#2'B'#5'Width'#2
   +#27#7'Caption'#6#3'...'#7'OnClick'#7#13'btBrowseClick'#8'TabOrder'#2#2#0#0#5
-  +'TEdit'#10'edUserName'#4'Left'#2'~'#6'Height'#2#27#3'Top'#2'n'#5'Width'#3#145
-  +#0#8'TabOrder'#2#3#0#0#5'TEdit'#10'edPassword'#4'Left'#2'~'#6'Height'#2#27#3
+  +'TEdit'#10'edUserName'#4'Left'#2'~'#6'Height'#2#21#3'Top'#2'n'#5'Width'#3#145
+  +#0#8'TabOrder'#2#3#0#0#5'TEdit'#10'edPassword'#4'Left'#2'~'#6'Height'#2#21#3
   +'Top'#3#156#0#5'Width'#3#145#0#8'EchoMode'#7#10'emPassword'#12'PasswordChar'
   +#6#1'-'#8'TabOrder'#2#4#0#0#7'TBitBtn'#5'bbReg'#4'Left'#2#8#6'Height'#2'&'#3
   +'Top'#3'('#1#5'Width'#2'c'#7'Caption'#6#8'Register'#5'Color'#4#219#242#247#0
@@ -131,16 +133,16 @@ LazarusResources.Add('TfmReg','FORMDATA',[
   +'ick'#8'TabOrder'#2#9#0#0#7'TBitBtn'#8'bbCancel'#4'Left'#2'x'#6'Height'#2'&'
   +#3'Top'#3'('#1#5'Width'#2'X'#7'Caption'#6#6'Cancel'#5'Color'#4#219#242#247#0
   +#4'Kind'#7#8'bkCancel'#11'ModalResult'#2#2#8'TabOrder'#2#10#0#0#5'TEdit'#7'e'
-  +'dTitle'#4'Left'#2#127#6'Height'#2#27#3'Top'#2#16#5'Width'#3'!'#1#8'TabOrder'
+  +'dTitle'#4'Left'#2#127#6'Height'#2#21#3'Top'#2#16#5'Width'#3'!'#1#8'TabOrder'
   +#2#0#0#0#7'TBitBtn'#6'bbTest'#4'Left'#3'('#1#6'Height'#2'('#3'Top'#3'('#1#5
   +'Width'#3#160#0#7'Caption'#6#15'Test connection'#5'Color'#4#219#242#247#0#4
   +'Kind'#7#5'bkAll'#7'OnClick'#7#11'bbTestClick'#8'TabOrder'#2#8#0#0#9'TCheckB'
-  +'ox'#14'cxSavePassword'#4'Left'#3#23#1#6'Height'#2#24#3'Top'#3#160#0#5'Width'
-  +#2'~'#7'Caption'#6#13'Save Password'#8'TabOrder'#2#5#0#0#5'TEdit'#6'edRole'#4
-  +'Left'#2#127#6'Height'#2#27#3'Top'#3#248#0#5'Width'#3#144#0#8'TabOrder'#2#7#0
-  +#0#9'TComboBox'#9'cbCharset'#4'Left'#2#127#6'Height'#2#29#3'Top'#3#200#0#5'W'
-  +'idth'#3#140#0#10'ItemHeight'#2#0#9'ItemIndex'#2#0#13'Items.Strings'#1#6#4'N'
-  +'ONE'#6#4'TRIM'#6#5'ASCII'#6#5'BIG_5'#6#6'CP943C'#6#4'CYRL'#6#6'DOS437'#6#6
+  +'ox'#14'cxSavePassword'#4'Left'#3#23#1#6'Height'#2#17#3'Top'#3#160#0#5'Width'
+  +#2']'#7'Caption'#6#13'Save Password'#8'TabOrder'#2#5#0#0#5'TEdit'#6'edRole'#4
+  +'Left'#2#127#6'Height'#2#21#3'Top'#3#248#0#5'Width'#3#144#0#8'TabOrder'#2#7#0
+  +#0#9'TComboBox'#9'cbCharset'#4'Left'#2#127#6'Height'#2#21#3'Top'#3#200#0#5'W'
+  +'idth'#3#140#0#10'ItemHeight'#2#13#9'ItemIndex'#2#0#13'Items.Strings'#1#6#4
+  +'NONE'#6#4'TRIM'#6#5'ASCII'#6#5'BIG_5'#6#6'CP943C'#6#4'CYRL'#6#6'DOS437'#6#6
   +'DOS737'#6#6'DOS775'#6#6'DOS850'#6#6'DOS852'#6#6'DOS857'#6#6'DOS858'#6#6'DOS'
   +'860'#6#6'DOS861'#6#6'DOS862'#6#6'DOS863'#6#6'DOS864'#6#6'DOS865'#6#6'DOS866'
   +#6#6'DOS869'#6#9'EUCJ_0208'#6#3'GBK'#6#7'GB_2312'#6#9'ISO8859_1'#6#10'ISO885'
