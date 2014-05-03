@@ -226,9 +226,9 @@ LazarusResources.Add('TfmCopyTable','FORMDATA',[
   +#184#1#5'Width'#2'r'#7'Anchors'#11#6'akLeft'#8'akBottom'#0#7'Caption'#6#6'&C'
   +'lose'#4'Kind'#7#7'bkClose'#7'OnClick'#7#12'bbCloseClick'#8'TabOrder'#2#4#0#0
   +#6'TLabel'#11'laDatabase1'#4'Left'#2#12#6'Height'#2'"'#3'Top'#3#174#0#5'Widt'
-  +'h'#3#148#0#8'AutoSize'#8#7'Caption'#6'5Make sure it is already exist with t'
-  +'he same structure'#10'Font.Color'#4'FFF'#0#11'Font.Height'#2#245#11'ParentC'
-  +'olor'#8#10'ParentFont'#8#8'WordWrap'#9#0#0#6'TLabel'#6'Label5'#4'Left'#2#9#6
+  +'h'#3#148#0#8'AutoSize'#8#7'Caption'#6'3Make sure it already exists with the'
+  +' same structure'#10'Font.Color'#4'FFF'#0#11'Font.Height'#2#245#11'ParentCol'
+  +'or'#8#10'ParentFont'#8#8'WordWrap'#9#0#0#6'TLabel'#6'Label5'#4'Left'#2#9#6
   +'Height'#2#13#3'Top'#3#224#0#5'Width'#3#170#0#7'Caption'#6'"select statement'
   +' from Source Table'#11'ParentColor'#8#0#0#244#8'TSynEdit'#8'syScript'#4'Lef'
   +'t'#2#8#6'Height'#3#161#0#3'Top'#3#8#1#5'Width'#3'Q'#2#7'Anchors'#11#5'akTop'

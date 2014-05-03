@@ -248,7 +248,7 @@ object fmCopyTable: TfmCopyTable
     Top = 174
     Width = 148
     AutoSize = False
-    Caption = 'Make sure it is already exist with the same structure'
+    Caption = 'Make sure it already exists with the same structure'
     Font.Color = 4605510
     Font.Height = -11
     ParentColor = False
