@@ -54,7 +54,7 @@ implementation
 
 { TfmDBInfo }
 
-uses Main, SysTables;
+uses SysTables;
 
 procedure TfmDBInfo.bbCloseClick(Sender: TObject);
 begin

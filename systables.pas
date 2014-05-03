@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, sqldb, IBConnection, FileUtil, LResources, Forms, Controls,
-  Dialogs, db;
+  Dialogs;
 
 type
 
@@ -252,7 +252,6 @@ end;
 function TdmSysTables.GetTriggerInfo(DatabaseIndex: Integer; ATriggername: string;
   var AfterBefor, OnTable, Event, Body: string; var TriggerEnabled: Boolean; var TriggerPosition: Integer): Boolean;
 var
-  Rec: TDatabaseRec;
   Encode: string;
 begin
   try

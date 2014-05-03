@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="1097"/>
+      <BuildNr Value="1098"/>
       <StringTable ProductVersion="0.9"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -100,7 +100,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="38">
+    <Units Count="39">
       <Unit0>
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -389,6 +389,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="topologicalsort"/>
       </Unit37>
+      <Unit38>
+        <Filename Value="unitfirebirdservices.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitFirebirdServices"/>
+      </Unit38>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

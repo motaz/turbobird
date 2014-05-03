@@ -526,7 +526,7 @@ end;
 
 procedure TfmPermissionManage.cxProcGrantChange(Sender: TObject);
 var
-  Index, ProcIndex: Integer;
+  Index: Integer;
 begin
   Index:= clbProcedures.ItemIndex;
   if Index <> -1 then
@@ -535,7 +535,7 @@ end;
 
 procedure TfmPermissionManage.cxRoleGrantChange(Sender: TObject);
 var
-  Index, RoleIndex: Integer;
+  Index: Integer;
 begin
   Index:= clbRoles.ItemIndex;
   if Index <> -1 then
@@ -546,7 +546,6 @@ procedure TfmPermissionManage.Init(dbIndex: integer; ATableName, AUserName: stri
   OnCommitProcedure: TNotifyEvent = nil);
 var
   Count: integer;
-  StoredProcs: string;
 begin
   fOnCommitProcedure:= OnCommitProcedure;
   ProcList:= TStringList.Create;

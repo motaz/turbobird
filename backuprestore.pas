@@ -93,7 +93,6 @@ procedure TfmBackupRestore.bbStartClick(Sender: TObject);
 var
   FireBirdServices: TFirebirdServices;
   Res: Ansistring;
-  ADatabase: string;
 begin
   FireBirdServices:= TFirebirdServices.Create;
   try

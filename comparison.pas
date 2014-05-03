@@ -540,7 +540,7 @@ procedure TfmComparison.CheckMissingDBObjects;
 var
   List, ComparedList: TStringList;
   Count: Integer;
-  x, i, j: Integer;
+  x, i: Integer;
 begin
   List:= TStringList.Create;
   ComparedList:= TStringList.Create;
@@ -677,7 +677,7 @@ var
   FieldSize: Integer;
   FieldType, DefaultValue, Description: string;
   CFieldType, CDefaultValue, CDescription: string;
-  CFieldSize, CIsNull: Integer;
+  CFieldSize: Integer;
   NotNull, CNotNull: Boolean;
 begin
   meLog.Lines.Add('');
@@ -703,16 +703,14 @@ begin
 
     // Compare
     if (FieldType <> CFieldType) or ((FieldSize <> CFieldSize) and (not cxIgnoreLength.Checked)) or
-       (NotNull <> CNotNull) or (DefaultValue <> CDefaultValue)
-       or (Description <> CDescription) then
-       begin
-         meLog.Lines.Add(' ' + ExistFieldsList[i]);
-         ModifiedFieldsList.Add(ExistFieldsList[i]);
-         Inc(DiffCount);
-       end;
-
+      (NotNull <> CNotNull) or (DefaultValue <> CDefaultValue)
+      or (Description <> CDescription) then
+      begin
+        meLog.Lines.Add(' ' + ExistFieldsList[i]);
+        ModifiedFieldsList.Add(ExistFieldsList[i]);
+        Inc(DiffCount);
+      end;
   end;
-
 end;
 
 procedure TfmComparison.CheckModifiedIndices;
@@ -1833,8 +1831,6 @@ var
   i, j: Integer;
   List, ComparedList: TStringList;
   TablesList: TStringList;
-  PrimaryIndexName: string;
-  ConstraintName: string;
   Count: Integer;
 begin
   List:= TStringList.Create;
@@ -1879,7 +1875,6 @@ begin
           meLog.Lines.Add(' ' + List[j]);
           Inc(DiffCount);
         end;
-
       end;
     except
       on e: exception do

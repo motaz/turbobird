@@ -1,4 +1,4 @@
-{ Wirtten by Zoran }
+{ Written by Zoran }
 
 unit UnitFirebirdServices;
 
@@ -7,7 +7,7 @@ unit UnitFirebirdServices;
 interface
 
 uses
-  Classes, SysUtils, ibase60dyn, LCLProc, strutils;
+  Classes, SysUtils, ibase60dyn, LCLProc;
 
 type
 
@@ -366,4 +366,4 @@ initialization
 finalization
 
 end.
-
+

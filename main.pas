@@ -510,7 +510,6 @@ procedure TfmMain.lmDisconnectClick(Sender: TObject);
 var
   dbIndex: Integer;
   i: Integer;
-  Form: TForm;
   j: Integer;
   TabSheet: TTabSheet;
 begin
@@ -573,8 +572,6 @@ begin
     ShowCompleteQueryWindow(dbIndex, 'get increment generator SQL for:' + AGenName,
       'select GEN_ID(' + AGenName + ', 1) from RDB$Database;');
   end;
-
-
 end;
 
 procedure TfmMain.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -886,10 +883,7 @@ end;
 function TfmMain.CreateNewTrigger(dbIndex: Integer; ATableName: string; OnCommitProcedure: TNotifyEvent = nil): Boolean;
 var
   QWindow: TfmQueryWindow;
-  AViewName: string;
-  TableNames: string;
   TrigType: string;
-  Count: Integer;
 begin
   Result:= False;
   if ATableName <> '' then
@@ -943,10 +937,7 @@ procedure TfmMain.lmCreateTriggerClick(Sender: TObject);
 var
   SelNode: TTreeNode;
   DBIndex: Integer;
-  QWindow: TfmQueryWindow;
-  AViewName: string;
   TableNames: string;
-  TrigType: string;
   Count: Integer;
 begin
   SelNode:= tvMain.Selected;
@@ -1032,9 +1023,6 @@ var
   Rec: TDatabaseRec;
   EditForm: TfmEditDataFullRec;
   ATableName: string;
-  i: Integer;
-  PKFieldsList: TStringList;
-  FieldLine: string;
   dbIndex: Integer;
 begin
   SelNode:= tvMain.Selected;
@@ -1094,9 +1082,6 @@ var
   Rec: TDatabaseRec;
   EditWindow: TfmEditTable;
   ATableName: string;
-  i: Integer;
-  PKFieldsList: TStringList;
-  FieldLine: string;
   dbIndex: Integer;
 begin
   SelNode:= tvMain.Selected;
@@ -1125,12 +1110,6 @@ var
   SelNode: TTreeNode;
   QWindow: TfmQueryWindow;
   ATriggerName: string;
-  Body: string;
-  AfterBefore: string;
-  Event: string;
-  OnTable: string;
-  TriggerEnabled: Boolean;
-  TriggerPosition: Integer;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -1180,7 +1159,6 @@ var
   AQuery: TSQLQuery;
   i: Integer;
   IndexFields: string;
-  ATitle: string;
   Rec: TDatabaseRec;
   CurrentRow: Integer;
   FieldsList: TStringList;
@@ -1340,8 +1318,6 @@ end;
 procedure TfmMain.InitNewGen(DatabaseIndex: Integer);
 var
   Rec: TDatabaseRec;
-  TableNames: string;
-  Count: integer;
 begin
   Rec:= RegisteredDatabases[DatabaseIndex];
 
@@ -1363,7 +1339,6 @@ end;
 
 function TfmMain.GetServerNameNode(ServerName: string): TTreeNode;
 var
-  i: Integer;
   Node: TTreeNode;
 begin
   Node:= nil;
@@ -1932,7 +1907,6 @@ var
   SelNode: TTreeNode;
   QWindow: TfmQueryWindow;
   ATableName: string;
-  PKFieldsList: TStringList;
   FieldLine: string;
   FieldNames: string;
   ParamNames: string;
@@ -2295,8 +2269,6 @@ end;
 procedure TfmMain.lmSweepClick(Sender: TObject);
 var
   FireBirdServices: TFirebirdServices;
-  Res: Ansistring;
-  ADatabase: string;
   dbIndex: Integer;
   AdbName: string;
   Lines: string;
@@ -3087,8 +3059,6 @@ end;
 procedure TfmMain.ViewTableFields(ATableName: string; dbIndex: Integer;
   AStringGrid: TStringGrid);
 var
-  Rec: TDatabaseRec;
-  QWindow: TfmQueryWindow;
   i: Integer;
   PKFieldsList: TStringList;
   DefaultValue: string;
@@ -3186,7 +3156,6 @@ procedure TfmMain.lmDisplayViewClick(Sender: TObject);
 var
   SelNode: TTreeNode;
   Rec: TDatabaseRec;
-  QWindow: TfmQueryWindow;
   AViewName: string;
   ViewBody, Columns: string;
   dbIndex: Integer;
@@ -3900,7 +3869,6 @@ end;
 procedure TfmMain.tvMainExpanded(Sender: TObject; Node: TTreeNode);
 var
   Rec: TRegisteredDatabase;
-  Count: Integer;
 begin
   if (Node <> nil) then
   if (Node.Parent <> nil) and (Node.Parent.Parent = nil) then   // Expand database

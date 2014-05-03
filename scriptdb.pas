@@ -327,7 +327,6 @@ var
   ProceduresList: TStringList;
   ProcedureScript: TStringList;
   SPOwner: string;
-  SPBody: string;
 begin
   ProceduresList:= TStringList.Create;
   ProcedureScript:= TStringList.Create;
@@ -480,10 +479,9 @@ var
   CompositeCounter: integer;
   TableCounter: integer;
   TablesList: TStringList;
-  Line: string;
 
   procedure WriteResult(
-    const TableName, ConstraintName, CurrentFieldName, CurrentTableName,
+    const TableName, ConstraintName, CurrentFieldName,
     OtherFieldName, OtherTableName, DeleteRule, UpdateRule: string;
     var List: TStringList);
   const
@@ -565,7 +563,6 @@ begin
               WriteResult(TablesList[TableCounter],
                 ConstraintName,
                 CompositeClauseFK,
-                Trim(sqQuery.FieldByName('CurrentTableName').AsString),
                 CompositeClauseRef,
                 Trim(sqQuery.FieldByName('OtherTableName').AsString),
                 Trim(sqQuery.FieldByName('DeleteRule').AsString),
@@ -589,7 +586,6 @@ begin
           WriteResult(TablesList[TableCounter],
             ConstraintName,
             Trim(sqQuery.FieldByName('CurrentFieldName').AsString),
-            Trim(sqQuery.FieldByName('CurrentTableName').AsString),
             Trim(sqQuery.FieldByName('OtherFieldName').AsString),
             Trim(sqQuery.FieldByName('OtherTableName').AsString),
             Trim(sqQuery.FieldByName('DeleteRule').AsString),
@@ -669,15 +665,11 @@ end;
 
 function ScriptAllPermissions(dbIndex: Integer; var List: TStringList): Boolean;
 var
-  Count: Integer;
   i, j: Integer;
   UsersList: TStringList;
   ObjectsList: TStringList;
   PermissionList: TStringList;
-  ObjName: string;
-  Permissions: string;
   UserName: string;
-  Line: string;
   ObjType: Integer;
 begin
   UsersList:= TStringList.Create;

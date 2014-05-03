@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, StdCtrls, Buttons, URIParser, LCLIntf;
+  ExtCtrls, StdCtrls, Buttons, LCLIntf;
 
 const
   {$IFDEF LINUX}
