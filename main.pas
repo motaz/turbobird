@@ -352,7 +352,6 @@ begin
         ShowMessage('User (' + edUserName.Text + ') will not appear in users list unless you grant it a permission');
       lmRefresh.Click;
     end;
-
   except
     on e: exception do
     begin
@@ -2409,6 +2408,7 @@ procedure TfmMain.lmViewDomainClick(Sender: TObject);
 var
   SelNode: TTreeNode;
   ADomainName: string;
+  Collation: string;
   DomainType: string;
   DomainSize: Integer;
   ADomainForm: TFmViewDomain;
@@ -2439,15 +2439,16 @@ begin
       ATab:= ADomainForm.Parent as TTabSheet;
     PageControl1.ActivePage:= ATab;
 
-
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
-    dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue);
+    dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue, Collation);
     ATab.Tag:= dbIndex;
     if Pos('default', LowerCase(DefaultValue)) = 1 then
       DefaultValue:= Trim(Copy(DefaultValue, 8, Length(DefaultValue)));
-    if Pos('CHAR', DomainType) > 0 then
+    if (Pos('CHAR', DomainType) > 0) or
+      (Pos('CSTRING', DomainType) >0) then
       DomainType:= DomainType + '(' + IntToStr(DomainSize) + ')';
 
+    //todo: how to present character set/collation
     // Fill ViewDomain form
     with ADomainForm do
     begin

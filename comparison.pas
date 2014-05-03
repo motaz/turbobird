@@ -308,6 +308,7 @@ var
   SPOwner: string;
   ModuleName, EntryPoint, Params: string;
   Line: string;
+  Collation: string;
   DomainType, DefaultValue: string;
   DomainSize: Integer;
   ATableName, AIndexName: string;
@@ -318,6 +319,8 @@ var
   IsPrimary: Boolean;
   ConstraintName: string;
 begin
+  //todo: if posssible merge this with create object statements generated
+  // in scriptdb code
   InitializeQueryWindow;
   ScriptList:= TStringList.Create;
   FieldsList:= TStringList.Create;
@@ -434,7 +437,8 @@ begin
       if (x = 8) and cxDomains.Checked then // Domains
       for i:= 0 to dbObjectsList[x].Count - 1 do
       begin
-        dmSysTables.GetDomainInfo(fdbIndex, dbObjectsList[x].Strings[i], DomainType, DomainSize, DefaultValue);
+        dmSysTables.GetDomainInfo(fdbIndex, dbObjectsList[x].Strings[i], DomainType, DomainSize, DefaultValue, Collation);
+        //todo: add support for collations and character sets.
 
         Line:= 'Create Domain ' + dbObjectsList[x].Strings[i] + ' as ' + DomainType;
           if Pos('CHAR', DomainType) > 0 then
@@ -976,11 +980,12 @@ end;
 procedure TfmComparison.CheckModifiedDomains;
 var
   i: Integer;
+  Collation: string;
   DomainName: string;
   DomainType, DefaultValue: string;
+  CCollation: string;
   CDomainType, CDefaultValue: string;
   DomainSize, CDomainSize: Integer;
-
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified domains');
@@ -996,17 +1001,19 @@ begin
     DomainName:= dbExistingObjectsList[8][i];
 
     // Read all domain properties
-    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue);
-    dmSysTables.GetDomainInfo(cbComparedDatabase.ItemIndex, DomainName, CDomainType, CDomainSize, CDefaultValue);
+    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue, Collation);
+    dmSysTables.GetDomainInfo(cbComparedDatabase.ItemIndex, DomainName, CDomainType, CDomainSize, CDefaultValue,CCollation);
 
     // Compare
-    if (DomainType <> CDomainType) or (DomainSize <> CDomainSize) or (DefaultValue <> CDefaultValue) then
+    if (DomainType <> CDomainType) or
+       (DomainSize <> CDomainSize) or
+       (DefaultValue <> CDefaultValue) or
+       (Collation <> CCollation) then
     begin
       meLog.Lines.Add(' ' + DomainName);
       ModifiedDomainsList.Add(DomainName);
       Inc(DiffCount);
     end;
-
   end;
 
 end;
@@ -1523,11 +1530,13 @@ end;
 procedure TfmComparison.ScriptModifiedDomains;
 var
   i: Integer;
+  Collation: string;
   DomainName: string;
   DomainType, DefaultValue: string;
   DomainSize: Integer;
   Line: string;
 begin
+  //todo: align this with regular script code for domains, including collations
   if ModifiedDomainsList.Count > 0 then
   begin
     fQueryWindow.meQuery.Lines.Add('');
@@ -1537,12 +1546,16 @@ begin
   for i:= 0 to ModifiedDomainsList.Count - 1 do
   begin
     DomainName:= ModifiedDomainsList[i];
-    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, domainSize, DefaultValue);
+    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, domainSize, DefaultValue, Collation);
     fQueryWindow.meQuery.Lines.Add('');
     Line:= 'Alter DOMAIN ' + DomainName + ' type ' + DomainType;
     if Pos('char', LowerCase(DomainType)) > 0 then
       Line:= Line + '(' + IntToStr(DomainSize) + ')';
     fQueryWindow.meQuery.Lines.Add(Line);
+
+    // todo: verify if this is correct
+    if Trim(Collation) <> '' then
+      FQueryWindow.meQuery.Lines.Add('collation '+Trim(Collation));
 
     if Trim(DefaultValue) <> '' then
     begin
@@ -1553,7 +1566,6 @@ begin
     end
     else
       fQueryWindow.meQuery.Lines.Add('set DEFAULT NULL;');
-
 
     fQueryWindow.meQuery.Lines.Add('');
 

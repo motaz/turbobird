@@ -61,8 +61,9 @@ type
     // Gets information about exception.
     // Returns CREATE EXCEPTION statement in SQLQuery.
     function GetExceptionInfo(ExceptionName: string; var Msg, Description, SqlQuery: string): Boolean;
+    // Gets information about domain
     procedure GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
-      var DomainSize: Integer; var DefaultValue: string);
+      var DomainSize: Integer; var DefaultValue: string; var Collation: string);
     function GetConstraintForeignKeyFields(AIndexName: string; SqlQuery: TSQLQuery): string;
 
     function GetDBUsers(dbIndex: Integer; ObjectName: string = ''): string;
@@ -594,11 +595,21 @@ end;
 (************  View Domain info  ***************)
 
 procedure TdmSysTables.GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
-  var DomainSize: Integer; var DefaultValue: string);
+  var DomainSize: Integer; var DefaultValue: string; var Collation: string);
+const
+  // Select domain and associated collation (if text type domain)
+  // note weird double join fields required...
+  Template= 'select f.*, '+
+    'c.rdb$collation_name '+
+    'from rdb$fields as f '+
+    'left join rdb$collations as c on '+
+    'f.rdb$collation_id=c.rdb$collation_id and '+
+    'f.rdb$character_set_id=c.rdb$character_set_id '+
+    'where f.rdb$field_name=''%s'' ';
 begin
   Init(dbIndex);
   sqQuery.Close;
-  sqQuery.SQL.Text:= 'select * from RDB$FIELDS where RDB$Field_Name = ''' + UpperCase(DomainName) + '''';
+  sqQuery.SQL.Text:= format(Template, [UpperCase(DomainName)]);
   sqQuery.Open;
 
   if sqQuery.RecordCount > 0 then
@@ -609,6 +620,7 @@ begin
       sqQuery.FieldByName('RDB$FIELD_SCALE').AsInteger);
     DomainSize:= sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger;
     DefaultValue:= sqQuery.FieldByName('RDB$DEFAULT_SOURCE').AsString;
+    Collation:= sqQuery.FieldByName('rdb$collation_name').AsString;
   end
   else
     DomainSize:= 0;
@@ -820,9 +832,9 @@ end;
 
 function TdmSysTables.GetDomainTypeSize(dbIndex: Integer; DomainTypeName: string): Integer;
 var
-  DomainType, DefaultValue: string;
+  DomainType, DefaultValue, COllation: string;
 begin
-  GetDomainInfo(dbIndex, DomainTypeName, DomainType, Result, DefaultValue);
+  GetDomainInfo(dbIndex, DomainTypeName, DomainType, Result, DefaultValue, Collation);
 end;
 
 

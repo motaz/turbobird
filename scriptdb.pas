@@ -150,23 +150,28 @@ function ScriptAllDomains(dbIndex: Integer; var List: TStringList): Boolean;
 var
   Count: Integer;
   i: Integer;
+  Collation: string;
   DomainType: string;
   DomainSize: Integer;
   DefaultValue: string;
 begin
+  //todo: add support for character set
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 8, Count);
   // Get domains in dependency order (if dependencies can exist between domains)
   dmSysTables.SortDependencies(List);
   for i:= 0 to List.Count - 1 do
   begin
-    dmSysTables.GetDomainInfo(dbIndex, List[i], DomainType, DomainSize, DefaultValue);
+    dmSysTables.GetDomainInfo(dbIndex, List[i], DomainType, DomainSize, DefaultValue, Collation);
 
     List[i]:= 'Create Domain ' + List[i] + ' as ' + DomainType;
-    if Pos('CHAR', DomainType) > 0 then
-      List[i]:= List[i] + '(' + IntToStr(DomainSize) + ')'
-    else
-      List[i]:= List[i] ;
-    List[i]:= List[i] + ' ' + DefaultValue + ';';
+    if (Pos('CHAR', DomainType) > 0) or (Pos('CSTRING', DomainType) > 0) then
+      List[i]:= List[i] + '(' + IntToStr(DomainSize) + ')';
+    List[i]:= List[i] + ' ' + DefaultValue;
+    // Collation for text types:
+    if Collation <> '' then
+      List[i]:= List[i] + ' COLLATE ' +  Collation;
+    // Close off create clause:
+    List[i]:= List[i] + ' ;';
   end;
   Result:= List.Count > 0;
 end;
