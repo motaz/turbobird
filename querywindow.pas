@@ -191,12 +191,12 @@ type
     procedure FinishCellEditing(DataSet: TDataSet);
     function GetRecordSet(TabIndex: Integer): TSQLQuery;
     function GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer;
-      var IsDDL: Boolean): Integer;
+      var IsDDL: Boolean): TQueryTypes;
     procedure NewCommitButton(const Pan: TPanel; var ATab: TTabSheet);
     procedure RemoveComments(QueryList: TStringList; StartLine: Integer;
       var RealStartLine: Integer);
     procedure RemoveAllSingleLineComments(QueryList: TStringList);
-    procedure removeEmptyLines(QueryList: TStringList;
+    procedure RemoveEmptyLines(QueryList: TStringList;
       var SecondRealStart: Integer; const RealStartLine: Integer);
     procedure InsertModifiedRecord(RecordNo, TabIndex: Integer);
     procedure ApplyClick(Sender: TObject);
@@ -217,7 +217,8 @@ type
     procedure RemoveControls;
     function FindSqlQuery: TSqlQuery;
     function GetSQLType(Query: string; var Command: string): string;
-    function GetSQLSegment(QueryList: TStringList; StartLine: Integer; var QueryType, EndLine: Integer;
+    function GetSQLSegment(QueryList: TStringList; StartLine: Integer;
+      var QueryType: TQueryTypes; var EndLine: Integer;
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
     procedure QueryAfterScroll(DataSet: TDataSet);
     procedure CallExecuteQuery(aQueryType: TQueryTypes);
@@ -605,7 +606,7 @@ end;
 
 { GetQuerySQLType: get query type: select, script, execute from current string list }
 
-function TfmQueryWindow.GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): Integer;
+function TfmQueryWindow.GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): TQueryTypes;
 var
   SQLSegment: string;
 begin
@@ -615,13 +616,13 @@ begin
     SQLSegment:= SQLSegment + QueryList[SecondRealStart];
 
     if (Pos('select', LowerCase(Trim(SQLSegment))) = 1) then
-      Result:= 1 // Selectable
+      Result:= qtSelectable // Selectable
     else
     if Pos('setterm', LowerCase(StringReplace(SQLSegment, ' ', '', [rfReplaceAll]))) = 1 then
-      Result:= 3 // Script
+      Result:= qtScript // Script
     else
     begin
-      Result:= 2; // Executable
+      Result:= qtExecute; // Executable
       IsDDL:= (Pos('create', lowerCase(Trim(SQLSegment))) = 1) or (Pos('alter',
         lowerCase(Trim(SQLSegment))) = 1) or
          (Pos('modify', lowerCase(Trim(SQLSegment))) = 1);
@@ -1011,6 +1012,7 @@ begin
         Break;
       end
       else
+      // todo: better test for set term in trim(lowercase at position 1?
       if Pos('setterm', LowerCase(StringReplace(Line, ' ', '', [rfReplaceAll]))) = 1 then
       begin
         Result:= qtScript;
@@ -1022,9 +1024,7 @@ begin
         Result:= qtExecute; // Executable
         Break;
       end;
-
     end;
-
   finally
     List.Free;
   end;
@@ -1138,6 +1138,9 @@ begin
         aSQLScript:= TSQLScript.Create(nil);
         aSQLScript.DataBase:= ibConnection;
         aSQLScript.Transaction:= SqlTrans;
+        aSQLScript.CommentsInSQL:= true; //pass on comments. They cannot hurt
+        // and may be useful when tracing errors at the database end.
+        aSQLScript.UseSetTerm:= true; //needed if set term is used, e.g. for SPs
         AddResultControl(ATab, aSQLScript);
       end;
     end;
@@ -1155,7 +1158,7 @@ var
   Command: string;
   IsDDL: Boolean;
   Affected: Integer;
-  fQueryType: Integer;
+  fQueryType: TQueryTypes;
 begin
   try
     // Script
@@ -1183,7 +1186,7 @@ begin
         fStartLine:= EndLine + 1;
 
       if Trim(fQueryPart) <> '' then   // Select
-      if fQueryType = 1 then
+      if fQueryType = qtSelectable then
       begin
         fTab:= nil;
         try
@@ -1203,13 +1206,13 @@ begin
 
           // Wait for the thread to complete
           repeat
-              Sleep(100);
-              application.ProcessMessages; // This prevents display freeze
+            Sleep(100);
+            application.ProcessMessages; // This prevents display freeze
           until fQT.fTerminated;
 
           // Raise exception if an error occured during thread execution (Open)
           if fQT.Error then
-              raise Exception.Create(fQT.ErrorMsg);
+            raise Exception.Create(fQT.ErrorMsg);
 
           fQT.Free;
           fTab.Caption:= faText;
@@ -1234,7 +1237,7 @@ begin
         end;
       end
       else  // Execute
-        if fQueryType = 2 then
+        if fQueryType = qtExecute then
         begin
           fTab:= nil;
           fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
@@ -1407,24 +1410,29 @@ var
   meResult: TMemo;
   ATab: TTabSheet;
 begin
+  StartTime:= Now;
   ATab:= nil;
+  SQLScript:= nil;
   try
-    StartTime:= Now;
     ATab:= CreateResultTab(3, SqlQuery, SqlScript, meResult);
-    ATab.ImageIndex:= 2;
-    SQLScript.Script.Text:= Script;
-    //todo: perhaps replace #10 with LineEnding?
-    SQLScript.ExecuteScript;
+    try
+      ATab.ImageIndex:= 2;
+      SQLScript.Script.Text:= Script;
+      //todo: perhaps replace #10 with LineEnding?
+      SQLScript.ExecuteScript;
 
-    // Auto commit
-    if cxAutoCommit.Checked then
-      SqlTrans.Commit;
+      // Auto commit
+      if cxAutoCommit.Checked then
+        SqlTrans.Commit;
 
-    Result:= True;
-    meResult.Lines.Text:= FormatDateTime('hh:nn:ss.z', Now) + ' - Script Executed. It takes (H:M:S.MS) ' +
-      FormatDateTime('HH:nn:ss.z', Now - StartTime);
-    meResult.Lines.Add('--------');
-    meResult.Lines.Add(Script);
+      Result:= True;
+      meResult.Lines.Text:= FormatDateTime('hh:nn:ss.z', Now) + ' - Script Executed. It took (H:M:S.MS) ' +
+        FormatDateTime('HH:nn:ss.z', Now - StartTime);
+      meResult.Lines.Add('--------');
+      meResult.Lines.Add(Script);
+    finally
+      SQLScript.Free;
+    end;
   except
     on e: exception do
     begin
@@ -1536,7 +1544,8 @@ end;
 
 { GetSQLSeqment: read part of SQL end by ; }
 
-function TfmQueryWindow.GetSQLSegment(QueryList: TStringList; StartLine: Integer; var QueryType, EndLine: Integer;
+function TfmQueryWindow.GetSQLSegment(QueryList: TStringList; StartLine: Integer;
+  var QueryType: TQueryTypes; var EndLine: Integer;
   var SQLSegment: string; var IsDDL: Boolean): Boolean;
 var
   i: Integer;
@@ -1557,12 +1566,12 @@ begin
   SecondRealStart:= RealStartLine;
 
   // remove empty lines
-  removeEmptyLines(QueryList, SecondRealStart, RealStartLine);
+  RemoveEmptyLines(QueryList, SecondRealStart, RealStartLine);
 
   // Get SQL type
   QueryType:= GetQuerySQLType(QueryList, SecondRealStart, IsDDL);
 
-  // Concatinate
+  // Concatenate
   SQLSegment:= '';
   BeginExist:= False;
   for i:= SecondRealStart to QueryList.Count - 1 do
@@ -1572,7 +1581,7 @@ begin
 
     SQLSegment:= SQLSegment + QueryList[i] + #10;
 
-    if (QueryType in [1, 2]) and
+    if (QueryType in [qtSelectable, qtExecute]) and
       (((Pos(';', QueryList[i]) > 0) and (Not BeginExist)) or
       ((Pos('end', LowerCase(Trim(QueryList[i]))) = 1) and BeginExist)
       or (i = QueryList.Count - 1)) then
@@ -1591,19 +1600,19 @@ begin
       end
       else
         EndLine:= i;
-
       Break;
     end
     else
-    if (QueryType = 3) and ((i > SecondRealStart) and (Pos('setterm', LowerCase(StringReplace(QueryList[i],
-      ' ', '', [rfReplaceAll]))) > 0)) or (i = QueryList.Count - 1) then
+    if (QueryType = qtScript) and
+      ((i > SecondRealStart) and (Pos('setterm', LowerCase(StringReplace(QueryList[i],
+      ' ', '', [rfReplaceAll]))) > 0))
+      or (i = QueryList.Count - 1) then
     begin
       Result:= True;
       EndLine:= i;
       Break;
     end;
   end;
-
 end;
 
 
