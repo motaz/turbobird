@@ -1497,9 +1497,8 @@ begin
       (ResultControls[i] as TSQLQuery).Close;
       (ResultControls[i] as TSQLQuery).DataSource:= nil;
     end;
-
-      ResultControls[i].Free;
-      ResultControls[i]:= nil;
+    ResultControls[i].Free;
+    ResultControls[i]:= nil;
   end;
 
   SetLength(ResultControls, 0);
