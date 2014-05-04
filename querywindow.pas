@@ -1169,7 +1169,7 @@ begin
       SqlType:= GetSQLType(fQuery, Command);
       fmMain.AddToSQLHistory(RegRec.Title, SqlType, fQuery);
       fFinished:= True;
-      fList.Free;
+      fList.Clear;
     end
     else  // normal statement / Multi statements
     begin
@@ -1551,7 +1551,7 @@ var
   i: Integer;
   RealStartLine: Integer;
   SecondRealStart: Integer;
-  BeginExist: Boolean;
+  BeginExists: Boolean;
 begin
   // Get start
   SQLSegment:= '';
@@ -1573,21 +1573,21 @@ begin
 
   // Concatenate
   SQLSegment:= '';
-  BeginExist:= False;
+  BeginExists:= False;
   for i:= SecondRealStart to QueryList.Count - 1 do
   begin
     if Pos('begin', Trim(LowerCase(QueryList[i]))) > 0 then
-      BeginExist:= True;
+      BeginExists:= True;
 
     SQLSegment:= SQLSegment + QueryList[i] + #10;
 
     if (QueryType in [qtSelectable, qtExecute]) and
-      (((Pos(';', QueryList[i]) > 0) and (Not BeginExist)) or
-      ((Pos('end', LowerCase(Trim(QueryList[i]))) = 1) and BeginExist)
+      (((Pos(';', QueryList[i]) > 0) and (Not BeginExists)) or
+      ((Pos('end', LowerCase(Trim(QueryList[i]))) = 1) and BeginExists)
       or (i = QueryList.Count - 1)) then
     begin
       Result:= True;
-      if (not BeginExist) and (Pos(';', QueryList[i]) > 0) then
+      if (not BeginExists) and (Pos(';', QueryList[i]) > 0) then
       begin
         QueryList[i]:= Trim(Copy(QueryList[i],  Pos(';', QueryList[i]) + 1, Length(QueryList[i])));
         if QueryList[i] = '' then
@@ -1603,6 +1603,7 @@ begin
       Break;
     end
     else
+    //todo: perhaps better test for set termin trim(querylist[i] instead
     if (QueryType = qtScript) and
       ((i > SecondRealStart) and (Pos('setterm', LowerCase(StringReplace(QueryList[i],
       ' ', '', [rfReplaceAll]))) > 0))
@@ -1698,6 +1699,7 @@ end;
 
 procedure TfmQueryWindow.FormCreate(Sender: TObject);
 begin
+  fList:= TStringList.Create;
   // Initialize new instance of IBConnection and SQLTransaction
   ibConnection:= TIBConnection.Create(nil);
   SqlTrans:= TSQLTransaction.Create(nil);
@@ -1710,6 +1712,7 @@ begin
   // Clean up resources to avoid memory leaks
   SQLTrans.Free;
   IBConnection.Free;
+  FList.Free;
 end;
 
 procedure TfmQueryWindow.FormKeyDown(Sender: TObject; var Key: Word;
@@ -2084,7 +2087,6 @@ end;
 
 procedure TfmQueryWindow.CallExecuteQuery(aQueryType: TQueryTypes);
 begin
-  fList:= TStringList.Create;
 
   // Get query text from memo
   fQuery:= Trim(GetQuery);
@@ -2101,7 +2103,7 @@ begin
   fModifyCount:= 0;
   RemoveControls;
 
-  // Get initial query type, it could be changed later in the next parts
+  // Get initial query type; this can be changed later in the next parts
   if aQueryType = qtUnknown then // Auto
     fOrigQueryType:= GetQueryType(fQuery)
   else
@@ -2121,8 +2123,8 @@ end;
 
 procedure TfmQueryWindow.SortSynCompletion;
 var
-  SortingList:TStringList;
-  i:Integer;
+  SortingList: TStringList;
+  i: Integer;
 begin
   SortingList:=TStringList.Create;
   try
