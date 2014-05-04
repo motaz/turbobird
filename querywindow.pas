@@ -209,8 +209,9 @@ type
     procedure Init(dbIndex: Integer);
     function GetQueryType(AQuery: string): TQueryTypes;
     function GetQuery: string;
-    function CreateResultTab(QueryType: Byte; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
+    function CreateResultTab(QueryType: TQueryTypes; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
+    // Runs SQL script; returns result
     function ExecuteScript(Script: string): Boolean;
     procedure AddResultControl(ParentControl: TObject; AControl: TObject);
     procedure NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
@@ -739,7 +740,7 @@ var
   QT: TQueryThread;
 begin
   RemoveControls;
-  ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
+  ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create(qaCommit);
   try
     QT.Trans:= SqlTrans;
@@ -864,7 +865,7 @@ var
   QT: TQueryThread;
 begin
   RemoveControls;
-  ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
+  ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create(qaRollBack);
   try
     QT.Trans:= SqlTrans;
@@ -1043,7 +1044,7 @@ end;
 
 { Create new result tab depending on query type }
 
-function TfmQueryWindow.CreateResultTab(QueryType: Byte;
+function TfmQueryWindow.CreateResultTab(QueryType: TQueryTypes;
   var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript; var meResult: TMemo;
   AdditionalTitle: string): TTabSheet;
 var
@@ -1058,7 +1059,7 @@ begin
   Result:= ATab;
   ATab.Parent:= PageControl1;
   ATab.Caption:= 'Result # ' + GetNewTabNum + ' ' + AdditionalTitle;
-  if QueryType = 1 then // Select, need record set result
+  if QueryType = qtSelectable then // Select, need record set result
   begin
     // Query
     aSqlQuery:= TSQLQuery.Create(nil);
@@ -1118,7 +1119,7 @@ begin
     NewCommitButton(Pan, ATab);
   end
   else
-  if QueryType in [2, 3] then
+  if QueryType in [qtExecute, qtScript] then
   begin
     meResult:= TMemo.Create(nil);
     meResult.Parent:= ATab;
@@ -1126,15 +1127,17 @@ begin
     meResult.Align:= alClient;
     AddResultControl(ATab, meResult);
     case QueryType of
-      2:
+      qtExecute:
       begin
         aSqlQuery:= TSQLQuery.Create(nil);
         aSqlQuery.DataBase:= ibConnection;
         aSqlQuery.Transaction:= SqlTrans;
         AddResultControl(ATab, aSqlQuery);
       end;
-      3: // Script
+      qtScript: // Script
       begin
+        //todo: strip out this create stuff; pass existing object to function.
+        // makes it easier to understand who is responsible for clearing up
         aSQLScript:= TSQLScript.Create(nil);
         aSQLScript.DataBase:= ibConnection;
         aSQLScript.Transaction:= SqlTrans;
@@ -1190,7 +1193,7 @@ begin
       begin
         fTab:= nil;
         try
-          fTab:= CreateResultTab(1, fSqlQuery, fSqlScript, fmeResult);
+          fTab:= CreateResultTab(qtSelectable, fSqlQuery, fSqlScript, fmeResult);
           fTab.ImageIndex:= 6;
           fTab.Hint:= fQueryPart;
           fTab.ShowHint:= True;
@@ -1225,7 +1228,7 @@ begin
               fTab.TabVisible:= False;
             SetLength(ResultControls, High(ResultControls));
             SetLength(ParentResultControls, High(ParentResultControls));
-            fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+            fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
             PageControl1.ActivePage:= fTab;
 
             fmeResult.Text:= e.message;
@@ -1240,7 +1243,7 @@ begin
         if fQueryType = qtExecute then
         begin
           fTab:= nil;
-          fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+          fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
 
           fTab.ImageIndex:= 1;
           SqlType:= GetSQLType(fQueryPart, Command);
@@ -1332,7 +1335,7 @@ begin
             begin
               if Assigned(fTab) then
                 fTab.TabVisible:= False;
-              fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+              fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
               PageControl1.ActivePage:= fTab;
               fmeResult.Text:= e.message;
               fmeResult.Lines.Add(fQueryPart);
@@ -1356,7 +1359,7 @@ begin
             begin
               if Assigned(fTab) then
                 fTab.TabVisible:= False;
-              fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+              fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
               PageControl1.ActivePage:= fTab;
               fmeResult.Text:= e.message;
               fmeResult.Lines.Add(fQueryPart);
@@ -1386,7 +1389,7 @@ begin
     begin
       if Assigned(fTab) then
         fTab.TabVisible:= False;
-      fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+      fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
       fTab.ImageIndex:= 2;
       PageControl1.ActivePage:= fTab;
 
@@ -1414,7 +1417,8 @@ begin
   ATab:= nil;
   SQLScript:= nil;
   try
-    ATab:= CreateResultTab(3, SqlQuery, SqlScript, meResult);
+    // CreateResultTab creates the SQLScript object for us.
+    ATab:= CreateResultTab(qtScript, SqlQuery, SQLScript, meResult);
     try
       ATab.ImageIndex:= 2;
       SQLScript.Script.Text:= Script;
@@ -1439,7 +1443,7 @@ begin
       Result:= False;
       if Assigned(ATab) then
         ATab.TabVisible:= False;
-      ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
+      ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
       PageControl1.ActivePage:= ATab;
       meResult.Text:= e.Message;
       meResult.Lines.Add('--------');
@@ -2087,7 +2091,6 @@ end;
 
 procedure TfmQueryWindow.CallExecuteQuery(aQueryType: TQueryTypes);
 begin
-
   // Get query text from memo
   fQuery:= Trim(GetQuery);
   fList.Text:= fQuery;
@@ -2151,7 +2154,7 @@ begin
       fTab.TabVisible:= False;
     SetLength(ResultControls, High(ResultControls));
     SetLength(ParentResultControls, High(ParentResultControls));
-    fTab:= CreateResultTab(2, fSqlQuery, fSqlScript, fmeResult);
+    fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
     PageControl1.ActivePage:= fTab;
 
     fmeResult.Text:= fQT.ErrorMsg;
