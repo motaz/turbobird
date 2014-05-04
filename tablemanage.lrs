@@ -401,7 +401,7 @@ LazarusResources.Add('TfmTableManage','FORMDATA',[
   +'m'#0#8'ColCount'#2#7#7'Columns'#14#1#13'Title.Caption'#6#15'Constraint Name'
   +#5'Width'#2'x'#0#1#13'Title.Caption'#6#8'Key name'#5'Width'#2'd'#0#1#13'Titl'
   +'e.Caption'#6#9'On Fields'#5'Width'#2'x'#0#1#13'Title.Caption'#6#13'Foreign '
-  +'Table'#5'Width'#2'd'#0#1#13'Title.Caption'#6#11'Foriegn Key'#5'Width'#2'd'#0
+  +'Table'#5'Width'#2'd'#0#1#13'Title.Caption'#6#11'Foreign Key'#5'Width'#2'd'#0
   +#1#13'Title.Caption'#6#11'Update Rule'#5'Width'#2'd'#0#1#13'Title.Caption'#6
   +#11'Delete Rule'#5'Width'#2'd'#0#0#10'FixedColor'#4#207#218#221#0#9'FixedCol'
   +'s'#2#0#7'Options'#11#15'goFixedVertLine'#15'goFixedHorzLine'#10'goVertLine'

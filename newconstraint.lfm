@@ -93,7 +93,7 @@ object fmNewConstraint: TfmNewConstraint
     Top = 224
     Width = 351
     Anchors = [akTop, akLeft, akRight]
-    Caption = 'Foriegn Table'
+    Caption = 'Foreign Table'
     ClientHeight = 181
     ClientWidth = 347
     TabOrder = 1

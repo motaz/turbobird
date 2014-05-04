@@ -22,7 +22,7 @@ LazarusResources.Add('TfmNewConstraint','FORMDATA',[
   +'eight'#2'h'#3'Top'#2''''#5'Width'#3#160#0#10'ItemHeight'#2#0#8'TabOrder'#2#1
   +#8'TopIndex'#2#255#0#0#0#9'TGroupBox'#9'GroupBox2'#4'Left'#2#16#6'Height'#3
   +#200#0#3'Top'#3#224#0#5'Width'#3'_'#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akR'
-  +'ight'#0#7'Caption'#6#13'Foriegn Table'#12'ClientHeight'#3#181#0#11'ClientWi'
+  +'ight'#0#7'Caption'#6#13'Foreign Table'#12'ClientHeight'#3#181#0#11'ClientWi'
   +'dth'#3'['#1#8'TabOrder'#2#1#0#6'TLabel'#6'Label4'#4'Left'#2#11#6'Height'#2
   +#18#3'Top'#2#12#5'Width'#2'L'#7'Caption'#6#10'Table name'#11'ParentColor'#8#0
   +#0#6'TLabel'#6'Label5'#4'Left'#2#11#6'Height'#2#18#3'Top'#2'4'#5'Width'#2':'

@@ -588,7 +588,7 @@ object fmTableManage: TfmTableManage
             Width = 100
           end        
           item
-            Title.Caption = 'Foriegn Key'
+            Title.Caption = 'Foreign Key'
             Width = 100
           end        
           item
