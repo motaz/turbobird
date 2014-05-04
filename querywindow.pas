@@ -18,6 +18,15 @@ type
     qtExecute=2,
     qtScript=3);
 
+  TQueryActions = (
+    qaCommit,
+    qaCommitRet,
+    qaRollBack,
+    qaRollbackRet,
+    qaOpen,
+    qaDDL,
+    qaExec );
+
 
   { TQueryThread }
 
@@ -31,7 +40,7 @@ type
       Error: Boolean;
       ErrorMsg: string;
       fTerminated: Boolean;
-      fType: string;
+      fType: TQueryActions;
       fStatement: string;
       property Query: TSQLQuery read fSQLQuery write fSQLQuery;
       property Trans: TSQLTransaction read fTrans write fTrans;
@@ -39,7 +48,7 @@ type
       property Statement: String read fStatement write fStatement;
       procedure DoJob;
       procedure Execute; override;
-      constructor Create(aType: string);
+      constructor Create(aType: TQueryActions);
   end;
 
 
@@ -623,25 +632,25 @@ end;
 procedure TQueryThread.DoJob;
 begin
   try
-    if fType = 'open' then
+    if fType = qaOpen then
       fSQLQuery.Open
     else
-    if fType = 'exec' then
+    if fType = qaExec then
       fSQLQuery.ExecSQL
     else
-    if fType = 'ddl' then
+    if fType = qaDDL then
       fConnection.ExecuteDirect(fStatement)
     else
-    if fType = 'commit' then
+    if fType = qaCommit then
       fTrans.Commit
     else
-    if fType = 'commitret' then
+    if fType = qaCommitRet then
       fTrans.CommitRetaining
     else
-    if fType = 'rollback' then
+    if fType = qaRollBack then
       fTrans.Rollback
     else
-    if fType = 'rollbackret' then
+    if fType = qaRollbackRet then
       fTrans.RollbackRetaining;
 
     Error:= False;
@@ -681,7 +690,7 @@ end;
 
 { Create query thread }
 
-constructor TQueryThread.Create(aType: string);
+constructor TQueryThread.Create(aType: TQueryActions);
 begin
   inherited Create(True);
   fType:= aType;
@@ -727,7 +736,7 @@ var
 begin
   RemoveControls;
   ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
-  QT:= TQueryThread.Create('commit');
+  QT:= TQueryThread.Create(qaCommit);
   try
     QT.Trans:= SqlTrans;
     ATab.ImageIndex:= 6;
@@ -769,7 +778,7 @@ procedure TfmQueryWindow.tbCommitRetainingClick(Sender: TObject);
 var
   QT: TQueryThread;
 begin
-  QT:= TQueryThread.Create('commitret');
+  QT:= TQueryThread.Create(qaCommitRet);
   try
     QT.Trans:= SqlTrans;
 
@@ -852,7 +861,7 @@ var
 begin
   RemoveControls;
   ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
-  QT:= TQueryThread.Create('rollback');
+  QT:= TQueryThread.Create(qaRollBack);
   try
     QT.Trans:= SqlTrans;
     ATab.ImageIndex:= 6;
@@ -890,7 +899,7 @@ procedure TfmQueryWindow.tbRollbackRetainingClick(Sender: TObject);
 var
   QT: TQueryThread;
 begin
-  QT:= TQueryThread.Create('rollbackret');
+  QT:= TQueryThread.Create(qaRollbackRet);
   try
     QT.Trans:= SqlTrans;
 
@@ -1182,7 +1191,7 @@ begin
           fSQLQuery.SQL.Text:= fQueryPart;
 
           // Create thread to open dataset
-          fQT:= TQueryThread.Create('open');
+          fQT:= TQueryThread.Create(qaOpen);
           fQT.Query:= fSqlQuery;
           // fQT.OnTerminate:= @ThreadTerminated;
           faText:= fTab.Caption;
@@ -1235,7 +1244,7 @@ begin
             if IsDDL then
             begin
               // Execute the statement in thread
-              fQT:= TQueryThread.Create('ddl');
+              fQT:= TQueryThread.Create(qaDDL);
               fQT.Connection:= ibConnection;
               fQT.Statement:= fQueryPart;
               fQT.Resume;
@@ -1268,7 +1277,7 @@ begin
               fSQLQuery.SQL.Text:= fQueryPart;
 
               // Execute the statement in thread
-              fQT:= TQueryThread.Create('exec');
+              fQT:= TQueryThread.Create(qaExec);
               try
                 fQT.Query:= fSqlQuery;
                 fQT.Resume;
