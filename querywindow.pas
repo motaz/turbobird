@@ -11,7 +11,6 @@ uses
   SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType;
 
 type
-
   TQueryTypes = (
     qtUnknown=0,
     qtSelectable=1,
@@ -273,7 +272,9 @@ begin
       Comment:= False;
     end;
 
-    if not MultiComment then
+    // Avoid checking for comments if there's any chance they're within
+    // a string literal e.g. select 'this is -- no -- comment' from rdb$database
+    if (not MultiComment) and (pos('''',QueryList[i])=0) then
       Comment:= Pos('--', Trim(QueryList[i])) = 1;
 
     if (Trim(QueryList[i]) <> '') and (not Comment) and (not MultiComment) then
@@ -289,13 +290,13 @@ begin
       RealStartLine:= i;
       MultiComment:= False;
       Comment:= False;
+      //todo: verify check of -- regarding string literals below.
       if (i = QueryList.Count - 1) or
          ((Trim(QueryList[i + 1]) <> '') and  (Pos('/*', Trim(QueryList[i + 1])
            ) <> 1) and
          (Pos('--', Trim(QueryList[i + 1])) <> 1)) then
           Break;
     end;
-
   end;
 end;
 
@@ -310,11 +311,13 @@ begin
   if Pos('--', QueryList[i]) > 0 then
   begin
     if Pos('--', Trim(QueryList[i])) = 1 then
-      QueryList.Delete(i)
+      QueryList.Delete(i);
+    {
     else
+      //todo: this will also pick up -- within string literals which is wrong
       QueryList[i]:= Copy(QueryList[i], 1, Pos('--', QueryList[i]) - 1);
+    }
   end;
-
 end;
 
 
@@ -1410,6 +1413,7 @@ begin
     ATab:= CreateResultTab(3, SqlQuery, SqlScript, meResult);
     ATab.ImageIndex:= 2;
     SQLScript.Script.Text:= Script;
+    //todo: perhaps replace #10 with LineEnding?
     SQLScript.ExecuteScript;
 
     // Auto commit
@@ -1421,23 +1425,21 @@ begin
       FormatDateTime('HH:nn:ss.z', Now - StartTime);
     meResult.Lines.Add('--------');
     meResult.Lines.Add(Script);
-
   except
-  on e: exception do
-  begin
-    Result:= False;
-    if Assigned(ATab) then
-      ATab.TabVisible:= False;
-    ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
-    PageControl1.ActivePage:= ATab;
-    meResult.Text:= e.Message;
-    meResult.Lines.Add('--------');
-    meResult.Lines.Add(Script);
-    meResult.Font.Color:= clRed;
-    ATab.Font.Color:= clRed;
-    ATab.ImageIndex:= 3;
-  end;
-
+    on e: exception do
+    begin
+      Result:= False;
+      if Assigned(ATab) then
+        ATab.TabVisible:= False;
+      ATab:= CreateResultTab(2, SqlQuery, SqlScript, meResult);
+      PageControl1.ActivePage:= ATab;
+      meResult.Text:= e.Message;
+      meResult.Lines.Add('--------');
+      meResult.Lines.Add(Script);
+      meResult.Font.Color:= clRed;
+      ATab.Font.Color:= clRed;
+      ATab.ImageIndex:= 3;
+    end;
   end;
 end;
 
