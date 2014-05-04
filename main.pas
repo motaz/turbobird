@@ -201,6 +201,7 @@ type
     function RemoveSpecialChars(AText: string): string;
     // Remove RegisteredDatabases and clean up memory held by its objects
     procedure ReleaseRegisteredDatabases;
+    // Set connection for SQLQuery1 to selected registered database
     procedure SetConnection(Index: Integer);
     procedure SetFocus; override; // solve a bug in Lazarus
     { private declarations }
@@ -222,6 +223,8 @@ type
     // Get name of index used for primary key
     // Also returns name of constraint used
     function GetPrimaryKeyIndexName(DatabaseIndex: Integer; ATableName: string; var ConstraintName: string): string;
+    // Get primary key field(s) names into KeyFields
+    function GetPrimaryKeyFields(DatabaseIndex: Integer; ATableName: string; var KeyFields: TStringList): boolean;
     function GetConstraintFields(ATableName, AIndexName: string; var List: TStringList): Boolean;
     // Get fields information for specified table
     // Fills SQLQuery1 with details
@@ -243,8 +246,6 @@ type
       OnCommitProcedure: TNotifyEvent = nil);
     procedure ViewTableFields(ATableName: string; dbIndex: Integer; AStringGrid: TStringGrid);
     procedure ShowIndicesManagement(AForm: TForm; DatabaseIndex: Integer; ATableName: string);
-    // Taking a normal query, try to make sure the UpdateSQL and InsertSQL work.
-    function ChangeQueryToUpdatable(DatabaseIndex: Integer; ATableName: string; sqQuery: TSQLQuery): Boolean;
     function GetTableNames(dbIndex: Integer): string;
     function CreateNewTrigger(dbIndex: Integer; ATableName: string; OnCommitProcedure: TNotifyEvent = nil): Boolean;
     function AddToSQLHistory(DatabaseTitle: string; SQLType, SQLStatement: string): Boolean;
@@ -1368,7 +1369,9 @@ begin
   if ibConnection <> RegisteredDatabases[Index].IBConnection then
   begin
     ibConnection:= RegisteredDatabases[Index].IBConnection;
-    ibConnection.Close;
+    // This used to say ibConnection.Close which will simply also close all open
+    // queries - not a good idea
+    //ibConnection.Close;
     sqlTransaction:= RegisteredDatabases[Index].SQLTrans;
     ibConnection.Transaction:= sqlTransaction;
     SQLQuery1.DataBase:= ibConnection;
@@ -1982,7 +1985,7 @@ var
   dbIndex: Integer;
   ScriptList: TStringList;
   Line: string;
-  PKName: string;
+  PKIndexName: string;
   ConstraintName: string;
   List: TStringList;
   i: Integer;
@@ -2023,7 +2026,7 @@ begin
       QWindow.meQuery.Lines.Add('');
 
       // Script Secondary indices
-      PKName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
+      PKIndexName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
       List:= TStringList.Create;
       try
         with dmSysTables do
@@ -2031,7 +2034,7 @@ begin
         with sqQuery do
         while not EOF do
         begin
-          if PKName <> Trim(FieldByName('RDB$Index_name').AsString) then
+          if PKIndexName <> Trim(FieldByName('RDB$Index_name').AsString) then
           begin
             Line:= 'create ';
             if FieldByName('RDB$Unique_Flag').AsString = '1' then
@@ -2122,7 +2125,7 @@ var
   AFieldName: string;
   WhereClause: string;
   Skipped: Boolean;
-  PKeyName: string;
+  PKIndexName: string;
   dbIndex: Integer;
   ConstraintName: string;
   LastParam: string;
@@ -2182,10 +2185,10 @@ begin
     // Primary Keys
     WhereClause:= '';
     PKFieldsList:= TStringList.Create;
-    PKeyName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
-    if PKeyName <> '' then
+    PKIndexName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
+    if PKIndexName <> '' then
     begin
-      GetConstraintFields(ATableName, PKeyName, PKFieldsList);
+      GetConstraintFields(ATableName, PKIndexName, PKFieldsList);
       for i:= 0 to PKFieldsList.Count - 1 do
       begin
         WhereClause:= WhereClause + PKFieldsList[i] + ' = :' + PKFieldsList[i];
@@ -3043,7 +3046,7 @@ var
   i: Integer;
   PKFieldsList: TStringList;
   DefaultValue: string;
-  PKeyName: string;
+  PKIndexName: string;
   ConstraintName: string;
 begin
   try
@@ -3111,9 +3114,9 @@ begin
     // Primary Keys
     PKFieldsList:= TStringList.Create;
     try
-      PKeyName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
-      if PKeyName <> '' then
-        GetConstraintFields(ATableName, PKeyName, PKFieldsList);
+      PKIndexName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
+      if PKIndexName <> '' then
+        GetConstraintFields(ATableName, PKIndexName, PKFieldsList);
 
       with AStringGrid do
       for i:= 1 to RowCount - 1 do
@@ -3183,7 +3186,7 @@ var
   FieldTitle: string;
   FieldNode: TTreeNode;
   PKFieldsList: TStringList;
-  PKeyName: string;
+  PKIndexName: string;
   ConstraintName: string;
   AFieldName: string;
   i: Integer;
@@ -3197,9 +3200,9 @@ begin
     // Primary Keys
     PKFieldsList:= TStringList.Create;
     try
-      PKeyName:= GetPrimaryKeyIndexName(dbIndex, Node.Text, ConstraintName);
-      if PKeyName <> '' then
-        GetConstraintFields(Node.Text, PKeyName, PKFieldsList);
+      PKIndexName:= GetPrimaryKeyIndexName(dbIndex, Node.Text, ConstraintName);
+      if PKIndexName <> '' then
+        GetConstraintFields(Node.Text, PKIndexName, PKFieldsList);
 
       // Fields
       FieldsList:= TStringList.Create;
@@ -4145,6 +4148,38 @@ begin
   SQLQuery1.Close;
 end;
 
+function TfmMain.GetPrimaryKeyFields(DatabaseIndex: Integer;
+  ATableName: string; var KeyFields: TStringList): boolean;
+const
+  // Select field(s) that make up primary key
+  Template=' SELECT r.rdb$field_name ' +
+    ' FROM RDB$RELATION_FIELDS r ' +
+    ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
+    ' LEFT JOIN RDB$INDEX_SEGMENTS s ON s.RDB$FIELD_NAME=r.RDB$FIELD_NAME ' +
+    ' LEFT JOIN RDB$INDICES i ON i.RDB$INDEX_NAME = s.RDB$INDEX_NAME ' +
+    ' AND i.RDB$RELATION_NAME=r.RDB$RELATION_NAME ' +
+    ' LEFT JOIN RDB$RELATION_CONSTRAINTS rc ON rc.RDB$INDEX_NAME = s.RDB$INDEX_NAME ' +
+    ' AND rc.RDB$INDEX_NAME = i.RDB$INDEX_NAME ' +
+    ' AND rc.RDB$RELATION_NAME = i.RDB$RELATION_NAME ' +
+    ' WHERE r.RDB$RELATION_NAME=''%s'' AND ' +
+    ' rc.RDB$CONSTRAINT_TYPE = ''PRIMARY KEY'' ';
+begin
+  result:= false;
+  KeyFields.Clear;
+  SQLQuery1.Close;
+  SetConnection(DatabaseIndex);
+  SQLQuery1.Close;
+  SQLQuery1.SQL.Text:=format(Template,[UpperCase(ATableName)]);
+  SQLQuery1.Open;
+  while not(SQLQuery1.EOF) do
+  begin
+    KeyFields.Add(Trim(SQLQuery1.FieldByName('rdb$field_name').AsString));
+    SQLQuery1.Next;
+  end;
+  SQLQuery1.Close;
+  result:= true;
+end;
+
 (*********  Get constrain fields  *********)
 
 function TfmMain.GetConstraintFields(ATableName, AIndexName: string; var List: TStringList): Boolean;
@@ -4171,90 +4206,6 @@ begin
   end;
   SQLQuery1.Close;
   Result:= List.Count > 0;
-end;
-
-
-function TfmMain.ChangeQueryToUpdatable(DatabaseIndex: Integer; ATableName: string; sqQuery: TSQLQuery): Boolean;
-var
-  KeyList, FieldsList: TStringList;
-  PKName: string;
-  sqPrimaryKey: TSQLQuery;
-  i: Integer;
-  WhereClause: string;
-  ConstraintName: string;
-begin
-  Result:= false;
-  SetConnection(DatabaseIndex);
-
-  sqQuery.UpdateSQL.Clear;
-  sqQuery.DeleteSQL.Clear;
-  sqQuery.InsertSQL.Clear;
-
-  KeyList:= TStringList.Create;
-  FieldsList:= TStringList.Create;
-  try
-    PKName:= fmMain.GetPrimaryKeyIndexName(DatabaseIndex, ATableName, ConstraintName);
-    if (PKName <> '') then
-    begin
-      sqPrimaryKey:= TSQLQuery.Create(nil);
-      try
-        sqPrimaryKey.DataBase:= IBConnection;
-        GetIndexFields(ATableName, PKName, sqPrimaryKey, KeyList);
-        GetFields(DatabaseIndex, ATableName, FieldsList);
-
-        // Update SQL
-        sqQuery.UpdateSQL.Add('update ' + ATableName + ' set ');
-        for i:= 0 to FieldsList.Count - 1 do
-        begin
-          if KeyList.IndexOf(FieldsList[i]) = -1 then
-          begin
-            sqQuery.UpdateSQL.Add(FieldsList[i] + ' = :' + FieldsList[i]);
-            sqQuery.UpdateSQL.Add(',');
-          end;
-        end;
-        sqQuery.UpdateSQL.Delete(sqQuery.UpdateSQL.Count - 1); // Delete last comma
-
-        // Key where clause
-        WhereClause:= ' where ';
-        for i:= 0 to KeyList.Count - 1 do
-        begin
-          WhereClause:= WhereClause + KeyList[i] + ' = :' + KeyList[i];
-          if i + 1 < KeyList.Count then
-            WhereClause:= WhereClause + ' and ';
-        end;
-        sqQuery.UpdateSQL.Add(WhereClause);
-
-        // Insert SQL
-        sqQuery.InsertSQL.Add('insert into ' + ATableName + ' (');
-        for i:= 0 to FieldsList.Count - 1 do
-        begin
-          sqQuery.InsertSQL.Add(FieldsList[i]);
-          if i < FieldsList.Count - 1 then
-            sqQuery.InsertSQL.Add(',')
-          else
-           sqQuery.InsertSQL.Add(') values (');
-        end;
-
-        for i:= 0 to FieldsList.Count - 1 do
-        begin
-          sqQuery.InsertSQL.Add(':' + FieldsList[i]);
-          if i < FieldsList.Count - 1 then
-            sqQuery.InsertSQL.Add(',')
-          else
-            sqQuery.InsertSQL.Add(')');
-        end;
-
-        // Delete SQL
-        sqQuery.DeleteSQL.Text:= 'delete from ' + ATableName + WhereClause;
-      finally
-        sqPrimaryKey.Free;
-      end;
-      Result:= true;
-    end;
-  finally
-    KeyList.Free;
-    FieldsList.Free;
-  end;
 end;
 
 (********  Get table names   ********)

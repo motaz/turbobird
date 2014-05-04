@@ -152,6 +152,7 @@ type
     procedure tbSaveClick(Sender: TObject);
   private
     { private declarations }
+    // Index of selected registered database
     fdbIndex: Integer;
     RegRec: TRegisteredDatabase;
     ResultControls: array of TObject;

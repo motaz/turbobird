@@ -63,7 +63,6 @@ begin
   try
     if sqEditTable.State in [dsInsert, dsEdit] then
       sqEditTable.Post;
-
     if sqEditTable.Active then
       sqEditTable.ApplyUpdates;
     if SQLTrans.Active then
@@ -92,23 +91,55 @@ begin
 end;
 
 procedure TfmEditTable.Init(dbIndex: Integer; ATableName: string);
+var
+  FieldsList: TStringList;
+  i: integer;
+  PKField: TField;
 begin
   sqEditTable.Close;
   if ibConnection = nil then
   begin
     ibConnection:= Rec.IBConnection;
-    ibConnection.Close;
+    if not(ibConnection.Connected) then
+      ibConnection.Open;
     sqlTrans:= Rec.SQLTrans;
     sqEditTable.DataBase:= ibConnection;
   end;
-
-  bbSave.Visible:= fmMain.ChangeQueryToUpdatable(dbIndex, ATableName, sqEditTable);
-  if not bbSave.Visible then
-    ShowMessage('Primary key is not found for this table. It can not be edited.');
-
-  sqEditTable.Close;
+  //todo: deal with quoted identifiers in ATableName here and elsewhere
   sqEditTable.SQL.Text:= 'select * from ' + ATableName;
-  sqEditTable.Open;
+  sqEditTable.Open; // need to have open query in order to access fields below
+
+  bbSave.Visible:= true;
+  {
+  // ASSUME there's a generator/trigger
+  //todo: verify this assumption using code to check this out. Then also modify
+  //insert statement to leave out the relevant fields if not present
+  FieldsList:= TStringList.Create;
+  try
+    if fmmain.GetPrimaryKeyFields(dbIndex, ATableName, FieldsList) then
+    begin
+      bbSave.Visible:= true;
+      for i:= 0 to FieldsList.Count -1 do
+      begin
+        try
+          sqEditTable.FieldByName(FieldsList[i]).Required:=false;
+        except
+          // field does not exist => error
+          bbSave.Visible:=false;
+          break;
+        end;
+      end;
+    end
+    else
+    begin
+      bbSave.Visible:= false;
+    end;
+  finally
+    FieldsList.Free;
+  end;
+  }
+  if not(bbSave.Visible) then
+    ShowMessage('Primary key is not found for this table. It can not be edited.');
 end;
 
 initialization

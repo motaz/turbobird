@@ -228,6 +228,7 @@
         <Filename Value="editdatafullrec.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmEditDataFullRec"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EditDataFullRec"/>
       </Unit16>
@@ -397,7 +398,6 @@
       <Unit39>
         <Filename Value="turbocommon.inc"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Unit1"/>
       </Unit39>
     </Units>
   </ProjectOptions>

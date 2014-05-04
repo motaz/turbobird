@@ -9,20 +9,20 @@ object fmEditDataFullRec: TfmEditDataFullRec
   ClientWidth = 593
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '0.9.30'
+  LCLVersion = '1.2.2.0'
   object Label1: TLabel
     Left = 258
-    Height = 18
+    Height = 13
     Top = 27
-    Width = 60
+    Width = 45
     Caption = 'Record #'
     ParentColor = False
   end
   object laPos: TLabel
     Left = 326
-    Height = 18
+    Height = 13
     Top = 27
-    Width = 9
+    Width = 6
     Caption = '0'
     Font.Color = 11610912
     ParentColor = False
@@ -43,6 +43,7 @@ object fmEditDataFullRec: TfmEditDataFullRec
     ClientHeight = 25
     ClientWidth = 241
     DataSource = Datasource1
+    Options = []
     TabOrder = 0
   end
   object bbSave: TBitBtn
@@ -54,16 +55,15 @@ object fmEditDataFullRec: TfmEditDataFullRec
     OnClick = bbSaveClick
     TabOrder = 1
   end
-  object Datasource1: TDatasource
+  object Datasource1: TDataSource
     DataSet = sqEditTable
     left = 408
     top = 128
   end
   object sqEditTable: TSQLQuery
-    IndexName = 'DEFAULT_ORDER'
+    FieldDefs = <>
     AutoCalcFields = False
     AfterScroll = sqEditTableAfterScroll
-    ReadOnly = False
     Params = <>
     left = 385
     top = 48
