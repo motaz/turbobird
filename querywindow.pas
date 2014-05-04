@@ -163,11 +163,11 @@ type
     // Index of selected registered database
     fdbIndex: Integer;
     RegRec: TRegisteredDatabase;
-    ResultControls: array of TObject;
-    ParentResultControls: array of TObject;
+    fResultControls: array of TObject;
+    fParentResultControls: array of TObject;
     fOptions: set of TSynSearchOption;
     ibConnection: TIBConnection;
-    SqlTrans: TSQLTransaction;
+    fSqlTrans: TSQLTransaction;
     fCanceled: Boolean;
     fStartLine: Integer;
     fList: TStringList;
@@ -183,7 +183,7 @@ type
     faText: string;
     fModifyCount: Integer;
     fCnt: Integer;
-    ModifiedRecords: array of array of Integer;
+    fModifiedRecords: array of array of Integer;
 
     procedure EnableCommitButton;
     procedure ExecuteQuery;
@@ -360,14 +360,14 @@ var
   Exist: Boolean;
 begin
   Exist:= False;
-  if TabIndex > High(ModifiedRecords) then // Insert new tab
+  if TabIndex > High(fModifiedRecords) then // Insert new tab
   begin
-    SetLength(ModifiedRecords, TabIndex + 1);
+    SetLength(fModifiedRecords, TabIndex + 1);
   end;
 
   // check if record already inserted
-  for i:= 0 to High(ModifiedRecords[TabIndex]) do
-  if ModifiedRecords[TabIndex][i] = RecordNo then
+  for i:= 0 to High(fModifiedRecords[TabIndex]) do
+  if fModifiedRecords[TabIndex][i] = RecordNo then
   begin
     Exist:= True;
     Break;
@@ -375,12 +375,12 @@ begin
 
   if not Exist then  // Insert record pointer
   begin
-    setLength(ModifiedRecords[TabIndex], Length(ModifiedRecords[TabIndex]) + 1);
-    ModifiedRecords[TabIndex][High(ModifiedRecords[TabIndex])]:= RecordNo;
+    setLength(fModifiedRecords[TabIndex], Length(fModifiedRecords[TabIndex]) + 1);
+    fModifiedRecords[TabIndex][High(fModifiedRecords[TabIndex])]:= RecordNo;
   end;
 
   // Enable apply/save button
-  if Length(ModifiedRecords[TabIndex]) = 1 then
+  if Length(fModifiedRecords[TabIndex]) = 1 then
   begin
     EnableApplyButton;
   end;
@@ -395,7 +395,7 @@ var
   i, x: Integer;
   aTableName: string;
   aQuery: TSQLQuery;
-  PKName: string;
+  PKIndexName: string;
   ConstraintName: string;
   KeyList, FieldsList: TStringList;
   WhereClause: string;
@@ -409,27 +409,27 @@ begin
     RecordSet:= GetRecordSet(TabIndex);
 
     // Get primary key name
-    PKName:= fmMain.GetPrimaryKeyIndexName(fdbIndex, ATableName, ConstraintName);
-    if PKName <> '' then
+    PKIndexName:= fmMain.GetPrimaryKeyIndexName(fdbIndex, ATableName, ConstraintName);
+    if PKIndexName <> '' then
     begin
       KeyList:= TStringList.Create;
-      Fieldslist:= tstringList.Create;
+      Fieldslist:= TStringList.Create;
       aQuery:= TSQLQuery.Create(nil);
       try
         aQuery.DataBase:= ibConnection;
-        aQuery.Transaction:= SqlTrans;
+        aQuery.Transaction:= fSqlTrans;
 
         // Get primary key fields
-        fmMain.GetIndexFields(ATableName, PKName, aQuery, KeyList);
+        fmMain.GetIndexFields(ATableName, PKIndexName, aQuery, KeyList);
         fmMain.GetFields(fdbIndex, ATableName, FieldsList);
         WhereClause:= 'where ';
 
         RecordSet.DisableControls;
         // Check modified fields
-        for i:= Low(ModifiedRecords[TabIndex]) to High(ModifiedRecords[TabIndex]) do
+        for i:= Low(fModifiedRecords[TabIndex]) to High(fModifiedRecords[TabIndex]) do
         begin
           FieldsSQL:= '';
-          RecordSet.RecNo:= ModifiedRecords[TabIndex][i];
+          RecordSet.RecNo:= fModifiedRecords[TabIndex][i];
           for x:= 0 to RecordSet.Fields.Count - 1 do
           begin
             if (FieldsList.IndexOf(RecordSet.Fields[x].FieldName) <> -1) and  // Field exist in origional table
@@ -477,21 +477,20 @@ begin
                   WhereClause += ' and ';
               end;
             end;
-
             aQuery.SQL.Add(WhereClause);
             aQuery.ExecSQL;
             (Sender as TBitBtn).Visible:= False;
 
             // Auto commit
             if cxAutoCommit.Checked then
-              SqlTrans.CommitRetaining
+              fSqlTrans.CommitRetaining
             else
               EnableCommitButton;
           end;
         end;
 
-        // Reset ModifiedRecords pointer
-        ModifiedRecords[TabIndex]:= nil;
+        // Reset fModifiedRecords pointer
+        fModifiedRecords[TabIndex]:= nil;
         RecordSet.EnableControls;
       finally
         FieldsList.Free;
@@ -515,11 +514,11 @@ procedure TfmQueryWindow.EnableApplyButton;
 var
   i: Integer;
 begin
-  for i:= 0 to High(ResultControls) do
-  if (ResultControls[i] is TBitBtn) and ((ResultControls[i] as TBitBtn).Tag = PageControl1.TabIndex) and
-    ((ResultControls[i] as TBitBtn).Caption = 'Apply') then
+  for i:= 0 to High(fResultControls) do
+  if (fResultControls[i] is TBitBtn) and ((fResultControls[i] as TBitBtn).Tag = PageControl1.TabIndex) and
+    ((fResultControls[i] as TBitBtn).Caption = 'Apply') then
   begin
-    (ResultControls[i] as TBitBtn).Visible:= True;
+    (fResultControls[i] as TBitBtn).Visible:= True;
     Break;
   end;
 end;
@@ -531,11 +530,11 @@ procedure TfmQueryWindow.EnableCommitButton;
 var
   i: Integer;
 begin
-  for i:= 0 to High(ResultControls) do
-  if (ResultControls[i] is TBitBtn) and ((ResultControls[i] as TBitBtn).Tag = PageControl1.TabIndex)
-    and ((ResultControls[i] as TBitBtn).Caption = 'Commit') then
+  for i:= 0 to High(fResultControls) do
+  if (fResultControls[i] is TBitBtn) and ((fResultControls[i] as TBitBtn).Tag = PageControl1.TabIndex)
+    and ((fResultControls[i] as TBitBtn).Caption = 'Commit') then
   begin
-    (ResultControls[i] as TBitBtn).Visible:= True;
+    (fResultControls[i] as TBitBtn).Visible:= True;
     Break;
   end;
 end;
@@ -570,10 +569,10 @@ function TfmQueryWindow.GetCurrentSQLText: string;
 var
   i: Integer;
 begin
-  for i:= 0 to High(ResultControls) do
-  if (ResultControls[i] is TDBGrid) and ((ResultControls[i] as TDBGrid).Tag = PageControl1.TabIndex) then
+  for i:= 0 to High(fResultControls) do
+  if (fResultControls[i] is TDBGrid) and ((fResultControls[i] as TDBGrid).Tag = PageControl1.TabIndex) then
   begin
-    Result:= ((ResultControls[i] as TDBGrid).DataSource.DataSet as TSQLQuery).SQL.Text;
+    Result:= ((fResultControls[i] as TDBGrid).DataSource.DataSet as TSQLQuery).SQL.Text;
     Break;
   end;
 
@@ -584,7 +583,7 @@ end;
 
 procedure TfmQueryWindow.CommitResultClick(Sender: TObject);
 begin
-  SqlTrans.CommitRetaining;
+  fSqlTrans.CommitRetaining;
   (Sender as TBitBtn).Visible:= False;
 end;
 
@@ -595,10 +594,10 @@ function TfmQueryWindow.GetRecordSet(TabIndex: Integer): TSQLQuery;
 var
   i: Integer;
 begin
-  for i:= 0 to High(ResultControls) do
-  if (ResultControls[i] is TSQLQuery) and ((ResultControls[i] as TSQLQuery).Tag = TabIndex) then
+  for i:= 0 to High(fResultControls) do
+  if (fResultControls[i] is TSQLQuery) and ((fResultControls[i] as TSQLQuery).Tag = TabIndex) then
   begin
-    Result:= ResultControls[i] as TSQLQuery;
+    Result:= fResultControls[i] as TSQLQuery;
     Break;
   end;
 
@@ -743,7 +742,7 @@ begin
   ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create(qaCommit);
   try
-    QT.Trans:= SqlTrans;
+    QT.Trans:= fSqlTrans;
     ATab.ImageIndex:= 6;
 
     // Run thread
@@ -785,7 +784,7 @@ var
 begin
   QT:= TQueryThread.Create(qaCommitRet);
   try
-    QT.Trans:= SqlTrans;
+    QT.Trans:= fSqlTrans;
 
     // Run thread
     QT.Resume;
@@ -868,7 +867,7 @@ begin
   ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create(qaRollBack);
   try
-    QT.Trans:= SqlTrans;
+    QT.Trans:= fSqlTrans;
     ATab.ImageIndex:= 6;
     QT.Resume;
     repeat
@@ -906,7 +905,7 @@ var
 begin
   QT:= TQueryThread.Create(qaRollbackRet);
   try
-    QT.Trans:= SqlTrans;
+    QT.Trans:= fSqlTrans;
 
     QT.Resume;
     repeat
@@ -960,8 +959,8 @@ begin
   RegRec:= fmMain.RegisteredDatabases[dbIndex].RegRec;
 
   // Set instances of IBConnection and SQLTransaction for the current Query Window
-  fmMain.setTransactionIsolation(SqlTrans.Params);
-  SqlTrans.DataBase:= ibConnection;
+  fmMain.setTransactionIsolation(fSqlTrans.Params);
+  fSqlTrans.DataBase:= ibConnection;
 
   // Set connection parameters to IBConnection
   with fmMain.RegisteredDatabases[dbIndex] do
@@ -1064,7 +1063,7 @@ begin
     // Query
     aSqlQuery:= TSQLQuery.Create(nil);
     aSqlQuery.DataBase:= ibConnection;
-    aSqlQuery.Transaction:= SqlTrans;
+    aSqlQuery.Transaction:= fSqlTrans;
     aSqlQuery.AfterScroll:= @QueryAfterScroll;
     AddResultControl(ATab, aSqlQuery);
     aSqlQuery.AfterPost:= @FinishCellEditing;
@@ -1131,7 +1130,7 @@ begin
       begin
         aSqlQuery:= TSQLQuery.Create(nil);
         aSqlQuery.DataBase:= ibConnection;
-        aSqlQuery.Transaction:= SqlTrans;
+        aSqlQuery.Transaction:= fSqlTrans;
         AddResultControl(ATab, aSqlQuery);
       end;
       qtScript: // Script
@@ -1140,7 +1139,7 @@ begin
         // makes it easier to understand who is responsible for clearing up
         aSQLScript:= TSQLScript.Create(nil);
         aSQLScript.DataBase:= ibConnection;
-        aSQLScript.Transaction:= SqlTrans;
+        aSQLScript.Transaction:= fSqlTrans;
         aSQLScript.CommentsInSQL:= true; //pass on comments. They cannot hurt
         // and may be useful when tracing errors at the database end.
         aSQLScript.UseSetTerm:= true; //needed if set term is used, e.g. for SPs
@@ -1226,8 +1225,8 @@ begin
           begin
             if Assigned(fTab) then
               fTab.TabVisible:= False;
-            SetLength(ResultControls, High(ResultControls));
-            SetLength(ParentResultControls, High(ParentResultControls));
+            SetLength(fResultControls, High(fResultControls));
+            SetLength(fParentResultControls, High(fParentResultControls));
             fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
             PageControl1.ActivePage:= fTab;
 
@@ -1273,7 +1272,7 @@ begin
 
               // Auto commit
               if cxAutoCommit.Checked then
-                SqlTrans.Commit;
+                fSqlTrans.Commit;
               fQT.Free;
             end
             else
@@ -1304,7 +1303,7 @@ begin
 
                 // Auto commit
                 if cxAutoCommit.Checked then
-                  SqlTrans.Commit;
+                  fSqlTrans.Commit;
               finally
                 fQT.Free;
               end;
@@ -1374,7 +1373,7 @@ begin
         if (MessageDlg('Commit', 'There are too many transactions, did you want to commit',
           mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
         begin
-          SqlTrans.CommitRetaining;
+          fSqlTrans.CommitRetaining;
           fModifyCount:= 0;
         end
         else
@@ -1427,7 +1426,7 @@ begin
 
       // Auto commit
       if cxAutoCommit.Checked then
-        SqlTrans.Commit;
+        fSqlTrans.Commit;
 
       Result:= True;
       meResult.Lines.Text:= FormatDateTime('hh:nn:ss.z', Now) + ' - Script Executed. It took (H:M:S.MS) ' +
@@ -1460,10 +1459,10 @@ end;
 
 procedure TfmQueryWindow.AddResultControl(ParentControl: TObject; AControl: TObject);
 begin
-  SetLength(ResultControls, Length(ResultControls) + 1);
-  SetLength(ParentResultControls, Length(ParentResultControls) + 1);
-  ResultControls[High(ParentResultControls)]:= AControl;
-  ParentResultControls[High(ParentResultControls)]:= ParentControl;
+  SetLength(fResultControls, Length(fResultControls) + 1);
+  SetLength(fParentResultControls, Length(fParentResultControls) + 1);
+  fResultControls[High(fParentResultControls)]:= AControl;
+  fParentResultControls[High(fParentResultControls)]:= ParentControl;
 end;
 
 
@@ -1489,20 +1488,20 @@ procedure TfmQueryWindow.RemoveControls;
 var
   i: Integer;
 begin
-  for i:= High(ResultControls) downto Low(ResultControls) do
+  for i:= High(fResultControls) downto Low(fResultControls) do
   begin
-    if ResultControls[i] is TSQLQuery then
+    if fResultControls[i] is TSQLQuery then
     begin
-      (ResultControls[i] as TSQLQuery).AfterScroll:= nil;
-      (ResultControls[i] as TSQLQuery).Close;
-      (ResultControls[i] as TSQLQuery).DataSource:= nil;
+      (fResultControls[i] as TSQLQuery).AfterScroll:= nil;
+      (fResultControls[i] as TSQLQuery).Close;
+      (fResultControls[i] as TSQLQuery).DataSource:= nil;
     end;
-    ResultControls[i].Free;
-    ResultControls[i]:= nil;
+    fResultControls[i].Free;
+    fResultControls[i]:= nil;
   end;
 
-  SetLength(ResultControls, 0);
-  SetLength(ParentResultControls, 0);
+  SetLength(fResultControls, 0);
+  SetLength(fParentResultControls, 0);
 end;
 
 
@@ -1686,9 +1685,9 @@ begin
   RemoveControls;
 
   // Check if the transaction is active commit it
-  if SqlTrans.Active then
+  if fSqlTrans.Active then
   begin
-    SqlTrans.CommitRetaining;
+    fSqlTrans.CommitRetaining;
     if OnCommit <> nil then
       OnCommit(self);
     OnCommit:= nil;
@@ -1705,7 +1704,7 @@ begin
   fList:= TStringList.Create;
   // Initialize new instance of IBConnection and SQLTransaction
   ibConnection:= TIBConnection.Create(nil);
-  SqlTrans:= TSQLTransaction.Create(nil);
+  fSqlTrans:= TSQLTransaction.Create(nil);
   SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
   SortSynCompletion;
 end;
@@ -1713,7 +1712,7 @@ end;
 procedure TfmQueryWindow.FormDestroy(Sender: TObject);
 begin
   // Clean up resources to avoid memory leaks
-  SQLTrans.Free;
+  fSqlTrans.Free;
   IBConnection.Free;
   FList.Free;
 end;
@@ -2061,24 +2060,24 @@ var
 begin
   TabSheet:= nil;
   // Get DataSet's TTabsheet
-  for i:= 0 to High(ResultControls) do
-  if (ResultControls[i] <> nil) and
-    (DataSet = ResultControls[i]) then
+  for i:= 0 to High(fResultControls) do
+  if (fResultControls[i] <> nil) and
+    (DataSet = fResultControls[i]) then
   begin
-    TabSheet:= ParentResultControls[i] as TTabSheet;
+    TabSheet:= fParentResultControls[i] as TTabSheet;
     Break;
   end;
 
 
   // Search for status bar inside current query result TabSheet
   if TabSheet <> nil then
-  for i:= 0 to High(ResultControls) do
-  if ResultControls[i] <> nil then
-    if  (ParentResultControls[i] <> nil) and ((ParentResultControls[i] as TTabSheet) = TabSheet)
-      and (ResultControls[i] is TStatusBar) then
+  for i:= 0 to High(fResultControls) do
+  if fResultControls[i] <> nil then
+    if  (fParentResultControls[i] <> nil) and ((fParentResultControls[i] as TTabSheet) = TabSheet)
+      and (fResultControls[i] is TStatusBar) then
     begin
       // Display current record and number of total records in status bar
-      (ResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
+      (fResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
       ' records fetched. At record # ' + IntToStr(DataSet.RecNo);
     break;
   end;
@@ -2151,8 +2150,8 @@ begin
   begin
     if Assigned(fTab) then
       fTab.TabVisible:= False;
-    SetLength(ResultControls, High(ResultControls));
-    SetLength(ParentResultControls, High(ParentResultControls));
+    SetLength(fResultControls, High(fResultControls));
+    SetLength(fParentResultControls, High(fParentResultControls));
     fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
     PageControl1.ActivePage:= fTab;
 
