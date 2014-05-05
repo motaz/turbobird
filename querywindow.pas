@@ -224,6 +224,7 @@ type
       var QueryType: TQueryTypes; var EndLine: Integer;
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
     procedure QueryAfterScroll(DataSet: TDataSet);
+    // Run query; use aQueryType to force running as e.g. script or open query
     procedure CallExecuteQuery(aQueryType: TQueryTypes);
     procedure SortSynCompletion;
     procedure ThreadTerminated(Sender: TObject);
@@ -599,12 +600,14 @@ var
   i: Integer;
 begin
   for i:= 0 to High(fResultControls) do
-  if (fResultControls[i] is TSQLQuery) and ((fResultControls[i] as TSQLQuery).Tag = TabIndex) then
   begin
-    Result:= fResultControls[i] as TSQLQuery;
-    Break;
+    if (fResultControls[i] is TSQLQuery) and
+      ((fResultControls[i] as TSQLQuery).Tag = TabIndex) then
+    begin
+      Result:= fResultControls[i] as TSQLQuery;
+      Break;
+    end;
   end;
-
 end;
 
 
@@ -1518,14 +1521,17 @@ begin
   if PageControl1.PageCount > 0 then
   begin
     with PageControl1.ActivePage do
+    begin
       for i:= 0 to ControlCount - 1 do
+      begin
         if Controls[i] is TDBGrid then
         begin
           Result:= TSqlQuery((Controls[i] as TDBGrid).DataSource.DataSet);
           Break;
         end;
+      end;
+    end;
   end;
-
 end;
 
 
