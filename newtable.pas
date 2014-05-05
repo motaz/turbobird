@@ -280,7 +280,7 @@ begin
       List.Text:= GenerateCreateSQL(KeyField, GeneratorName);
       if cxCreateGen.Checked then
       begin;
-        //todo: move this to a utility function somewhere
+        //todo: move this generator/trigger creation to a utility function somewhere
         List.Add('');
         List.Add('-- Generator');
         List.Add('create generator ' + GeneratorName + ';');

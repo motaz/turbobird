@@ -2403,7 +2403,7 @@ begin
       (Pos('CSTRING', DomainType) >0) then
       DomainType:= DomainType + '(' + IntToStr(DomainSize) + ')';
 
-    //todo: how to present character set/collation
+    //todo: how to present character set/collation?
     // Fill ViewDomain form
     with ADomainForm do
     begin

@@ -47,7 +47,8 @@ implementation
 uses SysTables, Main;
 
 // Tries to guess if a constraint name is system-generated.
-// todo: find a way to search the system tables and make sure.
+{ todo: find a way to search the system tables and make sure the constraint name
+is system-generated}
 function SystemGeneratedConstraint(ConstraintName: string): boolean;
 begin
   result:=(pos('INTEG_',uppercase(Trim(ConstraintName)))=1);
@@ -218,8 +219,8 @@ begin
           FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
 
         // Rudimentary support for array datatypes (only covers 0 dimension types):
-        // todo: expand to proper array type detection (low priority as arrays are
-        // virtually unused)
+        {todo: expand to proper array type detection (low priority as arrays are
+         virtually unused}
         if not(FieldByName('Array_Upper_Bound').IsNull) then
           FieldLine:= FieldLine + ' [' + FieldByName('Array_Upper_Bound').AsString + '] ';
 

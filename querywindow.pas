@@ -1450,7 +1450,11 @@ parameters
     try
       ATab.ImageIndex:= 2;
       SQLScript.Script.Text:= Script;
-      //todo: perhaps replace #10 with LineEnding?
+      {todo: when generating SQL, instead of generating #10 for line endings,
+       use  ASCII 23, ETB/End of Transmit Block
+       when displaying/using, replace ASCII 23 with End Of Line. Gives
+       better error messages on Windows where otherwise we'd have huge lines
+      }
       SQLScript.ExecuteScript;
 
       // Auto commit

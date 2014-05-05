@@ -319,8 +319,8 @@ var
   IsPrimary: Boolean;
   ConstraintName: string;
 begin
-  //todo: if posssible merge this with create object statements generated
-  // in scriptdb code
+  {todo: if posssible merge this with create object statements generated
+   in scriptdb code}
   InitializeQueryWindow;
   ScriptList:= TStringList.Create;
   FieldsList:= TStringList.Create;
@@ -1551,7 +1551,7 @@ begin
       Line:= Line + '(' + IntToStr(DomainSize) + ')';
     fQueryWindow.meQuery.Lines.Add(Line);
 
-    // todo: verify if this is correct
+    // todo: verify if this collation clause works correctly
     if Trim(Collation) <> '' then
       FQueryWindow.meQuery.Lines.Add('collation '+Trim(Collation));
 
