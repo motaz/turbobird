@@ -178,8 +178,8 @@ type
     fQueryPart: string;
     fTab: TTabSheet;
     fmeResult: TMemo;
-    fSQLQuery: TSQLQuery;
-    fSQLScript: TSQLScript;
+    fSqlQuery: TSQLQuery;
+    fSqlScript: TSQLScript;
     faText: string;
     fModifyCount: Integer;
     fCnt: Integer;
@@ -209,7 +209,6 @@ type
     procedure Init(dbIndex: Integer);
     function GetQueryType(AQuery: string): TQueryTypes;
     function GetQuery: string;
-    // Takes existing query or script and uses it to create result tab
     function CreateResultTab(QueryType: TQueryTypes; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
     // Runs SQL script; returns result
@@ -740,11 +739,9 @@ var
   QT: TQueryThread;
 begin
   RemoveControls;
-  SQLQuery:= TSQLQuery.Create(nil);
-  SQLScript:= TSQLScript.Create(nil);
+  ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create(qaCommit);
   try
-    ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
     QT.Trans:= fSqlTrans;
     ATab.ImageIndex:= 6;
 
@@ -771,11 +768,11 @@ begin
         OnCommit(self);
       OnCommit:= nil;
     end;
+
   finally
     QT.Free;
-    SQLScript.Free;
-    SQLQuery.Free;
   end;
+
 end;
 
 
@@ -867,11 +864,9 @@ var
   QT: TQueryThread;
 begin
   RemoveControls;
-  SQLQuery:= TSQLQuery.Create(nil);
-  SQLScript:= TSQLScript.Create(nil);
+  ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create(qaRollBack);
   try
-    ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
     QT.Trans:= fSqlTrans;
     ATab.ImageIndex:= 6;
     QT.Resume;
@@ -895,10 +890,9 @@ begin
       OnCommit:= nil;
       meResult.Font.Color:= $AA6666;
     end;
+
   finally
     QT.Free;
-    SqlQuery.Free;
-    SQLScript.Free
   end;
 end;
 
@@ -1067,8 +1061,7 @@ begin
   if QueryType = qtSelectable then // Select, need record set result
   begin
     // Query
-    if not(assigned(aSQLQuery)) then
-      raise Exception.Create('Query object does not yet exist. Pass an existing query object to this function.');
+    aSqlQuery:= TSQLQuery.Create(nil);
     aSqlQuery.DataBase:= ibConnection;
     aSqlQuery.Transaction:= fSqlTrans;
     aSqlQuery.AfterScroll:= @QueryAfterScroll;
@@ -1135,16 +1128,16 @@ begin
     case QueryType of
       qtExecute:
       begin
-        if not(assigned(aSQLQuery)) then
-          raise Exception.Create('Query object does not yet exist. Pass an existing query object to this function.');
+        aSqlQuery:= TSQLQuery.Create(nil);
         aSqlQuery.DataBase:= ibConnection;
         aSqlQuery.Transaction:= fSqlTrans;
         AddResultControl(ATab, aSqlQuery);
       end;
       qtScript: // Script
       begin
-        if not(assigned(aSQLScript)) then
-          raise Exception.Create('Script object does not yet exist. Pass an existing script object to this function.');
+        //todo: strip out this create stuff; pass existing object to function.
+        // makes it easier to understand who is responsible for clearing up
+        aSQLScript:= TSQLScript.Create(nil);
         aSQLScript.DataBase:= ibConnection;
         aSQLScript.Transaction:= fSqlTrans;
         aSQLScript.CommentsInSQL:= true; //pass on comments. They cannot hurt
@@ -1199,7 +1192,7 @@ begin
       begin
         fTab:= nil;
         try
-          fTab:= CreateResultTab(qtSelectable, fSQLQuery, fSQLScript, fmeResult);
+          fTab:= CreateResultTab(qtSelectable, fSqlQuery, fSqlScript, fmeResult);
           fTab.ImageIndex:= 6;
           fTab.Hint:= fQueryPart;
           fTab.ShowHint:= True;
@@ -1207,7 +1200,7 @@ begin
 
           // Create thread to open dataset
           fQT:= TQueryThread.Create(qaOpen);
-          fQT.Query:= fSQLQuery;
+          fQT.Query:= fSqlQuery;
           // fQT.OnTerminate:= @ThreadTerminated;
           faText:= fTab.Caption;
           fTab.Caption:= 'Running..';
@@ -1234,7 +1227,7 @@ begin
               fTab.TabVisible:= False;
             SetLength(fResultControls, High(fResultControls));
             SetLength(fParentResultControls, High(fParentResultControls));
-            fTab:= CreateResultTab(qtExecute, fSQLQuery, fSQLScript, fmeResult);
+            fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
             PageControl1.ActivePage:= fTab;
 
             fmeResult.Text:= e.message;
@@ -1249,7 +1242,7 @@ begin
         if fQueryType = qtExecute then
         begin
           fTab:= nil;
-          fTab:= CreateResultTab(qtExecute, fSQLQuery, fSQLScript, fmeResult);
+          fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
 
           fTab.ImageIndex:= 1;
           SqlType:= GetSQLType(fQueryPart, Command);
@@ -1284,8 +1277,8 @@ begin
             end
             else
             begin // DML
-              fSQLQuery.Close;
-              fSQLQuery.SQL.Text:= fQueryPart;
+              fSqlQuery.Close;
+              fSqlQuery.SQL.Text:= fQueryPart;
               fTab.ImageIndex:= 6;
               fTab.Hint:= fQueryPart;
               fTab.ShowHint:= True;
@@ -1294,7 +1287,7 @@ begin
               // Execute the statement in thread
               fQT:= TQueryThread.Create(qaExec);
               try
-                fQT.Query:= fSQLQuery;
+                fQT.Query:= fSqlQuery;
                 fQT.Resume;
                 faText:= fTab.Caption;
                 fTab.Caption:= 'Running..';
@@ -1316,7 +1309,7 @@ begin
               end;
               fTab.Caption:= faText;
               fTab.ImageIndex:= 1;
-              Affected:= fSQLQuery.RowsAffected;
+              Affected:= fsqlQuery.RowsAffected;
             end;
             Inc(fModifyCount);
 
@@ -1341,7 +1334,7 @@ begin
             begin
               if Assigned(fTab) then
                 fTab.TabVisible:= False;
-              fTab:= CreateResultTab(qtExecute, fSQLQuery, fSQLScript, fmeResult);
+              fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
               PageControl1.ActivePage:= fTab;
               fmeResult.Text:= e.message;
               fmeResult.Lines.Add(fQueryPart);
@@ -1365,7 +1358,7 @@ begin
             begin
               if Assigned(fTab) then
                 fTab.TabVisible:= False;
-              fTab:= CreateResultTab(qtExecute, fSQLQuery, fSQLScript, fmeResult);
+              fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
               PageControl1.ActivePage:= fTab;
               fmeResult.Text:= e.message;
               fmeResult.Lines.Add(fQueryPart);
@@ -1395,7 +1388,7 @@ begin
     begin
       if Assigned(fTab) then
         fTab.TabVisible:= False;
-      fTab:= CreateResultTab(qtExecute, fSQLQuery, fSQLScript, fmeResult);
+      fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
       fTab.ImageIndex:= 2;
       PageControl1.ActivePage:= fTab;
 
@@ -1421,8 +1414,7 @@ var
 begin
   StartTime:= Now;
   ATab:= nil;
-  SQLQuery:= TSQLQuery.Create(nil);
-  SQLScript:= TSQLScript.Create(nil);
+  SQLScript:= nil;
   try
     // CreateResultTab creates the SQLScript object for us.
     ATab:= CreateResultTab(qtScript, SqlQuery, SQLScript, meResult);
@@ -1442,7 +1434,6 @@ begin
       meResult.Lines.Add('--------');
       meResult.Lines.Add(Script);
     finally
-      SQLQuery.Free;
       SQLScript.Free;
     end;
   except
@@ -1714,8 +1705,6 @@ begin
   // Initialize new instance of IBConnection and SQLTransaction
   ibConnection:= TIBConnection.Create(nil);
   fSqlTrans:= TSQLTransaction.Create(nil);
-  FSQLQuery:= TSQLQuery.Create(nil);
-  FSQLScript:= TSQLScript.Create(nil);
   SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
   SortSynCompletion;
 end;
@@ -1723,8 +1712,6 @@ end;
 procedure TfmQueryWindow.FormDestroy(Sender: TObject);
 begin
   // Clean up resources to avoid memory leaks
-  FSQLQuery.Free;
-  FSQLScript.Free;
   fSqlTrans.Free;
   IBConnection.Free;
   FList.Free;
@@ -2165,7 +2152,7 @@ begin
       fTab.TabVisible:= False;
     SetLength(fResultControls, High(fResultControls));
     SetLength(fParentResultControls, High(fParentResultControls));
-    fTab:= CreateResultTab(qtExecute, fSQLQuery, fSQLScript, fmeResult);
+    fTab:= CreateResultTab(qtExecute, fSqlQuery, fSqlScript, fmeResult);
     PageControl1.ActivePage:= fTab;
 
     fmeResult.Text:= fQT.ErrorMsg;
