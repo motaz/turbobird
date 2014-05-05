@@ -180,6 +180,7 @@ type
     fmeResult: TMemo;
     fSQLQuery: TSQLQuery;
     fSQLScript: TSQLScript;
+    // Text for caption
     faText: string;
     fModifyCount: Integer;
     fCnt: Integer;
@@ -208,6 +209,7 @@ type
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
     function GetQueryType(AQuery: string): TQueryTypes;
+    // Get query text from GUI/memo
     function GetQuery: string;
     // Takes existing query or script and uses it to create result tab
     function CreateResultTab(QueryType: TQueryTypes; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
@@ -311,15 +313,17 @@ var
   i: Integer;
 begin
   for i:= QueryList.Count - 1 downto 0 do
-  if Pos('--', QueryList[i]) > 0 then
   begin
-    if Pos('--', Trim(QueryList[i])) = 1 then
-      QueryList.Delete(i);
-    {
-    else
-      //todo: this will also pick up -- within string literals which is wrong
-      QueryList[i]:= Copy(QueryList[i], 1, Pos('--', QueryList[i]) - 1);
-    }
+    if Pos('--', QueryList[i]) > 0 then
+    begin
+      if Pos('--', Trim(QueryList[i])) = 1 then
+        QueryList.Delete(i);
+      {
+      else
+        //todo: this will also pick up -- within string literals which is wrong
+        QueryList[i]:= Copy(QueryList[i], 1, Pos('--', QueryList[i]) - 1);
+      }
+    end;
   end;
 end;
 
@@ -925,7 +929,7 @@ begin
 end;
 
 
-{ Run current SQL, 0 for auto-detect type }
+{ Run current SQL, auto-detect type }
 procedure TfmQueryWindow.tbRunClick(Sender: TObject);
 begin
   CallExecuteQuery(qtUnknown);
@@ -1041,9 +1045,9 @@ end;
 
 function TfmQueryWindow.GetQuery: string;
 begin
-  Result:= meQuery.SelText;
+  Result:= trim(meQuery.SelText);
   if Result = '' then
-    Result:= meQuery.Lines.Text;
+    Result:= trim(meQuery.Lines.Text);
 end;
 
 
@@ -1332,7 +1336,6 @@ begin
               fmeResult.Lines.Add(FormatDateTime('hh:nn:ss.z', Now) + ' - DML Executed. Takes (H:M:S.MS) ' +
                 FormatDateTime('HH:nn:ss.z', Now - StartTime));
               fmeResult.Lines.Add('Rows affected: ' + Format('%3.0n', [Affected / 1]));
-
             end;
             fmeResult.Lines.Add('----');
             fmeResult.Lines.Add(fQueryPart);
@@ -1693,7 +1696,7 @@ procedure TfmQueryWindow.FormClose(Sender: TObject;
 begin
   RemoveControls;
 
-  // Check if the transaction is active commit it
+  // Check if the transaction is active; then commit it
   if fSqlTrans.Active then
   begin
     fSqlTrans.CommitRetaining;
@@ -1714,8 +1717,8 @@ begin
   // Initialize new instance of IBConnection and SQLTransaction
   ibConnection:= TIBConnection.Create(nil);
   fSqlTrans:= TSQLTransaction.Create(nil);
-  FSQLQuery:= TSQLQuery.Create(nil);
-  FSQLScript:= TSQLScript.Create(nil);
+  fSQLQuery:= TSQLQuery.Create(nil);
+  fSQLScript:= TSQLScript.Create(nil);
   SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
   SortSynCompletion;
 end;
@@ -1723,8 +1726,8 @@ end;
 procedure TfmQueryWindow.FormDestroy(Sender: TObject);
 begin
   // Clean up resources to avoid memory leaks
-  FSQLQuery.Free;
-  FSQLScript.Free;
+  fSQLQuery.Free;
+  fSQLScript.Free;
   fSqlTrans.Free;
   IBConnection.Free;
   FList.Free;
@@ -2098,12 +2101,12 @@ begin
 end;
 
 
-{ Execute query according to passed query ype }
+{ Execute query according to passed query type }
 
 procedure TfmQueryWindow.CallExecuteQuery(aQueryType: TQueryTypes);
 begin
   // Get query text from memo
-  fQuery:= Trim(GetQuery);
+  fQuery:= GetQuery;
   fList.Text:= fQuery;
   fStartLine:= 0;
 
