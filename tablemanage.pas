@@ -173,18 +173,19 @@ end;
 procedure TfmTableManage.bbDropClick(Sender: TObject);
 begin
   with sgIndices do
-  if RowCount > 1 then
-    if MessageDlg('Are you sure you want to drop index: ' + Cells[0, Row], mtConfirmation,
-      [mbYes, mbNo], 0) = mrYes then
-      begin
-        if Cells[0, Row] = PKeyName then // Delete primary key
-          fmMain.ShowCompleteQueryWindow(fdbIndex,  'Drop Primary Key on Table: ' + fTableName,
-            'alter table ' + fTableName + ' DROP constraint ' + ConstraintName, bbRefreshIndices.OnClick)
-        else // Delete secondary key
-          fmMain.ShowCompleteQueryWindow(fdbIndex, 'Drop Secondary Index on table: ' + fTableName,
-            'DROP INDEX ' + Cells[0, Row], bbRefreshIndices.OnClick);
-
-      end;
+  begin
+    if (RowCount > 1) and
+      (MessageDlg('Are you sure you want to drop index: ' + Cells[0, Row], mtConfirmation,
+        [mbYes, mbNo], 0) = mrYes) then
+    begin
+      if Cells[0, Row] = PKeyName then // Delete primary key
+        fmMain.ShowCompleteQueryWindow(fdbIndex,  'Drop Primary Key on Table: ' + fTableName,
+          'alter table ' + fTableName + ' DROP constraint ' + ConstraintName, bbRefreshIndices.OnClick)
+      else // Delete secondary key
+        fmMain.ShowCompleteQueryWindow(fdbIndex, 'Drop Secondary Index on table: ' + fTableName,
+          'DROP INDEX ' + Cells[0, Row], bbRefreshIndices.OnClick);
+    end;
+  end;
 end;
 
 procedure TfmTableManage.bbDropConstraintClick(Sender: TObject);
