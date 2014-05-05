@@ -803,7 +803,6 @@ begin
     Part:= StringReplace(Part, #10, ' ', [rfReplaceAll]);
 
     QWindow.meQuery.Lines.Add(Part);
-
   until AQueryText = '';
 end;
 

@@ -219,6 +219,7 @@ type
     // Their memory will be freed in code when no longer used
     procedure AddResultControl(ParentControl: TObject; AControl: TObject);
     procedure NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
+    // Free up memory for controls
     procedure RemoveControls;
     function FindSqlQuery: TSqlQuery;
     function GetSQLType(Query: string; var Command: string): string;
@@ -1077,6 +1078,8 @@ begin
     aSqlQuery.DataBase:= ibConnection;
     aSqlQuery.Transaction:= fSqlTrans;
     aSqlQuery.AfterScroll:= @QueryAfterScroll;
+    // Here and in other cases, the object is added to the list of
+    // programmatically maintained objects and freed programmatically
     AddResultControl(ATab, aSqlQuery);
     aSqlQuery.AfterPost:= @FinishCellEditing;
     aSqlQuery.Tag:= ATab.TabIndex;
@@ -1147,8 +1150,6 @@ begin
       end;
       qtScript: // Script
       begin
-        //todo: strip out this create stuff; pass existing object to function.
-        // makes it easier to understand who is responsible for clearing up
         aSQLScript:= TSQLScript.Create(nil);
         aSQLScript.DataBase:= ibConnection;
         aSQLScript.Transaction:= fSqlTrans;
@@ -1423,6 +1424,23 @@ var
   meResult: TMemo;
   ATab: TTabSheet;
 begin
+{ Note regarding SQLScript bug in FPC <= 2.7.1:
+If parameters are used in the script e.g. as in the sample EMPLOYEE.FDB
+CREATE Procedure DELETE_EMPLOYEE
+...
+SELECT count(po_number)
+FROM sales
+WHERE sales_rep = :emp_num
+INTO :any_sales;
+you may get this error
+: PrepareStatement :
+-Dynamic SQL Error
+-SQL error code = -104
+-Token unknown - line 19, column 7
+-?
+because the TSQLScript tries to process parameters as if they were sqldb
+parameters
+}
   StartTime:= Now;
   ATab:= nil;
   SQLScript:= nil;
@@ -1619,7 +1637,7 @@ begin
       Break;
     end
     else
-    //todo: perhaps better test for set termin trim(querylist[i] instead
+    //todo: perhaps better test for set term in trim(querylist[i] instead
     if (QueryType = qtScript) and
       ((i > SecondRealStart) and (Pos('setterm', LowerCase(StringReplace(QueryList[i],
       ' ', '', [rfReplaceAll]))) > 0))

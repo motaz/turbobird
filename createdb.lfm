@@ -9,42 +9,42 @@ object fmCreateDB: TfmCreateDB
   ClientWidth = 481
   Color = clWhite
   Position = poScreenCenter
-  LCLVersion = '1.0.4.0'
+  LCLVersion = '1.2.2.0'
   object Label1: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 37
-    Width = 112
+    Width = 82
     Caption = 'Server:Database'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 88
-    Width = 72
+    Width = 51
     Caption = 'User name'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 136
-    Width = 67
+    Width = 46
     Caption = 'Password'
     ParentColor = False
   end
   object Label4: TLabel
     Left = 11
-    Height = 18
+    Height = 13
     Top = 174
-    Width = 53
+    Width = 38
     Caption = 'Charset'
     ParentColor = False
   end
   object edNewDatabase: TEdit
     Left = 128
-    Height = 27
+    Height = 21
     Top = 35
     Width = 248
     TabOrder = 0
@@ -60,14 +60,14 @@ object fmCreateDB: TfmCreateDB
   end
   object edUserName: TEdit
     Left = 87
-    Height = 27
+    Height = 21
     Top = 81
     Width = 129
     TabOrder = 2
   end
   object edPassword: TEdit
     Left = 87
-    Height = 27
+    Height = 21
     Top = 128
     Width = 129
     EchoMode = emPassword
@@ -175,10 +175,10 @@ object fmCreateDB: TfmCreateDB
   end
   object cbCharset: TComboBox
     Left = 87
-    Height = 29
+    Height = 21
     Top = 170
     Width = 124
-    ItemHeight = 0
+    ItemHeight = 13
     ItemIndex = 0
     Items.Strings = (
       'NONE'
