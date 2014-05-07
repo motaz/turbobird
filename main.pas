@@ -795,12 +795,12 @@ begin
   QWindow.meQuery.ClearAll;
   QWindow.OnCommit:= OnCommitProcedure;
   repeat
-    if Pos(#10, AQueryText) > 0 then
-      Part:= Copy(AQueryText, 1, Pos(#10, AQueryText))
+    if Pos(LineEnding, AQueryText) > 0 then
+      Part:= Copy(AQueryText, 1, Pos(LineEnding, AQueryText))
     else
       Part:= AQueryText;
     Delete(AQueryText, 1, Length(Part));
-    Part:= StringReplace(Part, #10, ' ', [rfReplaceAll]);
+    Part:= StringReplace(Part, LineEnding, ' ', [rfReplaceAll]);
 
     QWindow.meQuery.Lines.Add(Part);
   until AQueryText = '';
@@ -1798,7 +1798,6 @@ begin
         Lines.Add('--     Functions (UDF)');
         Lines.Add('');
         ScriptAllFunctions(dbIndex, List);
-        List.Text:= StringReplace(List.Text, #10, #13#10, [rfReplaceAll]);
         Lines.AddStrings(List);
 
         Lines.Add('');
@@ -2538,7 +2537,7 @@ begin
           end;
           SQLQuery1.Next;
         end;
-        BodyList.Add(')' + #10);
+        BodyList.Add(')' + LineEnding);
       end;
 
       // Get output parameters
@@ -2566,7 +2565,7 @@ begin
           end;
           SQLQuery1.Next;
         end;
-        BodyList.Add(')' + #10);
+        BodyList.Add(')' + LineEnding);
       end;
       SQLQuery1.Close;
 
@@ -2675,15 +2674,15 @@ function TfmMain.GetIndexFields(ATableName, AIndexName: string;
   AQuery: TSQLQuery; var FieldsList: TStringList): Boolean;
 begin
   AQuery.Close;
-  AQuery.SQL.Text:= 'SELECT RDB$INDEX_SEGMENTS.RDB$FIELD_NAME AS field_name, ' + #10 +
-     'RDB$INDICES.RDB$DESCRIPTION AS description, ' +#10 +
-     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position ' +#10 +
-     'FROM RDB$INDEX_SEGMENTS ' +#10 +
-     'LEFT JOIN RDB$INDICES ON RDB$INDICES.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' +#10 +
-     'LEFT JOIN RDB$RELATION_CONSTRAINTS ON RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' +#10 +
-     ' WHERE UPPER(RDB$INDICES.RDB$RELATION_NAME)=''' + UpperCase(ATablename) + '''         -- table name ' +#10 +
-     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' -- index name ' +#10 +
-     '--  AND RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE IS NULL ' +#10 +
+  AQuery.SQL.Text:= 'SELECT RDB$INDEX_SEGMENTS.RDB$FIELD_NAME AS field_name, ' + LineEnding +
+     'RDB$INDICES.RDB$DESCRIPTION AS description, ' +LineEnding +
+     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position ' +LineEnding +
+     'FROM RDB$INDEX_SEGMENTS ' +LineEnding +
+     'LEFT JOIN RDB$INDICES ON RDB$INDICES.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' +LineEnding +
+     'LEFT JOIN RDB$RELATION_CONSTRAINTS ON RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' +LineEnding +
+     ' WHERE UPPER(RDB$INDICES.RDB$RELATION_NAME)=''' + UpperCase(ATablename) + '''         -- table name ' +LineEnding +
+     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' -- index name ' +LineEnding +
+     '--  AND RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE IS NULL ' +LineEnding +
      'ORDER BY RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION;';
   AQuery.Open;
   Result:= AQuery.FieldCount > 0;
@@ -2725,7 +2724,7 @@ begin
     Params:= '';
     while not SQLQuery1.EOF do
     begin
-      Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger,
+      Params:= Params + LineEnding + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_LENGTH').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_SCALE').AsInteger);
@@ -2736,7 +2735,7 @@ begin
         Params:= Params + ', ';
     end;
     SQLQuery1.Close;
-    Params:= Params + ')' + #10 + #10 + 'Returns ';
+    Params:= Params + ')' + LineEnding + LineEnding + 'Returns ';
 
     {todo: return values can't be determined}
 
@@ -2746,7 +2745,7 @@ begin
     SQLQuery1.Open;
     while not SQLQuery1.EOF do
     begin
-      Params:= Params + #10 + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger,
+      Params:= Params + LineEnding + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_LENGTH').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_SCALE').AsInteger);
@@ -3168,7 +3167,7 @@ begin
 
     GetViewInfo(dbIndex, AViewName, Columns, ViewBody);
     fmViewView.seScript.Lines.Clear;
-    fmViewView.seScript.Lines.Text:= 'create view "' + AviewName + '" (' + Columns + ')' + #13#10 + ViewBody;
+    fmViewView.seScript.Lines.Text:= 'create view "' + AviewName + '" (' + Columns + ')' + LineEnding + ViewBody;
     PageControl1.ActivePage:= ATab;
     fmViewView.Show;
   end;

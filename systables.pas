@@ -579,12 +579,12 @@ begin
   begin
     Msg:= sqQuery.FieldByName('RDB$MESSAGE').AsString;
     Description:= sqQuery.FieldByName('RDB$DESCRIPTION').AsString;
-    SqlQuery:= 'CREATE EXCEPTION ' + ExceptionName + #10 +
+    SqlQuery:= 'CREATE EXCEPTION ' + ExceptionName + LineEnding +
       '''' + Msg + ''';';
     if Description<>'' then
-      SQLQuery:= SQLQuery + #10 +
-        'UPDATE RDB$EXCEPTIONS set ' + #10 +
-        'RDB$DESCRIPTION = ''' + Description + ''' ' + #10 +
+      SQLQuery:= SQLQuery + LineEnding +
+        'UPDATE RDB$EXCEPTIONS set ' + LineEnding +
+        'RDB$DESCRIPTION = ''' + Description + ''' ' + LineEnding +
         'where RDB$EXCEPTION_NAME = ''' + ExceptionName + ''';';
   end;
   sqQuery.Close;
@@ -1015,17 +1015,17 @@ function TdmSysTables.GetIndexInfo(dbIndex: Integer; ATableName, AIndexName: str
 begin
   Init(dbIndex);
   sqQuery.Close;
-  sqQuery.SQL.Text:= 'SELECT RDB$Indices.*, RDB$INDEX_SEGMENTS.RDB$FIELD_NAME AS field_name, ' + #10 +
-     'RDB$INDICES.RDB$DESCRIPTION AS description, ' + #10 +
-     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position, ' + #10 +
-     'RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE as IndexType, ' + #10 +
-     'RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_Name as ConstraintName' + #10 +
-     'FROM RDB$INDEX_SEGMENTS ' + #10 +
-     'LEFT JOIN RDB$INDICES ON RDB$INDICES.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' + #10 +
+  sqQuery.SQL.Text:= 'SELECT RDB$Indices.*, RDB$INDEX_SEGMENTS.RDB$FIELD_NAME AS field_name, ' + LineEnding +
+     'RDB$INDICES.RDB$DESCRIPTION AS description, ' + LineEnding +
+     '(RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION + 1) AS field_position, ' + LineEnding +
+     'RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE as IndexType, ' + LineEnding +
+     'RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_Name as ConstraintName' + LineEnding +
+     'FROM RDB$INDEX_SEGMENTS ' + LineEnding +
+     'LEFT JOIN RDB$INDICES ON RDB$INDICES.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME ' + LineEnding +
      'LEFT JOIN RDB$RELATION_CONSTRAINTS ON RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME = RDB$INDEX_SEGMENTS.RDB$INDEX_NAME '
-     + #10 +
-     ' WHERE UPPER(RDB$INDICES.RDB$RELATION_NAME)=''' + UpperCase(ATablename) + '''         -- table name ' + #10 +
-     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' ' + #10 +
+     + LineEnding +
+     ' WHERE UPPER(RDB$INDICES.RDB$RELATION_NAME)=''' + UpperCase(ATablename) + '''         -- table name ' + LineEnding +
+     '  AND UPPER(RDB$INDICES.RDB$INDEX_NAME)=''' + UpperCase(AIndexName) + ''' ' + LineEnding +
      'ORDER BY RDB$INDEX_SEGMENTS.RDB$FIELD_POSITION;';
   sqQuery.Open;
   Result:= sqQuery.FieldCount > 0;

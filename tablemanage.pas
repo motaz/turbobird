@@ -245,8 +245,8 @@ begin
 
     if cbIndexType.ItemIndex = 0 then // primary key
     begin
-      QWindow.meQuery.Lines.Text:= 'alter table ' + fTableName + #13#10 +
-      'add constraint ' + edIndexName.Text + #13#10 +
+      QWindow.meQuery.Lines.Text:= 'alter table ' + fTableName + LineEnding +
+      'add constraint ' + edIndexName.Text + LineEnding +
       'primary key (' + Fields + ')';
     end
     else    // Secondary index
@@ -257,7 +257,7 @@ begin
       FirstLine:= FirstLine + cbSortType.Text + ' index ' + edIndexName.Text;
 
 
-      QWindow.meQuery.Lines.Text:= FirstLine + #13+#10 + 'on ' + fTableName + #13#10 + Fields;
+      QWindow.meQuery.Lines.Text:= FirstLine + LineEnding + 'on ' + fTableName + LineEnding + Fields;
     end;
     QWindow.OnCommit:= bbRefreshIndices.OnClick;
 

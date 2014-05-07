@@ -470,8 +470,8 @@ begin
         begin
           if IsPrimary then
           begin
-            Line:= 'alter table ' + ATableName + #13#10 +
-            'add constraint ' + AIndexName + #13#10 +
+            Line:= 'alter table ' + ATableName + LineEnding +
+            'add constraint ' + AIndexName + LineEnding +
             'primary key (' + FieldsList.CommaText + ');';
 
           end
@@ -1323,8 +1323,8 @@ begin
         begin
           fQueryWindow.meQuery.Lines.Add('alter table AAAA DROP constraint ' + ConstraintName + ';');
 
-          Line:= 'alter table ' + ATableName + #13#10 +
-          'add constraint ' + AIndexName + #13#10 +
+          Line:= 'alter table ' + ATableName + LineEnding +
+          'add constraint ' + AIndexName + LineEnding +
           'primary key (' + FieldsList.CommaText + ')';
 
         end

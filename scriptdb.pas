@@ -338,9 +338,12 @@ begin
     List.Clear;
     for i:= 0 to ProceduresList.Count - 1 do
     begin
+      // Insert procedure body...
       ProcedureScript.Text:= fmMain.GetStoredProcBody(dbIndex, ProceduresList[i], SPOwner);
+      // Then put CREATE part above it...
       ProcedureScript.Insert(0, 'SET TERM ^ ;');
       ProcedureScript.Insert(1, 'CREATE Procedure ' + ProceduresList[i]);
+      // ... and closing SET TERM part below it.
       ProcedureScript.Add('^');
       ProcedureScript.Add('SET TERM ; ^');
       ProcedureScript.Add('');

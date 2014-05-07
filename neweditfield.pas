@@ -98,7 +98,7 @@ begin
     // Check name change
     if UpperCase(Trim(edFieldName.Text)) <> OldFieldName then
       Line:= 'ALTER TABLE ' + fTableName + ' ALTER ' + OldFieldName + ' TO ' +
-      edFieldName.Text + ';' + #10;
+      edFieldName.Text + ';' + LineEnding;
 
     // check type/size change
     if (cbType.Text <> OldFieldType) or (seSize.Value <> OldFieldSize) then
@@ -107,14 +107,14 @@ begin
         + ' TYPE ' + cbType.Text;
 
       if Pos('CHAR', Line) > 0 then
-        Line:= Line + '(' + IntToStr(seSize.Value) + ');' + #10;
+        Line:= Line + '(' + IntToStr(seSize.Value) + ');' + LineEnding;
     end;
 
     // Field Order
     if seOrder.Value <> OldOrder then
     begin
       Line:= Line + 'ALTER TABLE ' + fTableName + ' ALTER ' + edFieldName.Text + ' POSITION ' +
-        IntToStr(seOrder.Value) + ';' + #10;
+        IntToStr(seOrder.Value) + ';' + LineEnding;
     end;
 
     // Allow Null
@@ -124,9 +124,9 @@ begin
         NullFlag:= 'NULL'
       else
         NullFlag:= '1';
-        Line:= Line + 'UPDATE RDB$RELATION_FIELDS SET RDB$NULL_FLAG = ' + NullFlag + #10 +
+        Line:= Line + 'UPDATE RDB$RELATION_FIELDS SET RDB$NULL_FLAG = ' + NullFlag + LineEnding +
           'WHERE RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) + ''' AND RDB$RELATION_NAME = ''' +
-          fTableName + '''' + #10;
+          fTableName + '''' + LineEnding;
     end;
 
     // Description
@@ -134,7 +134,7 @@ begin
     begin
       Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$DESCRIPTION = ''' + edDescription.Text +
         '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
-        ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + #10;
+        ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + LineEnding;
     end;
 
     // Default value
@@ -142,7 +142,7 @@ begin
     begin
       Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$Default_Source = ''' + edDefault.Text +
         '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
-        ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + #10;
+        ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + LineEnding;
     end;
 
     if Line <> '' then

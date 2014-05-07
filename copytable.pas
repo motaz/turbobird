@@ -151,7 +151,7 @@ begin
           Next;
         end;
         SQLTrans.Commit;
-        ShowMessage(IntToStr(Num) + ' record(s) has been copied' + #10 + 'Don''t forget to set the Generator to the new value, ' +
+        ShowMessage(IntToStr(Num) + ' record(s) has been copied' + LineEnding + 'Don''t forget to set the Generator to the new value, ' +
           'if it does exists');
         dmSysTables.sqQuery.Close;
         Close;

@@ -1455,11 +1455,6 @@ begin
     try
       ATab.ImageIndex:= 2;
       SQLScript.Script.Text:= Script;
-      {todo: when generating SQL, instead of generating #10 for line endings,
-       use  ASCII 23, ETB/End of Transmit Block
-       when displaying/using, replace ASCII 23 with End Of Line. Gives
-       better error messages on Windows where otherwise we'd have huge lines
-      }
       SQLScript.ExecuteScript;
 
       // Auto commit
@@ -1622,7 +1617,7 @@ begin
     if Pos('begin', Trim(LowerCase(QueryList[i]))) > 0 then
       BeginExists:= True;
 
-    SQLSegment:= SQLSegment + QueryList[i] + #10;
+    SQLSegment:= SQLSegment + QueryList[i] + LineEnding;
 
     if (QueryType in [qtSelectable, qtExecute]) and
       (((Pos(';', QueryList[i]) > 0) and (Not BeginExists)) or

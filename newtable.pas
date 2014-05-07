@@ -67,7 +67,7 @@ var
   FieldType: string;
   PKey: string;
 begin
-  Result:= 'create table ' + edNewTable.Text + ' (' + #10;
+  Result:= 'create table ' + edNewTable.Text + ' (' + LineEnding;
   for i:= 1 to StringGrid1.RowCount - 1 do
     if Trim(StringGrid1.Cells[0, i]) <> '' then
     begin
@@ -102,7 +102,7 @@ begin
       end;
 
       if (StringGrid1.RowCount > i + 1) and (Trim(stringGrid1.Cells[0, i + 1]) <> '') then
-        FieldLine:= FieldLine + ',' + #10;
+        FieldLine:= FieldLine + ',' + LineEnding;
       Result:= Result + FieldLine;
     end;
 
@@ -110,9 +110,9 @@ begin
   if PKey <> '' then
   begin
     Delete(PKey, Length(PKey), 1);
-    Result:= Result + ', ' + #10 + ' constraint ' + edNewTable.Text + '_pk_1 primary key (' + PKey + ') ' + #10;
+    Result:= Result + ', ' + LineEnding + ' constraint ' + edNewTable.Text + '_pk_1 primary key (' + PKey + ') ' + LineEnding;
   end;
-  Result:= Result + ');' + #10;
+  Result:= Result + ');' + LineEnding;
 
   // Permission
   if cxGrantPermission.Checked and (Trim(cbRolesUsers.Text) <> '') then

@@ -293,19 +293,19 @@ begin
   if (Grant) and (not WithGrant) then
   begin
     if OldTableSelectGrant and not cxSelectGrant.Checked and (LowerCase(OptionName) = 'select') then
-      Line:= Line + #10 + 'REVOKE GRANT OPTION FOR SELECT ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+      Line:= Line + LineEnding + 'REVOKE GRANT OPTION FOR SELECT ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
 
     if OldTableUpdateGrant and not cxUpdateGrant.Checked and (LowerCase(OptionName) = 'update') then
-      Line:= Line + #10 + 'REVOKE GRANT OPTION FOR Update ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+      Line:= Line + LineEnding + 'REVOKE GRANT OPTION FOR Update ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
 
     if OldTableReferencesGrant and not cxReferencesGrant.Checked and (LowerCase(OptionName) = 'references') then
-      Line:= Line + #10 + 'REVOKE GRANT OPTION FOR References ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+      Line:= Line + LineEnding + 'REVOKE GRANT OPTION FOR References ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
 
     if OldTableDeleteGrant and not cxDeleteGrant.Checked and (LowerCase(OptionName) = 'delete') then
-      Line:= Line +#10 +  'REVOKE GRANT OPTION FOR Delete ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+      Line:= Line +LineEnding +  'REVOKE GRANT OPTION FOR Delete ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
 
     if OldTableInsertGrant and not cxInsertGrant.Checked and (LowerCase(OptionName) = 'insert') then
-      Line:= Line  +#10 +  'REVOKE GRANT OPTION FOR Insert ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
+      Line:= Line  +LineEnding +  'REVOKE GRANT OPTION FOR Insert ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
   end;
 
   List.Add(Line);
