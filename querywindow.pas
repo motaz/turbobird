@@ -5,12 +5,34 @@ unit QueryWindow;
 interface
 
 uses
-  Classes, SysUtils, IBConnection, sqldb, db, FileUtil, LResources, Forms,
+  Classes, SysUtils, IBConnection, db, sqldb, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
-  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType;
+  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType
+  {$IF FPC_FULLVERSION < 20701}
+{ Note regarding SQLScript bug in FPC <= 2.7.1:
+If parameters are used in the script e.g. as in the sample EMPLOYEE.FDB
+CREATE Procedure DELETE_EMPLOYEE
+...
+SELECT count(po_number)
+FROM sales
+WHERE sales_rep = :emp_num
+INTO :any_sales;
+you may get this error
+: PrepareStatement :
+-Dynamic SQL Error
+-SQL error code = -104
+-Token unknown - line 19, column 7
+-?
+because the TSQLScript tries to process parameters as if they were sqldb
+parameters
+}
+  ,modsqlscript
+  {$ENDIF}
+  ;
 
 type
+
   TQueryTypes = (
     qtUnknown=0,
     qtSelectable=1,
@@ -179,7 +201,7 @@ type
     fTab: TTabSheet;
     fmeResult: TMemo;
     fSqlQuery: TSQLQuery;
-    fSqlScript: TSQLScript;
+    fSqlScript: TModSQLScript;
     // Text for caption
     faText: string;
     fModifyCount: Integer;
@@ -211,7 +233,7 @@ type
     function GetQueryType(AQuery: string): TQueryTypes;
     // Get query text from GUI/memo
     function GetQuery: string;
-    function CreateResultTab(QueryType: TQueryTypes; var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript;
+    function CreateResultTab(QueryType: TQueryTypes; var aSqlQuery: TSQLQuery; var aSQLScript: TModSQLScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
     // Runs SQL script; returns result
     function ExecuteScript(Script: string): Boolean;
@@ -241,11 +263,11 @@ var
 
 implementation
 
-{ TfmQueryWindow }
+
 
 uses main, SQLHistory;
 
-
+{ TfmQueryWindow }
 { NewCommitButton: Create commit button for editable query result }
 
 procedure TfmQueryWindow.NewCommitButton(const Pan: TPanel; var ATab: TTabSheet);
@@ -747,7 +769,7 @@ procedure TfmQueryWindow.tbCommitClick(Sender: TObject);
 var
   meResult: TMemo;
   SqlQuery: TSQLQuery;
-  SqlScript: TSQLScript;
+  SqlScript: TModSQLScript;
   ATab: TTabSheet;
   QT: TQueryThread;
 begin
@@ -872,7 +894,7 @@ procedure TfmQueryWindow.tbRollbackClick(Sender: TObject);
 var
   meResult: TMemo;
   SqlQuery: TSQLQuery;
-  SqlScript: TSQLScript;
+  SqlScript: TModSQLScript;
   ATab: TTabSheet;
   QT: TQueryThread;
 begin
@@ -1057,7 +1079,7 @@ end;
 { Create new result tab depending on query type }
 
 function TfmQueryWindow.CreateResultTab(QueryType: TQueryTypes;
-  var aSqlQuery: TSQLQuery; var aSQLScript: TSqlScript; var meResult: TMemo;
+  var aSqlQuery: TSQLQuery; var aSQLScript: TModSQLScript; var meResult: TMemo;
   AdditionalTitle: string): TTabSheet;
 var
   ATab: TTabSheet;
@@ -1150,7 +1172,7 @@ begin
       end;
       qtScript: // Script
       begin
-        aSQLScript:= TSQLScript.Create(nil);
+        aSQLScript:= TModSQLScript.Create(nil);
         aSQLScript.DataBase:= ibConnection;
         aSQLScript.Transaction:= fSqlTrans;
         aSQLScript.CommentsInSQL:= true; //pass on comments. They cannot hurt
@@ -1420,27 +1442,10 @@ function TfmQueryWindow.ExecuteScript(Script: string): Boolean;
 var
   StartTime: TDateTime;
   SqlQuery: TSQLQuery;
-  SqlScript: TSQLScript;
+  SqlScript: TModSQLScript;
   meResult: TMemo;
   ATab: TTabSheet;
 begin
-{ Note regarding SQLScript bug in FPC <= 2.7.1:
-If parameters are used in the script e.g. as in the sample EMPLOYEE.FDB
-CREATE Procedure DELETE_EMPLOYEE
-...
-SELECT count(po_number)
-FROM sales
-WHERE sales_rep = :emp_num
-INTO :any_sales;
-you may get this error
-: PrepareStatement :
--Dynamic SQL Error
--SQL error code = -104
--Token unknown - line 19, column 7
--?
-because the TSQLScript tries to process parameters as if they were sqldb
-parameters
-}
   StartTime:= Now;
   ATab:= nil;
   SQLScript:= nil;
