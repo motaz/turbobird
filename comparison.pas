@@ -1349,14 +1349,10 @@ begin
       end
       else
         fQueryWindow.meQuery.Lines.Add('--Index ' + AIndexName + ' does not exist on table: ' + ATableName);
-
     end;
-
   finally
     FieldsList.Free;
   end;
-
-
 end;
 
 procedure TfmComparison.ScriptModifiedConstraints;
@@ -1393,11 +1389,8 @@ begin
         fQueryWindow.meQuery.Lines.Add(Line + ';');
         fQueryWindow.meQuery.Lines.Add('');
       end;
-
     end;
-
   end;
-
 end;
 
 procedure TfmComparison.ScriptModifiedViews;
@@ -1427,7 +1420,6 @@ begin
     ShowMessage(e.Message);
   end;
   end;
-
 end;
 
 procedure TfmComparison.ScriptModifiedTriggers;
@@ -1453,11 +1445,9 @@ begin
         fQueryWindow.meQuery.Lines.Add('');
       end;
     end;
-
   finally
     List.Free;
   end;
-
 end;
 
 procedure TfmComparison.ScriptModifiedProcedures;
@@ -1484,12 +1474,9 @@ begin
 
       fQueryWindow.meQuery.Lines.Add('');
     end;
-
-
   finally
     List.Free;
   end;
-
 end;
 
 procedure TfmComparison.ScriptModifiedFunctions;
@@ -1518,11 +1505,8 @@ begin
       fQueryWindow.meQuery.Lines.Add('MODULE_NAME ''' + ModuleName + ''' ;');
 
       fQueryWindow.meQuery.Lines.Add('');
-
     end;
-
   end;
-
 end;
 
 procedure TfmComparison.ScriptModifiedDomains;
@@ -1566,10 +1550,7 @@ begin
       fQueryWindow.meQuery.Lines.Add('set DEFAULT NULL;');
 
     fQueryWindow.meQuery.Lines.Add('');
-
-
   end;
-
 end;
 
 procedure TfmComparison.ScriptRemovedDBObjects;
