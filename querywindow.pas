@@ -8,7 +8,8 @@ uses
   Classes, SysUtils, IBConnection, db, sqldb, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
-  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType, modsqlscript;
+  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType, modsqlscript
+  {$IFDEF DEBUG},lazlogger{$ENDIF};
 
 type
 
@@ -208,6 +209,9 @@ type
     function GetTableName(SQLText: string): string;
     function GetCurrentSQLText: string;
     procedure CommitResultClick(Sender: TObject);
+  protected
+    // This procedure will receive the events that are logged by the connection:
+    procedure GetLogEvent(Sender: TSQLConnection; EventType: TDBEventType; Const Msg : String);
   public
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
@@ -601,6 +605,25 @@ procedure TfmQueryWindow.CommitResultClick(Sender: TObject);
 begin
   fSqlTrans.CommitRetaining;
   (Sender as TBitBtn).Visible:= False;
+end;
+
+procedure TfmQueryWindow.GetLogEvent(Sender: TSQLConnection;
+  EventType: TDBEventType; const Msg: String);
+// Used to log everything sent through the connection
+var
+  Source: string;
+begin
+  case EventType of
+    detCustom:   Source:='Custom:  ';
+    detPrepare:  Source:='Prepare: ';
+    detExecute:  Source:='Execute: ';
+    detFetch:    Source:='Fetch:   ';
+    detCommit:   Source:='Commit:  ';
+    detRollBack: Source:='Rollback:';
+    else Source:='Unknown event. Please fix program code.';
+  end;
+  debugln(Source + Msg);
+  sleep(100);
 end;
 
 
@@ -1732,6 +1755,10 @@ begin
   fList:= TStringList.Create;
   // Initialize new instance of IBConnection and SQLTransaction
   ibConnection:= TIBConnection.Create(nil);
+  {$IFDEF DEBUG}
+  ibConnection.OnLog:=@GetLogEvent;
+  ibConnection.LogEvents:=[detCustom,detExecute,detCommit,detRollBack];
+  {$ENDIF DEBUG}
   fSqlTrans:= TSQLTransaction.Create(nil);
   SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
   SortSynCompletion;

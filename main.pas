@@ -7,7 +7,8 @@ interface
 uses
   Classes, SysUtils, IBConnection, sqldb, memds, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
-  ExtCtrls, Buttons, StdCtrls, TableManage;
+  ExtCtrls, Buttons, StdCtrls, TableManage
+  {$IFDEF DEBUG},lazlogger{$ENDIF};
 
 {$i turbocommon.inc}
 
@@ -204,7 +205,9 @@ type
     // Set connection for SQLQuery1 to selected registered database
     procedure SetConnection(Index: Integer);
     procedure SetFocus; override; // solve a bug in Lazarus
-    { private declarations }
+  protected
+    // This procedure will receive the events that are logged by the connection:
+    procedure GetLogEvent(Sender: TSQLConnection; EventType: TDBEventType; Const Msg : String);
   public
     RegisteredDatabases: array of TDatabaseRec;
     Version: string;
@@ -1382,6 +1385,25 @@ procedure TfmMain.SetFocus;
 begin
   if not fActivated then
     inherited SetFocus;
+end;
+
+procedure TfmMain.GetLogEvent(Sender: TSQLConnection; EventType: TDBEventType;
+  const Msg: String);
+// Used to log everything sent through the connection
+var
+  Source: string;
+begin
+  case EventType of
+    detCustom:   Source:='Custom:   ';
+    detPrepare:  Source:='Prepare:  ';
+    detExecute:  Source:='Execute:  ';
+    detFetch:    Source:='Fetch:    ';
+    detCommit:   Source:='Commit:   ';
+    detRollBack: Source:='Rollback: ';
+    else Source:='Unknown event. Please fix program code.';
+  end;
+  debugln(Source + Msg);
+  sleep(100);
 end;
 
 
@@ -3911,6 +3933,10 @@ begin
             OrigRegRec:= Rec;
             Index:= FilePos(F) - 1;
             IBConnection:= TIBConnection.Create(nil);
+            {$IFDEF DEBUG}
+            ibConnection.OnLog:=@GetLogEvent;
+            ibConnection.LogEvents:=[detCustom,detExecute,detCommit,detRollBack];
+            {$ENDIF DEBUG}
             SQLTrans:= TSQLTransaction.Create(nil);
             setTransactionIsolation(SQLTrans.Params);
 
