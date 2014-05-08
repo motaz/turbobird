@@ -222,12 +222,7 @@ type
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
     // Runs SQL script; returns result
     function ExecuteScript(Script: string): Boolean;
-    // Adds control/object to list of programmatically created items.
-    // Their memory will be freed in code when no longer used
-    procedure AddResultControl(ParentControl: TObject; AControl: TObject);
     procedure NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
-    // Free up memory for controls
-    procedure RemoveControls;
     function FindSqlQuery: TSqlQuery;
     // Returns whether query is DDL or DML
     function GetSQLType(Query: string; var Command: string): string;
@@ -261,14 +256,13 @@ procedure TfmQueryWindow.NewCommitButton(const Pan: TPanel; var ATab: TTabSheet)
 var
   Commit: TBitBtn;
 begin
-  Commit:= TBitBtn.Create(nil);
+  Commit:= TBitBtn.Create(self);
   Commit.Parent:= Pan;
   Commit.Caption:= 'Commit';
   Commit.Left:= 400;
   Commit.Visible:= False;
   Commit.OnClick:= @CommitResultClick;
   Commit.Tag:= ATab.TabIndex;
-  AddResultControl(ATab, Commit);
 end;
 
 
@@ -788,7 +782,6 @@ var
   ATab: TTabSheet;
   QT: TQueryThread;
 begin
-  RemoveControls;
   ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create(qaCommit);
   try
@@ -913,7 +906,6 @@ var
   ATab: TTabSheet;
   QT: TQueryThread;
 begin
-  RemoveControls;
   ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
   QT:= TQueryThread.Create(qaRollBack);
   try
@@ -1103,42 +1095,37 @@ var
   Nav: TDBNavigator;
   Pan: TPanel;
 begin
-  ATab:= TTabSheet.Create(nil);
+  ATab:= TTabSheet.Create(self);
+  BeginUpdateBounds;
   Result:= ATab;
   ATab.Parent:= PageControl1;
   ATab.Caption:= 'Result # ' + GetNewTabNum + ' ' + AdditionalTitle;
   if QueryType = qtSelectable then // Select, need record set result
   begin
     // Query
-    aSqlQuery:= TSQLQuery.Create(nil);
+    aSqlQuery:= TSQLQuery.Create(self);
     aSqlQuery.DataBase:= ibConnection;
     aSqlQuery.Transaction:= fSqlTrans;
     aSqlQuery.AfterScroll:= @QueryAfterScroll;
-    // Here and in other cases, the object is added to the list of
-    // programmatically maintained objects and freed programmatically
-    AddResultControl(ATab, aSqlQuery);
     aSqlQuery.AfterPost:= @FinishCellEditing;
     aSqlQuery.Tag:= ATab.TabIndex;
 
     // Status Bar
-    StatusBar:= TStatusBar.Create(nil);
+    StatusBar:= TStatusBar.Create(self);
     StatusBar.Parent:= ATab;
-    AddResultControl(ATab, StatusBar);
 
     // Datasource
-    DataSource:= TDataSource.Create(nil);
+    DataSource:= TDataSource.Create(self);
     DataSource.DataSet:= aSqlQuery;
-    AddResultControl(ATab, DataSource);
 
     // Panel
-    pan:= TPanel.Create(nil);
+    pan:= TPanel.Create(self);
     pan.Parent:= ATab;
     Pan.Height:= 30;
     Pan.Align:= alTop;
-    AddResultControl(ATab, Pan);
 
     // Query result Grid
-    DBGrid:= TDBGrid.Create(nil);
+    DBGrid:= TDBGrid.Create(self);
     DBGrid.Parent:= ATab;
     DBGrid.DataSource:= DataSource;
     DBGrid.Align:= alClient;
@@ -1153,14 +1140,12 @@ begin
     DBGrid.Options:= DBGrid.Options + [dgAutoSizeColumns, dgHeaderHotTracking, dgHeaderPushedLook, dgAnyButtonCanSelect];
 
     DBGrid.OnTitleClick:= @DBGridTitleClick;
-    AddResultControl(ATab, DBGrid);
 
     // Navigator
-    Nav:= TDBNavigator.Create(nil);
+    Nav:= TDBNavigator.Create(self);
     Nav.Parent:= Pan;
     Nav.VisibleButtons:= [nbFirst, nbNext, nbPrior, nbLast];
     Nav.DataSource:= DataSource;
-    AddResultControl(ATab, Nav);
 
     // Apply button
     NewApplyButton(Pan, ATab);
@@ -1171,32 +1156,28 @@ begin
   else
   if QueryType in [qtExecute, qtScript] then
   begin
-    meResult:= TMemo.Create(nil);
+    meResult:= TMemo.Create(self);
     meResult.Parent:= ATab;
     meResult.ReadOnly:= True;
     meResult.Align:= alClient;
-    AddResultControl(ATab, meResult);
     case QueryType of
       qtExecute:
       begin
-        aSqlQuery:= TSQLQuery.Create(nil);
+        aSqlQuery:= TSQLQuery.Create(self);
         aSqlQuery.DataBase:= ibConnection;
         aSqlQuery.Transaction:= fSqlTrans;
-        AddResultControl(ATab, aSqlQuery);
       end;
       qtScript: // Script
       begin
-        aSQLScript:= TModSQLScript.Create(nil);
+        aSQLScript:= TModSQLScript.Create(self);
         aSQLScript.DataBase:= ibConnection;
         aSQLScript.Transaction:= fSqlTrans;
         aSQLScript.CommentsInSQL:= true; //pass on comments. They cannot hurt
         // and may be useful when tracing errors at the database end.
         aSQLScript.UseSetTerm:= true; //needed if set term is used, e.g. for SPs
-        AddResultControl(ATab, aSQLScript);
       end;
     end;
   end;
-  AddResultControl(nil, ATab);
 end;
 
 (***************  Execute Query   ******************)
@@ -1501,15 +1482,6 @@ begin
   end;
 end;
 
-{ AddResultControl: add object to array of program-managed memory }
-
-procedure TfmQueryWindow.AddResultControl(ParentControl: TObject; AControl: TObject);
-begin
-  SetLength(fResultControls, Length(fResultControls) + 1);
-  SetLength(fParentResultControls, Length(fParentResultControls) + 1);
-  fResultControls[High(fParentResultControls)]:= AControl;
-  fParentResultControls[High(fParentResultControls)]:= ParentControl;
-end;
 
 
 { Display new Save/Apply button for current query result been edited }
@@ -1518,37 +1490,13 @@ procedure TfmQueryWindow.NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
 var
   Apply: TBitBtn;
 begin
-  Apply:= TBitBtn.Create(nil);
+  Apply:= TBitBtn.Create(self);
   Apply.Parent:= Pan;
   Apply.Caption:= 'Apply';
   Apply.Left:= 300;
   Apply.Visible:= False;
   Apply.OnClick:= @ApplyClick;
   Apply.Tag:= ATab.TabIndex;
-  AddResultControl(ATab, Apply);
-end;
-
-{ Remove all run-time controls from current Query window }
-
-procedure TfmQueryWindow.RemoveControls;
-var
-  i: Integer;
-begin
-  for i:= High(fResultControls) downto Low(fResultControls) do
-  begin
-    if Assigned(fResultControls[i]) then
-    begin
-      if fResultControls[i] is TSQLQuery then
-      begin
-        (fResultControls[i] as TSQLQuery).AfterScroll:= nil;
-        (fResultControls[i] as TSQLQuery).Close;
-        (fResultControls[i] as TSQLQuery).DataSource:= nil;
-      end;
-      FreeAndNil(fResultControls[i]);
-    end;
-  end;
-  SetLength(fResultControls, 0);
-  SetLength(fParentResultControls, 0);
 end;
 
 
@@ -1733,8 +1681,6 @@ end;
 procedure TfmQueryWindow.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
-  RemoveControls;
-
   // Check if the transaction is active; then commit it
   if fSqlTrans.Active then
   begin
@@ -2155,7 +2101,6 @@ begin
   tbRollbackRetaining.Enabled:= False;
 
   fModifyCount:= 0;
-  RemoveControls;
 
   // Get initial query type; this can be changed later in the next parts
   if aQueryType = qtUnknown then // Auto
