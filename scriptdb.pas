@@ -62,6 +62,11 @@ var
   i: Integer;
 begin
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
+  { todo: wrap create role RDB$Admin statement - in FB 2.5+ this role is present
+  by default, in lower dbs it isn't. No way to find out in advance when writing
+  a script. No support in FB yet for CREATE OR UPDATE ROLE so probably best
+  to do it in execute block with error handling or
+  first check system tables for role existence, again with execute block }
   for i:= 0 to List.Count - 1 do
     List[i]:= 'Create Role ' + List[i] + ';';
   Result:= List.Count > 0;

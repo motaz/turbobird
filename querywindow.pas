@@ -8,28 +8,7 @@ uses
   Classes, SysUtils, IBConnection, db, sqldb, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
-  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType
-  {$IF FPC_FULLVERSION < 20701}
-{ Note regarding SQLScript bug in FPC <= 2.7.1:
-If parameters are used in the script e.g. as in the sample EMPLOYEE.FDB
-CREATE Procedure DELETE_EMPLOYEE
-...
-SELECT count(po_number)
-FROM sales
-WHERE sales_rep = :emp_num
-INTO :any_sales;
-you may get this error
-: PrepareStatement :
--Dynamic SQL Error
--SQL error code = -104
--Token unknown - line 19, column 7
--?
-because the TSQLScript tries to process parameters as if they were sqldb
-parameters
-}
-  ,modsqlscript
-  {$ENDIF}
-  ;
+  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType, modsqlscript;
 
 type
 
@@ -213,7 +192,9 @@ type
     function GetNewTabNum: string;
     procedure FinishCellEditing(DataSet: TDataSet);
     function GetRecordSet(TabIndex: Integer): TSQLQuery;
-    function GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer;
+    // Gets both querytype and whether SQL is DML or DDL
+    // Investigates QueryList[LookAtIndex] to find out
+    function GetQuerySQLType(QueryList: TStringList; var LookAtIndex: Integer;
       var IsDDL: Boolean): TQueryTypes;
     procedure NewCommitButton(const Pan: TPanel; var ATab: TTabSheet);
     procedure RemoveComments(QueryList: TStringList; StartLine: Integer;
@@ -244,7 +225,9 @@ type
     // Free up memory for controls
     procedure RemoveControls;
     function FindSqlQuery: TSqlQuery;
+    // Returns whether query is DDL or DML
     function GetSQLType(Query: string; var Command: string): string;
+    // Tries to split up text into separate queries
     function GetSQLSegment(QueryList: TStringList; StartLine: Integer;
       var QueryType: TQueryTypes; var EndLine: Integer;
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
@@ -345,7 +328,7 @@ begin
         QueryList.Delete(i);
       {
       else
-        //todo: this will also pick up -- within string literals which is wrong
+        // this will also pick up -- within string literals which is wrong
         QueryList[i]:= Copy(QueryList[i], 1, Pos('--', QueryList[i]) - 1);
       }
     end;
@@ -641,26 +624,37 @@ end;
 
 { GetQuerySQLType: get query type: select, script, execute from current string list }
 
-function TfmQueryWindow.GetQuerySQLType(QueryList: TStringList; var SecondRealStart: Integer; var IsDDL: Boolean): TQueryTypes;
+function TfmQueryWindow.GetQuerySQLType(QueryList: TStringList; var LookAtIndex: Integer; var IsDDL: Boolean): TQueryTypes;
 var
-  SQLSegment: string;
+  MassagedSQL: string;
 begin
-  IsDDL:= False;
-  if SecondRealStart < QueryList.Count then
+  Result:= qtUnknown;
+  IsDDL:= False; //default
+  if LookAtIndex < QueryList.Count then
   begin
-    SQLSegment:= SQLSegment + QueryList[SecondRealStart];
+    MassagedSQL:= LowerCase(Trim(QueryList[LookAtIndex]));
 
-    if (Pos('select', LowerCase(Trim(SQLSegment))) = 1) then
-      Result:= qtSelectable // Selectable
-    else
-    if Pos('setterm', LowerCase(StringReplace(SQLSegment, ' ', '', [rfReplaceAll]))) = 1 then
-      Result:= qtScript // Script
+    // Script overrides rest
+    if Pos('set term', MassagedSQL) = 1 then
+    begin
+      // Using set term does not mean the SQL you're running has to be
+      // DDL (could be an execute block or something) but it most probably is
+      IsDDL:= true;
+      exit(qtScript);
+    end;
+
+    if (Pos('select', MassagedSQL) = 1) then
+      // todo: low priority misses insert...returning,
+      // update...returning, merge.. returning...
+      Result:= qtSelectable
     else
     begin
-      Result:= qtExecute; // Executable
-      IsDDL:= (Pos('create', lowerCase(Trim(SQLSegment))) = 1) or (Pos('alter',
-        lowerCase(Trim(SQLSegment))) = 1) or
-         (Pos('modify', lowerCase(Trim(SQLSegment))) = 1);
+      Result:= qtExecute;
+      IsDDL:= (Pos('alter', MassagedSQL) = 1) or
+        (Pos('create', MassagedSQL) = 1) or
+        (Pos('drop', MassagedSQL) = 1) or
+        (Pos('grant', MassagedSQL) = 1) {actually DCL} or
+        (Pos('revoke', MassagedSQL) = 1) {actually DCL};
     end;
   end;
 end;
@@ -694,16 +688,14 @@ begin
 
     Error:= False;
     fTerminated:= True;
-
   except
-  on e: exception do
-  begin
-    Error:= True;
-    ErrorMsg:= e.Message;
-    fTerminated:= True;
+    on e: exception do
+    begin
+      Error:= True;
+      ErrorMsg:= e.Message;
+      fTerminated:= True;
+    end;
   end;
-  end;
-
 end;
 
 
@@ -1047,8 +1039,7 @@ begin
         Break;
       end
       else
-      // todo: better test for set term in trim(lowercase at position 1?
-      if Pos('setterm', LowerCase(StringReplace(Line, ' ', '', [rfReplaceAll]))) = 1 then
+      if Pos('set term', LowerCase(Trim(Line))) = 1 then
       begin
         Result:= qtScript;
         Break;
@@ -1566,16 +1557,19 @@ end;
 
 function TfmQueryWindow.GetSQLType(Query: string; var Command: string): string;
 begin
+  Result:= 'DML'; //default
   Query:= Trim(Query);
   if (Query <> '') and (Pos(' ', Query) > 0) then
   begin
+    // to do: this does not take comments into account...
     Command:= Copy(Query, 1, Pos(' ', Query) - 1);
     Command:= LowerCase(Command);
-    if (Command = 'alter') or (Command = 'create') or (Command = 'drop') or (Command = 'grant') or
-       (Command = 'revoke') then
-      Result:= 'DDL'
-    else
-      Result:= 'DML';
+    if (Command = 'alter') or
+       (Command = 'create') or
+       (Command = 'drop') or
+       (Command = 'grant') {actually DCL} or
+       (Command = 'revoke') {actually DCL} then
+      Result:= 'DDL';
   end;
 end;
 
@@ -1641,11 +1635,9 @@ begin
       Break;
     end
     else
-    //todo: perhaps better test for set term in trim(querylist[i] instead
     if (QueryType = qtScript) and
-      ((i > SecondRealStart) and (Pos('setterm', LowerCase(StringReplace(QueryList[i],
-      ' ', '', [rfReplaceAll]))) > 0))
-      or (i = QueryList.Count - 1) then
+      ((i > SecondRealStart) and (Pos('set term', LowerCase(Trim(QueryList[i]))) = 1)) or
+      (i = QueryList.Count - 1) then
     begin
       Result:= True;
       EndLine:= i;

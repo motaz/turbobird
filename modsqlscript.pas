@@ -18,6 +18,24 @@ Modified from FPC  sqldb.pp and sqlscript.pp to solve bugs with
 parameters. See 
 http://wiki.lazarus.freepascal.org/User_Changes_Trunk#TSQLScript_supports_:.2C_backtick_quotes_and_explicit_COMMIT.2FCOMMIT_RETAIN
 }
+{ Note regarding SQLScript bug in FPC <= 2.7.1:
+If parameters are used in the script e.g. as in the sample EMPLOYEE.FDB
+CREATE Procedure DELETE_EMPLOYEE
+...
+SELECT count(po_number)
+FROM sales
+WHERE sales_rep = :emp_num
+INTO :any_sales;
+you may get this error
+: PrepareStatement :
+-Dynamic SQL Error
+-SQL error code = -104
+-Token unknown - line 19, column 7
+-?
+because the TSQLScript tries to process parameters as if they were sqldb
+parameters
+}
+
 unit modsqlscript;
 
 {$mode objfpc}{$H+}
@@ -27,6 +45,7 @@ interface
 uses
   Classes, SysUtils, sqlscript, db, dbconst, sqldb;
 
+{$IF FPC_FULLVERSION<20701}
 type
   { TModCustomSQLQuery }
     TModCustomSQLQuery = class(TCustomSQLQuery)
@@ -79,6 +98,8 @@ implementation
 
 procedure TModSQLScript.ExecuteStatement(SQLStatement: TStrings;
   var StopExecution: Boolean);
+var
+  statementtext: string;
 begin
   fquery.SQL.assign(SQLStatement);
   fquery.ExecSQL;
@@ -144,5 +165,10 @@ procedure TModSQLScript.ExecuteScript;
 begin
   Execute;
 end;
-
+{$ELSE}
+// In FPC trunk, we can just use existing code
+type
+  TModSQLScript = TSQLscript;
+implementation
+{$ENDIF}
 end.
