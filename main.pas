@@ -7,8 +7,7 @@ interface
 uses
   Classes, SysUtils, IBConnection, sqldb, memds, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
-  ExtCtrls, Buttons, StdCtrls, TableManage
-  {$IFDEF DEBUG},lazlogger{$ENDIF};
+  ExtCtrls, Buttons, StdCtrls, TableManage,dbugintf;
 
 {$i turbocommon.inc}
 
@@ -287,6 +286,10 @@ end;
 
 procedure TfmMain.FormCreate(Sender: TObject);
 begin
+  {$IFNDEF DEBUG}
+  // Do not log to debug server if built as release instead of debug
+  SetDebuggingEnabled(false);
+  {$ENDIF}
   Application.OnException:= @GlobalException;
   fActivated:= False;
   LoadRegisteredDatabases;
@@ -1402,8 +1405,7 @@ begin
     detRollBack: Source:='Rollback: ';
     else Source:='Unknown event. Please fix program code.';
   end;
-  debugln(Source + Msg);
-  sleep(100);
+  SendDebug(Source + Msg);
 end;
 
 

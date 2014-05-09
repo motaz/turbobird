@@ -8,8 +8,8 @@ uses
   Classes, SysUtils, IBConnection, db, sqldb, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
-  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType, modsqlscript
-  {$IFDEF DEBUG},lazlogger{$ENDIF};
+  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType, modsqlscript,
+  dbugintf;
 
 type
 
@@ -162,8 +162,7 @@ type
     procedure tbSaveClick(Sender: TObject);
   private
     { private declarations }
-    // Index of selected registered database
-    fdbIndex: Integer;
+    fdbIndex: Integer; // Index of selected registered database
     RegRec: TRegisteredDatabase;
     fResultControls: array of TObject;
     fParentResultControls: array of TObject;
@@ -172,8 +171,7 @@ type
     fSqlTrans: TSQLTransaction;
     fCanceled: Boolean;
     fStartLine: Integer;
-    fList: TStringList;
-    fQuery: string;
+    fQuery: TStringList; //query text
     fOrigQueryType: TQueryTypes;
     fFinished: Boolean;
     fQT: TQueryThread;
@@ -216,8 +214,9 @@ type
     OnCommit: TNotifyEvent;
     procedure Init(dbIndex: Integer);
     function GetQueryType(AQuery: string): TQueryTypes;
-    // Get query text from GUI/memo
-    function GetQuery: string;
+    // Get query text from GUI/memo into
+    // QueryContents
+    function GetQuery(QueryContents: tstrings): boolean;
     function CreateResultTab(QueryType: TQueryTypes; var aSqlQuery: TSQLQuery; var aSQLScript: TModSQLScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
     // Runs SQL script; returns result
@@ -616,8 +615,7 @@ begin
     detRollBack: Source:='Rollback:';
     else Source:='Unknown event. Please fix program code.';
   end;
-  debugln(Source + Msg);
-  sleep(100);
+  SendDebug(Source + Msg);
 end;
 
 
@@ -1074,11 +1072,20 @@ end;
 
 { GetQuery: get query text from editor }
 
-function TfmQueryWindow.GetQuery: string;
+function TfmQueryWindow.GetQuery(QueryContents: TStrings): boolean;
+var
+  Seltext: string;
 begin
-  Result:= trim(meQuery.SelText);
-  if Result = '' then
-    Result:= trim(meQuery.Lines.Text);
+  Result:= false;
+  if assigned(QueryContents) then
+  begin
+    SelText:= trim(meQuery.SelText);
+    if SelTExt<>'' then
+      QueryContents.Text:= SelText
+    else
+      QueryContents.Text:= trim(meQuery.Lines.Text);
+    Result:= true;
+  end;
 end;
 
 
@@ -1196,17 +1203,17 @@ begin
     // Script
     if (fOrigQueryType = qtScript) then
     begin // script
-      ExecuteScript(fQuery);
+      ExecuteScript(fQuery.Text);
       Inc(fModifyCount);
-      SqlType:= GetSQLType(fQuery, Command);
-      fmMain.AddToSQLHistory(RegRec.Title, SqlType, fQuery);
+      SqlType:= GetSQLType(fQuery.Text, Command);
+      fmMain.AddToSQLHistory(RegRec.Title, SqlType, fQuery.Text);
       fFinished:= True;
-      fList.Clear;
+      fQuery.Clear;
     end
     else  // normal statement / Multi statements
     begin
       Inc(fCnt);
-      if not GetSQLSegment(fList, fStartline, fQueryType, EndLine, fQueryPart, IsDDL) then
+      if not GetSQLSegment(fQuery, fStartline, fQueryType, EndLine, fQueryPart, IsDDL) then
       begin
         fFinished:= True;
         Exit;
@@ -1409,7 +1416,7 @@ begin
         begin
           fModifyCount:= 0;
         end;
-      if fStartLine >= fList.Count then
+      if fStartLine >= fQuery.Count then
         fFinished:= True;
     end;
   except
@@ -1450,6 +1457,10 @@ begin
     try
       ATab.ImageIndex:= 2;
       SQLScript.Script.Text:= Script;
+      {$IFDEF DEBUG}
+      //todo: debug
+      SendDebug('going to run script: '+SQLScript.Script.Text);
+      {$Endif}
       SQLScript.ExecuteScript;
 
       // Auto commit
@@ -1467,6 +1478,9 @@ begin
   except
     on e: exception do
     begin
+      {$IFDEF DEBUG}
+      SendDebug('ExecuteScript failed; error '+E.Message);
+      {$Endif}
       Result:= False;
       if Assigned(ATab) then
         ATab.TabVisible:= False;
@@ -1698,7 +1712,11 @@ end;
 
 procedure TfmQueryWindow.FormCreate(Sender: TObject);
 begin
-  fList:= TStringList.Create;
+  {$IFNDEF DEBUG}
+  // Do not log to debug server if built as release instead of debug
+  SetDebuggingEnabled(false);
+  {$ENDIF}
+  fQuery:= TStringList.Create;
   // Initialize new instance of IBConnection and SQLTransaction
   ibConnection:= TIBConnection.Create(nil);
   {$IFDEF DEBUG}
@@ -1715,7 +1733,7 @@ begin
   // Clean up resources to avoid memory leaks
   fSqlTrans.Free;
   IBConnection.Free;
-  FList.Free;
+  fQuery.Free;
 end;
 
 procedure TfmQueryWindow.FormKeyDown(Sender: TObject; var Key: Word;
@@ -2089,8 +2107,11 @@ end;
 procedure TfmQueryWindow.CallExecuteQuery(aQueryType: TQueryTypes);
 begin
   // Get query text from memo
-  fQuery:= GetQuery;
-  fList.Text:= fQuery;
+  if not(GetQuery(fQuery)) then
+  begin
+    ShowMessage('Could not get valid query');
+    exit;
+  end;
   fStartLine:= 0;
 
   // Disable buttons to prevent query interrupt
@@ -2104,7 +2125,7 @@ begin
 
   // Get initial query type; this can be changed later in the next parts
   if aQueryType = qtUnknown then // Auto
-    fOrigQueryType:= GetQueryType(fQuery)
+    fOrigQueryType:= GetQueryType(fQuery.Text)
   else
     fOrigQueryType:= aQueryType;
 
