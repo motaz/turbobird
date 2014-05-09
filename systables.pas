@@ -618,8 +618,8 @@ begin
       sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger,
       sqQuery.FieldByName('RDB$FIELD_SCALE').AsInteger);
     DomainSize:= sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger;
-    DefaultValue:= sqQuery.FieldByName('RDB$DEFAULT_SOURCE').AsString;
-    Collation:= sqQuery.FieldByName('rdb$collation_name').AsString;
+    DefaultValue:= trim(sqQuery.FieldByName('RDB$DEFAULT_SOURCE').AsString);
+    Collation:= trim(sqQuery.FieldByName('rdb$collation_name').AsString);
   end
   else
     DomainSize:= 0;
