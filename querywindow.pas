@@ -1179,8 +1179,7 @@ begin
         aSQLScript:= TModSQLScript.Create(self);
         aSQLScript.DataBase:= ibConnection;
         aSQLScript.Transaction:= fSqlTrans;
-        aSQLScript.CommentsInSQL:= true; //pass on comments. They cannot hurt
-        // and may be useful when tracing errors at the database end.
+        aSQLScript.CommentsInSQL:= true;
         aSQLScript.UseSetTerm:= true; //needed if set term is used, e.g. for SPs
       end;
     end;
