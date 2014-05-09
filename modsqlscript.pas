@@ -46,7 +46,8 @@ interface
 uses
   Classes, SysUtils, sqlscript, db, dbconst, sqldb, trunksqlscript;
 {$ELSE}
-// no uses
+uses
+  Classes, SysUtils, db, sqldb;
 {$ENDIF}
 
 {$IF FPC_FULLVERSION<20701}
