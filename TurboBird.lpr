@@ -22,7 +22,8 @@ uses
   NewDomain, SysTables, NewConstraint, NewEditField, Calen, Scriptdb,
   UserPermissions, TableManage, BackupRestore, CreateUser, ChangePass,
   PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo,
-  sysutils, Comparison, Update, topologicalsort, UnitFirebirdServices;
+  sysutils, Comparison, Update, topologicalsort, UnitFirebirdServices, 
+trunksqlscript;
 
 const
   Major = 1;

@@ -101,7 +101,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="40">
+    <Units Count="41">
       <Unit0>
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -400,6 +400,11 @@
         <Filename Value="turbocommon.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit39>
+      <Unit40>
+        <Filename Value="trunksqlscript.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="trunksqlscript"/>
+      </Unit40>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

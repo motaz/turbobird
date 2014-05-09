@@ -42,8 +42,12 @@ unit modsqlscript;
 
 interface
 
+{$IF FPC_FULLVERSION<20701}
 uses
-  Classes, SysUtils, sqlscript, db, dbconst, sqldb;
+  Classes, SysUtils, sqlscript, db, dbconst, sqldb, trunksqlscript;
+{$ELSE}
+// no uses
+{$ENDIF}
 
 {$IF FPC_FULLVERSION<20701}
 type
@@ -57,8 +61,7 @@ type
     end;
 
   { TModSQLScript }
-
-    TModSQLScript = class (TCustomSQLscript)
+    TModSQLScript = class (TTrunkCustomSQLScript)
     private
       FOnDirective: TSQLScriptDirectiveEvent;
       FQuery   : TModCustomSQLQuery;
@@ -67,7 +70,7 @@ type
     protected
       procedure ExecuteStatement (SQLStatement: TStrings; var StopExecution: Boolean); override;
       procedure ExecuteDirective (Directive, Argument: String; var StopExecution: Boolean); override;
-      procedure ExecuteCommit; override;
+      procedure ExecuteCommit(CommitRetaining: boolean=true); override;
       Procedure SetDatabase (Value : TDatabase); virtual;
       Procedure SetTransaction(Value : TDBTransaction); virtual;
       Procedure CheckDatabase;
@@ -91,6 +94,7 @@ type
       property OnException;
     end;
 
+
 implementation
 
 
@@ -98,8 +102,6 @@ implementation
 
 procedure TModSQLScript.ExecuteStatement(SQLStatement: TStrings;
   var StopExecution: Boolean);
-var
-  statementtext: string;
 begin
   fquery.SQL.assign(SQLStatement);
   fquery.ExecSQL;
@@ -112,10 +114,16 @@ begin
     FOnDirective (Self, Directive, Argument, StopExecution);
 end;
 
-procedure TModSQLScript.ExecuteCommit;
+procedure TModSQLScript.ExecuteCommit(CommitRetaining: boolean=true);
 begin
   if FTransaction is TSQLTransaction then
-    TSQLTransaction(FTransaction).CommitRetaining
+    if CommitRetaining then
+      TSQLTransaction(FTransaction).CommitRetaining
+    else
+      begin
+      TSQLTransaction(FTransaction).Commit;
+      TSQLTransaction(FTransaction).StartTransaction;
+      end
   else
     begin
     FTransaction.Active := false;
@@ -143,9 +151,8 @@ constructor TModSQLScript.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FQuery := TModCustomSQLQuery.Create(nil);
-  // Corrections to fix parameter error:
-  FQuery.ParamCheck := false;
-  FQuery.ParseSQL := false;
+  FQuery.ParamCheck := false; // Do not parse for parameters; breaks use of e.g. select bla into :bla in Firebird procedures
+  FQuery.ParseSQL:= false; //added for extra protection against messing with parameters
 end;
 
 destructor TModSQLScript.Destroy;
