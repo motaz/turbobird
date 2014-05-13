@@ -1,5 +1,5 @@
 unit Comparison;
-
+//todo: add support for check constraints
 {$mode objfpc}{$H+}
 
 interface

@@ -13,7 +13,7 @@ function ScriptAllRoles(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllFunctions(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts all domains in a database
 function ScriptAllDomains(dbIndex: Integer; var List: TStringList): Boolean;
-// Scripts all defined exceptions in a database
+// Scripts all exceptions defined in a database
 function ScriptAllExceptions(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts all sequences (old name: generators) in a database
 function ScriptAllGenerators(dbIndex: Integer; var List: TStringList): Boolean;
@@ -28,8 +28,18 @@ function ScriptAllViews(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptAllTriggers(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts all non-primary key indexes for a database
 function ScriptAllSecIndices(dbIndex: Integer; var List: TStringList): Boolean;
+
+// Scripts check constraints for all tables
+function ScriptAllCheckConstraints(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts all constraints (e.g. foreign key constraints) for tables in a database
-// For now, seems to only cover foreign keys. Todo: verify/confirm
+{ For now, seems to only cover foreign keys. Todo: verify/confirm
+There are 5 kind of constraints:
+    NOT NULL
+    PRIMARY KEY
+    UNIQUE
+    FOREIGN KEY
+    CHECK
+}
 function ScriptAllConstraints(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptObjectPermission(dbIndex: Integer; ObjName, UserName: string; var ObjType: Integer;
    List: TStrings; NewUser: string = ''): Boolean;
@@ -473,6 +483,15 @@ begin
   end;
 end;
 
+
+(********************  Script Check Constraints   ***********************)
+
+function ScriptAllCheckConstraints(dbIndex: Integer; var List: TStringList
+  ): Boolean;
+  //todo: get check constraints for domains
+begin
+  dmSysTables.ScriptCheckConstraints(dbIndex,List);
+end;
 
 (********************  Script Constraints   ***********************)
 

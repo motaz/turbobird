@@ -1873,6 +1873,12 @@ begin
         Lines.AddStrings(List);
 
         Lines.Add('');
+        Lines.Add('--      Check constraints');
+        Lines.Add('');
+        ScriptAllCheckConstraints(dbIndex, List);
+        Lines.AddStrings(List);
+
+        Lines.Add('');
         Lines.Add('--      Permissions');
         Lines.Add('');
         ScriptAllPermissions(dbIndex, List);

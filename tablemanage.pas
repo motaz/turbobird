@@ -255,15 +255,12 @@ begin
       if cxUnique.Checked then
         FirstLine:= FirstLine + 'unique ';
       FirstLine:= FirstLine + cbSortType.Text + ' index ' + edIndexName.Text;
-
-
       QWindow.meQuery.Lines.Text:= FirstLine + LineEnding + 'on ' + fTableName + LineEnding + Fields;
     end;
-    QWindow.OnCommit:= bbRefreshIndices.OnClick;
 
+    QWindow.OnCommit:= bbRefreshIndices.OnClick;
     QWindow.Show;
   end;
-
 end;
 
 procedure TfmTableManage.bbAddUserClick(Sender: TObject);

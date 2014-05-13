@@ -107,5 +107,4 @@ begin
   InitialiseIBase60;
   Application.Run;
   ReleaseIBase60;
-
 end.

@@ -42,6 +42,9 @@ type
     function GetTriggerInfo(DatabaseIndex: Integer; ATriggername: string;
       var AfterBefor, OnTable, Event, Body: string; var TriggerEnabled: Boolean;
       var TriggerPosition: Integer): Boolean;
+    // Scripts all check constraints for a database's tables as alter table
+    // statement, adding the SQL to List
+    function ScriptCheckConstraints(dbIndex: Integer; List: TStrings): boolean;
     function ScriptTrigger(dbIndex: Integer; ATriggerName: string; List: TStrings;
       AsCreate: Boolean = False): Boolean;
     // Used e.g. in scripting foreign keys
@@ -297,13 +300,51 @@ begin
     end;
     sqQuery.Close;
     Result:= True;
-
   except
-  on e: exception do
-  begin
-    MessageDlg('Error: ' + e.Message, mtError, [mbOk], 0);
-    Result:= False;
+    on e: exception do
+    begin
+      MessageDlg('Error: ' + e.Message, mtError, [mbOk], 0);
+      Result:= False;
+    end;
   end;
+end;
+
+function TdmSysTables.ScriptCheckConstraints(dbIndex: Integer; List: TStrings
+  ): boolean;
+const
+  Template='select '+
+    'rc.rdb$relation_name, t.rdb$trigger_source '+
+    'from rdb$check_constraints cc '+
+    'inner join rdb$relation_constraints rc '+
+    'on cc.rdb$constraint_name=rc.rdb$constraint_name '+
+    'inner join rdb$triggers t '+
+    'on cc.rdb$trigger_name=t.rdb$trigger_name '+
+    'where rc.rdb$constraint_type=''CHECK'' and '+
+    't.rdb$trigger_inactive<>1 and '+
+    't.rdb$trigger_type=1' {type=1:before insert probably};
+begin
+  Result:= false;
+  List.Clear;
+  try
+    Init(dbIndex);
+    sqQuery.Close;
+    sqQuery.SQL.Text:= Template;
+    sqQuery.Open;
+    while not sqQuery.EOF do
+    begin
+      List.Add(Format('ALTER TABLE %s ADD ',
+        [trim(sqQuery.FieldByName('rdb$relation_name').AsString)]));
+      // Field starts with CHECK
+      List.Add(trim(sqQuery.FieldByName('rdb$trigger_source').AsString)+';');
+      sqQuery.Next;
+    end;
+    sqQuery.Close;
+    Result:= True;
+  except
+    on e: exception do
+    begin
+      MessageDlg('Error: ' + e.Message, mtError, [mbOk], 0);
+    end;
   end;
 end;
 
@@ -338,7 +379,6 @@ begin
     List.Text:= List.Text + Body + ' ^';
     List.Add('SET TERM ; ^');
   end;
-
 end;
 
 (**********  Get Table Constraints Info  ********************)
