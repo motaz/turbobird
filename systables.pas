@@ -40,7 +40,7 @@ type
     // Limits sorting within one category (e.g. views)
     procedure SortDependencies(var ObjectList: TStringList);
     function GetTriggerInfo(DatabaseIndex: Integer; ATriggername: string;
-      var AfterBefor, OnTable, Event, Body: string; var TriggerEnabled: Boolean;
+      var AfterBefore, OnTable, Event, Body: string; var TriggerEnabled: Boolean;
       var TriggerPosition: Integer): Boolean;
     // Scripts all check constraints for a database's tables as alter table
     // statement, adding the SQL to List
@@ -253,7 +253,7 @@ end;
 (***********  Get Trigger Info  ***************)
 
 function TdmSysTables.GetTriggerInfo(DatabaseIndex: Integer; ATriggername: string;
-  var AfterBefor, OnTable, Event, Body: string; var TriggerEnabled: Boolean; var TriggerPosition: Integer): Boolean;
+  var AfterBefore, OnTable, Event, Body: string; var TriggerEnabled: Boolean; var TriggerPosition: Integer): Boolean;
 var
   Encode: string;
 begin
@@ -279,9 +279,9 @@ begin
     TriggerPosition:= sqQuery.FieldByName('TPos').AsInteger;
     Encode:= DecToBin(sqQuery.FieldByName('Trigger_Type').AsInteger + 1, 7);
     if Encode[7] = '1' then
-      AfterBefor:= 'After'
+      AfterBefore:= 'After'
     else
-      AfterBefor:= 'Before';
+      AfterBefore:= 'Before';
     Delete(Encode, 7, 1);
     Event:= '';
     while Length(Encode) > 0 do
