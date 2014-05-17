@@ -2392,6 +2392,7 @@ procedure TfmMain.lmViewDomainClick(Sender: TObject);
 var
   SelNode: TTreeNode;
   ADomainName: string;
+  CheckConstraint: string;
   Collation: string;
   DomainType: string;
   DomainSize: Integer;
@@ -2424,7 +2425,7 @@ begin
     PageControl1.ActivePage:= ATab;
 
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
-    dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue, Collation);
+    dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, Collation);
     ATab.Tag:= dbIndex;
     if Pos('default', LowerCase(DefaultValue)) = 1 then
       DefaultValue:= Trim(Copy(DefaultValue, 8, Length(DefaultValue)));
@@ -2432,7 +2433,6 @@ begin
       (Pos('CSTRING', DomainType) >0) then
       DomainType:= DomainType + '(' + IntToStr(DomainSize) + ')';
 
-    //todo: how to present character set/collation?
     // Fill ViewDomain form
     with ADomainForm do
     begin
@@ -2442,6 +2442,8 @@ begin
       laType.Caption:= DomainType;
       laSize.Caption:= IntToStr(DomainSize);
       laDefault.Caption:= DefaultValue;
+      //todo: add caption with check constraint
+      //todo: add caption with character set/collation
     end;
     ADomainForm.Show;
   end;

@@ -169,6 +169,7 @@ var
   Collation: string;
   DomainType: string;
   DomainSize: Integer;
+  CheckConstraint: string;
   DefaultValue: string;
 begin
   //todo: add support for character set
@@ -177,12 +178,15 @@ begin
   dmSysTables.SortDependencies(List);
   for i:= 0 to List.Count - 1 do
   begin
-    dmSysTables.GetDomainInfo(dbIndex, List[i], DomainType, DomainSize, DefaultValue, Collation);
+    dmSysTables.GetDomainInfo(dbIndex, List[i], DomainType, DomainSize, DefaultValue, CheckConstraint, Collation);
 
     List[i]:= 'Create Domain ' + List[i] + ' as ' + DomainType;
     if (Pos('CHAR', DomainType) > 0) or (Pos('CSTRING', DomainType) > 0) then
       List[i]:= List[i] + '(' + IntToStr(DomainSize) + ')';
     List[i]:= List[i] + ' ' + DefaultValue;
+    // Check constraint
+    if CheckConstraint <> '' then
+      List[i]:= List[i] + ' ' + CheckConstraint;
     // Collation for text types:
     if Collation <> '' then
       List[i]:= List[i] + ' COLLATE ' +  Collation;

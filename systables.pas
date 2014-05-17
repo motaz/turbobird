@@ -66,7 +66,7 @@ type
     function GetExceptionInfo(ExceptionName: string; var Msg, Description, SqlQuery: string): Boolean;
     // Gets information about domain
     procedure GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
-      var DomainSize: Integer; var DefaultValue: string; var Collation: string);
+      var DomainSize: Integer; var DefaultValue: string; var CheckConstraint: string; var Collation: string);
     function GetConstraintForeignKeyFields(AIndexName: string; SqlQuery: TSQLQuery): string;
 
     function GetDBUsers(dbIndex: Integer; ObjectName: string = ''): string;
@@ -634,7 +634,7 @@ end;
 (************  View Domain info  ***************)
 
 procedure TdmSysTables.GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
-  var DomainSize: Integer; var DefaultValue: string; var Collation: string);
+  var DomainSize: Integer; var DefaultValue: string; var CheckConstraint: string; var Collation: string);
 const
   // Select domain and associated collation (if text type domain)
   // note weird double join fields required...
@@ -659,6 +659,7 @@ begin
       sqQuery.FieldByName('RDB$FIELD_SCALE').AsInteger);
     DomainSize:= sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger;
     DefaultValue:= trim(sqQuery.FieldByName('RDB$DEFAULT_SOURCE').AsString);
+    CheckConstraint:= trim(sqQuery.FieldByName('RDB$VALIDATION_SOURCE').AsString); //e.g. CHECK (VALUE > 10000 AND VALUE <= 2000000)
     Collation:= trim(sqQuery.FieldByName('rdb$collation_name').AsString);
   end
   else
@@ -871,9 +872,9 @@ end;
 
 function TdmSysTables.GetDomainTypeSize(dbIndex: Integer; DomainTypeName: string): Integer;
 var
-  DomainType, DefaultValue, COllation: string;
+  DomainType, DefaultValue, CheckConstraint, Collation: string;
 begin
-  GetDomainInfo(dbIndex, DomainTypeName, DomainType, Result, DefaultValue, Collation);
+  GetDomainInfo(dbIndex, DomainTypeName, DomainType, Result, DefaultValue, CheckConstraint, Collation);
 end;
 
 
