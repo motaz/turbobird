@@ -1,5 +1,5 @@
 unit Comparison;
-//todo: add support for check constraints
+
 {$mode objfpc}{$H+}
 
 interface
@@ -439,12 +439,22 @@ begin
       for i:= 0 to dbObjectsList[x].Count - 1 do
       begin
         dmSysTables.GetDomainInfo(fdbIndex, dbObjectsList[x].Strings[i], DomainType, DomainSize, DefaultValue, CheckConstraint, Collation);
-        //todo: add support for collations and character sets and check constraints
 
         Line:= 'Create Domain ' + dbObjectsList[x].Strings[i] + ' as ' + DomainType;
-          if Pos('CHAR', DomainType) > 0 then
-            Line:= Line + '(' + IntToStr(DomainSize) + ')';
-          Line:= Line + ' ' + DefaultValue + ';';
+        // String size
+        if Pos('CHAR', DomainType) > 0 then
+          Line:= Line + '(' + IntToStr(DomainSize) + ')';
+        // Default value, if any
+        if DefaultValue<>'' then
+          Line:= Line + ' ' + DefaultValue;
+        //todo: domain comparison: verify if this collate/constraint works
+        // Check constraint, if any:
+        if CheckConstraint <> '' then
+          Line:= Line + ' ' + CheckConstraint;
+        // Collation for text types, if any:
+        if Collation <> '' then
+          Line:= Line + ' COLLATE ' +  Collation;
+        Line:= Line+' ;';
 
         fQueryWindow.meQuery.Lines.Add(Line);
         fQueryWindow.meQuery.Lines.Add('');

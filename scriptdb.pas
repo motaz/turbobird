@@ -172,7 +172,7 @@ var
   CheckConstraint: string;
   DefaultValue: string;
 begin
-  //todo: add support for character set
+  //todo: script domains: add support for character set
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 8, Count);
   // Get domains in dependency order (if dependencies can exist between domains)
   dmSysTables.SortDependencies(List);
@@ -184,10 +184,10 @@ begin
     if (Pos('CHAR', DomainType) > 0) or (Pos('CSTRING', DomainType) > 0) then
       List[i]:= List[i] + '(' + IntToStr(DomainSize) + ')';
     List[i]:= List[i] + ' ' + DefaultValue;
-    // Check constraint
+    // Check constraint, if any:
     if CheckConstraint <> '' then
       List[i]:= List[i] + ' ' + CheckConstraint;
-    // Collation for text types:
+    // Collation for text types, if any:
     if Collation <> '' then
       List[i]:= List[i] + ' COLLATE ' +  Collation;
     // Close off create clause:
