@@ -222,7 +222,7 @@ type
     // Returns field type DDL given a RDB$FIELD_TYPE value as well
     // as subtype/length/scale (use -1 for empty/unknown values)
     function GetFBTypeName(Index: Integer;
-      SubType: integer=-1; FieldLength: integer=-1;
+      SubType: integer=-1; FieldLength: integer=-1; Precision: integer=-1;
       Scale: integer=-1): string;
     // Get name of index used for primary key
     // Also returns name of constraint used
@@ -1957,6 +1957,7 @@ begin
           GetFBTypeName(SQLQuery1.FieldByName('Field_Type_Int').AsInteger,
             SQLQuery1.FieldByName('field_sub_type').AsInteger,
             SQLQuery1.FieldByName('field_length').AsInteger,
+            SQLQuery1.FieldByName('field_precision').AsInteger,
             SQLQuery1.FieldByName('field_scale').AsInteger);
         if FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType] then
           FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
@@ -2187,6 +2188,7 @@ begin
         FieldLine:= FieldLine + GetFBTypeName(SQLQuery1.FieldByName('Field_Type_Int').AsInteger,
           SQLQuery1.FieldByName('field_sub_type').AsInteger,
           SQLQuery1.FieldByName('field_length').AsInteger,
+          SQLQuery1.FieldByName('field_precision').AsInteger,
           SQLQuery1.FieldByName('field_scale').AsInteger);
         if FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType] then
           FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
@@ -2561,6 +2563,7 @@ begin
               GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger,
               SQLQuery1.FieldByName('rdb$field_sub_type').AsInteger,
               SQLQuery1.FieldByName('rdb$field_length').AsInteger,
+              SQLQuery1.FieldByName('rdb$field_precision').AsInteger,
               SQLQuery1.FieldByName('rdb$field_scale').AsInteger);
             if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger in [CharType,CStringType,VarCharType] then
               Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
@@ -2589,6 +2592,7 @@ begin
               GetFBTypeName(SQLQuery1.FieldByName('RDB$Field_Type').AsInteger,
               SQLQuery1.FieldByName('rdb$field_sub_type').AsInteger,
               SQLQuery1.FieldByName('rdb$field_length').AsInteger,
+              SQLQuery1.FieldByName('rdb$field_precision').AsInteger,
               SQLQuery1.FieldByName('rdb$field_scale').AsInteger);
             if SQLQuery1.FieldByName('RDB$Field_Type').AsInteger in [CharType,CStringType,VarCharType] then
               Line:= Line + '(' + SQLQuery1.FieldByName('RDB$Character_Length').AsString + ')';
@@ -2761,6 +2765,7 @@ begin
       Params:= Params + LineEnding + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_LENGTH').AsInteger,
+        SQLQuery1.FieldByName('RDB$FIELD_PRECISION').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_SCALE').AsInteger);
       if SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger in [CharType, CStringType, VarCharType] then
         Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
@@ -2782,6 +2787,7 @@ begin
       Params:= Params + LineEnding + GetFBTypeName(SQLQuery1.FieldByName('RDB$FIELD_TYPE').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_LENGTH').AsInteger,
+        SQLQuery1.FieldByName('RDB$FIELD_PRECISION').AsInteger,
         SQLQuery1.FieldByName('RDB$FIELD_SCALE').AsInteger);
       if SQLQuery1.FieldByName('Field_Type_Int').AsInteger in [CharType, CStringType, VarCharType] then
         Params:= Params + '(' + SQLQuery1.FieldByName('RDB$Character_LENGTH').AsString + ')';
@@ -3102,6 +3108,7 @@ begin
         Cells[2, RowCount - 1]:= GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
           FieldByName('Field_Sub_Type').AsInteger,
           FieldByName('Field_Length').AsInteger,
+          FieldByName('Field_Precision').AsInteger,
           FieldByName('Field_Scale').AsInteger);
 
         // Correct field type if it is an array type
@@ -3257,6 +3264,7 @@ begin
             GetFBTypeName(SQLQuery1.FieldByName('Field_Type_Int').AsInteger,
               SQLQuery1.FieldByName('field_sub_type').AsInteger,
               SQLQuery1.FieldByName('field_length').AsInteger,
+              SQLQuery1.FieldByName('field_precision').AsInteger,
               SQLQuery1.FieldByName('field_scale').AsInteger) +
             ' ' + LenStr;
           FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
@@ -4122,7 +4130,7 @@ end;
 
 function TfmMain.GetFBTypeName(Index: Integer;
   SubType: integer=-1; FieldLength: integer=-1;
-  Scale: integer=-1
+  Precision: integer=-1; Scale: integer=-1
   ): string;
 begin
   //todo: add Firebird 3.0 beta BOOLEAN datatype number
@@ -4160,18 +4168,17 @@ begin
     end
     else
     begin
-      // Numeric/decimal: use scale
+      // Numeric/decimal: use precision/scale
       if SubType = 1 then
         Result:= 'Numeric('
       else
       if SubType = 2 then
         Result:= 'Decimal(';
-      case FieldLength of
-        4: Result:= Result + '9,';
-        8: Result:= Result + '18,';
+
+      if Precision=-1 then {sensible default}
+        Result:= Result + '2,'
       else
-        Result:= Result + IntToStr(FieldLength) + ',';
-      end;
+        Result:= Result + IntToStr(Precision)+',';
       Result:= Result + IntToStr(Abs(Scale)) + ') ';
     end;
   end;

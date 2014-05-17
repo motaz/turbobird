@@ -656,6 +656,7 @@ begin
     DomainType:= fmMain.GetFBTypeName(sqQuery.FieldByName('RDB$FIELD_TYPE').AsInteger,
       sqQuery.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
       sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger,
+      sqQuery.FieldByName('RDB$FIELD_PRECISION').AsInteger,
       sqQuery.FieldByName('RDB$FIELD_SCALE').AsInteger);
     DomainSize:= sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger;
     DefaultValue:= trim(sqQuery.FieldByName('RDB$DEFAULT_SOURCE').AsString);
@@ -912,6 +913,7 @@ begin
       FieldType:= fmMain.GetFBTypeName(FieldByName('Field_Type').AsInteger,
         FieldByName('field_sub_type').AsInteger,
         FieldByName('field_length').AsInteger,
+        FieldByName('field_precision').AsInteger,
         FieldByName('field_scale').AsInteger);
       // Array should really be [lowerbound:upperbound] (if dimension is 0)
       // but for now don't bother as arrays are not supported anyway

@@ -233,6 +233,7 @@ begin
         FieldLine:= FieldLine + fmMain.GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
           FieldByName('Field_Sub_Type').AsInteger,
           FieldByName('Field_Length').AsInteger,
+          FieldByName('Field_Precision').AsInteger,
           FieldByName('Field_Scale').AsInteger);
 
         if (FieldByName('Field_Type_Int').AsInteger) in [CharType, CStringType, VarCharType] then

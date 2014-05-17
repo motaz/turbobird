@@ -99,6 +99,7 @@ begin
       FType:= fmMain.GetFBTypeName(fmMain.SQLQuery1.FieldByName('Field_Type').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_sub_type').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_length').AsInteger,
+        fmMain.SQLQuery1.FieldByName('field_precision').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_scale').AsInteger);
       //todo: verify whether this still works. Also what about other integer types?
       if (FType = 'INTEGER') or (FType = 'BIGINT') or (FType = 'SMALLINT') then
