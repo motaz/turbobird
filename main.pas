@@ -217,6 +217,8 @@ type
     function LoadRegisteredDatabases: Boolean;
     function FindQueryWindow(ATitle: string): TComponent;
     function DeleteRegistration(Index: Integer): Boolean;
+    // Returns BLOB subtype clause depending on subtype
+    function GetBlobSubTypeName(SubType: integer): string;
     // Returns field type DDL given a RDB$FIELD_TYPE value as well
     // as subtype/length/scale (use -1 for empty/unknown values)
     function GetFBTypeName(Index: Integer;
@@ -4104,6 +4106,18 @@ begin
   end;
 end;
 
+function TfmMain.GetBlobSubTypeName(SubType: integer): string;
+begin
+  case SubType of
+    //<0: user-defined
+    0: Result:= 'SUB_TYPE BINARY';
+    1: Result:= 'SUB_TYPE TEXT';
+    2: Result:= 'SUB_TYPE BLR'; //(used for definitions of Firebird procedures, triggers, etc.
+    //>2: reserved by Firebird
+    else Result:= ''; //unknown
+  end;
+end;
+
 (**************  Get Firebird Type name  *****************)
 
 function TfmMain.GetFBTypeName(Index: Integer;
@@ -4136,7 +4150,7 @@ begin
   // Subtypes for numeric types
   if Index in [7, 8, 16] then
   begin
-    if SubType = 0 then
+    if SubType = 0 then {integer}
     begin
       case Index of
         7: Result:= 'SMALLINT';
@@ -4146,6 +4160,7 @@ begin
     end
     else
     begin
+      // Numeric/decimal: use scale
       if SubType = 1 then
         Result:= 'Numeric('
       else
