@@ -692,15 +692,22 @@ begin
           Line:= 'Grant ' + PermissionList.CommaText + ' on ' + ObjName + ' to ' + NewUser;
           if Pos('G', Permissions) > 0 then
             Line:= Line + ' with Grant option';
-          List.Add(Line + ' ;');
         end
         else
         if Pos('<P>', OrigObjName) = 1 then // Procedure
-          List.Add('Grant Execute on procedure ' + ObjName + ' to ' + NewUser + ' ;')
+        begin
+          Line:= 'Grant Execute on procedure ' + ObjName + ' to ' + NewUser;
+          if Pos('G', Permissions) > 0 then
+            Line:= Line + ' with Grant option';
+        end
         else
         if Pos('<R>', OrigObjName) = 1 then // Role
-          List.Add('Grant ' + ObjName + ' to ' + NewUser + ' ;');
-
+        begin
+          Line:= 'Grant ' + ObjName + ' to ' + NewUser;
+          if Pos('G', Permissions) > 0 then
+            Line:= Line + ' with Grant option';
+        end;
+        List.Add(Line + ' ;');
       end;
     finally
       PermissionList.Free;

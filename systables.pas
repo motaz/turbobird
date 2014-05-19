@@ -73,6 +73,7 @@ type
     function GetDBObjectsForPermissions(dbIndex: Integer; AObjectType: Integer = -1): string;
     function GetObjectUsers(dbIndex: Integer; ObjectName: string): string;
     function GetUserObjects(dbIndex: Integer; UserName: string; AObjectType: Integer = -1): string;
+    // Get permissions that specified user has for indicated object
     function GetObjectUserPermission(dbIndex: Integer; ObjectName, UserName: string; var ObjType: Integer): string;
 
     procedure GetBasicTypes(List: TStrings);
@@ -817,7 +818,6 @@ begin
       if not sqQuery.EOF then
         Result:= Result + ',';
     end;
-
   end;
   sqQuery.Close;
 end;
