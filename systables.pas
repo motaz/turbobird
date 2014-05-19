@@ -885,7 +885,7 @@ begin
   Init(dbIndex);
   sqQuery.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
     ' r.RDB$DESCRIPTION AS field_description, ' +
-    ' r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
+    ' r.RDB$DEFAULT_SOURCE AS field_default_source, ' {SQL text for default value}+
     ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
     ' f.RDB$FIELD_LENGTH AS field_length, ' +
     ' f.RDB$Character_LENGTH AS Characterlength, ' + {character_length seems a reserved word }
@@ -928,7 +928,7 @@ begin
       else
         FieldSize:= FieldByName('Field_Length').AsInteger;
       NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';
-      DefaultValue:= FieldByName('Field_Default_Value').AsString;
+      DefaultValue:= FieldByName('Field_Default_Source').AsString;
       Description:= FieldByName('Field_Description').AsString;
     end;
   end;
@@ -1096,7 +1096,7 @@ begin
   Init(dbIndex);
   sqQuery.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
       ' r.RDB$DESCRIPTION AS field_description, ' +
-      ' r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
+      ' r.RDB$DEFAULT_SOURCE AS field_default_source, ' {SQL source for default value}+
       ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
       ' f.RDB$FIELD_LENGTH AS field_length, ' +
       ' f.RDB$FIELD_PRECISION AS field_precision, ' +

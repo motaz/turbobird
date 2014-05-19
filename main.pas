@@ -2460,7 +2460,7 @@ procedure TfmMain.GetFields(DatabaseIndex: Integer; ATableName: string; FieldsLi
 const
   QueryTemplate= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
     ' r.RDB$DESCRIPTION AS field_description, ' +
-    ' r.RDB$DEFAULT_SOURCE AS field_default_value, ' +
+    ' r.RDB$DEFAULT_SOURCE AS field_default_source, ' {SQL source for default value }+
     ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
     ' f.RDB$FIELD_LENGTH AS field_length, ' +
     ' f.RDB$CHARACTER_LENGTH AS characterlength, ' + {character_length seems a reserved word}
@@ -3138,7 +3138,7 @@ begin
           Cells[4, RowCount - 1]:= '1';
 
         // Default Value
-        DefaultValue:= FieldByName('Field_Default_Value').AsString;
+        DefaultValue:= FieldByName('Field_Default_Source').AsString;
         if Pos('default', DefaultValue) > 0 then
           DefaultValue:= Trim(StringReplace(DefaultValue, 'default', '', []));
         Cells[5, RowCount - 1]:= DefaultValue;

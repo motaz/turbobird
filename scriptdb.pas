@@ -253,7 +253,7 @@ begin
           FieldLine:= FieldLine + ' [' + FieldByName('Array_Upper_Bound').AsString + '] ';
 
         // Default value
-        DefaultValue:= Trim(FieldByName('Field_Default_Value').AsString);
+        DefaultValue:= Trim(FieldByName('Field_Default_Source').AsString);
         if DefaultValue <> '' then
         begin
           if pos('default', LowerCase(DefaultValue)) <> 1 then
