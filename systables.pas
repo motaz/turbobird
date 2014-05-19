@@ -312,7 +312,7 @@ end;
 function TdmSysTables.ScriptCheckConstraints(dbIndex: Integer; List: TStrings
   ): boolean;
 const
-  Template='select '+
+  QueryTemplate='select '+
     'rc.rdb$relation_name, t.rdb$trigger_source '+
     'from rdb$check_constraints cc '+
     'inner join rdb$relation_constraints rc '+
@@ -328,7 +328,7 @@ begin
   try
     Init(dbIndex);
     sqQuery.Close;
-    sqQuery.SQL.Text:= Template;
+    sqQuery.SQL.Text:= QueryTemplate;
     sqQuery.Open;
     while not sqQuery.EOF do
     begin
@@ -389,7 +389,7 @@ const
   // Note that this query differs from the way constraints are
   // presented in GetConstraintsOfTable.
   // to do: find out what the differences are and indicate better in code/comments
-  Template='select '+
+  QueryTemplate='select '+
     'trim(rc.rdb$constraint_name) as ConstName, '+
     'trim(rfc.rdb$const_name_uq) as KeyName, '+
     'trim(rc2.rdb$relation_name) as OtherTableName, '+
@@ -409,7 +409,7 @@ const
     'order by rc.rdb$constraint_name, flds_fk.rdb$field_position ';
 begin
   SqlQuery.Close;
-  SQLQuery.SQL.Text:= format(Template, [UpperCase(ATableName)]);
+  SQLQuery.SQL.Text:= format(QueryTemplate, [UpperCase(ATableName)]);
   SqlQuery.Open;
   Result:= SqlQuery.RecordCount > 0;
   with SqlQuery do
@@ -638,7 +638,7 @@ procedure TdmSysTables.GetDomainInfo(dbIndex: Integer; DomainName: string; var D
 const
   // Select domain and associated collation (if text type domain)
   // note weird double join fields required...
-  Template= 'select f.*, '+
+  QueryTemplate= 'select f.*, '+
     'c.rdb$collation_name '+
     'from rdb$fields as f '+
     'left join rdb$collations as c on '+
@@ -648,7 +648,7 @@ const
 begin
   Init(dbIndex);
   sqQuery.Close;
-  sqQuery.SQL.Text:= format(Template, [UpperCase(DomainName)]);
+  sqQuery.SQL.Text:= format(QueryTemplate, [UpperCase(DomainName)]);
   sqQuery.Open;
 
   if sqQuery.RecordCount > 0 then
