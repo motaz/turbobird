@@ -896,10 +896,11 @@ begin
     ' coll.RDB$COLLATION_NAME AS field_collation, ' +
     ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
     ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
-    ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound ' +
+    ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound, ' +
+    ' r.RDB$FIELD_SOURCE AS field_source ' {domain if field based on domain} +
     ' FROM RDB$RELATION_FIELDS r ' +
     ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
-    ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
+    ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID and f.rdb$character_set_id=coll.rdb$character_set_id ' +
     ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
     ' LEFT JOIN RDB$FIELD_DIMENSIONS dim on f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME '+
     ' WHERE r.RDB$RELATION_NAME=''' + TableName + '''  and Trim(r.RDB$FIELD_NAME) = ''' + UpperCase(FieldName) + ''' ' +
@@ -910,23 +911,34 @@ begin
   begin
     with sqQuery do
     begin
-      FieldType:= fmMain.GetFBTypeName(FieldByName('Field_Type').AsInteger,
-        FieldByName('field_sub_type').AsInteger,
-        FieldByName('field_length').AsInteger,
-        FieldByName('field_precision').AsInteger,
-        FieldByName('field_scale').AsInteger);
-      // Array should really be [lowerbound:upperbound] (if dimension is 0)
-      // but for now don't bother as arrays are not supported anyway
-      // Assume 0 dimension, 1 lower bound; just fill in upper bound
-      if not(FieldByName('Array_Upper_Bound').IsNull) then
-        FieldType := FieldType +
-          ' [' +
-          FieldByName('Array_Upper_Bound').AsString +
-          ']';
-      if FieldByName('Field_Type_int').AsInteger = VarCharType then
-        FieldSize:= FieldByName('CharacterLength').AsInteger
+      if (FieldByName('field_source').IsNull) or
+        (trim(FieldByName('field_source').AsString)='') or
+        (SystemGeneratedFieldDomain(trim(FieldByname('field_source').AsString))) then
+      begin
+        // Field type is not based on a domain but a standard SQL type
+        FieldType:= fmMain.GetFBTypeName(FieldByName('Field_Type').AsInteger,
+          FieldByName('field_sub_type').AsInteger,
+          FieldByName('field_length').AsInteger,
+          FieldByName('field_precision').AsInteger,
+          FieldByName('field_scale').AsInteger);
+        // Array should really be [lowerbound:upperbound] (if dimension is 0)
+        // but for now don't bother as arrays are not supported anyway
+        // Assume 0 dimension, 1 lower bound; just fill in upper bound
+        if not(FieldByName('Array_Upper_Bound').IsNull) then
+          FieldType := FieldType +
+            ' [' +
+            FieldByName('Array_Upper_Bound').AsString +
+            ']';
+        if FieldByName('Field_Type_int').AsInteger = VarCharType then
+          FieldSize:= FieldByName('CharacterLength').AsInteger
+        else
+          FieldSize:= FieldByName('Field_Length').AsInteger;
+      end
       else
-        FieldSize:= FieldByName('Field_Length').AsInteger;
+      begin
+        // Field is based on a domain
+        FieldType:= trim(FieldByName('field_source').AsString);
+      end;
       NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';
       DefaultValue:= FieldByName('Field_Default_Source').AsString;
       Description:= FieldByName('Field_Description').AsString;

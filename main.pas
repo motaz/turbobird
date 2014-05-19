@@ -267,8 +267,12 @@ type
     procedure setTransactionIsolation(Params: TStringList);
   end;
 
+
 var
   fmMain: TfmMain;
+
+// Tries to guess if an RDB$RELATION_FIELDS.RDB$FIELD_SOURCE domain name for a column is system-generated.
+function SystemGeneratedFieldDomain(FieldSource: string): boolean;
 
 implementation
 
@@ -280,6 +284,13 @@ uses CreateDb, ViewView, ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen,
      NewDomain, SysTables, Scriptdb, UserPermissions, BackupRestore, UnitFirebirdServices, CreateUser, ChangePass,
      PermissionManage, CopyTable, About, NewEditField, dbInfo, Comparison;
 
+
+function SystemGeneratedFieldDomain(FieldSource: string): boolean;
+begin
+  { todo: find a way to search the system tables and make sure the constraint name
+  is system-generated}
+  result:=(pos('RDB$',uppercase(Trim(FieldSource)))=1);
+end;
 
 procedure TfmMain.mnExitClick(Sender: TObject);
 begin
@@ -2471,10 +2482,11 @@ const
     ' coll.RDB$COLLATION_NAME AS field_collation, ' +
     ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
     ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
-    ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound ' +
+    ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound, ' +
+    ' r.RDB$FIELD_SOURCE AS field_source ' {domain if field based on domain}+
     ' FROM RDB$RELATION_FIELDS r ' +
     ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
-    ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
+    ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID and f.rdb$character_set_id=coll.rdb$character_set_id ' +
     ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
     ' LEFT JOIN RDB$FIELD_DIMENSIONS dim ON f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME ' +
     ' WHERE r.RDB$RELATION_NAME=''%s'' ' +

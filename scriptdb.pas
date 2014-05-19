@@ -229,29 +229,39 @@ begin
         // Field Name
         FieldLine:= Trim(FieldByName('Field_Name').AsString) + ' ';
 
-        // Field type
-        FieldLine:= FieldLine + fmMain.GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
-          FieldByName('Field_Sub_Type').AsInteger,
-          FieldByName('Field_Length').AsInteger,
-          FieldByName('Field_Precision').AsInteger,
-          FieldByName('Field_Scale').AsInteger);
-
-        if (FieldByName('Field_Type_Int').AsInteger) in [CharType, CStringType, VarCharType] then
-          FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
-
-        if (FieldByName('Field_Type_Int').AsInteger = BlobType) then
+        if (FieldByName('field_source').IsNull) or
+          (trim(FieldByName('field_source').AsString)='') or
+          (SystemGeneratedFieldDomain(trim(FieldByname('field_source').AsString))) then
         begin
-          BlobSubType:= fmMain.GetBlobSubTypeName(FieldByName('Field_Sub_Type').AsInteger);
-          if BlobSubType<>'' then
-            FieldLine:= FieldLine + ' ' + BlobSubType;
+          // Field type is not based on a domain but a standard SQL type
+          // Field type
+          FieldLine:= FieldLine + fmMain.GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
+            FieldByName('Field_Sub_Type').AsInteger,
+            FieldByName('Field_Length').AsInteger,
+            FieldByName('Field_Precision').AsInteger,
+            FieldByName('Field_Scale').AsInteger);
+
+          if (FieldByName('Field_Type_Int').AsInteger) in [CharType, CStringType, VarCharType] then
+            FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
+
+          if (FieldByName('Field_Type_Int').AsInteger = BlobType) then
+          begin
+            BlobSubType:= fmMain.GetBlobSubTypeName(FieldByName('Field_Sub_Type').AsInteger);
+            if BlobSubType<>'' then
+              FieldLine:= FieldLine + ' ' + BlobSubType;
+          end;
+
+          // Rudimentary support for array datatypes (only covers 0 dimension types):
+          {todo: expand to proper array type detection (low priority as arrays are
+           virtually unused}
+          if not(FieldByName('Array_Upper_Bound').IsNull) then
+            FieldLine:= FieldLine + ' [' + FieldByName('Array_Upper_Bound').AsString + '] ';
+        end
+        else
+        begin
+          // Field is based on a domain
+          FieldLine:= FieldLine + ' ' + trim(FieldByName('field_source').AsString);
         end;
-
-        // Rudimentary support for array datatypes (only covers 0 dimension types):
-        {todo: expand to proper array type detection (low priority as arrays are
-         virtually unused}
-        if not(FieldByName('Array_Upper_Bound').IsNull) then
-          FieldLine:= FieldLine + ' [' + FieldByName('Array_Upper_Bound').AsString + '] ';
-
         // Default value
         DefaultValue:= Trim(FieldByName('Field_Default_Source').AsString);
         if DefaultValue <> '' then
