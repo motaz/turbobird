@@ -1180,7 +1180,7 @@ begin
         aSQLScript.DataBase:= ibConnection;
         aSQLScript.Transaction:= fSqlTrans;
         aSQLScript.CommentsInSQL:= true;
-        aSQLScript.UseSetTerm:= true; //needed if set term is used, e.g. for SPs
+        aSQLScript.UseSetTerm:= true; //needed if set term is used, e.g. for stored procedures
       end;
     end;
   end;
@@ -1405,15 +1405,17 @@ begin
           end;
         end;
         if (fModifyCount > 50) then
-        if (MessageDlg('Commit', 'There are too many transactions, did you want to commit',
-          mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
         begin
-          fSqlTrans.CommitRetaining;
-          fModifyCount:= 0;
-        end
-        else
-        begin
-          fModifyCount:= 0;
+          if (MessageDlg('Commit', 'There are too many transactions, do you want to commit',
+            mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+          begin
+            fSqlTrans.CommitRetaining;
+            fModifyCount:= 0;
+          end
+          else
+          begin
+            fModifyCount:= 0;
+          end;
         end;
       if fStartLine >= fQuery.Count then
         fFinished:= True;
