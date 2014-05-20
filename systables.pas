@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, sqldb, IBConnection, FileUtil, LResources, Forms, Controls,
-  Dialogs;
+  Dialogs, dbugintf;
 
 type
 
@@ -66,7 +66,7 @@ type
     function GetExceptionInfo(ExceptionName: string; var Msg, Description, SqlQuery: string): Boolean;
     // Gets information about domain
     procedure GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
-      var DomainSize: Integer; var DefaultValue: string; var CheckConstraint: string; var Collation: string);
+      var DomainSize: Integer; var DefaultValue: string; var CheckConstraint: string; var CharacterSet: string; var Collation: string);
     function GetConstraintForeignKeyFields(AIndexName: string; SqlQuery: TSQLQuery): string;
 
     function GetDBUsers(dbIndex: Integer; ObjectName: string = ''): string;
@@ -178,7 +178,7 @@ begin
     sqQuery.SQL.Text:= 'SELECT RDB$RELATION_NAME FROM RDB$RELATIONS where RDB$SYSTEM_FLAG=1 ' +
       'order by RDB$RELATION_NAME'
   else
-  if TVIndex = 8 then // Domains
+  if TVIndex = 8 then // Domains, excluding system-defined domains
     sqQuery.SQL.Text:= 'select RDB$FIELD_NAME from RDB$FIELDS where RDB$Field_Name not like ''RDB$%''  order by rdb$Field_Name'
   else
   if TVIndex = 9 then // Roles
@@ -635,16 +635,19 @@ end;
 (************  View Domain info  ***************)
 
 procedure TdmSysTables.GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
-  var DomainSize: Integer; var DefaultValue: string; var CheckConstraint: string; var Collation: string);
+  var DomainSize: Integer; var DefaultValue: string; var CheckConstraint: string; var CharacterSet: string; var Collation: string);
 const
   // Select domain and associated collation (if text type domain)
   // note weird double join fields required...
   QueryTemplate= 'select f.*, '+
-    'c.rdb$collation_name '+
+    'coll.rdb$collation_name, '+
+    'cs.rdb$character_set_name '+
     'from rdb$fields as f '+
-    'left join rdb$collations as c on '+
-    'f.rdb$collation_id=c.rdb$collation_id and '+
-    'f.rdb$character_set_id=c.rdb$character_set_id '+
+    'left join rdb$collations as coll on '+
+    'f.rdb$collation_id=coll.rdb$collation_id and '+
+    'f.rdb$character_set_id=coll.rdb$character_set_id '+
+    'inner join rdb$character_sets as cs on '+
+    'coll.rdb$character_set_id=cs.rdb$character_set_id '+
     'where f.rdb$field_name=''%s'' ';
 begin
   Init(dbIndex);
@@ -662,6 +665,7 @@ begin
     DomainSize:= sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger;
     DefaultValue:= trim(sqQuery.FieldByName('RDB$DEFAULT_SOURCE').AsString);
     CheckConstraint:= trim(sqQuery.FieldByName('RDB$VALIDATION_SOURCE').AsString); //e.g. CHECK (VALUE > 10000 AND VALUE <= 2000000)
+    CharacterSet:= trim(sqQuery.FieldByName('rdb$character_set_name').AsString);
     Collation:= trim(sqQuery.FieldByName('rdb$collation_name').AsString);
   end
   else
@@ -873,9 +877,9 @@ end;
 
 function TdmSysTables.GetDomainTypeSize(dbIndex: Integer; DomainTypeName: string): Integer;
 var
-  DomainType, DefaultValue, CheckConstraint, Collation: string;
+  DomainType, DefaultValue, CheckConstraint, CharacterSet, Collation: string;
 begin
-  GetDomainInfo(dbIndex, DomainTypeName, DomainType, Result, DefaultValue, CheckConstraint, Collation);
+  GetDomainInfo(dbIndex, DomainTypeName, DomainType, Result, DefaultValue, CheckConstraint, CharacterSet, Collation);
 end;
 
 

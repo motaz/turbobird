@@ -19,7 +19,13 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
     laDefault: TLabel;
+    laCheckConstraint: TLabel;
+    laCharacterSet: TLabel;
+    laCollation: TLabel;
     laType: TLabel;
     laSize: TLabel;
     procedure bbCloseClick(Sender: TObject);

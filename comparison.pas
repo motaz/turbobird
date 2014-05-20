@@ -309,6 +309,7 @@ var
   ModuleName, EntryPoint, Params: string;
   Line: string;
   CheckConstraint: string; //for domain check constraints
+  CharacterSet: string;
   Collation: string;
   DomainType, DefaultValue: string;
   DomainSize: Integer;
@@ -438,7 +439,7 @@ begin
       if (x = 8) and cxDomains.Checked then // Domains
       for i:= 0 to dbObjectsList[x].Count - 1 do
       begin
-        dmSysTables.GetDomainInfo(fdbIndex, dbObjectsList[x].Strings[i], DomainType, DomainSize, DefaultValue, CheckConstraint, Collation);
+        dmSysTables.GetDomainInfo(fdbIndex, dbObjectsList[x].Strings[i], DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
 
         Line:= 'Create Domain ' + dbObjectsList[x].Strings[i] + ' as ' + DomainType;
         // String size
@@ -451,6 +452,9 @@ begin
         // Check constraint, if any:
         if CheckConstraint <> '' then
           Line:= Line + ' ' + CheckConstraint;
+        // Character set for text types, if any:
+        if CharacterSet <> '' then
+          Line:= Line + ' CHARACTER SET ' +  CharacterSet;
         // Collation for text types, if any:
         if Collation <> '' then
           Line:= Line + ' COLLATE ' +  Collation;
@@ -989,10 +993,10 @@ end;
 procedure TfmComparison.CheckModifiedDomains;
 var
   i: Integer;
-  CheckConstraint, Collation: string;
+  CheckConstraint, CharacterSet, Collation: string;
   DomainName: string;
   DomainType, DefaultValue: string;
-  CCheckConstraint, CCollation: string;
+  CCheckConstraint, CCharacterSet, CCollation: string;
   CDomainType, CDefaultValue: string;
   DomainSize, CDomainSize: Integer;
 begin
@@ -1010,14 +1014,15 @@ begin
     DomainName:= dbExistingObjectsList[8][i];
 
     // Read all domain properties
-    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, Collation);
-    dmSysTables.GetDomainInfo(cbComparedDatabase.ItemIndex, DomainName, CDomainType, CDomainSize, CDefaultValue, CCheckConstraint, CCollation);
+    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
+    dmSysTables.GetDomainInfo(cbComparedDatabase.ItemIndex, DomainName, CDomainType, CDomainSize, CDefaultValue, CCheckConstraint, CCharacterSet, CCollation);
 
     // Compare
     if (DomainType <> CDomainType) or
        (DomainSize <> CDomainSize) or
        (DefaultValue <> CDefaultValue) or
        (CheckConstraint <> CCheckConstraint) or
+       (CharacterSet <> CCharacterSet) or
        (Collation <> CCollation) then
     begin
       meLog.Lines.Add(' ' + DomainName);
@@ -1524,7 +1529,7 @@ end;
 procedure TfmComparison.ScriptModifiedDomains;
 var
   i: Integer;
-  CheckConstraint, Collation: string;
+  CheckConstraint, CharacterSet, Collation: string;
   DomainName: string;
   DomainType, DefaultValue: string;
   DomainSize: Integer;
@@ -1540,7 +1545,7 @@ begin
   for i:= 0 to ModifiedDomainsList.Count - 1 do
   begin
     DomainName:= ModifiedDomainsList[i];
-    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, domainSize, DefaultValue, CheckConstraint, Collation);
+    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
     fQueryWindow.meQuery.Lines.Add('');
     Line:= 'Alter DOMAIN ' + DomainName + ' type ' + DomainType;
     if Pos('char', LowerCase(DomainType)) > 0 then
@@ -1549,11 +1554,15 @@ begin
 
     // todo: verify if this check constraint clause works correctly
     if Trim(CheckConstraint) <> '' then
-      FQueryWindow.meQuery.Lines.Add(Trim(CheckConstraint));
+      FQueryWindow.meQuery.Lines.Add(CheckConstraint);
+
+    // todo: verify if this character set clause works correctly
+    if Trim(CharacterSet) <> '' then
+      FQueryWindow.meQuery.Lines.Add('characterset '+CharacterSet);
 
     // todo: verify if this collation clause works correctly
     if Trim(Collation) <> '' then
-      FQueryWindow.meQuery.Lines.Add('collation '+Trim(Collation));
+      FQueryWindow.meQuery.Lines.Add('collation '+Collation);
 
     if Trim(DefaultValue) <> '' then
     begin

@@ -166,6 +166,7 @@ function ScriptAllDomains(dbIndex: Integer; var List: TStringList): Boolean;
 var
   Count: Integer;
   i: Integer;
+  CharacterSet: string;
   Collation: string;
   DomainType: string;
   DomainSize: Integer;
@@ -178,7 +179,7 @@ begin
   dmSysTables.SortDependencies(List);
   for i:= 0 to List.Count - 1 do
   begin
-    dmSysTables.GetDomainInfo(dbIndex, List[i], DomainType, DomainSize, DefaultValue, CheckConstraint, Collation);
+    dmSysTables.GetDomainInfo(dbIndex, List[i], DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
 
     List[i]:= 'Create Domain ' + List[i] + ' as ' + DomainType;
     if (Pos('CHAR', DomainType) > 0) or (Pos('CSTRING', DomainType) > 0) then
@@ -187,6 +188,9 @@ begin
     // Check constraint, if any:
     if CheckConstraint <> '' then
       List[i]:= List[i] + ' ' + CheckConstraint;
+    // Character set for text types, if any
+    if CharacterSet <> '' then
+      List[i]:= List[i] + ' CHARACTER SET ' + CharacterSet;
     // Collation for text types, if any:
     if Collation <> '' then
       List[i]:= List[i] + ' COLLATE ' +  Collation;

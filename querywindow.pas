@@ -659,8 +659,8 @@ begin
     end;
 
     if (Pos('select', MassagedSQL) = 1) then
-      // todo: low priority misses insert...returning,
-      // update...returning, merge.. returning...
+      { todo: low priority misses insert...returning,
+       update...returning, merge.. returning...}
       Result:= qtSelectable
     else
     begin
@@ -1459,7 +1459,6 @@ begin
       ATab.ImageIndex:= 2;
       SQLScript.Script.Text:= Script;
       {$IFDEF DEBUG}
-      //todo: debug
       SendDebug('going to run script: '+SQLScript.Script.Text);
       {$Endif}
       SQLScript.ExecuteScript;

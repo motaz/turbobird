@@ -1418,7 +1418,11 @@ begin
     detRollBack: Source:='Rollback: ';
     else Source:='Unknown event. Please fix program code.';
   end;
-  SendDebug(Source + Msg);
+  try
+    SendDebug(Source + Msg);
+  except
+    // Ignore errors (e.g. debug server not active)
+  end;
 end;
 
 
@@ -2408,6 +2412,7 @@ var
   SelNode: TTreeNode;
   ADomainName: string;
   CheckConstraint: string;
+  CharacterSet: string;
   Collation: string;
   DomainType: string;
   DomainSize: Integer;
@@ -2440,7 +2445,7 @@ begin
     PageControl1.ActivePage:= ATab;
 
     dbIndex:= SelNode.Parent.Parent.OverlayIndex;
-    dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, Collation);
+    dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
     ATab.Tag:= dbIndex;
     if Pos('default', LowerCase(DefaultValue)) = 1 then
       DefaultValue:= Trim(Copy(DefaultValue, 8, Length(DefaultValue)));
@@ -2457,8 +2462,9 @@ begin
       laType.Caption:= DomainType;
       laSize.Caption:= IntToStr(DomainSize);
       laDefault.Caption:= DefaultValue;
-      //todo: add caption with check constraint
-      //todo: add caption with character set/collation
+      laCheckConstraint.Caption:= CheckConstraint;
+      laCharacterSet.Caption:= CharacterSet;
+      laCollation.Caption:= Collation;
     end;
     ADomainForm.Show;
   end;
