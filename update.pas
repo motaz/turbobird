@@ -17,10 +17,10 @@ type
 
   THTTPDownload = class(TThread)
     private
-      fURL: string;
-      fFileName: string;
-      fSuccess: Boolean;
-      fErrorMessage: string;
+      FURL: string;
+      FFileName: string;
+      FSuccess: Boolean;
+      FErrorMessage: string;
     public
       constructor Create(URL, FileName: string);
       procedure Execute; override;
@@ -55,8 +55,8 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure Timer1Timer(Sender: TObject);
   private
-    fNewFileName: string;
-    downloadThread: THTTPDownload;
+    FNewFileName: string;
+    FDownloadThread: THTTPDownload;
     { private declarations }
     procedure DownloadTerminated(Sender: TObject);
   public
@@ -82,8 +82,8 @@ uses Main;
 constructor THTTPDownload.Create(URL, FileName: string);
 begin
   inherited Create(True);
-  fURL:= URL;
-  fFileName:= FileName;
+  FURL:= URL;
+  FFileName:= FileName;
 end;
 
 procedure THTTPDownload.Execute;
@@ -103,17 +103,17 @@ begin
         http.ProxyPass:= edPassword.Text;
       end;
 
-      fSuccess:= http.HTTPMethod('GET', fURL);
-      if fSuccess then
+      FSuccess:= http.HTTPMethod('GET', FURL);
+      if FSuccess then
       if http.Document.Size > 10000 then  // Actual file has been downloaded
-        http.Document.SaveToFile(ExtractFilePath(ParamStr(0)) + fFileName)
+        http.Document.SaveToFile(ExtractFilePath(ParamStr(0)) + FFileName)
       else
       begin // Error HTML response
         List:= TStringList.Create;
         try
           List.LoadFromStream(http.Document);
-          fSuccess:= False;
-          fErrorMessage:= List.Text;
+          FSuccess:= False;
+          FErrorMessage:= List.Text;
         finally
           List.Free;
         end;
@@ -124,8 +124,8 @@ begin
   except
     on e: exception do
     begin
-      fSuccess:= False;
-      fErrorMessage:= e.Message;
+      FSuccess:= False;
+      FErrorMessage:= e.Message;
     end;
   end;
 
@@ -137,7 +137,7 @@ var
   ResMsg: string;
   ThereIsaNewVersion: Boolean;
 begin
-  if GetNewVersion(fNewFileName, Version, ResMsg, ThereisaNewVersion) then
+  if GetNewVersion(FNewFileName, Version, ResMsg, ThereisaNewVersion) then
   begin
     if ThereisaNewVersion then
     begin
@@ -212,13 +212,13 @@ begin
   bbDownload.Enabled:= True;
   bbSearch.Enabled:= True;
   cxProxy.Enabled:= True;
-  ResMsg:= downloadThread.fErrorMessage;
+  ResMsg:= FDownloadThread.FErrorMessage;
 
-  if downloadThread.fSuccess then
+  if FDownloadThread.FSuccess then
   begin
     stStatus.Caption:= 'Update completed';
     SetCurrentDir(ExtractFileDir(ParamStr(0)));
-    Process1.CommandLine:= AppName + ' ' + fNewFileName + ' ' + ExtractFileName(ParamStr(0));
+    Process1.CommandLine:= AppName + ' ' + FNewFileName + ' ' + ExtractFileName(ParamStr(0));
     Process1.Execute;
     Close;
     fmMain.Close;
@@ -286,10 +286,10 @@ end;
 
 function TfmUpdate.DownloadNewVersion: Boolean;
 begin
-  downloadThread:= THTTPDownload.Create('http://code-sd.com/turbobird/releases/' + fNewFileName, fNewFileName);
-  downloadThread.OnTerminate:= @DownloadTerminated;
-  downloadThread.FreeOnTerminate:= False;
-  downloadThread.Resume;
+  FDownloadThread:= THTTPDownload.Create('http://code-sd.com/turbobird/releases/' + FNewFileName, FNewFileName);
+  FDownloadThread.OnTerminate:= @DownloadTerminated;
+  FDownloadThread.FreeOnTerminate:= False;
+  FDownloadThread.Resume;
 end;
 
 procedure TfmUpdate.Init(aMajor, aMinor, aReleaseVersion: Word);

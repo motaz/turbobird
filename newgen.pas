@@ -28,9 +28,9 @@ type
     procedure cxTriggerChange(Sender: TObject);
   private
     { private declarations }
-    fdbIndex: Integer;
-    ibConnection: TIBConnection;
-    SQLTrans: TSQLTransaction;
+    FDBIndex: Integer;
+    FIBConnection: TIBConnection;
+    FSQLTrans: TSQLTransaction;
   public
     procedure Init(dbIndex: Integer);
     { public declarations }
@@ -76,7 +76,7 @@ begin
         end;
 
       end;
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create Generator: ' + edGenName.Text, List.Text);
+      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Create Generator: ' + edGenName.Text, List.Text);
       Close;
     finally
       List.Free;
@@ -92,7 +92,7 @@ var
 begin
   if cbTables.ItemIndex <> -1 then
   begin
-    fmMain.GetFields(fdbIndex, cbTables.Text, nil);
+    fmMain.GetFields(FDBIndex, cbTables.Text, nil);
     cbFields.Clear;
     while not fmMain.SQLQuery1.EOF do
     begin
@@ -122,7 +122,7 @@ var
   TableNames: string;
   Count: Integer;
 begin
-  fdbIndex:= dbIndex;
+  FDBIndex:= dbIndex;
   TableNames:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
 
   fmNewGen.cbTables.Items.CommaText:= TableNames;

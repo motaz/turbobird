@@ -32,9 +32,9 @@ type
     procedure cbTypeChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
-    fdbIndex: Integer;
-    fTableName: string;
-    fRefreshButton: TBitBtn;
+    FDBIndex: Integer;
+    FTableName: string;
+    FRefreshButton: TBitBtn;
   public
     fFormMode: TFormMode;
     OldFieldName: string;
@@ -65,10 +65,10 @@ var
   Nullflag: string;
   Clk: TNotifyEvent;
 begin
-  if fRefreshButton = nil then
+  if FRefreshButton = nil then
    clk:= nil
   else
-    clk:= fRefreshButton.OnClick;
+    clk:= FRefreshButton.OnClick;
 
   if fFormMode = foNew then  // New field
   begin
@@ -89,21 +89,21 @@ begin
     if not cxAllowNull.Checked then
       Line:= Line + ' not null';
 
-    fmMain.ShowCompleteQueryWindow(fdbIndex, 'Add new field on Table: ' + fTableName,
-      'ALTER TABLE ' + fTableName + ' ADD ' + edFieldName.Text + ' ' + Line, Clk);
+    fmMain.ShowCompleteQueryWindow(FDBIndex, 'Add new field on Table: ' + FTableName,
+      'ALTER TABLE ' + FTableName + ' ADD ' + edFieldName.Text + ' ' + Line, Clk);
   end
   else  // Upate
   begin
     Line:= '';
     // Check name change
     if UpperCase(Trim(edFieldName.Text)) <> OldFieldName then
-      Line:= 'ALTER TABLE ' + fTableName + ' ALTER ' + OldFieldName + ' TO ' +
+      Line:= 'ALTER TABLE ' + FTableName + ' ALTER ' + OldFieldName + ' TO ' +
       edFieldName.Text + ';' + LineEnding;
 
     // check type/size change
     if (cbType.Text <> OldFieldType) or (seSize.Value <> OldFieldSize) then
     begin
-      Line:= Line + 'ALTER TABLE ' + fTableName + ' ALTER ' + UpperCase(Trim(edFieldName.Text))
+      Line:= Line + 'ALTER TABLE ' + FTableName + ' ALTER ' + UpperCase(Trim(edFieldName.Text))
         + ' TYPE ' + cbType.Text;
 
       if Pos('CHAR', Line) > 0 then
@@ -113,7 +113,7 @@ begin
     // Field Order
     if seOrder.Value <> OldOrder then
     begin
-      Line:= Line + 'ALTER TABLE ' + fTableName + ' ALTER ' + edFieldName.Text + ' POSITION ' +
+      Line:= Line + 'ALTER TABLE ' + FTableName + ' ALTER ' + edFieldName.Text + ' POSITION ' +
         IntToStr(seOrder.Value) + ';' + LineEnding;
     end;
 
@@ -126,7 +126,7 @@ begin
         NullFlag:= '1';
         Line:= Line + 'UPDATE RDB$RELATION_FIELDS SET RDB$NULL_FLAG = ' + NullFlag + LineEnding +
           'WHERE RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) + ''' AND RDB$RELATION_NAME = ''' +
-          fTableName + '''' + LineEnding;
+          FTableName + '''' + LineEnding;
     end;
 
     // Description
@@ -134,7 +134,7 @@ begin
     begin
       Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$DESCRIPTION = ''' + edDescription.Text +
         '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
-        ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + LineEnding;
+        ''' and RDB$RELATION_NAME = ''' + FTableName + ''';' + LineEnding;
     end;
 
     // Default value
@@ -142,18 +142,18 @@ begin
     begin
       Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$Default_Source = ''' + edDefault.Text +
         '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
-        ''' and RDB$RELATION_NAME = ''' + fTableName + ''';' + LineEnding;
+        ''' and RDB$RELATION_NAME = ''' + FTableName + ''';' + LineEnding;
     end;
 
     if Line <> '' then
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit field: ' + OldFieldName, Line, clk);
+      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Edit field: ' + OldFieldName, Line, clk);
   end;
   Close;
 end;
 
 procedure TfmNewEditField.cbTypeChange(Sender: TObject);
 begin
-  seSize.Value:= dmSysTables.GetDefaultTypeSize(fdbIndex, cbType.Text);
+  seSize.Value:= dmSysTables.GetDefaultTypeSize(FDBIndex, cbType.Text);
 end;
 
 procedure TfmNewEditField.FormClose(Sender: TObject;
@@ -173,10 +173,10 @@ begin
   // Add Domain types
   dmSysTables.GetDomainTypes(dbIndex, cbType.Items);
 
-  fdbIndex:= dbIndex;
-  fTableName:= TableName;
+  FDBIndex:= dbIndex;
+  FTableName:= TableName;
   fFormMode:= FormMode;
-  fRefreshButton:= RefreshButton;
+  FRefreshButton:= RefreshButton;
 
   OldFieldName:= FieldName;
   OldFieldSize:= FSize;

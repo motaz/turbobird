@@ -33,7 +33,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private
-    fQueryForm: TForm;
+    FQueryForm: TForm;
     { private declarations }
   public
     { public declarations }
@@ -77,9 +77,9 @@ begin
   end;
 
   if cxOverwrite.Checked then
-    (fQueryForm as TfmQueryWindow).meQuery.Lines.Clear;
+    (FQueryForm as TfmQueryWindow).meQuery.Lines.Clear;
 
-  (fQueryForm as TfmQueryWindow).meQuery.Lines.Text:= (fQueryForm as TfmQueryWindow).meQuery.Lines.Text + SQLStatement;
+  (FQueryForm as TfmQueryWindow).meQuery.Lines.Text:= (FQueryForm as TfmQueryWindow).meQuery.Lines.Text + SQLStatement;
   Close;
 end;
 
@@ -122,14 +122,13 @@ begin
             ((CurrType = 'DDL') and (cbSQLType.ItemIndex in [1, 2])) or
             ((CurrType = 'DML') and (cbSQLType.ItemIndex in [1, 3])) or
             ((CurrType = 'SELECT') and (cbSQLType.ItemIndex = 4)) then
-            begin
-              List.Add('-- ' + FieldByName('Time').AsString);
-              Line:= FieldByName('SQLStatement').AsString;
-              if Pos(';', Line) = 0 then
-                Line:= Line + ';';
-              List.Add(Line);
-            end;
-
+          begin
+            List.Add('-- ' + FieldByName('Time').AsString);
+            Line:= FieldByName('SQLStatement').AsString;
+            if Pos(';', Line) = 0 then
+              Line:= Line + ';';
+            List.Add(Line);
+          end;
         end;
         Next;
       end;
@@ -143,7 +142,7 @@ end;
 
 procedure TfmSQLHistory.Init(DatabaseTitle: string; QueryForm: TForm);
 begin
-  fQueryForm:= QueryForm;
+  FQueryForm:= QueryForm;
   Caption:= 'SQL History for: ' + DatabaseTitle;
   Datasource1.DataSet:= fmMain.mdsHistory;
   fmMain.mdsHistory.Last;

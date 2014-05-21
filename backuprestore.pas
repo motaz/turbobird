@@ -37,10 +37,9 @@ type
     procedure sbBrowseTargetdbClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
   private
-
     { private declarations }
+    FDatabase: string; //doesn't really seem to be used anywhere
   public
-    fDatabase: string;
     procedure Init(Title, Database, User, Password: string);
     { public declarations }
   end; 
@@ -70,23 +69,22 @@ end;
 
 procedure TfmBackupRestore.Init(Title, Database, User, Password: string);
 begin
-  fDatabase:= Database;
+  FDatabase:= Database;
   edUserName.Text:= User;
   edPassword.Text:= Password;
 
   // Linux: servername:/path/test.fdb  or /path/test.fdb
   // Windows: servername:c:\path\test.fdb or c:\path\test.fdb
-  if Pos(':', Trim(fDatabase)) > 2 then
+  if Pos(':', Trim(FDatabase)) > 2 then
   begin
-    edHost.Text:= Trim(Copy(fDatabase, 1, Pos(':', fDatabase) - 1));
-    edTargetDatabase.Text:= Trim(Copy(fDatabase, Pos(':', fDatabase) + 1, Length(fDatabase)));
+    edHost.Text:= Trim(Copy(FDatabase, 1, Pos(':', FDatabase) - 1));
+    edTargetDatabase.Text:= Trim(Copy(FDatabase, Pos(':', FDatabase) + 1, Length(FDatabase)));
   end
   else
   begin
     edHost.Text := 'localhost';
-    edTargetDatabase.Text := fDatabase;
+    edTargetDatabase.Text := FDatabase;
   end;
-
 end;
 
 procedure TfmBackupRestore.bbStartClick(Sender: TObject);

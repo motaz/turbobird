@@ -24,8 +24,8 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure sqEditTableAfterScroll(DataSet: TDataSet);
   private
-    ibConnection: TIBConnection;
-    sqlTrans: TSQLTransaction;
+    FIBConnection: TIBConnection;
+    FSQLTrans: TSQLTransaction;
     { private declarations }
   public
     procedure CurrentDateClick(Sender: TObject);
@@ -54,7 +54,7 @@ begin
   if sqEditTable.State in [dsInsert, dsEdit] then
     sqEditTable.Post;
   sqEditTable.ApplyUpdates;
-  SQLTrans.CommitRetaining;
+  FSQLTrans.CommitRetaining;
 end;
 
 procedure TfmEditDataFullRec.sqEditTableAfterScroll(DataSet: TDataSet);
@@ -86,10 +86,10 @@ var
   ATop: Integer;
   bbDate: TBitBtn;
 begin
-  ibConnection:= fmMain.RegisteredDatabases[dbIndex].IBConnection;
-  ibConnection.Close;
-  sqlTrans:= fmMain.RegisteredDatabases[dbIndex].SQLTrans;
-  sqEditTable.DataBase:= ibConnection;
+  FIBConnection:= fmMain.RegisteredDatabases[dbIndex].IBConnection;
+  FIBConnection.Close;
+  FSQLTrans:= fmMain.RegisteredDatabases[dbIndex].SQLTrans;
+  sqEditTable.DataBase:= FIBConnection;
 
 
   sqEditTable.SQL.Text:= 'select * from ' +  ATableName;

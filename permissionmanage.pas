@@ -87,21 +87,23 @@ type
     procedure cxProcGrantChange(Sender: TObject);
     procedure cxRoleGrantChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
-    fdbIndex: Integer;
-    ProcList: TStringList;
-    RoleList: TStringList;
-    ProcGrant: array of Boolean;
-    OrigProcGrant: array of Boolean;
-    RoleGrant: array of Boolean;
-    OrigRoleGrant: array of Boolean;
-    fOnCommitProcedure: TNotifyEvent;
+    FDBIndex: Integer;
+    FProcList: TStringList;
+    FRoleList: TStringList;
+    FProcGrant: array of Boolean;
+    FOrigProcGrant: array of Boolean;
+    FRoleGrant: array of Boolean;
+    FOrigRoleGrant: array of Boolean;
+    FOnCommitProcedure: TNotifyEvent;
 
-    OldTableSelectGrant: Boolean;
-    OldTableInsertGrant: Boolean;
-    OldTableUpdateGrant: Boolean;
-    OldTableDeleteGrant: Boolean;
-    OldTableReferencesGrant: Boolean;
+    FOldTableSelectGrant: Boolean;
+    FOldTableInsertGrant: Boolean;
+    FOldTableUpdateGrant: Boolean;
+    FOldTableDeleteGrant: Boolean;
+    FOldTableReferencesGrant: Boolean;
 
     procedure UpdatePermissions;
     procedure UpdateViewsPermissions;
@@ -125,11 +127,21 @@ uses SysTables, main;
 
 procedure TfmPermissionManage.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  ProcList.Free;
-  RoleList.Free;
   CloseAction:= caFree;
-  SetLength(ProcGrant, 0);
-  SetLength(OrigProcGrant, 0);
+  SetLength(FProcGrant, 0);
+  SetLength(FOrigProcGrant, 0);
+end;
+
+procedure TfmPermissionManage.FormCreate(Sender: TObject);
+begin
+  FProcList:= TStringList.Create;
+  FRoleList:= TStringList.Create;
+end;
+
+procedure TfmPermissionManage.FormDestroy(Sender: TObject);
+begin
+  FProcList.Free;
+  FRoleList.Free;
 end;
 
 procedure TfmPermissionManage.UpdatePermissions;
@@ -139,7 +151,7 @@ var
 begin
   if (cbUsers.Text <> '') and (cbTables.Text <> '') then
   begin;
-    Permissions := dmSysTables.GetObjectUserPermission(fdbIndex, cbTables.Text, cbUsers.Text, ObjType);
+    Permissions := dmSysTables.GetObjectUserPermission(FDBIndex, cbTables.Text, cbUsers.Text, ObjType);
     cxAll.Checked:= False;
     cxAllGrant.Checked:= False;
 
@@ -155,11 +167,11 @@ begin
     cxDeleteGrant.Checked:= Pos('DG', Permissions) > 0;;
     cxReferencesGrant.Checked:= Pos('RG', Permissions) > 0;;
 
-    OldTableSelectGrant:= cxSelectGrant.Checked;
-    OldTableInsertGrant:= cxInsertGrant.Checked;
-    OldTableUpdateGrant:= cxUpdateGrant.Checked;
-    OldTableDeleteGrant:= cxDeleteGrant.Checked;
-    OldTableReferencesGrant:= cxReferencesGrant.Checked;
+    FOldTableSelectGrant:= cxSelectGrant.Checked;
+    FOldTableInsertGrant:= cxInsertGrant.Checked;
+    FOldTableUpdateGrant:= cxUpdateGrant.Checked;
+    FOldTableDeleteGrant:= cxDeleteGrant.Checked;
+    FOldTableReferencesGrant:= cxReferencesGrant.Checked;
   end;
 
 end;
@@ -171,7 +183,7 @@ var
 begin
   if (cbViewsUsers.Text <> '') and (cbViews.Text <> '') then
   begin;
-    Permissions := dmSysTables.GetObjectUserPermission(fdbIndex, cbViews.Text, cbViewsUsers.Text, ObjType);
+    Permissions := dmSysTables.GetObjectUserPermission(FDBIndex, cbViews.Text, cbViewsUsers.Text, ObjType);
     cxViewAll.Checked:= False;
     cxViewAllGrant.Checked:= False;
 
@@ -200,23 +212,23 @@ begin
   clbProcedures.Clear;
   if cbProcUsers.Text <> '' then
   begin
-    clbProcedures.Items.CommaText:= dmSysTables.GetDBObjectsForPermissions(fdbIndex, 5);
-    ProcList:= TStringList.Create;
-    ProcList.CommaText:= dmSysTables.GetUserObjects(fdbIndex, cbProcUsers.Text, 5);
-    SetLength(ProcGrant, clbProcedures.Count);
-    SetLength(OrigProcGrant, clbProcedures.Count);
-    for i:= 0 to ProcList.Count - 1 do
+    clbProcedures.Items.CommaText:= dmSysTables.GetDBObjectsForPermissions(FDBIndex, 5);
+    FProcList.Clear;
+    FProcList.CommaText:= dmSysTables.GetUserObjects(FDBIndex, cbProcUsers.Text, 5);
+    SetLength(FProcGrant, clbProcedures.Count);
+    SetLength(FOrigProcGrant, clbProcedures.Count);
+    for i:= 0 to FProcList.Count - 1 do
     begin
-      ObjName:= ProcList[i];
+      ObjName:= FProcList[i];
       if Pos('<G>', ObjName) = 1 then
       begin
         Delete(ObjName, 1, 3);
-        ProcList[i]:= ObjName;
+        FProcList[i]:= ObjName;
         ProcIndex:= clbProcedures.Items.IndexOf(ObjName);
         if ProcIndex <> -1 then
         begin
-          ProcGrant[ProcIndex]:= True;
-          OrigProcGrant[ProcIndex]:= True;
+          FProcGrant[ProcIndex]:= True;
+          FOrigProcGrant[ProcIndex]:= True;
         end;
       end;
 
@@ -239,26 +251,26 @@ begin
   clbRoles.Clear;
   if cbRolesUser.Text <> '' then
   begin
-    clbRoles.Items.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 9, Count);
-    RoleList:= TStringList.Create;
-    RoleList.CommaText:= dmSysTables.GetUserObjects(fdbIndex, cbRolesUser.Text, 13);
-    SetLength(RoleGrant, clbRoles.Count);
-    SetLength(OrigRoleGrant, clbRoles.Count);
-    for i:= 0 to RoleList.Count - 1 do
+    clbRoles.Items.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, 9, Count);
+    FRoleList.Clear;
+    FRoleList.CommaText:= dmSysTables.GetUserObjects(FDBIndex, cbRolesUser.Text, 13);
+    SetLength(FRoleGrant, clbRoles.Count);
+    SetLength(FOrigRoleGrant, clbRoles.Count);
+    for i:= 0 to FRoleList.Count - 1 do
     begin
-      ObjName:= RoleList[i];
+      ObjName:= FRoleList[i];
       if Pos('<G>', ObjName) = 1 then
       begin
         Delete(ObjName, 1, 3);
-        RoleList[i]:= ObjName;
+        FRoleList[i]:= ObjName;
         RoleIndex:= clbRoles.Items.IndexOf(ObjName);
         if RoleIndex <> -1 then
         begin
-          RoleGrant[RoleIndex]:= True;
-          OrigRoleGrant[RoleIndex]:= True;
+          FRoleGrant[RoleIndex]:= True;
+          FOrigRoleGrant[RoleIndex]:= True;
         end;
       end;
-      Index:= clbRoles.Items.IndexOf(RoleList[i]);
+      Index:= clbRoles.Items.IndexOf(FRoleList[i]);
       if Index <> -1 then
         clbRoles.Checked[Index]:= True;
     end;
@@ -292,19 +304,19 @@ begin
 
   if (Grant) and (not WithGrant) then
   begin
-    if OldTableSelectGrant and not cxSelectGrant.Checked and (LowerCase(OptionName) = 'select') then
+    if FOldTableSelectGrant and not cxSelectGrant.Checked and (LowerCase(OptionName) = 'select') then
       Line:= Line + LineEnding + 'REVOKE GRANT OPTION FOR SELECT ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
 
-    if OldTableUpdateGrant and not cxUpdateGrant.Checked and (LowerCase(OptionName) = 'update') then
+    if FOldTableUpdateGrant and not cxUpdateGrant.Checked and (LowerCase(OptionName) = 'update') then
       Line:= Line + LineEnding + 'REVOKE GRANT OPTION FOR Update ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
 
-    if OldTableReferencesGrant and not cxReferencesGrant.Checked and (LowerCase(OptionName) = 'references') then
+    if FOldTableReferencesGrant and not cxReferencesGrant.Checked and (LowerCase(OptionName) = 'references') then
       Line:= Line + LineEnding + 'REVOKE GRANT OPTION FOR References ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
 
-    if OldTableDeleteGrant and not cxDeleteGrant.Checked and (LowerCase(OptionName) = 'delete') then
+    if FOldTableDeleteGrant and not cxDeleteGrant.Checked and (LowerCase(OptionName) = 'delete') then
       Line:= Line +LineEnding +  'REVOKE GRANT OPTION FOR Delete ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
 
-    if OldTableInsertGrant and not cxInsertGrant.Checked and (LowerCase(OptionName) = 'insert') then
+    if FOldTableInsertGrant and not cxInsertGrant.Checked and (LowerCase(OptionName) = 'insert') then
       Line:= Line  +LineEnding +  'REVOKE GRANT OPTION FOR Insert ON ' + ATableName + ' FROM ' + cbUsers.Text + ';';
   end;
 
@@ -330,7 +342,7 @@ begin
         ComposeTablePermissionSQL(cbTables.Text, 'References', cxReferences.Checked, cxReferencesGrant.Checked, List);
       end;
 
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbTables.Text, List.Text, fOnCommitProcedure);
+      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Edit Permission for: ' + cbTables.Text, List.Text, FOnCommitProcedure);
     finally
       List.Free;
     end;
@@ -360,7 +372,7 @@ begin
         ComposeTablePermissionSQL('"' + cbViews.Text + '"', 'References', cxViewReferences.Checked, cxViewReferencesGrant.Checked, List);
       end;
 
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbViews.Text, List.Text, fOnCommitProcedure);
+      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Edit Permission for: ' + cbViews.Text, List.Text, FOnCommitProcedure);
     finally
       List.Free;
     end;
@@ -396,21 +408,21 @@ begin
       For i:= 0 to clbProcedures.Items.Count - 1 do
       begin
         if clbProcedures.Checked[i] and
-          ((ProcList.IndexOf(clbProcedures.Items[i]) = -1) or (ProcGrant[i] and (not OrigProcGrant[i]))) then // Grant this proc
+          ((FProcList.IndexOf(clbProcedures.Items[i]) = -1) or (FProcGrant[i] and (not FOrigProcGrant[i]))) then // Grant this proc
           begin
             Line:= 'grant execute on procedure ' + clbProcedures.Items[i] + ' to ' + cbProcUsers.Text;
-            if ProcGrant[i] then
+            if FProcGrant[i] then
               Line:= Line + ' with grant option';
             List.Add(Line + ';');
 
           end;
 
-        if (not clbProcedures.Checked[i]) and (ProcList.IndexOf(clbProcedures.Items[i]) <> -1) then // Remove this proc
+        if (not clbProcedures.Checked[i]) and (FProcList.IndexOf(clbProcedures.Items[i]) <> -1) then // Remove this proc
           List.Add('Revoke execute on procedure ' + clbProcedures.Items[i] + ' from ' + cbProcUsers.Text + ';');
       end;
       if List.Count > 0 then
       begin
-        fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbProcUsers.Text, List.Text, fOnCommitProcedure);
+        fmMain.ShowCompleteQueryWindow(FDBIndex, 'Edit Permission for: ' + cbProcUsers.Text, List.Text, FOnCommitProcedure);
         Close;
         Parent.Free;
       end
@@ -435,21 +447,21 @@ begin
       For i:= 0 to clbRoles.Items.Count - 1 do
       begin
         if clbRoles.Checked[i] and
-          ((RoleList.IndexOf(clbRoles.Items[i]) = -1) or (RoleGrant[i] and (not OrigRoleGrant[i]))) then // Grant this Role
+          ((FRoleList.IndexOf(clbRoles.Items[i]) = -1) or (FRoleGrant[i] and (not FOrigRoleGrant[i]))) then // Grant this Role
         begin
           Line:= 'grant ' + clbRoles.Items[i] + ' to ' + cbRolesUser.Text;
-          if RoleGrant[i] then
+          if FRoleGrant[i] then
             Line:= Line + ' with admin option';
           List.Add(Line + ';');
         end;
 
-        if (not clbRoles.Checked[i]) and (RoleList.IndexOf(clbRoles.Items[i]) <> -1) then // Remove this Role
+        if (not clbRoles.Checked[i]) and (FRoleList.IndexOf(clbRoles.Items[i]) <> -1) then // Remove this Role
           List.Add('Revoke ' + clbRoles.Items[i] + ' from ' + cbRolesUser.Text + ';');
       end;
 
       if List.Count > 0 then
       begin
-        fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Permission for: ' + cbRolesUser.Text, List.Text, fOnCommitProcedure);
+        fmMain.ShowCompleteQueryWindow(FDBIndex, 'Edit Permission for: ' + cbRolesUser.Text, List.Text, FOnCommitProcedure);
         Close;
         Parent.Free;
       end
@@ -494,7 +506,7 @@ begin
   Index:= clbProcedures.ItemIndex;
   if Index <> -1 then
   begin
-    cxProcGrant.Checked:= ProcGrant[Index];
+    cxProcGrant.Checked:= FProcGrant[Index];
     cxProcGrant.Caption:= 'With Grant for ' + clbProcedures.Items[Index];
   end;
 end;
@@ -513,7 +525,7 @@ begin
   Index:= clbRoles.ItemIndex;
   if Index <> -1 then
   begin
-    cxRoleGrant.Checked:= RoleGrant[Index];
+    cxRoleGrant.Checked:= FRoleGrant[Index];
     cxRoleGrant.Caption:= 'With Admin for ' + clbRoles.Items[Index];
   end;
 end;
@@ -530,7 +542,7 @@ var
 begin
   Index:= clbProcedures.ItemIndex;
   if Index <> -1 then
-    ProcGrant[Index]:= cxProcGrant.Checked;
+    FProcGrant[Index]:= cxProcGrant.Checked;
 end;
 
 procedure TfmPermissionManage.cxRoleGrantChange(Sender: TObject);
@@ -539,7 +551,7 @@ var
 begin
   Index:= clbRoles.ItemIndex;
   if Index <> -1 then
-    RoleGrant[Index]:= cxRoleGrant.Checked;
+    FRoleGrant[Index]:= cxRoleGrant.Checked;
 end;
 
 procedure TfmPermissionManage.Init(dbIndex: integer; ATableName, AUserName: string; UserType: Integer;
@@ -547,12 +559,10 @@ procedure TfmPermissionManage.Init(dbIndex: integer; ATableName, AUserName: stri
 var
   Count: integer;
 begin
-  fOnCommitProcedure:= OnCommitProcedure;
-  ProcList:= TStringList.Create;
-  RoleList:= TStringList.Create;
+  FOnCommitProcedure:= OnCommitProcedure;
 
   PageControl1.ActivePageIndex:= 0;
-  fdbIndex := dbIndex;
+  FDBIndex := dbIndex;
   cbUsers.Text := AUserName;
   cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
   cbViews.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 4, Count);

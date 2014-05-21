@@ -41,7 +41,7 @@ type
     procedure Init(dbIndex: Integer);
     procedure StringGrid1PickListSelect(Sender: TObject);
   private
-    fdbIndex: Integer;
+    FDBIndex: Integer;
     function Validate: Boolean;
     function GetFieldsCount: Integer;
     function GetClosestType(ATypePart: string): string;
@@ -130,7 +130,7 @@ procedure TfmNewTable.Init(dbIndex: Integer);
 var
   i: Integer;
 begin
-  fdbIndex:= dbIndex;
+  FDBIndex:= dbIndex;
   edNewTable.Clear;
   cxCreateGen.Checked:= False;
   StringGrid1.RowCount:= 3;
@@ -150,7 +150,7 @@ begin
     StringGrid1.Cells[4, i]:= '0';
   end;
 
-  cbRolesUsers.Items.CommaText:= StringReplace(dmSysTables.GetDBUsers(fdbIndex), '<R>', '', [rfReplaceAll]);
+  cbRolesUsers.Items.CommaText:= StringReplace(dmSysTables.GetDBUsers(FDBIndex), '<R>', '', [rfReplaceAll]);
 end;
 
 procedure TfmNewTable.StringGrid1PickListSelect(Sender: TObject);
@@ -165,7 +165,7 @@ begin
     if SelType <> '' then
     begin
       Cells[1, Row]:= SelType;
-      Cells[2, Row]:= IntToStr(dmSysTables.GetDefaultTypeSize(fdbIndex, SelType));
+      Cells[2, Row]:= IntToStr(dmSysTables.GetDefaultTypeSize(FDBIndex, SelType));
     end;
   end;
 end;
@@ -294,7 +294,7 @@ begin
         List.Add('  NEW.' + KeyField + ' = GEN_ID(' + GeneratorName + ', 1);');
         List.Add('END;');
       end;
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Create New Table: ' + edNewTable.Text, List.Text);
+      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Create New Table: ' + edNewTable.Text, List.Text);
     finally
       List.Free;
     end;

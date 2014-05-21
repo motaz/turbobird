@@ -33,7 +33,7 @@ type
     procedure cbDestDatabaseChange(Sender: TObject);
     procedure cbSourceTableChange(Sender: TObject);
   private
-    fSourceIndex: Integer;
+    FSourceIndex: Integer;
     { private declarations }
   public
     { public declarations }
@@ -68,7 +68,7 @@ var
 begin
   List:= TStringList.Create;
   try
-    fmMain.GetFields(fSourceIndex, cbSourceTable.Text, List);
+    fmMain.GetFields(FSourceIndex, cbSourceTable.Text, List);
     Line:= List.CommaText;
   finally
     List.Free;
@@ -92,7 +92,7 @@ var
 begin
   Statement:= 'insert into ' + cbDestTable.Text + ' (';
   dmSysTables.sqQuery.Close;
-  dmSysTables.Init(fSourceIndex);
+  dmSysTables.Init(FSourceIndex);
   dmSysTables.sqQuery.SQL.Text:= syScript.Lines.Text;
   dmSysTables.sqQuery.Open;
   Values:= '';
@@ -178,7 +178,7 @@ var
   Count: Integer;
 begin
   dmSysTables.sqQuery.Close;
-  fSourceIndex:= SourceIndex;
+  FSourceIndex:= SourceIndex;
   laSourceDatabase.Caption:= fmMain.RegisteredDatabases[SourceIndex].RegRec.Title;
   cbDestDatabase.Clear;
 

@@ -47,35 +47,37 @@ type
     procedure bbStartClick(Sender: TObject);
     procedure cbComparedDatabaseChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure laScriptClick(Sender: TObject);
   private
-    fdbIndex: Integer;
-    DiffCount: Integer;
-    dbObjectsList: array [1 .. NumObjects] of TStringList;
-    dbExistingObjectsList: array [1 .. NumObjects] of TStringList;
-    dbRemovedObjectsList: array [1 .. NumObjects] of TStringList;
-    MissingFieldsList: TStringList;
+    FDBIndex: Integer;
+    FDiffCount: Integer;
+    FDBObjectsList: array [1 .. NumObjects] of TStringList;
+    FDBExistingObjectsList: array [1 .. NumObjects] of TStringList;
+    FDBRemovedObjectsList: array [1 .. NumObjects] of TStringList;
+    FMissingFieldsList: TStringList;
 
-    ExistFieldsList: TStringList;
-    ModifiedFieldsList: TStringList;
+    FExistFieldsList: TStringList;
+    FModifiedFieldsList: TStringList;
 
-    ExistIndicesList: TStringList;
-    ModifiedIndicesList: TStringList;
+    FExistIndicesList: TStringList;
+    FModifiedIndicesList: TStringList;
 
-    ExistConstraintsList: TStringList;
-    ModifiedConstraintsList: TStringList;
+    FExistConstraintsList: TStringList;
+    FModifiedConstraintsList: TStringList;
 
-    ModifiedViewsList: TStringList;
-    ModifiedTriggersList: TStringList;
-    ModifiedProceduresList: TStringList;
-    ModifiedFunctionsList: TStringList;
-    ModifiedDomainsList: TStringList;
+    FModifiedViewsList: TStringList;
+    FModifiedTriggersList: TStringList;
+    FModifiedProceduresList: TStringList;
+    FModifiedFunctionsList: TStringList;
+    FModifiedDomainsList: TStringList;
 
-    RemovedFieldsList: TStringList;
+    FRemovedFieldsList: TStringList;
 
-    fQueryWindow: TfmQueryWindow;
-    fCanceled: Boolean;
+    FQueryWindow: TfmQueryWindow;
+    FCanceled: Boolean;
 
     procedure CheckRemovedDBObjects;
     procedure DisplayStatus(AStatus: string);
@@ -135,7 +137,7 @@ var
   Connected: Boolean;
 begin
   ComparedDBIndex:= cbComparedDatabase.ItemIndex;
-  if ComparedDBIndex = fdbIndex then
+  if ComparedDBIndex = FDBIndex then
   begin
     ShowMessage('Could not compare database with it self');
     cbComparedDatabase.ItemIndex:= -1;
@@ -167,67 +169,67 @@ procedure TfmComparison.bbStartClick(Sender: TObject);
 begin
   meLog.Clear;
   meLog.Visible:= False;
-  DiffCount:= 0;
+  FDiffCount:= 0;
   StatusBar1.Color:= clBlue;
   DisplayStatus('Searching for missing DB Objects...');
   bbCancel.Enabled:= True;
-  fCanceled:= False;
+  FCanceled:= False;
 
   CheckMissingDBObjects;
   Application.ProcessMessages;
 
-  if cxTables.Checked and not fCanceled then
+  if cxTables.Checked and not FCanceled then
   begin
     CheckMissingIndices;
-    if not fCanceled then
+    if not FCanceled then
       CheckMissingConstraints;
-    if not fCanceled then
+    if not FCanceled then
       CheckMissingFields;
-    if not fCanceled then
+    if not FCanceled then
       CheckModifiedFields;
-    if not fCanceled then
+    if not FCanceled then
       CheckModifiedIndices;
-    if not fCanceled then
+    if not FCanceled then
       CheckModifiedConstraints;
   end;
   Application.ProcessMessages;
 
   DisplayStatus('Searching for modified db Objects...');
-  if cxViews.Checked and not fCanceled then
+  if cxViews.Checked and not FCanceled then
     CheckModifiedViews;
   Application.ProcessMessages;
 
-  if cxTriggers.Checked and not fCanceled then
+  if cxTriggers.Checked and not FCanceled then
     CheckModifiedTriggers;
   Application.ProcessMessages;
 
-  if cxStoredProcs.Checked and not fCanceled then
+  if cxStoredProcs.Checked and not FCanceled then
     CheckModifiedProcedures;
   Application.ProcessMessages;
 
-  if cxUDFs.Checked and not fCanceled then
+  if cxUDFs.Checked and not FCanceled then
     CheckModifiedFunctions;
   Application.ProcessMessages;
 
-  if cxDomains.Checked and not fCanceled then
+  if cxDomains.Checked and not FCanceled then
     CheckModifiedDomains;
   Application.ProcessMessages;
 
   DisplayStatus('Searching for removed db Objects...');
 
-  if cxRemovedObjects.Checked and not fCanceled then
+  if cxRemovedObjects.Checked and not FCanceled then
     CheckRemovedDBObjects;
   Application.ProcessMessages;
 
-  if cxTables.Checked and cxRemovedObjects.Checked and not fCanceled then
+  if cxTables.Checked and cxRemovedObjects.Checked and not FCanceled then
     CheckRemovedFields;
   Application.ProcessMessages;
 
   StatusBar1.Color:= clDefault;
-  if not fCanceled then
+  if not FCanceled then
   begin
-    DisplayStatus('Comparison Finished, ' + IntToStr(DiffCount) + ' difference(s) found');
-    if DiffCount = 0 then
+    DisplayStatus('Comparison Finished, ' + IntToStr(FDiffCount) + ' difference(s) found');
+    if FDiffCount = 0 then
       meLog.Text:= 'No difference';
     meLog.Visible:= True;
   end
@@ -245,7 +247,7 @@ end;
 
 procedure TfmComparison.bbCancelClick(Sender: TObject);
 begin
-  fCanceled:= True;
+  FCanceled:= True;
   laScript.Enabled:= False;
 end;
 
@@ -253,34 +255,59 @@ procedure TfmComparison.FormClose(Sender: TObject; var CloseAction: TCloseAction
 var
   i: Integer;
 begin
-  for i:= Low(dbObjectsList) to High(dbObjectsList) do
-    dbObjectsList[i].Free;
+  for i:= Low(FDBObjectsList) to High(FDBObjectsList) do
+    FDBObjectsList[i].Free;
 
-  for i:= Low(dbExistingObjectsList) to High(dbExistingObjectsList) do
-    dbExistingObjectsList[i].Free;
+  for i:= Low(FDBExistingObjectsList) to High(FDBExistingObjectsList) do
+    FDBExistingObjectsList[i].Free;
 
-  for i:= Low(dbRemovedObjectsList) to High(dbRemovedObjectsList) do
-    dbRemovedObjectsList[i].Free;
-
-  MissingFieldsList.Free;
-
-  ExistFieldsList.Free;
-  ModifiedFieldsList.Free;
-
-  ExistIndicesList.Free;
-  ModifiedIndicesList.Free;
-
-  ExistConstraintsList.Free;
-  ModifiedConstraintsList.Free;
-
-  ModifiedViewsList.Free;
-  ModifiedTriggersList.Free;
-  ModifiedProceduresList.Free;
-  ModifiedFunctionsList.Free;
-  ModifiedDomainsList.Free;
-  RemovedFieldsList.Free;
+  for i:= Low(FDBRemovedObjectsList) to High(FDBRemovedObjectsList) do
+    FDBRemovedObjectsList[i].Free;
 
   CloseAction:= caFree;
+end;
+
+procedure TfmComparison.FormCreate(Sender: TObject);
+begin
+  FMissingFieldsList:= TStringList.Create;
+
+  FExistFieldsList:= TStringList.Create;
+  FModifiedFieldsList:= TStringList.Create;
+
+  FExistIndicesList:= TStringList.Create;
+  FModifiedIndicesList:= TStringList.Create;
+
+  FExistConstraintsList:= TStringList.Create;
+  FModifiedConstraintsList:= TStringList.Create;
+
+  FModifiedViewsList:= TStringList.Create;
+  FModifiedTriggersList:= TStringList.Create;
+  FModifiedProceduresList:= TStringList.Create;
+  FModifiedFunctionsList:= TStringList.Create;
+  FModifiedDomainsList:= TStringList.Create;
+
+  FRemovedFieldsList:= TStringList.Create;
+end;
+
+procedure TfmComparison.FormDestroy(Sender: TObject);
+begin
+  FMissingFieldsList.Free;
+
+  FExistFieldsList.Free;
+  FModifiedFieldsList.Free;
+
+  FExistIndicesList.Free;
+  FModifiedIndicesList.Free;
+
+  FExistConstraintsList.Free;
+  FModifiedConstraintsList.Free;
+
+  FModifiedViewsList.Free;
+  FModifiedTriggersList.Free;
+  FModifiedProceduresList.Free;
+  FModifiedFunctionsList.Free;
+  FModifiedDomainsList.Free;
+  FRemovedFieldsList.Free;
 end;
 
 procedure TfmComparison.FormKeyDown(Sender: TObject; var Key: Word;
@@ -357,75 +384,75 @@ begin
     if cxDomains.Checked then
       ScriptModifiedDomains;
 
-    dmSysTables.Init(fdbIndex);
+    dmSysTables.Init(FDBIndex);
 
-    fQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('');
 
     for x:= 1 to NumObjects do
     begin
       if (x = 1) and cxTables.Checked then // Tables
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
         ScriptList.Clear;
-        Scriptdb.ScriptTableAsCreate(fdbIndex, dbObjectsList[x].Strings[i], ScriptList);
+        Scriptdb.ScriptTableAsCreate(FDBIndex, FDBObjectsList[x].Strings[i], ScriptList);
 
-        fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+        FQueryWindow.meQuery.Lines.Add('');
       end
       else
       if (x = 2) and cxGenerators.Checked then // Generators
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
         ScriptList.Clear;
 
-        fQueryWindow.meQuery.Lines.Add('create generator ' + dbObjectsList[x].Strings[i] + ';');
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.Add('create generator ' + FDBObjectsList[x].Strings[i] + ';');
+        FQueryWindow.meQuery.Lines.Add('');
       end
       else
       if (x = 3) and cxTriggers.Checked then // Triggers
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
         ScriptList.Clear;
-        dmSysTables.ScriptTrigger(fdbIndex, dbObjectsList[x].Strings[i], ScriptList, True);
+        dmSysTables.ScriptTrigger(FDBIndex, FDBObjectsList[x].Strings[i], ScriptList, True);
 
-        fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+        FQueryWindow.meQuery.Lines.Add('');
       end
       else
       if (x = 4) and cxViews.Checked then // Views
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
-        fmMain.GetViewInfo(fdbIndex, dbObjectsList[x].Strings[i], Columns, ViewBody);
+        fmMain.GetViewInfo(FDBIndex, FDBObjectsList[x].Strings[i], Columns, ViewBody);
         ScriptList.Text:= Trim(ViewBody);
 
-        fQueryWindow.meQuery.Lines.Add('CREATE VIEW "' + dbObjectsList[x].Strings[i] + '" (' + Columns + ')');
-        fQueryWindow.meQuery.Lines.Add('AS');
+        FQueryWindow.meQuery.Lines.Add('CREATE VIEW "' + FDBObjectsList[x].Strings[i] + '" (' + Columns + ')');
+        FQueryWindow.meQuery.Lines.Add('AS');
         ScriptList.Text:= Trim(ViewBody);
-        fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
-        fQueryWindow.meQuery.Lines.Add(' ;');
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+        FQueryWindow.meQuery.Lines.Add(' ;');
+        FQueryWindow.meQuery.Lines.Add('');
       end
       else
       if (x = 5) and cxStoredProcs.Checked then // Stored proc
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
-        ScriptList.Text:= fmMain.GetStoredProcBody(fdbIndex, dbObjectsList[x].Strings[i], SPOwner);
+        ScriptList.Text:= fmMain.GetStoredProcBody(FDBIndex, FDBObjectsList[x].Strings[i], SPOwner);
         ScriptList.Insert(0, 'SET TERM ^ ;');
-        ScriptList.Insert(1, 'CREATE Procedure ' + dbObjectsList[x].Strings[i]);
+        ScriptList.Insert(1, 'CREATE Procedure ' + FDBObjectsList[x].Strings[i]);
         ScriptList.Add('^');
         ScriptList.Add('SET TERM ; ^');
         ScriptList.Add('');
 
-        fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+        FQueryWindow.meQuery.Lines.Add('');
       end
       else
       if (x = 6) and cxUDFs.Checked then // UDF
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
         ScriptList.Clear;
-        ScriptList.Add('Declare External Function "' + dbObjectsList[x].Strings[i] + '"');
-        if fmMain.GetUDFInfo(fdbIndex, dbObjectsList[x].Strings[i], ModuleName, EntryPoint, Params) then
+        ScriptList.Add('Declare External Function "' + FDBObjectsList[x].Strings[i] + '"');
+        if fmMain.GetUDFInfo(FDBIndex, FDBObjectsList[x].Strings[i], ModuleName, EntryPoint, Params) then
         begin
           RemoveParamClosing(Params);
           ScriptList.Add(Params);
@@ -433,15 +460,15 @@ begin
           ScriptList.Add('MODULE_NAME ''' + ModuleName + ''';');
           ScriptList.Add('');
         end;
-        fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+        FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
       end
       else
       if (x = 8) and cxDomains.Checked then // Domains
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
-        dmSysTables.GetDomainInfo(fdbIndex, dbObjectsList[x].Strings[i], DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
+        dmSysTables.GetDomainInfo(FDBIndex, FDBObjectsList[x].Strings[i], DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
 
-        Line:= 'Create Domain ' + dbObjectsList[x].Strings[i] + ' as ' + DomainType;
+        Line:= 'Create Domain ' + FDBObjectsList[x].Strings[i] + ' as ' + DomainType;
         // String size
         if Pos('CHAR', DomainType) > 0 then
           Line:= Line + '(' + IntToStr(DomainSize) + ')';
@@ -460,27 +487,27 @@ begin
           Line:= Line + ' COLLATE ' +  Collation;
         Line:= Line+' ;';
 
-        fQueryWindow.meQuery.Lines.Add(Line);
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.Add(Line);
+        FQueryWindow.meQuery.Lines.Add('');
       end
       else
       if (x = 9) and cxRoles.Checked then // Roles
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
         ScriptList.Clear;
-        fQueryWindow.meQuery.Lines.Add('create role ' + dbObjectsList[x].Strings[i] + ';');
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.Add('create role ' + FDBObjectsList[x].Strings[i] + ';');
+        FQueryWindow.meQuery.Lines.Add('');
       end
       else
       if (x = 12) and cxTables.Checked then // Indices
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
-        Line:= dbObjectsList[x].Strings[i];
+        Line:= FDBObjectsList[x].Strings[i];
         ATableName:= copy(Line, 1, Pos(',', Line) - 1);
         System.Delete(Line, 1, Pos(',', Line));
         AIndexName:= Line;
         ScriptList.Clear;
-        if dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique,
+        if dmSysTables.GetIndexInfo(FDBIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique,
           Ascending, IsPrimary) then
         begin
           if IsPrimary then
@@ -503,23 +530,23 @@ begin
             Line:= Line + ' (' + FieldsList.CommaText + ') ;';
           end;
 
-          fQueryWindow.meQuery.Lines.Add(Line);
-          fQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add(Line);
+          FQueryWindow.meQuery.Lines.Add('');
         end
         else
-          fQueryWindow.meQuery.Lines.Add('-- Index ' + AIndexName + ' not exist on ' + ATableName);
+          FQueryWindow.meQuery.Lines.Add('-- Index ' + AIndexName + ' not exist on ' + ATableName);
 
       end
       else
       if (x = 13) and cxTables.Checked then // Constraints
-      for i:= 0 to dbObjectsList[x].Count - 1 do
+      for i:= 0 to FDBObjectsList[x].Count - 1 do
       begin
-        Line:= dbObjectsList[x].Strings[i];
+        Line:= FDBObjectsList[x].Strings[i];
         ATableName:= copy(Line, 1, Pos(',', Line) - 1);
         System.Delete(Line, 1, Pos(',', Line));
         ConstraintName:= Line;
         ScriptList.Clear;
-        if dmSysTables.GetConstraintInfo(fdbIndex, ATableName, ConstraintName, KeyName, CurrentTableName, CurrentFieldName,
+        if dmSysTables.GetConstraintInfo(FDBIndex, ATableName, ConstraintName, KeyName, CurrentTableName, CurrentFieldName,
           OtherTableName, OtherFieldName, UpdateRule, DeleteRule) then
         begin
           Line:= 'alter table ' + ATableName + ' add constraint ' + ConstraintName +
@@ -530,18 +557,18 @@ begin
           if Trim(DeleteRule) <> 'RESTRICT' then
             Line:= Line + ' on delete ' + Trim(DeleteRule);
 
-          fQueryWindow.meQuery.Lines.Add(Line + ';');
-          fQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add(Line + ';');
+          FQueryWindow.meQuery.Lines.Add('');
         end
         else
-          fQueryWindow.meQuery.Lines.Add('-- Constraint ' + ConstraintName + ' not exist on ' + ATableName);
+          FQueryWindow.meQuery.Lines.Add('-- Constraint ' + ConstraintName + ' not exist on ' + ATableName);
       end;
     end;
   finally
     ScriptList.Free;
     FieldsList.Free;
   end;
-  fQueryWindow.Show;
+  FQueryWindow.Show;
 
 end;
 
@@ -573,23 +600,23 @@ begin
       meLog.Lines.Add('');
       meLog.Lines.Add('Checking Missing ' + dbObjects[x] + ':');
 
-      List.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, x, Count);
+      List.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, x, Count);
 
       Application.ProcessMessages;
-      if fCanceled then
+      if FCanceled then
         Exit;
       ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, x, Count);
-      dbObjectsList[x].Clear;
-      dbExistingObjectsList[x].Clear;
+      FDBObjectsList[x].Clear;
+      FDBExistingObjectsList[x].Clear;
       for i:= 0 to List.Count -1 do
       if ComparedList.IndexOf(List[i]) = -1 then  // Not exist
       begin
         meLog.Lines.Add(' ' + List[i]);
-        dbObjectsList[x].Add(List[i]);
-        Inc(DiffCount);
+        FDBObjectsList[x].Add(List[i]);
+        Inc(FDiffCount);
       end
       else                                        // Exist
-        dbExistingObjectsList[x].Add(List[i]);
+        FDBExistingObjectsList[x].Add(List[i]);
 
     end;
     laScript.Enabled:= True;
@@ -620,17 +647,17 @@ begin
       meLog.Lines.Add('');
       meLog.Lines.Add('Checking Removed ' + dbObjects[x] + ':');
 
-      List.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, x, Count);
+      List.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, x, Count);
 
       ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, x, Count);
-      dbRemovedObjectsList[x].Clear;
+      FDBRemovedObjectsList[x].Clear;
 
       for i:= 0 to ComparedList.Count -1 do
       if List.IndexOf(ComparedList[i]) = -1 then  // Removed
       begin
         meLog.Lines.Add(' ' + ComparedList[i]);
-        dbRemovedObjectsList[x].Add(ComparedList[i]);
-        Inc(DiffCount);
+        FDBRemovedObjectsList[x].Add(ComparedList[i]);
+        Inc(FDiffCount);
       end;
 
     end;
@@ -653,28 +680,28 @@ begin
   try
     meLog.Lines.Add('');
     meLog.Lines.Add('Missing fields');
-    MissingFieldsList.Clear;
-    ExistFieldsList.Clear;
-    for i:= 0 to dbExistingObjectsList[1].Count - 1 do
+    FMissingFieldsList.Clear;
+    FExistFieldsList.Clear;
+    for i:= 0 to FDBExistingObjectsList[1].Count - 1 do
     begin
       // Check for cancel button press
       Application.ProcessMessages;
-      if fCanceled then
+      if FCanceled then
         Exit;
 
-      dmSysTables.GetTableFields(fdbIndex, dbExistingObjectsList[1].Strings[i], FieldsList);
-      dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, dbExistingObjectsList[1].Strings[i], ComparedList);
+      dmSysTables.GetTableFields(FDBIndex, FDBExistingObjectsList[1].Strings[i], FieldsList);
+      dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, FDBExistingObjectsList[1].Strings[i], ComparedList);
 
       // Get missing fields
       for j:= 0 to FieldsList.Count - 1 do
         if ComparedList.IndexOf(FieldsList[j]) = -1 then // Add to missing list
         begin
-          meLog.Lines.Add(' ' + dbExistingObjectsList[1].Strings[i] + ': ' + FieldsList[j]);
-          MissingFieldsList.Add(dbExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
-          Inc(DiffCount);
+          meLog.Lines.Add(' ' + FDBExistingObjectsList[1].Strings[i] + ': ' + FieldsList[j]);
+          FMissingFieldsList.Add(FDBExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
+          Inc(FDiffCount);
         end
         else                                             // Add to existing list
-          ExistFieldsList.Add(dbExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
+          FExistFieldsList.Add(FDBExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
     end;
   finally
     FieldsList.Free;
@@ -697,22 +724,22 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified fields');
-  ModifiedFieldsList.Clear;
+  FModifiedFieldsList.Clear;
 
-  for i:= 0 to ExistFieldsList.Count - 1 do
+  for i:= 0 to FExistFieldsList.Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
-    if fCanceled then
+    if FCanceled then
       Exit;
 
-    Line:= ExistFieldsList[i];
+    Line:= FExistFieldsList[i];
     ATableName:= copy(Line, 1, Pos(',', Line) - 1);
     System.Delete(Line, 1, Pos(',', Line));
     AFieldName:= Line;
 
     // Read all field properties
-    dmSysTables.GetFieldInfo(fdbIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
+    dmSysTables.GetFieldInfo(FDBIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
     dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName, CFieldType, CFieldSize, CNotNull,
       CDefaultValue, CDescription);
 
@@ -721,9 +748,9 @@ begin
       (NotNull <> CNotNull) or (DefaultValue <> CDefaultValue)
       or (Description <> CDescription) then
       begin
-        meLog.Lines.Add(' ' + ExistFieldsList[i]);
-        ModifiedFieldsList.Add(ExistFieldsList[i]);
-        Inc(DiffCount);
+        meLog.Lines.Add(' ' + FExistFieldsList[i]);
+        FModifiedFieldsList.Add(FExistFieldsList[i]);
+        Inc(FDiffCount);
       end;
   end;
 end;
@@ -744,33 +771,33 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Indices');
-  ModifiedIndicesList.Clear;
+  FModifiedIndicesList.Clear;
   FieldsList:= TStringList.Create;
   CFieldsList:= TStringList.Create;
   try
-    for i:= 0 to ExistIndicesList.Count - 1 do
+    for i:= 0 to FExistIndicesList.Count - 1 do
     begin
       // Check for cancel button press
       Application.ProcessMessages;
-      if fCanceled then
+      if FCanceled then
         Exit;
 
-      Line:= ExistIndicesList[i];
+      Line:= FExistIndicesList[i];
       ATableName:= copy(Line, 1, Pos(',', Line) - 1);
       System.Delete(Line, 1, Pos(',', Line));
       AIndexName:= Line;
 
       // Read all Index properties
-      dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique, Ascending, IsPrimary);
+      dmSysTables.GetIndexInfo(FDBIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique, Ascending, IsPrimary);
       dmSysTables.GetIndexInfo(cbComparedDatabase.ItemIndex, ATableName, AIndexName, CFieldsList, CConstraintName,
         CUnique, CAscending, IsPrimary);
 
       // Compare
       if (FieldsList.CommaText <> CFieldsList.CommaText) or (Unique <> CUnique) or (Ascending <> CAscending) then
       begin
-        meLog.Lines.Add(' ' + ExistIndicesList[i]);
-        ModifiedIndicesList.Add(ExistIndicesList[i]);
-        Inc(DiffCount);
+        meLog.Lines.Add(' ' + FExistIndicesList[i]);
+        FModifiedIndicesList.Add(FExistIndicesList[i]);
+        Inc(FDiffCount);
       end;
 
     end;
@@ -796,22 +823,22 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Constraints');
-  ModifiedConstraintsList.Clear;
+  FModifiedConstraintsList.Clear;
 
-  for i:= 0 to ExistConstraintsList.Count - 1 do
+  for i:= 0 to FExistConstraintsList.Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
-    if fCanceled then
+    if FCanceled then
       Exit;
 
-    Line:= ExistConstraintsList[i];
+    Line:= FExistConstraintsList[i];
     ATableName:= copy(Line, 1, Pos(',', Line) - 1);
     System.Delete(Line, 1, Pos(',', Line));
     AConstraintName:= Line;
 
     // Read all contraint properties
-    Exist:= (dmSysTables.GetConstraintInfo(fdbIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
+    Exist:= (dmSysTables.GetConstraintInfo(FDBIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
         OtherTablename, OtherFieldName, UpdateRole, DeleteRole));
 
     if Exist then
@@ -833,9 +860,9 @@ begin
        (OtherTablename <> COtherTablename) or (OtherFieldNames <> COtherFieldNames) or (UpdateRole <> CUpdateRole) or
        (DeleteRole <> CDeleteRole) then
     begin
-      meLog.Lines.Add(' ' + ExistConstraintsList[i]);
-      ModifiedConstraintsList.Add(ExistConstraintsList[i]);
-      Inc(DiffCount);
+      meLog.Lines.Add(' ' + FExistConstraintsList[i]);
+      FModifiedConstraintsList.Add(FExistConstraintsList[i]);
+      Inc(FDiffCount);
     end;
 
   end;
@@ -851,25 +878,25 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Views');
-  ModifiedViewsList.Clear;
+  FModifiedViewsList.Clear;
 
-  for i:= 0 to dbExistingObjectsList[4].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[4].Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
-    if fCanceled then
+    if FCanceled then
       Exit;
 
-    ViewName:= dbExistingObjectsList[4][i];
-    fmMain.GetViewInfo(fdbIndex, ViewName, Columns, Body);
+    ViewName:= FDBExistingObjectsList[4][i];
+    fmMain.GetViewInfo(FDBIndex, ViewName, Columns, Body);
 
     // Compare
     if fmMain.GetViewInfo(cbComparedDatabase.ItemIndex, ViewName, CColumns, CBody) then
     if  (Trim(Body) <> Trim(CBody)) then
     begin
       meLog.Lines.Add(' ' + ViewName);
-      ModifiedViewsList.Add(ViewName);
-      Inc(DiffCount);
+      FModifiedViewsList.Add(ViewName);
+      Inc(FDiffCount);
     end;
 
   end;
@@ -889,17 +916,17 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Triggers');
-  ModifiedTriggersList.Clear;
+  FModifiedTriggersList.Clear;
 
-  for i:= 0 to dbExistingObjectsList[3].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[3].Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
-    if fCanceled then
+    if FCanceled then
       Exit;
 
-    TriggerName:= dbExistingObjectsList[3][i];
-    dmSysTables.GetTriggerInfo(fdbIndex, TriggerName, AfterBefor, OnTable, Event, Body, TriggerEnabled, TPosition);
+    TriggerName:= FDBExistingObjectsList[3][i];
+    dmSysTables.GetTriggerInfo(FDBIndex, TriggerName, AfterBefor, OnTable, Event, Body, TriggerEnabled, TPosition);
 
     // Read all trigger properties
     if dmSysTables.GetTriggerInfo(cbComparedDatabase.ItemIndex, TriggerName, CAfterBefor, COnTable, CEvent, CBody,
@@ -909,8 +936,8 @@ begin
        or (TPosition <> CTPosition) then
     begin
       meLog.Lines.Add(' ' + TriggerName);
-      ModifiedTriggersList.Add(TriggerName);
-      Inc(DiffCount);
+      FModifiedTriggersList.Add(TriggerName);
+      Inc(FDiffCount);
     end;
 
   end;
@@ -928,27 +955,27 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Procedures');
-  ModifiedProceduresList.Clear;
+  FModifiedProceduresList.Clear;
 
-  for i:= 0 to dbExistingObjectsList[5].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[5].Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
-    if fCanceled then
+    if FCanceled then
       Exit;
 
-    ProcName:= dbExistingObjectsList[5][i];
+    ProcName:= FDBExistingObjectsList[5][i];
 
     // Read procedure script
-    Body:= fmMain.GetStoredProcBody(fdbIndex, ProcName, SPOwner);
+    Body:= fmMain.GetStoredProcBody(FDBIndex, ProcName, SPOwner);
     CBody:= fmMain.GetStoredProcBody(cbComparedDatabase.ItemIndex, ProcName, CSPOwner);
 
     // Compare
     if  (Trim(Body) <> Trim(CBody)) then
     begin
       meLog.Lines.Add(' ' + ProcName);
-      ModifiedProceduresList.Add(ProcName);
-      Inc(DiffCount);
+      FModifiedProceduresList.Add(ProcName);
+      Inc(FDiffCount);
     end;
 
   end;
@@ -963,27 +990,27 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified Functions');
-  ModifiedFunctionsList.Clear;
+  FModifiedFunctionsList.Clear;
 
-  for i:= 0 to dbExistingObjectsList[6].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[6].Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
-    if fCanceled then
+    if FCanceled then
       Exit;
 
-    FunctionName:= dbExistingObjectsList[6][i];
+    FunctionName:= FDBExistingObjectsList[6][i];
 
     // Get function properties
-    fmMain.GetUDFInfo(fdbIndex, FunctionName, ModuleName, EntryPoint, Params);
+    fmMain.GetUDFInfo(FDBIndex, FunctionName, ModuleName, EntryPoint, Params);
 
     if fmMain.GetUDFInfo(cbComparedDatabase.ItemIndex, FunctionName, CModuleName, CEntryPoint, CParams) then
     // Compare
     if  (ModuleName <> CModuleName) or (EntryPoint <> CEntryPoint) or (Params <> CParams) then
     begin
       meLog.Lines.Add(' ' + FunctionName);
-      ModifiedFunctionsList.Add(FunctionName);
-      Inc(DiffCount);
+      FModifiedFunctionsList.Add(FunctionName);
+      Inc(FDiffCount);
     end;
 
   end;
@@ -1002,19 +1029,19 @@ var
 begin
   meLog.Lines.Add('');
   meLog.Lines.Add('Modified domains');
-  ModifiedDomainsList.Clear;
+  FModifiedDomainsList.Clear;
 
-  for i:= 0 to dbExistingObjectsList[8].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[8].Count - 1 do
   begin
     // Check for pressed cancel button
     Application.ProcessMessages;
-    if fCanceled then
+    if FCanceled then
       Exit;
 
-    DomainName:= dbExistingObjectsList[8][i];
+    DomainName:= FDBExistingObjectsList[8][i];
 
     // Read all domain properties
-    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
+    dmSysTables.GetDomainInfo(FDBIndex, DomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
     dmSysTables.GetDomainInfo(cbComparedDatabase.ItemIndex, DomainName, CDomainType, CDomainSize, CDefaultValue, CCheckConstraint, CCharacterSet, CCollation);
 
     // Compare
@@ -1026,8 +1053,8 @@ begin
        (Collation <> CCollation) then
     begin
       meLog.Lines.Add(' ' + DomainName);
-      ModifiedDomainsList.Add(DomainName);
-      Inc(DiffCount);
+      FModifiedDomainsList.Add(DomainName);
+      Inc(FDiffCount);
     end;
   end;
 
@@ -1047,9 +1074,9 @@ begin
   TablesList:= TStringList.Create;
   CTablesList:= TStringList.Create;
   try
-    dmSysTables.GetAllIndices(fdbIndex, OrigList, TablesList);
+    dmSysTables.GetAllIndices(FDBIndex, OrigList, TablesList);
     dmSysTables.GetAllIndices(cbComparedDatabase.ItemIndex, ComparedList, CTablesList);
-    dbRemovedObjectsList[12].Clear;
+    FDBRemovedObjectsList[12].Clear;
 
     meLog.Lines.Add('');
     meLog.Lines.Add('Checking removed indices');
@@ -1057,16 +1084,16 @@ begin
     begin
       // Check for cancel button press
       Application.ProcessMessages;
-      if fCanceled then
+      if FCanceled then
         Break;
 
       Po:= OrigList.IndexOf(ComparedList[i]);
       // Compare
       if (Po = -1) or (TablesList[Po] <> CTablesList[i]) then
       begin
-        dbRemovedObjectsList[12].Add(CTablesList[i] + ',' + ComparedList[i]);
+        FDBRemovedObjectsList[12].Add(CTablesList[i] + ',' + ComparedList[i]);
         meLog.Lines.Add(' ' + CTableslist[i] + ':' + ComparedList[i]);
-        Inc(DiffCount);
+        Inc(FDiffCount);
       end;
     end;
   finally
@@ -1091,9 +1118,9 @@ begin
   TablesList:= TStringList.Create;
   CTablesList:= TStringList.Create;
   try
-    dmSysTables.GetAllConstraints(fdbIndex, OrigList, TablesList);
+    dmSysTables.GetAllConstraints(FDBIndex, OrigList, TablesList);
     dmSysTables.GetAllConstraints(cbComparedDatabase.ItemIndex, ComparedList, CTablesList);
-    dbRemovedObjectsList[13].Clear;
+    FDBRemovedObjectsList[13].Clear;
 
     meLog.Lines.Add('');
     meLog.Lines.Add('Checking removed constraints');
@@ -1101,7 +1128,7 @@ begin
     begin
       // Check for cancel button press
       Application.ProcessMessages;
-      if fCanceled then
+      if FCanceled then
         Break;
 
       Po:= OrigList.IndexOf(ComparedList[i]);
@@ -1109,9 +1136,9 @@ begin
       // Compare
       if (Po = -1) or (TablesList[Po] <> CTablesList[i]) then
       begin
-        dbRemovedObjectsList[13].Add(CTablesList[i] + ',' + ComparedList[i]);
+        FDBRemovedObjectsList[13].Add(CTablesList[i] + ',' + ComparedList[i]);
         meLog.Lines.Add(' ' + CTableslist[i] + ':' + ComparedList[i]);
-        Inc(DiffCount);
+        Inc(FDiffCount);
       end;
     end;
   finally
@@ -1134,25 +1161,25 @@ begin
   try
     meLog.Lines.Add('');
     meLog.Lines.Add('Removed fields');
-    RemovedFieldsList.Clear;
-    for i:= 0 to dbExistingObjectsList[1].Count - 1 do
+    FRemovedFieldsList.Clear;
+    for i:= 0 to FDBExistingObjectsList[1].Count - 1 do
     begin
       // Check for cancel button press
       Application.ProcessMessages;
-      if fCanceled then
+      if FCanceled then
         Break;
 
       // Read all table fields
-      dmSysTables.GetTableFields(fdbIndex, dbExistingObjectsList[1].Strings[i], FieldsList);
-      dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, dbExistingObjectsList[1].Strings[i], ComparedList);
+      dmSysTables.GetTableFields(FDBIndex, FDBExistingObjectsList[1].Strings[i], FieldsList);
+      dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, FDBExistingObjectsList[1].Strings[i], ComparedList);
 
       // Get missing fields
       for j:= 0 to ComparedList.Count - 1 do
         if FieldsList.IndexOf(ComparedList[j]) = -1 then // Add to missing list
         begin
-          meLog.Lines.Add(' ' + dbExistingObjectsList[1].Strings[i] + ': ' + ComparedList[j]);
-          RemovedFieldsList.Add(dbExistingObjectsList[1].Strings[i] + ',' + ComparedList[j]);
-          Inc(DiffCount);
+          meLog.Lines.Add(' ' + FDBExistingObjectsList[1].Strings[i] + ': ' + ComparedList[j]);
+          FRemovedFieldsList.Add(FDBExistingObjectsList[1].Strings[i] + ',' + ComparedList[j]);
+          Inc(FDiffCount);
         end;
     end;
   finally
@@ -1164,8 +1191,8 @@ end;
 
 procedure TfmComparison.InitializeQueryWindow;
 begin
-  fQueryWindow:= fmMain.ShowQueryWindow(cbComparedDatabase.ItemIndex, 'Database Differences');
-  fQueryWindow.meQuery.ClearAll;
+  FQueryWindow:= fmMain.ShowQueryWindow(cbComparedDatabase.ItemIndex, 'Database Differences');
+  FQueryWindow.meQuery.ClearAll;
 end;
 
 procedure TfmComparison.ScriptMissingFields;
@@ -1181,19 +1208,19 @@ var
   TableSpaces: Integer;
   FieldSpaces: Integer;
 begin
-  if MissingFieldsList.Count > 0 then
+  if FMissingFieldsList.Count > 0 then
   begin
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Missing fields');
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Missing fields');
   end;
 
-  for i:= 0 to MissingFieldsList.Count - 1 do
+  for i:= 0 to FMissingFieldsList.Count - 1 do
   begin
-    Line:= MissingFieldsList[i];
+    Line:= FMissingFieldsList[i];
     ATableName:= copy(Line, 1, Pos(',', Line) - 1);
     System.Delete(Line, 1, Pos(',', Line));
     AFieldName:= Line;
-    dmSysTables.GetFieldInfo(fdbIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
+    dmSysTables.GetFieldInfo(FDBIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
 
     // Script new field
     Line:= FieldType;
@@ -1224,7 +1251,7 @@ begin
     if FieldSpaces < 0 then
       FieldSpaces:= 0;
 
-    fQueryWindow.meQuery.Lines.Add('ALTER TABLE ' + ATableName + Space(TableSpaces) +
+    FQueryWindow.meQuery.Lines.Add('ALTER TABLE ' + ATableName + Space(TableSpaces) +
       ' ADD ' + AFieldName + Space(FieldSpaces) + ' ' + Line + ';');
 
   end;
@@ -1244,23 +1271,23 @@ var
   NotNull, CNotNull: Boolean;
   ScriptList: TStringList;
 begin
-  if ModifiedFieldsList.Count > 0 then
+  if FModifiedFieldsList.Count > 0 then
   try
     ScriptList:= TStringList.Create;
-    if ModifiedFieldsList.Count > 0 then
+    if FModifiedFieldsList.Count > 0 then
     begin
-      fQueryWindow.meQuery.Lines.Add('');
-      fQueryWindow.meQuery.Lines.Add('-- Modified fields');
+      FQueryWindow.meQuery.Lines.Add('');
+      FQueryWindow.meQuery.Lines.Add('-- Modified fields');
     end;
 
-    for i:= 0 to ModifiedFieldsList.Count - 1 do
+    for i:= 0 to FModifiedFieldsList.Count - 1 do
     begin
-      Line:= ModifiedFieldsList[i];
+      Line:= FModifiedFieldsList[i];
       ATableName:= copy(Line, 1, Pos(',', Line) - 1);
       System.Delete(Line, 1, Pos(',', Line));
       AFieldName:= Line;
 
-      dmSysTables.GetFieldInfo(fdbIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
+      dmSysTables.GetFieldInfo(FDBIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
       dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName, CFieldType, CFieldSize, CNotNull,
         cDefaultValue, cDescription);
 
@@ -1302,9 +1329,9 @@ begin
         ScriptList.Add('where RDB$FIELD_NAME = ''' + UpperCase(AFieldName) + '''');
         ScriptList.Add('and RDB$RELATION_NAME = ''' + ATableName + ''';');
       end;
-      fQueryWindow.meQuery.Lines.Add('');
-      fQueryWindow.meQuery.Lines.Add('-- ' + AFieldName + ' on ' + ATableName);
-      fQueryWindow.meQuery.Lines.AddStrings(ScriptList);
+      FQueryWindow.meQuery.Lines.Add('');
+      FQueryWindow.meQuery.Lines.Add('-- ' + AFieldName + ' on ' + ATableName);
+      FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
 
     end;
   finally
@@ -1322,23 +1349,23 @@ var
   IsPrimary: Boolean;
   ConstraintName: string;
 begin
-  if ModifiedIndicesList.Count > 0 then
+  if FModifiedIndicesList.Count > 0 then
   try
     FieldsList:= TStringList.Create;
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Modified Indices');
-    for i:= 0 to ModifiedIndicesList.Count - 1 do
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Modified Indices');
+    for i:= 0 to FModifiedIndicesList.Count - 1 do
     begin
-      Line:= ModifiedIndicesList[i];
+      Line:= FModifiedIndicesList[i];
       ATableName:= copy(Line, 1, Pos(',', Line) - 1);
       System.Delete(Line, 1, Pos(',', Line));
       AIndexName:= Line;
-      if dmSysTables.GetIndexInfo(fdbIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique, Ascending,
+      if dmSysTables.GetIndexInfo(FDBIndex, ATableName, AIndexName, FieldsList, ConstraintName, Unique, Ascending,
         IsPrimary) then
       begin
         if IsPrimary then
         begin
-          fQueryWindow.meQuery.Lines.Add('alter table AAAA DROP constraint ' + ConstraintName + ';');
+          FQueryWindow.meQuery.Lines.Add('alter table AAAA DROP constraint ' + ConstraintName + ';');
 
           Line:= 'alter table ' + ATableName + LineEnding +
           'add constraint ' + AIndexName + LineEnding +
@@ -1347,7 +1374,7 @@ begin
         end
         else // Secondary
         begin
-          fQueryWindow.meQuery.Lines.Add('drop index ' + AIndexName + ';');
+          FQueryWindow.meQuery.Lines.Add('drop index ' + AIndexName + ';');
 
           Line:= 'create ';
           if Unique then
@@ -1361,11 +1388,11 @@ begin
 
         end;
 
-        fQueryWindow.meQuery.Lines.Add(Line);
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.Add(Line);
+        FQueryWindow.meQuery.Lines.Add('');
       end
       else
-        fQueryWindow.meQuery.Lines.Add('--Index ' + AIndexName + ' does not exist on table: ' + ATableName);
+        FQueryWindow.meQuery.Lines.Add('--Index ' + AIndexName + ' does not exist on table: ' + ATableName);
     end;
   finally
     FieldsList.Free;
@@ -1380,20 +1407,20 @@ var
   KeyName, CurrentTableName, CurrentFieldName,
   OtherTablename, OtherFieldName, UpdateRule, DeleteRule: string;
 begin
-  if ModifiedConstraintsList.Count > 0 then
+  if FModifiedConstraintsList.Count > 0 then
   begin
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Modified Constraints');
-    for i:= 0 to ModifiedConstraintsList.Count - 1 do
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Modified Constraints');
+    for i:= 0 to FModifiedConstraintsList.Count - 1 do
     begin
-      Line:= ModifiedConstraintsList[i];
+      Line:= FModifiedConstraintsList[i];
       ATableName:= copy(Line, 1, Pos(',', Line) - 1);
       System.Delete(Line, 1, Pos(',', Line));
       AConstraintName:= Line;
-      if dmSysTables.GetConstraintInfo(fdbIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
+      if dmSysTables.GetConstraintInfo(FDBIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
           OtherTablename, OtherFieldName, UpdateRule, DeleteRule) then
       begin
-        fQueryWindow.meQuery.Lines.Add('alter table ' + ATableName + ' drop constraint ' + AConstraintName + ';');
+        FQueryWindow.meQuery.Lines.Add('alter table ' + ATableName + ' drop constraint ' + AConstraintName + ';');
 
         Line:= 'alter table ' + ATableName + ' add constraint ' + AConstraintName +
           ' foreign key (' + CurrentFieldName + ') references ' +  OtherTableName  +
@@ -1403,8 +1430,8 @@ begin
         if Trim(DeleteRule) <> 'RESTRICT' then
           Line:= Line + ' on delete ' + Trim(DeleteRule);
 
-        fQueryWindow.meQuery.Lines.Add(Line + ';');
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.Add(Line + ';');
+        FQueryWindow.meQuery.Lines.Add('');
       end;
     end;
   end;
@@ -1416,19 +1443,19 @@ var
   ViewName: string;
   Columns, Body: string;
 begin
-  if ModifiedViewsList.Count > 0 then
+  if FModifiedViewsList.Count > 0 then
   try
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Modified Views');
-    for i:= 0 to ModifiedViewsList.Count - 1 do
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Modified Views');
+    for i:= 0 to FModifiedViewsList.Count - 1 do
     begin
-      ViewName:= ModifiedViewsList[i];
-      fmMain.GetViewInfo(fdbIndex, ViewName, Columns, Body);
-      fQueryWindow.meQuery.Lines.Add('alter view "' + ViewName + '" (' + Columns + ')');
-      fQueryWindow.meQuery.Lines.Add('as');
-      fQueryWindow.meQuery.Lines.Add(Body);
-      fQueryWindow.meQuery.Lines.Add(';');
-      fQueryWindow.meQuery.Lines.Add('');
+      ViewName:= FModifiedViewsList[i];
+      fmMain.GetViewInfo(FDBIndex, ViewName, Columns, Body);
+      FQueryWindow.meQuery.Lines.Add('alter view "' + ViewName + '" (' + Columns + ')');
+      FQueryWindow.meQuery.Lines.Add('as');
+      FQueryWindow.meQuery.Lines.Add(Body);
+      FQueryWindow.meQuery.Lines.Add(';');
+      FQueryWindow.meQuery.Lines.Add('');
     end;
 
   except
@@ -1445,21 +1472,21 @@ var
   TriggerName: string;
   List: TStringList;
 begin
-  if ModifiedTriggersList.Count > 0 then
+  if FModifiedTriggersList.Count > 0 then
   try
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Modified Triggers');
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Modified Triggers');
     List:= TStringList.Create;
-    for i:= 0 to ModifiedTriggersList.Count - 1 do
+    for i:= 0 to FModifiedTriggersList.Count - 1 do
     begin
-      TriggerName:= ModifiedTriggersList[i];
+      TriggerName:= FModifiedTriggersList[i];
       List.Clear;
-      if dmSysTables.ScriptTrigger(fdbIndex, TriggerName, List, True) then
+      if dmSysTables.ScriptTrigger(FDBIndex, TriggerName, List, True) then
       begin
-        fQueryWindow.meQuery.Lines.Add('drop trigger ' + TriggerName + ';');
-        fQueryWindow.meQuery.Lines.Add('');
-        fQueryWindow.meQuery.Lines.AddStrings(List);
-        fQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.Add('drop trigger ' + TriggerName + ';');
+        FQueryWindow.meQuery.Lines.Add('');
+        FQueryWindow.meQuery.Lines.AddStrings(List);
+        FQueryWindow.meQuery.Lines.Add('');
       end;
     end;
   finally
@@ -1475,21 +1502,21 @@ var
   SOwner: string;
   List: TStringList;
 begin
-  if ModifiedProceduresList.Count > 0 then
+  if FModifiedProceduresList.Count > 0 then
   try
     List:= TStringList.Create;
 
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Modified Procedures');
-    for i:= 0 to ModifiedProceduresList.Count - 1 do
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Modified Procedures');
+    for i:= 0 to FModifiedProceduresList.Count - 1 do
     begin
-      ProcName:= ModifiedProceduresList[i];
-      Body:= fmMain.GetStoredProcBody(fdbIndex, ProcName, SOwner);
-      fQueryWindow.meQuery.Lines.Add('alter procedure ' + ProcName);
+      ProcName:= FModifiedProceduresList[i];
+      Body:= fmMain.GetStoredProcBody(FDBIndex, ProcName, SOwner);
+      FQueryWindow.meQuery.Lines.Add('alter procedure ' + ProcName);
       List.Text:= Body + ';';
-      fQueryWindow.meQuery.Lines.AddStrings(List);
+      FQueryWindow.meQuery.Lines.AddStrings(List);
 
-      fQueryWindow.meQuery.Lines.Add('');
+      FQueryWindow.meQuery.Lines.Add('');
     end;
   finally
     List.Free;
@@ -1502,26 +1529,26 @@ var
   FunctionName: string;
   ModuleName, EntryPoint, Params: string;
 begin
-  if ModifiedFunctionsList.Count > 0 then
+  if FModifiedFunctionsList.Count > 0 then
   begin
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Modified Functions (UDFs)');
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Modified Functions (UDFs)');
   end;
 
-  for i:= 0 to ModifiedFunctionsList.Count - 1 do
+  for i:= 0 to FModifiedFunctionsList.Count - 1 do
   begin
-    FunctionName:= ModifiedFunctionsList[i];
-    if fmMain.GetUDFInfo(fdbIndex, FunctionName, ModuleName, EntryPoint, Params) then
+    FunctionName:= FModifiedFunctionsList[i];
+    if fmMain.GetUDFInfo(FDBIndex, FunctionName, ModuleName, EntryPoint, Params) then
     begin
-      fQueryWindow.meQuery.Lines.Add('');
-      fQueryWindow.meQuery.Lines.Add('drop external function "' + FunctionName + '";');
-      fQueryWindow.meQuery.Lines.Add('');
-      fQueryWindow.meQuery.Lines.Add('DECLARE EXTERNAL FUNCTION "' + FunctionName + '"(');
-      fQueryWindow.meQuery.Lines.Add(Params);
-      fQueryWindow.meQuery.Lines.Add('ENTRY_POINT ''' + EntryPoint + '''');
-      fQueryWindow.meQuery.Lines.Add('MODULE_NAME ''' + ModuleName + ''' ;');
+      FQueryWindow.meQuery.Lines.Add('');
+      FQueryWindow.meQuery.Lines.Add('drop external function "' + FunctionName + '";');
+      FQueryWindow.meQuery.Lines.Add('');
+      FQueryWindow.meQuery.Lines.Add('DECLARE EXTERNAL FUNCTION "' + FunctionName + '"(');
+      FQueryWindow.meQuery.Lines.Add(Params);
+      FQueryWindow.meQuery.Lines.Add('ENTRY_POINT ''' + EntryPoint + '''');
+      FQueryWindow.meQuery.Lines.Add('MODULE_NAME ''' + ModuleName + ''' ;');
 
-      fQueryWindow.meQuery.Lines.Add('');
+      FQueryWindow.meQuery.Lines.Add('');
     end;
   end;
 end;
@@ -1536,21 +1563,21 @@ var
   Line: string;
 begin
   //todo: align this with regular script code for domains, including collations
-  if ModifiedDomainsList.Count > 0 then
+  if FModifiedDomainsList.Count > 0 then
   begin
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Modified Domains');
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Modified Domains');
   end;
 
-  for i:= 0 to ModifiedDomainsList.Count - 1 do
+  for i:= 0 to FModifiedDomainsList.Count - 1 do
   begin
-    DomainName:= ModifiedDomainsList[i];
-    dmSysTables.GetDomainInfo(fdbIndex, DomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
-    fQueryWindow.meQuery.Lines.Add('');
+    DomainName:= FModifiedDomainsList[i];
+    dmSysTables.GetDomainInfo(FDBIndex, DomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
+    FQueryWindow.meQuery.Lines.Add('');
     Line:= 'Alter DOMAIN ' + DomainName + ' type ' + DomainType;
     if Pos('char', LowerCase(DomainType)) > 0 then
       Line:= Line + '(' + IntToStr(DomainSize) + ')';
-    fQueryWindow.meQuery.Lines.Add(Line);
+    FQueryWindow.meQuery.Lines.Add(Line);
 
     // todo: verify if this check constraint clause works correctly
     if Trim(CheckConstraint) <> '' then
@@ -1567,14 +1594,14 @@ begin
     if Trim(DefaultValue) <> '' then
     begin
       if (Pos('char', LowerCase(DomainType)) > 0) and (Pos('''', DefaultValue) = 0) then
-        fQueryWindow.meQuery.Lines.Add('set ''' + DefaultValue + ''';')
+        FQueryWindow.meQuery.Lines.Add('set ''' + DefaultValue + ''';')
       else
-        fQueryWindow.meQuery.Lines.Add('set ' + DefaultValue + ';');
+        FQueryWindow.meQuery.Lines.Add('set ' + DefaultValue + ';');
     end
     else
-      fQueryWindow.meQuery.Lines.Add('set DEFAULT NULL;');
+      FQueryWindow.meQuery.Lines.Add('set DEFAULT NULL;');
 
-    fQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('');
   end;
 end;
 
@@ -1596,152 +1623,152 @@ begin
     begin
       if (x = 1) and cxTables.Checked then
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Tables');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Tables');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
-          fQueryWindow.meQuery.Lines.Add('drop table ' + ObjName + ';');
+          ObjName:= FDBRemovedObjectsList[x][i];
+          FQueryWindow.meQuery.Lines.Add('drop table ' + ObjName + ';');
         end;
       end
       else
       if (x = 2) and cxGenerators.Checked then
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Generators');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Generators');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
-          fQueryWindow.meQuery.Lines.Add('drop generator ' + ObjName + ';');
+          ObjName:= FDBRemovedObjectsList[x][i];
+          FQueryWindow.meQuery.Lines.Add('drop generator ' + ObjName + ';');
         end;
       end
       else
       if (x = 3) and cxTriggers.Checked then
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Triggers');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Triggers');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
-          fQueryWindow.meQuery.Lines.Add('drop trigger ' + ObjName + ';');
+          ObjName:= FDBRemovedObjectsList[x][i];
+          FQueryWindow.meQuery.Lines.Add('drop trigger ' + ObjName + ';');
         end;
       end
       else
       if (x = 4) and cxViews.Checked then
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Views');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Views');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
-          fQueryWindow.meQuery.Lines.Add('drop view "' + ObjName + '";');
+          ObjName:= FDBRemovedObjectsList[x][i];
+          FQueryWindow.meQuery.Lines.Add('drop view "' + ObjName + '";');
         end;
       end
       else
       if (x = 5) and cxStoredProcs.Checked then
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Procedures');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Procedures');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
-          fQueryWindow.meQuery.Lines.Add('drop procedure ' + ObjName + ';');
+          ObjName:= FDBRemovedObjectsList[x][i];
+          FQueryWindow.meQuery.Lines.Add('drop procedure ' + ObjName + ';');
         end;
       end
       else
       if (x = 6) and cxUDFs.Checked then
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Functions (UDFs)');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Functions (UDFs)');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
-          fQueryWindow.meQuery.Lines.Add('drop external function "' + ObjName + '";');
+          ObjName:= FDBRemovedObjectsList[x][i];
+          FQueryWindow.meQuery.Lines.Add('drop external function "' + ObjName + '";');
         end;
       end
       else
       if (x = 8) and cxDomains.Checked then
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Domains');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Domains');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
-          fQueryWindow.meQuery.Lines.Add('drop domain ' + ObjName + ';');
+          ObjName:= FDBRemovedObjectsList[x][i];
+          FQueryWindow.meQuery.Lines.Add('drop domain ' + ObjName + ';');
         end;
       end
       else
       if (x = 9) and cxRoles.Checked then
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Roles');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Roles');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
-          fQueryWindow.meQuery.Lines.Add('drop role ' + ObjName + ';');
+          ObjName:= FDBRemovedObjectsList[x][i];
+          FQueryWindow.meQuery.Lines.Add('drop role ' + ObjName + ';');
         end;
       end
       else
       if (x = 12) and cxTables.Checked then // Indices are linked to tables
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Indices');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Indices');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[x][i];
           TableName:= Copy(ObjName, 1, Pos(',', ObjName) - 1);
           System.Delete(ObjName, 1, Pos(',', ObjName));
           IndexName:= ObjName;
           dmSysTables.GetIndexInfo(cbComparedDatabase.ItemIndex, TableName, IndexName, FieldsList,
           ConstraintName, Unique, Asc, IsPrimary);
           if IsPrimary then
-            fQueryWindow.meQuery.Lines.Add('alter table ' + TableName + ' DROP constraint ' + ConstraintName + ';')
+            FQueryWindow.meQuery.Lines.Add('alter table ' + TableName + ' DROP constraint ' + ConstraintName + ';')
           else
-            fQueryWindow.meQuery.Lines.Add('drop index ' + IndexName + ';');
+            FQueryWindow.meQuery.Lines.Add('drop index ' + IndexName + ';');
         end;
       end
       else
       if (x = 13) and cxTables.Checked then // Constraints are linked to tables
       begin
-        if dbRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[x].Count > 0 then
         begin
-          fQueryWindow.meQuery.Lines.Add('');
-          fQueryWindow.meQuery.Lines.Add('-- Removed Constraints');
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Constraints');
         end;
-        for i:= 0 to dbRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
         begin
-          ObjName:= dbRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[x][i];
           TableName:= Copy(ObjName, 1, Pos(',', ObjName) - 1);
           System.Delete(ObjName, 1, Pos(',', ObjName));
           ConstraintName:= ObjName;
-          fQueryWindow.meQuery.Lines.Add('alter table ' + TableName + ' DROP constraint ' + ConstraintName + ';');
+          FQueryWindow.meQuery.Lines.Add('alter table ' + TableName + ' DROP constraint ' + ConstraintName + ';');
         end;
       end;
     end;
@@ -1756,19 +1783,19 @@ var
   i: Integer;
   Line, ATableName, AFieldName: string;
 begin
-  if RemovedFieldsList.Count > 0 then
+  if FRemovedFieldsList.Count > 0 then
   begin
-    fQueryWindow.meQuery.Lines.Add('');
-    fQueryWindow.meQuery.Lines.Add('-- Removed Fields');
+    FQueryWindow.meQuery.Lines.Add('');
+    FQueryWindow.meQuery.Lines.Add('-- Removed Fields');
   end;
 
-  for i:= 0 to RemovedFieldsList.Count - 1 do
+  for i:= 0 to FRemovedFieldsList.Count - 1 do
   begin
-    Line:= RemovedFieldsList[i];
+    Line:= FRemovedFieldsList[i];
     ATableName:= copy(Line, 1, Pos(',', Line) - 1);
     System.Delete(Line, 1, Pos(',', Line));
     AFieldName:= Line;
-    fQueryWindow.meQuery.Lines.Add('alter table ' + ATableName + ' drop ' + AFieldName + ';');
+    FQueryWindow.meQuery.Lines.Add('alter table ' + ATableName + ' drop ' + AFieldName + ';');
   end;
 
 
@@ -1792,10 +1819,10 @@ begin
 
   laScript.Enabled:= False;
   laComparedDatabase.Caption:= '[]';
-  fdbIndex:= dbIndex;
+  FDBIndex:= dbIndex;
   bbStart.Enabled:= False;
   with fmMain.RegisteredDatabases[dbIndex].RegRec do
-  laDatabase.Caption:= Title + ' (' + DatabaseName + ')';
+    laDatabase.Caption:= Title + ' (' + DatabaseName + ')';
   cbComparedDatabase.Items.Clear;
   for i:= 0 to High(fmMain.RegisteredDatabases) do
   begin
@@ -1803,33 +1830,14 @@ begin
     cbComparedDatabase.Items.Add(ServerName + '-' + fmMain.RegisteredDatabases[i].RegRec.Title);
   end;
 
-  for i:= 1 to High(dbObjectsList) do
-    dbObjectsList[i]:= TStringList.Create;
+  for i:= 1 to High(FDBObjectsList) do
+    FDBObjectsList[i]:= TStringList.Create;
 
-  for i:= 1 to High(dbExistingObjectsList) do
-    dbExistingObjectsList[i]:= TStringList.Create;
+  for i:= 1 to High(FDBExistingObjectsList) do
+    FDBExistingObjectsList[i]:= TStringList.Create;
 
-  for i:= 1 to High(dbRemovedObjectsList) do
-    dbRemovedObjectsList[i]:= TStringList.Create;
-
-  MissingFieldsList:= TStringList.Create;
-
-  ExistFieldsList:= TStringList.Create;
-  ModifiedFieldsList:= TStringList.Create;
-
-  ExistIndicesList:= TStringList.Create;
-  ModifiedIndicesList:= TStringList.Create;
-
-  ExistConstraintsList:= TStringList.Create;
-  ModifiedConstraintsList:= TStringList.Create;
-
-  ModifiedViewsList:= TStringList.Create;
-  ModifiedTriggersList:= TStringList.Create;
-  ModifiedProceduresList:= TStringList.Create;
-  ModifiedFunctionsList:= TStringList.Create;
-  ModifiedDomainsList:= TStringList.Create;
-
-  RemovedFieldsList:= TStringList.Create;
+  for i:= 1 to High(FDBRemovedObjectsList) do
+    FDBRemovedObjectsList[i]:= TStringList.Create;
 end;
 
 procedure TfmComparison.CheckMissingIndices;
@@ -1843,23 +1851,23 @@ begin
   ComparedList:= TStringList.Create;
   TablesList:= TStringList.Create;
   try
-    TablesList.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 1, Count);
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, 1, Count);
 
     meLog.Lines.Add('');
     meLog.Lines.Add('Missing Indices:');
-    dbObjectsList[12].Clear;
-    ExistIndicesList.Clear;
+    FDBObjectsList[12].Clear;
+    FExistIndicesList.Clear;
     try
       for i:= 0 to TablesList.Count - 1 do
       begin
 
         // Check for cancel button press
         Application.ProcessMessages;
-        if fCanceled then
+        if FCanceled then
           Exit;
 
         List.Clear;
-        dmSysTables.GetIndices(fdbIndex, TablesList[i], '', List);
+        dmSysTables.GetIndices(FDBIndex, TablesList[i], '', List);
         ComparedList.Clear;
         if dmSysTables.GetIndices(cbComparedDatabase.ItemIndex, TablesList[i], '', ComparedList) then
         begin
@@ -1867,19 +1875,19 @@ begin
             if ComparedList.IndexOf(List[j]) = -1 then // Add to missing indices
             begin
               meLog.Lines.Add(' ' + List[j]);
-              dbObjectsList[12].Add(TablesList[i] + ',' + List[j]);
-              Inc(DiffCount);
+              FDBObjectsList[12].Add(TablesList[i] + ',' + List[j]);
+              Inc(FDiffCount);
             end
             else
-              ExistIndicesList.Add(TablesList[i] + ',' + List[j]); // Add to existing indices list
+              FExistIndicesList.Add(TablesList[i] + ',' + List[j]); // Add to existing indices list
         end
         else // Table does not exist, all indices are missing
         if List.Count > 0 then
         for j:= 0 to List.Count - 1 do
         begin
-          dbObjectsList[12].Add(TablesList[i] + ',' + List[j]);
+          FDBObjectsList[12].Add(TablesList[i] + ',' + List[j]);
           meLog.Lines.Add(' ' + List[j]);
-          Inc(DiffCount);
+          Inc(FDiffCount);
         end;
       end;
     except
@@ -1906,23 +1914,23 @@ begin
   ComparedList:= TStringList.Create;
   TablesList:= TStringList.Create;
   try
-    TablesList.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 1, Count);
-    ExistConstraintsList.Clear;
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, 1, Count);
+    FExistConstraintsList.Clear;
 
     meLog.Lines.Add('');
     meLog.Lines.Add('Missing Constraints:');
     try
 
-      dbObjectsList[13].Clear;
+      FDBObjectsList[13].Clear;
       for i:= 0 to TablesList.Count - 1 do
       begin
 
         // Check for cancel button press
         Application.ProcessMessages;
-        if fCanceled then
+        if FCanceled then
           Exit;
 
-        dmSysTables.Init(fdbIndex);
+        dmSysTables.Init(FDBIndex);
         List.Clear;
         dmSysTables.GetTableConstraints(TablesList[i], dmSysTables.sqQuery, List);
         dmSysTables.sqQuery.Close;
@@ -1937,19 +1945,19 @@ begin
             if ComparedList.IndexOf(List[j]) = -1 then // Add to missing constraints
             begin
               meLog.Lines.Add(' ' + List[j]);
-              dbObjectsList[13].Add(TablesList[i] + ',' + List[j]);
-              Inc(DiffCount);
+              FDBObjectsList[13].Add(TablesList[i] + ',' + List[j]);
+              Inc(FDiffCount);
             end
             else
-              ExistConstraintsList.Add(TablesList[i] + ',' + List[j]);
+              FExistConstraintsList.Add(TablesList[i] + ',' + List[j]);
         end
         else // Table does not exist, all constraints are missing
         if List.Count > 0 then
         for j:= 0 to List.Count - 1 do
         begin
-          dbObjectsList[13].Add(TablesList[i] + ',' + List[j]);
+          FDBObjectsList[13].Add(TablesList[i] + ',' + List[j]);
           meLog.Lines.Add(' ' + List[j]);
-          Inc(DiffCount);
+          Inc(FDiffCount);
         end;
 
       end;

@@ -39,7 +39,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { private declarations }
-    fdbIndex: Integer;
+    FDBIndex: Integer;
   public
     procedure Init(dbIndex: Integer);
     { public declarations }
@@ -64,7 +64,7 @@ end;
 
 procedure TfmDBInfo.bbRefreshClick(Sender: TObject);
 begin
-  Init(fdbIndex);
+  Init(FDBIndex);
 end;
 
 procedure TfmDBInfo.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -94,7 +94,7 @@ var
   ServerTime: string;
   ErrorMsg: string;
 begin
-  fdbIndex:= dbIndex;
+  FDBIndex:= dbIndex;
   ProcessList:= TStringList.Create;
   try
     // Read database info

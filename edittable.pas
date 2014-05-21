@@ -28,8 +28,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure sqEditTableAfterScroll(DataSet: TDataSet);
   private
-    ibConnection: TIBConnection;
-    sqlTrans: TSQLTransaction;
+    FIBConnection: TIBConnection;
+    FSQLTrans: TSQLTransaction;
     { private declarations }
   public
     { public declarations }
@@ -48,14 +48,14 @@ procedure TfmEditTable.FormClose(Sender: TObject; var CloseAction: TCloseAction)
 begin
   sqEditTable.Close;
   CloseAction:= caFree;
-  ibConnection:= nil;
-  sqlTrans:= nil;
+  FIBConnection:= nil;
+  FSQLTrans:= nil;
 end;
 
 procedure TfmEditTable.FormCreate(Sender: TObject);
 begin
-  ibConnection:= nil;
-  sqlTrans:= nil;
+  FIBConnection:= nil;
+  FSQLTrans:= nil;
 end;
 
 procedure TfmEditTable.bbSaveClick(Sender: TObject);
@@ -65,8 +65,8 @@ begin
       sqEditTable.Post;
     if sqEditTable.Active then
       sqEditTable.ApplyUpdates;
-    if SQLTrans.Active then
-      SQLTrans.CommitRetaining;
+    if FSQLTrans.Active then
+      FSQLTrans.CommitRetaining;
   except
     on e: exception do
     begin
@@ -97,13 +97,13 @@ var
   PKField: TField;
 begin
   sqEditTable.Close;
-  if ibConnection = nil then
+  if FIBConnection = nil then
   begin
-    ibConnection:= Rec.IBConnection;
-    if not(ibConnection.Connected) then
-      ibConnection.Open;
-    sqlTrans:= Rec.SQLTrans;
-    sqEditTable.DataBase:= ibConnection;
+    FIBConnection:= Rec.IBConnection;
+    if not(FIBConnection.Connected) then
+      FIBConnection.Open;
+    FSQLTrans:= Rec.SQLTrans;
+    sqEditTable.DataBase:= FIBConnection;
   end;
   sqEditTable.SQL.Text:= 'select * from ' + ATableName;
   sqEditTable.Open; // need to have open query in order to access fields below

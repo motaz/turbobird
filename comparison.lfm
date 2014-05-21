@@ -8,6 +8,8 @@ object fmComparison: TfmComparison
   ClientWidth = 820
   KeyPreview = True
   OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
   LCLVersion = '1.2.2.0'

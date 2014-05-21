@@ -23,8 +23,8 @@ type
     FPassword: String;
     FUserName: String;
     FVerboseOutput: Boolean;
-    PServHandl: pisc_svc_handle;
-    ArrIStat: array [0..19] of ISC_STATUS;
+    FPServHandl: pisc_svc_handle;
+    FArrIStatus: array [0..19] of ISC_STATUS;
 
     procedure SetBkpName(const AValue: String);
     procedure SetDBName(const AValue: String);
@@ -44,6 +44,7 @@ type
     procedure StartBackup;
     procedure StartRestore;
     function ServiceQuery(out S: String): Boolean; //Returns True if there is more output.
+    // Runs sweep on database
     procedure StartSweep;
     function ServiceAttached: Boolean;
 
@@ -175,7 +176,7 @@ begin
   W := Length(S);
   Buff := S;
 
-  if isc_service_start(@ArrIStat, @PServHandl, nil, W, @Buff) <> 0 then
+  if isc_service_start(@FArrIStatus, @FPServHandl, nil, W, @Buff) <> 0 then
     RaiseServiceErr;
 
 end;
@@ -185,12 +186,12 @@ var
   Msg:  array [0..1023] of Char;
   Ps: PISC_STATUS;
 begin
-  Ps := @ArrIStat;
+  Ps := @FArrIStatus;
   isc_interprete(@Msg, @Ps); // Firebird interpretes the error code and
                              // turns it into a human-readable error message.
 
   raise EFBServiceError.Create(
-                   'Error: ' + IntToStr(ArrIStat[1]) + LineEnding + Msg);
+                   'Error: ' + IntToStr(FArrIStatus[1]) + LineEnding + Msg);
 end;
 
 function TFirebirdServices.ServiceQuery(out S: String): Boolean;
@@ -206,7 +207,7 @@ begin
   for I := Low(ResultBuff) to High(ResultBuff) do
     ResultBuff[I] := #0;
 
-  isc_service_query(@ArrIStat, @PServHandl, nil, 0, nil,
+  isc_service_query(@FArrIStatus, @FPServHandl, nil, 0, nil,
                      Length(S2), @RequestBuff, Length(ResultBuff), @ResultBuff);
 
   Result := False;
@@ -267,20 +268,20 @@ begin
 
   Buff := S;
 
-  if isc_service_start(@ArrIStat, @PServHandl, nil, W, @Buff) <> 0 then
+  if isc_service_start(@FArrIStatus, @FPServHandl, nil, W, @Buff) <> 0 then
     RaiseServiceErr;
 end;
 
 function TFirebirdServices.ServiceAttached: Boolean;
 begin
-  Result := PServHandl <> nil;
+  Result := FPServHandl <> nil;
 end;
 
 constructor TFirebirdServices.Create;
 begin
   inherited Create;
 
-  PServHandl := nil;
+  FPServHandl := nil;
   FVerboseOutput := True;
   FHostName := '';
   FBkpName := '';
@@ -332,7 +333,7 @@ begin
 
   Buff := S;
 
-  Result := isc_service_attach(@ArrIStat, W1, @ServiceName, @PServHandl, W2, @Buff) = 0;
+  Result := isc_service_attach(@FArrIStatus, W1, @ServiceName, @FPServHandl, W2, @Buff) = 0;
 
   if not Result then
     RaiseServiceErr;
@@ -341,12 +342,12 @@ end;
 function TFirebirdServices.DetachService: Boolean;
 begin
   Result := True;
-  if PServHandl <> nil then begin
-    Result := isc_service_detach(@ArrIStat, @PServHandl) = 0;
+  if FPServHandl <> nil then begin
+    Result := isc_service_detach(@FArrIStatus, @FPServHandl) = 0;
     if not Result then
       RaiseServiceErr;
 
-    PServHandl := nil;
+    FPServHandl := nil;
   end;
 end;
 

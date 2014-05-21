@@ -191,10 +191,10 @@ type
     procedure tvMainExpanded(Sender: TObject; Node: TTreeNode);
     procedure GlobalException(Sender: TObject; E : Exception);
   private
-    ibConnection: TIBConnection;
-    sqlTransaction: TSQLTransaction;
-    CurrentHistoryFile: string;
-    fActivated: Boolean;
+    FIBConnection: TIBConnection;
+    FSQLTransaction: TSQLTransaction;
+    FCurrentHistoryFile: string;
+    FActivated: Boolean;
     function FindCustomForm(ATitle: string; AClass: TClass): TComponent;
     procedure InitNewGen(DatabaseIndex: Integer);
     function GetServerNameNode(ServerName: string): TTreeNode;
@@ -304,7 +304,7 @@ begin
   SetDebuggingEnabled(false);
   {$ENDIF}
   Application.OnException:= @GlobalException;
-  fActivated:= False;
+  FActivated:= False;
   LoadRegisteredDatabases;
   StatusBar1.Panels[0].Text:= 'TurboBird for ' + Target + '-' + Arch;
 end;
@@ -584,7 +584,7 @@ end;
 
 procedure TfmMain.FormActivate(Sender: TObject);
 begin
-  fActivated:= True;
+  FActivated:= True;
 end;
 
 
@@ -1171,13 +1171,13 @@ begin
   try
     AQuery.Close;
 
-    if ibConnection <> RegisteredDatabases[DatabaseIndex].IBConnection then
+    if FIBConnection <> RegisteredDatabases[DatabaseIndex].IBConnection then
     begin
-      ibConnection:= RegisteredDatabases[DatabaseIndex].IBConnection;
-      sqlTransaction:= RegisteredDatabases[DatabaseIndex].SQLTrans;
+      FIBConnection:= RegisteredDatabases[DatabaseIndex].IBConnection;
+      FSQLTransaction:= RegisteredDatabases[DatabaseIndex].SQLTrans;
     end;
-    AQuery.DataBase:= ibConnection;
-    sqlTransaction.Commit;
+    AQuery.DataBase:= FIBConnection;
+    FSQLTransaction.Commit;
 
     Form.sgIndices.RowCount:= 1;
 
@@ -1384,22 +1384,22 @@ end;
 
 procedure TfmMain.SetConnection(Index: Integer);
 begin
-  if ibConnection <> RegisteredDatabases[Index].IBConnection then
+  if FIBConnection <> RegisteredDatabases[Index].IBConnection then
   begin
-    ibConnection:= RegisteredDatabases[Index].IBConnection;
-    // This used to say ibConnection.Close which will simply also close all open
+    FIBConnection:= RegisteredDatabases[Index].IBConnection;
+    // This used to say FIBConnection.Close which will simply also close all open
     // queries - not a good idea
-    //ibConnection.Close;
-    sqlTransaction:= RegisteredDatabases[Index].SQLTrans;
-    ibConnection.Transaction:= sqlTransaction;
-    SQLQuery1.DataBase:= ibConnection;
-    SQLQuery1.Transaction:= sqlTransaction;
+    //FIBConnection.Close;
+    FSQLTransaction:= RegisteredDatabases[Index].SQLTrans;
+    FIBConnection.Transaction:= FSQLTransaction;
+    SQLQuery1.DataBase:= FIBConnection;
+    SQLQuery1.Transaction:= FSQLTransaction;
   end;
 end;
 
 procedure TfmMain.SetFocus;
 begin
-  if not fActivated then
+  if not FActivated then
     inherited SetFocus;
 end;
 
@@ -1439,7 +1439,7 @@ begin
       begin
         mdsHistory.AppendRecord([Now, SQLType, SQLStatement, 0]);
         if SQLType = 'DDL' then
-          mdsHistory.SaveToFile(CurrentHistoryFile);
+          mdsHistory.SaveToFile(FCurrentHistoryFile);
       end;
     end;
 
@@ -1456,7 +1456,7 @@ function TfmMain.SaveAndCloseSQLHistory: Boolean;
 begin
   try
     if mdsHistory.Active then
-      mdsHistory.SaveToFile(CurrentHistoryFile);
+      mdsHistory.SaveToFile(FCurrentHistoryFile);
 
     mdsHistory.Close;
     Result:= True;
@@ -1482,10 +1482,10 @@ begin
     AFileName:= getConfigurationDirectory + LowerCase(RemoveSpecialChars(DatabaseTitle)) + '.history';
 
     // Different opened history file
-    if mdsHistory.Active and (AFileName <> CurrentHistoryFile) then
+    if mdsHistory.Active and (AFileName <> FCurrentHistoryFile) then
     begin
-      if CurrentHistoryFile <> '' then
-        mdsHistory.SaveToFile(CurrentHistoryFile);
+      if FCurrentHistoryFile <> '' then
+        mdsHistory.SaveToFile(FCurrentHistoryFile);
        mdsHistory.Close;
     end;
 
@@ -1511,7 +1511,7 @@ begin
       for i:= 1 to 2 do
         mdsHistory.Delete;
     end;
-    CurrentHistoryFile:= AFileName;
+    FCurrentHistoryFile:= AFileName;
     Result:= True;
   except
     on e: exception do
@@ -2503,7 +2503,7 @@ begin
   SQLQuery1.Close;
   Rec:= RegisteredDatabases[DatabaseIndex];
   SetConnection(DatabaseIndex);
-  sqlTransaction.Commit;
+  FSQLTransaction.Commit;
   SQLQuery1.SQL.Text:= format(QueryTemplate,[ATableName]);
   SQLQuery1.Open;
   // Fill field list if needed
@@ -2711,7 +2711,7 @@ begin
 
     SQLQuery1.ExecSQL;
     Result:= True;
-    SQLTransaction.Commit;
+    FSQLTransaction.Commit;
     AddToSQLHistory(Rec.RegRec.Title, 'DDL', SQLQuery1.SQL.Text);
 
   except
@@ -2818,7 +2818,7 @@ begin
     on e: exception do
     begin
       ShowMessage(e.Message);
-      IBConnection.Close;
+      FIBConnection.Close;
       Result:= False;
     end;
   end;

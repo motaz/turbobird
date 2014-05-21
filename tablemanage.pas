@@ -82,10 +82,10 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
-    fdbIndex: Integer;
-    fTableName: string;
-    ibConnection: TIBConnection;
-    sqlTrans: TSQLTransaction;
+    FDBIndex: Integer;
+    FTableName: string;
+    FIBConnection: TIBConnection;
+    FSQLTrans: TSQLTransaction;
   public
     PKeyName, ConstraintName: string;
     procedure Init(dbIndex: Integer; TableName: string);
@@ -142,7 +142,7 @@ begin
     DefaultValue:= Cells[5, Row];
     Description:= Cells[6, Row];
     FieldOrder:= Row;
-    fmNewEditField.Init(fdbIndex, fTableName, foEdit, FieldName, FieldType, DefaultValue, Description, FieldSize,
+    fmNewEditField.Init(FDBIndex, FTableName, foEdit, FieldName, FieldType, DefaultValue, Description, FieldSize,
       FieldOrder, AllowNull, bbRefresh);
 
     Caption:= 'Edit field: ' + OldFieldName;
@@ -161,8 +161,8 @@ begin
     List:= TStringList.Create;
     try
       ATriggerName:= sgTriggers.Cells[0, sgTriggers.Row];
-      dmSysTables.ScriptTrigger(fdbIndex, ATriggerName, List);
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Edit Trigger ', List.Text, bbRefreshTriggers.OnClick);
+      dmSysTables.ScriptTrigger(FDBIndex, ATriggerName, List);
+      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Edit Trigger ', List.Text, bbRefreshTriggers.OnClick);
     finally
       List.Free;
     end;
@@ -179,10 +179,10 @@ begin
         [mbYes, mbNo], 0) = mrYes) then
     begin
       if Cells[0, Row] = PKeyName then // Delete primary key
-        fmMain.ShowCompleteQueryWindow(fdbIndex,  'Drop Primary Key on Table: ' + fTableName,
-          'alter table ' + fTableName + ' DROP CONSTRAINT ' + ConstraintName, bbRefreshIndices.OnClick)
+        fmMain.ShowCompleteQueryWindow(FDBIndex,  'Drop Primary Key on Table: ' + FTableName,
+          'alter table ' + FTableName + ' DROP CONSTRAINT ' + ConstraintName, bbRefreshIndices.OnClick)
       else // Delete normal index
-        fmMain.ShowCompleteQueryWindow(fdbIndex, 'Drop Index on table: ' + fTableName,
+        fmMain.ShowCompleteQueryWindow(FDBIndex, 'Drop Index on table: ' + FTableName,
           'DROP INDEX ' + Cells[0, Row], bbRefreshIndices.OnClick);
     end;
   end;
@@ -198,8 +198,8 @@ begin
     ConstName:= sgConstraints.Cells[0, sgConstraints.Row];
     if MessageDlg('Are you sure you want to drop ' + ConstName, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
-      QWindow:= fmMain.ShowQueryWindow(fdbIndex, 'drop constraint: ' + ConstName);
-      QWindow.meQuery.Lines.Text:= 'ALTER TABLE ' + fTableName + ' DROP CONSTRAINT ' + ConstName;
+      QWindow:= fmMain.ShowQueryWindow(FDBIndex, 'drop constraint: ' + ConstName);
+      QWindow.meQuery.Lines.Text:= 'ALTER TABLE ' + FTableName + ' DROP CONSTRAINT ' + ConstName;
       fmMain.Show;
       QWindow.OnCommit:= bbRefreshConstraint.OnClick;
     end;
@@ -214,7 +214,7 @@ begin
     (MessageDlg('Are You sure to drop this trigger', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     ATriggerName:= sgTriggers.Cells[0, sgTriggers.Row];
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Drop Trigger : ' + ATriggerName,
+      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Drop Trigger : ' + ATriggerName,
         'drop trigger ' + ATriggerName, bbRefreshTriggers.OnClick);
 
   end;
@@ -240,12 +240,12 @@ begin
     MessageDlg('Error', 'Your should enter new index name', mtError, [mbOk], 0)
   else
   begin
-    QWindow:= fmMain.ShowQueryWindow(fdbIndex, 'Create new index');
+    QWindow:= fmMain.ShowQueryWindow(FDBIndex, 'Create new index');
     QWindow.meQuery.Lines.Clear;
 
     if cbIndexType.ItemIndex = 0 then // primary key
     begin
-      QWindow.meQuery.Lines.Text:= 'alter table ' + fTableName + LineEnding +
+      QWindow.meQuery.Lines.Text:= 'alter table ' + FTableName + LineEnding +
       'add constraint ' + edIndexName.Text + LineEnding +
       'primary key (' + Fields + ')';
     end
@@ -255,7 +255,7 @@ begin
       if cxUnique.Checked then
         FirstLine:= FirstLine + 'unique ';
       FirstLine:= FirstLine + cbSortType.Text + ' index ' + edIndexName.Text;
-      QWindow.meQuery.Lines.Text:= FirstLine + LineEnding + 'on ' + fTableName + LineEnding + Fields;
+      QWindow.meQuery.Lines.Text:= FirstLine + LineEnding + 'on ' + FTableName + LineEnding + Fields;
     end;
 
     QWindow.OnCommit:= bbRefreshIndices.OnClick;
@@ -268,7 +268,7 @@ var
   fmPermissions: TfmPermissionManage;
 begin
   fmPermissions:= TfmPermissionManage.Create(nil);
-  fmPermissions.Init(fdbIndex, fTableName, '', 1, bbRefreshPermissions.OnClick);
+  fmPermissions.Init(FDBIndex, FTableName, '', 1, bbRefreshPermissions.OnClick);
   fmPermissions.Show;
 end;
 
@@ -285,8 +285,8 @@ begin
   fmNewEditField:= TfmNewEditField.Create(nil);
   with fmNewEditField do
   begin
-    Init(fdbIndex, fTableName, foNew, '', '', '', '', 0, 0, True, bbRefresh);
-    Caption:= 'Add new field on Table: ' + fTableName;
+    Init(FDBIndex, FTableName, foNew, '', '', '', '', 0, 0, True, bbRefresh);
+    Caption:= 'Add new field on Table: ' + FTableName;
     Show;
   end;
 end;
@@ -299,21 +299,21 @@ begin
   // Get current fields
   FieldsList:= TStringList.Create;
   try
-    fmMain.GetFields(fdbIndex, fTableName, FieldsList);
+    fmMain.GetFields(FDBIndex, FTableName, FieldsList);
     fmNewConstraint.clxOnFields.Clear;
     fmNewConstraint.clxOnFields.Items.AddStrings(FieldsList);
   finally
     FieldsList.Free;
   end;
   fmMain.SQLQuery1.Close;
-  fmNewConstraint.edNewName.Text:= 'FK_' + fTableName + '_' + IntToStr(sgConstraints.RowCount);
+  fmNewConstraint.edNewName.Text:= 'FK_' + FTableName + '_' + IntToStr(sgConstraints.RowCount);
 
   // Foreign tables
-  fmNewConstraint.cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(fdbIndex, 1, Count);
-  fmNewConstraint.DatabaseIndex:= fdbIndex;
+  fmNewConstraint.cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, 1, Count);
+  fmNewConstraint.DatabaseIndex:= FDBIndex;
 
-  fmNewConstraint.laTable.Caption:= fTableName;
-  fmNewConstraint.Caption:= 'New Constraint for : ' + fTableName;
+  fmNewConstraint.laTable.Caption:= FTableName;
+  fmNewConstraint.Caption:= 'New Constraint for : ' + FTableName;
   if fmNewConstraint.ShowModal = mrOK then
   begin
     fmNewConstraint.QWindow.OnCommit:= bbRefreshConstraint.OnClick;
@@ -322,27 +322,27 @@ end;
 
 procedure TfmTableManage.bbNewTriggerClick(Sender: TObject);
 begin
-  fmMain.CreateNewTrigger(fdbIndex, fTableName, bbRefreshTriggers.OnClick);
+  fmMain.CreateNewTrigger(FDBIndex, FTableName, bbRefreshTriggers.OnClick);
 end;
 
 procedure TfmTableManage.bbRefreshClick(Sender: TObject);
 begin
-  fmMain.ViewTableFields(fTableName, fdbIndex, sgFields);
+  fmMain.ViewTableFields(FTableName, FDBIndex, sgFields);
   Parent.Show;
   Show;
 end;
 
 procedure TfmTableManage.bbRefreshConstraintClick(Sender: TObject);
 begin
-  SQLTrans.Commit;
-  fmMain.FillAndShowConstraintsForm(Self, fTableName, fdbIndex);
+  FSQLTrans.Commit;
+  fmMain.FillAndShowConstraintsForm(Self, FTableName, FDBIndex);
   Parent.Show;
   Show;
 end;
 
 procedure TfmTableManage.bbRefreshIndicesClick(Sender: TObject);
 begin
-  fmMain.ShowIndicesManagement(Self, fdbIndex, fTableName);
+  fmMain.ShowIndicesManagement(Self, FDBIndex, FTableName);
   Parent.Show;
   Show;
 end;
@@ -356,7 +356,7 @@ end;
 
 procedure TfmTableManage.bbRefreshTriggersClick(Sender: TObject);
 begin
-  SQLTrans.Commit;
+  FSQLTrans.Commit;
   ViewTriggers;
   Parent.Show;
   Show;
@@ -364,9 +364,9 @@ end;
 
 procedure TfmTableManage.bbRefreshReferencesClick(Sender: TObject);
 begin
-  SQLTrans.Commit;
-  dmSysTables.Init(fdbIndex);
-  dmSysTables.GetConstraintsOfTable(fTableName, SQLQuery1);
+  FSQLTrans.Commit;
+  dmSysTables.Init(FDBIndex);
+  dmSysTables.GetConstraintsOfTable(FTableName, SQLQuery1);
   sgReferences.RowCount:= 1;
 
   SQLQuery1.First;
@@ -388,8 +388,8 @@ end;
 procedure TfmTableManage.cbIndexTypeChange(Sender: TObject);
 begin
   case cbIndexType.ItemIndex of
-    0: edIndexName.Text:= 'PK_' + fTableName + '_1';
-    1: edIndexName.Text:= 'IX_' + fTableName + '_' + IntToStr(sgIndices.RowCount);
+    0: edIndexName.Text:= 'PK_' + FTableName + '_1';
+    1: edIndexName.Text:= 'IX_' + FTableName + '_' + IntToStr(sgIndices.RowCount);
   end;
 end;
 
@@ -398,7 +398,7 @@ begin
   if MessageDlg('Are you sure you want to delete the field: ' + sgFields.Cells[1, sgFields.Row] +
     ' with its data', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
-      fmMain.ShowCompleteQueryWindow(fdbIndex, 'Drop field', 'ALTER TABLE ' + fTableName + ' DROP ' +
+      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Drop field', 'ALTER TABLE ' + FTableName + ' DROP ' +
         sgFields.Cells[1, sgFields.Row], @bbRefreshClick);
     end;
 end;
@@ -415,7 +415,7 @@ begin
     else
       UserType:= 2;
     fmPermissions:= TfmPermissionManage.Create(nil);
-    fmPermissions.Init(fdbIndex, fTableName, sgPermissions.Cells[0, sgPermissions.Row], UserType, @bbRefreshPermissionsClick);
+    fmPermissions.Init(FDBIndex, FTableName, sgPermissions.Cells[0, sgPermissions.Row], UserType, @bbRefreshPermissionsClick);
     fmPermissions.Show;
   end
   else
@@ -426,19 +426,19 @@ end;
 procedure TfmTableManage.Init(dbIndex: Integer; TableName: string);
 begin
   try
-    fdbIndex:= dbIndex;
-    fTableName:= TableName;
+    FDBIndex:= dbIndex;
+    FTableName:= TableName;
     with fmMain do
     begin
-      ibConnection:= RegisteredDatabases[dbIndex].IBConnection;
-      ibConnection.Close;
-      sqlTrans:= RegisteredDatabases[dbIndex].SQLTrans;
-      ibConnection.Transaction:= sqlTrans;
+      FIBConnection:= RegisteredDatabases[dbIndex].IBConnection;
+      FIBConnection.Close;
+      FSQLTrans:= RegisteredDatabases[dbIndex].SQLTrans;
+      FIBConnection.Transaction:= FSQLTrans;
     end;
     SQLQuery1.Close;
-    SQLQuery1.DataBase:= ibConnection;
+    SQLQuery1.DataBase:= FIBConnection;
     SQLQuery2.Close;
-    SQLQuery2.DataBase:= ibConnection;
+    SQLQuery2.DataBase:= FIBConnection;
 
   except
     on e: exception do
@@ -451,7 +451,7 @@ end;
 procedure TfmTableManage.FillConstraints(dbIndex: Integer);
 begin
   SQLQuery1.First;
-  fdbIndex:= dbIndex;
+  FDBIndex:= dbIndex;
   sgConstraints.RowCount:= 1;
   with sgConstraints do
   // SQLQuery1 should have been filled by GetTableConstraints
@@ -475,7 +475,7 @@ procedure TfmTableManage.ViewTriggers;
 begin
   SQLQuery1.Close;
   SQLQuery1.SQL.Text:= 'SELECT RDB$Trigger_Name, RDB$Trigger_Inactive FROM RDB$TRIGGERS WHERE RDB$SYSTEM_FLAG=0 ' +
-    'and RDB$Relation_Name = ''' + fTableName + '''';
+    'and RDB$Relation_Name = ''' + FTableName + '''';
   SQLQuery1.Open;
   sgTriggers.RowCount:= 1;
   with sgTriggers, SQLQuery1 do
@@ -500,10 +500,10 @@ var
   ObjType: Integer;
   Permissions: string;
 begin
-  sqlTrans.Commit;
+  FSQLTrans.Commit;
   UsersList:= TStringList.Create;
   try
-    UsersList.CommaText:= dmSysTables.GetDBUsers(fdbIndex, fTableName);
+    UsersList.CommaText:= dmSysTables.GetDBUsers(FDBIndex, FTableName);
     sgPermissions.RowCount:= UsersList.Count + 1;
     for i:= 0 to UsersList.Count - 1 do
     begin
@@ -519,7 +519,7 @@ begin
       sgPermissions.Cells[0, i + 1]:= UserName;
 
       // Permissions
-      Permissions:= dmSysTables.GetObjectUserPermission(fdbIndex, fTableName, UserName, ObjType);
+      Permissions:= dmSysTables.GetObjectUserPermission(FDBIndex, FTableName, UserName, ObjType);
 
       if Pos('S', Permissions) > 0 then
         sgPermissions.Cells[2, i + 1]:= '1'

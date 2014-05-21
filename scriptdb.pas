@@ -57,7 +57,7 @@ implementation
 
 uses SysTables, Main;
 
-// Tries to guess if a constraint name is system-generated.
+// Indicates if a constraint name is system-generated.
 function IsConstraintSystemGenerated(ConstraintName: string): boolean;
 begin
   { Unfortunately there does not seem to be a way to search the system tables
