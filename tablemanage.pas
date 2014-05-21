@@ -181,8 +181,8 @@ begin
       if Cells[0, Row] = PKeyName then // Delete primary key
         fmMain.ShowCompleteQueryWindow(fdbIndex,  'Drop Primary Key on Table: ' + fTableName,
           'alter table ' + fTableName + ' DROP constraint ' + ConstraintName, bbRefreshIndices.OnClick)
-      else // Delete secondary key
-        fmMain.ShowCompleteQueryWindow(fdbIndex, 'Drop Secondary Index on table: ' + fTableName,
+      else // Delete normal index
+        fmMain.ShowCompleteQueryWindow(fdbIndex, 'Drop Index on table: ' + fTableName,
           'DROP INDEX ' + Cells[0, Row], bbRefreshIndices.OnClick);
     end;
   end;
@@ -249,7 +249,7 @@ begin
       'add constraint ' + edIndexName.Text + LineEnding +
       'primary key (' + Fields + ')';
     end
-    else    // Secondary index
+    else    // Normal index
     begin
       FirstLine:= 'create ';
       if cxUnique.Checked then
