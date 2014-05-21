@@ -8,8 +8,7 @@ uses
   Classes, SysUtils, IBConnection, db, sqldb, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
-  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType, modsqlscript,
-  dbugintf;
+  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType, modsqlscript,dbugintf;
 
 type
 

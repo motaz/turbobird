@@ -145,13 +145,12 @@ begin
     Write(F, Rec);
     CloseFile(F);
     Result:= True;
-
   except
-  on e: exception do
-  begin
-    Result:= False;
-    ShowMessage('Error: ' + e.Message);
-  end;
+    on e: exception do
+    begin
+      Result:= False;
+      ShowMessage('Error: ' + e.Message);
+    end;
   end;
 end;
 
@@ -185,13 +184,12 @@ begin
     Write(F, Rec);
     CloseFile(F);
     Result:= True;
-
   except
-  on e: exception do
-  begin
-    Result:= False;
-    ShowMessage('Error: ' + e.Message);
-  end;
+    on e: exception do
+    begin
+      Result:= False;
+      ShowMessage('Error: ' + e.Message);
+    end;
   end;
 end;
 

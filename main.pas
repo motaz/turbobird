@@ -287,8 +287,8 @@ uses CreateDb, ViewView, ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen,
 
 function SystemGeneratedFieldDomain(FieldSource: string): boolean;
 begin
-  { todo: find a way to search the system tables and make sure the constraint name
-  is system-generated}
+  // Unfortunately there does not seem to be a way to search the system tables to find out
+  // if the constraint name is system-generated
   result:=(pos('RDB$',uppercase(Trim(FieldSource)))=1);
 end;
 
@@ -4151,7 +4151,7 @@ function TfmMain.GetFBTypeName(Index: Integer;
   Precision: integer=-1; Scale: integer=-1
   ): string;
 begin
-  //todo: add Firebird 3.0 beta BOOLEAN datatype number
+  //todo (low priority): add Firebird 3.0 beta BOOLEAN datatype number
   case Index of
     // See also
     // http://firebirdsql.org/manual/migration-mssql-data-types.html
