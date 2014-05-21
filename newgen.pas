@@ -96,7 +96,7 @@ begin
     cbFields.Clear;
     while not fmMain.SQLQuery1.EOF do
     begin
-      FType:= fmMain.GetFBTypeName(fmMain.SQLQuery1.FieldByName('Field_Type').AsInteger,
+      FType:= fmMain.GetFBTypeName(fmMain.SQLQuery1.FieldByName('Field_Type_Int').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_sub_type').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_length').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_precision').AsInteger,
