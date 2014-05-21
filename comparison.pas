@@ -1830,13 +1830,13 @@ begin
     cbComparedDatabase.Items.Add(ServerName + '-' + fmMain.RegisteredDatabases[i].RegRec.Title);
   end;
 
-  for i:= 1 to High(FDBObjectsList) do
+  for i:= Low(FDBObjectsList) to High(FDBObjectsList) do
     FDBObjectsList[i]:= TStringList.Create;
 
-  for i:= 1 to High(FDBExistingObjectsList) do
+  for i:= Low(FDBExistingObjectsList) to High(FDBExistingObjectsList) do
     FDBExistingObjectsList[i]:= TStringList.Create;
 
-  for i:= 1 to High(FDBRemovedObjectsList) do
+  for i:= Low(FDBRemovedObjectsList) to High(FDBRemovedObjectsList) do
     FDBRemovedObjectsList[i]:= TStringList.Create;
 end;
 

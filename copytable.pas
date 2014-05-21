@@ -167,9 +167,7 @@ begin
     end;
   end;
 
-
   dmSysTables.sqQuery.Close;
-
 end;
 
 procedure TfmCopyTable.Init(SourceIndex: Integer; ATableName: string);
@@ -177,7 +175,7 @@ var
   i: Integer;
   Count: Integer;
 begin
-  dmSysTables.sqQuery.Close;
+  dmSysTables.sqQuery.Close; //todo: (low priority) is this really necessary?
   FSourceIndex:= SourceIndex;
   laSourceDatabase.Caption:= fmMain.RegisteredDatabases[SourceIndex].RegRec.Title;
   cbDestDatabase.Clear;

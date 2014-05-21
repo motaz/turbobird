@@ -43,7 +43,7 @@ type
     OldAllowNull: Boolean;
     OldOrder: Integer;
     OldDefault: string;
-    OldDesciption: string;
+    OldDescription: string;
     procedure Init(dbIndex: Integer; TableName: string; FormMode: TFormMode;
       FieldName, FieldType, DefaultValue, Description: string; FSize, FOrder: Integer; AllowNull: Boolean; RefreshButton: TBitBtn);
 
@@ -130,7 +130,7 @@ begin
     end;
 
     // Description
-    if edDescription.Text <> OldDesciption then
+    if edDescription.Text <> OldDescription then
     begin
       Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$DESCRIPTION = ''' + edDescription.Text +
         '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
@@ -184,7 +184,7 @@ begin
   OldAllowNull:= AllowNull;
   OldOrder:= FOrder;
   OldDefault:= DefaultValue;
-  OldDesciption:= Description;
+  OldDescription:= Description;
 
   edFieldName.Text:= OldFieldName;
   seSize.Value:= OldFieldSize;
@@ -192,7 +192,7 @@ begin
   cxAllowNull.Checked:= OldAllowNull;
   seOrder.Value:= OldOrder;
   edDefault.Text:= OldDefault;
-  edDescription.Text:= OldDesciption;
+  edDescription.Text:= OldDescription;
   if FormMode = foEdit then
   begin
     bbAdd.Caption:= 'Update';
@@ -203,7 +203,6 @@ begin
     bbAdd.Caption:= 'Add';
     Caption:= 'Add new in : ' + TableName;
   end;
-
 end;
 
 initialization

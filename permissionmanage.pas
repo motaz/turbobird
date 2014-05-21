@@ -575,13 +575,11 @@ begin
   cbProcUsers.Items.CommaText:= cbUsers.Items.CommaText;
   cbViewsUsers.Items.CommaText:= cbUsers.Items.CommaText;
 
-
-
   // Update table permissions
   UpdatePermissions;
 
   // stored procedures
-  UPdateProcPermissions;
+  UpdateProcPermissions;
 
   // Roles
   clbRoles.Clear;

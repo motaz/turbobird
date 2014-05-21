@@ -91,7 +91,6 @@ begin
   FSQLTrans:= fmMain.RegisteredDatabases[dbIndex].SQLTrans;
   sqEditTable.DataBase:= FIBConnection;
 
-
   sqEditTable.SQL.Text:= 'select * from ' +  ATableName;
   sqEditTable.Open;
   bbSave.Visible:= true;

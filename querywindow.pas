@@ -998,7 +998,7 @@ begin
   FRegRec:= fmMain.RegisteredDatabases[dbIndex].RegRec;
 
   // Set instances of FIBConnection and SQLTransaction for the current Query Window
-  setTransactionIsolation(FSQLTrans.Params);
+  SetTransactionIsolation(FSQLTrans.Params);
   FSQLTrans.DataBase:= FIBConnection;
 
   // Set connection parameters to FIBConnection
@@ -1011,7 +1011,7 @@ begin
     Self.FIBConnection.Role:= RegRec.Role;
   end;
 
-  // Get current database tables to be hilighted in SQL query editor
+  // Get current database tables to be highlighted in SQL query editor
   SynSQLSyn1.TableNames.CommaText:= fmMain.GetTableNames(dbIndex);
   SynCompletion1.ItemList.AddStrings(SynSQLSyn1.TableNames);
   SortSynCompletion;

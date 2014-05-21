@@ -439,7 +439,6 @@ begin
     SQLQuery1.DataBase:= FIBConnection;
     SQLQuery2.Close;
     SQLQuery2.DataBase:= FIBConnection;
-
   except
     on e: exception do
     begin
