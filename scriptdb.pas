@@ -308,26 +308,29 @@ begin
 
     // Primary Keys
     PKFieldsList:= TStringList.Create;
-    PKeyIndexName:= fmMain.GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
-    if PKeyIndexName <> '' then
-    begin
-      fmMain.GetConstraintFields(ATableName, PKeyIndexName, PKFieldsList);
-      // Follow isql -x (not FlameRobin) by omitting system-generated
-      // constraint names and let the system generate its own names
-      if IsConstraintSystemGenerated(ConstraintName) then
-        FieldLine:= ' primary key ('
-      else // User-specified, so explicilty mention constraint name
-        FieldLine:= 'constraint ' + ConstraintName + ' primary key (';
-      for i:= 0 to PKFieldsList.Count - 1 do
-        FieldLine:= FieldLine + PKFieldsList[i] + ', ';
-      if PKFieldsList.Count > 0 then
+    try
+      PKeyIndexName:= fmMain.GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
+      if PKeyIndexName <> '' then
       begin
-        Delete(FieldLine, Length(FieldLine) - 1, 2);
-        FieldLine:= FieldLine + ')';
-        ScriptList.Add(', ' + FieldLine);
+        fmMain.GetConstraintFields(ATableName, PKeyIndexName, PKFieldsList);
+        // Follow isql -x (not FlameRobin) by omitting system-generated
+        // constraint names and let the system generate its own names
+        if IsConstraintSystemGenerated(ConstraintName) then
+          FieldLine:= ' primary key ('
+        else // User-specified, so explicilty mention constraint name
+          FieldLine:= 'constraint ' + ConstraintName + ' primary key (';
+        for i:= 0 to PKFieldsList.Count - 1 do
+          FieldLine:= FieldLine + PKFieldsList[i] + ', ';
+        if PKFieldsList.Count > 0 then
+        begin
+          Delete(FieldLine, Length(FieldLine) - 1, 2);
+          FieldLine:= FieldLine + ')';
+          ScriptList.Add(', ' + FieldLine);
+        end;
       end;
+    finally
+      PKFieldsList.Free;
     end;
-
     ScriptList.Add(');');
     ScriptList.Add(CalculatedList.Text);
   finally
