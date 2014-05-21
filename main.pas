@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, IBConnection, sqldb, memds, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
-  ExtCtrls, Buttons, StdCtrls, TableManage,dbugintf;
+  ExtCtrls, Buttons, StdCtrls, TableManage,dbugintf, turbocommon;
 
 {$i turbocommon.inc}
 
@@ -264,7 +264,6 @@ type
     function Is64bit: Boolean;
     function Is32bit: Boolean;
     function getConfigurationDirectory: string;
-    procedure setTransactionIsolation(Params: TStringList);
   end;
 
 
@@ -783,14 +782,6 @@ begin
   end
   else
     ExtractFilePath(ParamStr(0));
-end;
-
-procedure TfmMain.setTransactionIsolation(Params: TStringList);
-begin
-  Params.Clear;
-  Params.Add('isc_tpb_read_commited');
-  Params.Add('isc_tpb_concurrency');
-  Params.Add('isc_tpb_nowait');
 end;
 
 (****************  Fill and show constraints form ************************)
@@ -3975,7 +3966,7 @@ begin
             ibConnection.LogEvents:=[detCustom,detExecute,detCommit,detRollBack];
             {$ENDIF DEBUG}
             SQLTrans:= TSQLTransaction.Create(nil);
-            setTransactionIsolation(SQLTrans.Params);
+            SetTransactionIsolation(SQLTrans.Params);
 
             IBConnection.Transaction:= SQLTrans;
             SQLTrans.DataBase:= IBConnection;

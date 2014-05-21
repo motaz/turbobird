@@ -23,7 +23,7 @@ uses
   UserPermissions, TableManage, BackupRestore, CreateUser, ChangePass,
   PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo,
   sysutils, Comparison, Update, topologicalsort, UnitFirebirdServices, 
-trunksqlscript;
+trunksqlscript, turbocommon;
 
 const
   Major = 1;

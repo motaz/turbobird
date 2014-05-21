@@ -8,7 +8,8 @@ uses
   Classes, SysUtils, IBConnection, db, sqldb, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
-  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType, modsqlscript,dbugintf;
+  SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType,
+  modsqlscript, dbugintf, turbocommon;
 
 type
 
@@ -997,7 +998,7 @@ begin
   FRegRec:= fmMain.RegisteredDatabases[dbIndex].RegRec;
 
   // Set instances of FIBConnection and SQLTransaction for the current Query Window
-  fmMain.setTransactionIsolation(FSQLTrans.Params);
+  setTransactionIsolation(FSQLTrans.Params);
   FSQLTrans.DataBase:= FIBConnection;
 
   // Set connection parameters to FIBConnection
