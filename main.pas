@@ -415,7 +415,7 @@ begin
     if fmComparison = nil then
     begin
       fmComparison:= TfmComparison.Create(Application);
-      ATab:= TTabSheet.Create(nil);
+      ATab:= TTabSheet.Create(self);
       ATab.Parent:= PageControl1;
       fmComparison.Parent:= ATab;
       fmComparison.Left:= 0;
@@ -487,7 +487,7 @@ begin
   if fmDBInfo = nil then
   begin
     fmDBInfo:= TfmDBInfo.Create(Application);
-    ATab:= TTabSheet.Create(nil);
+    ATab:= TTabSheet.Create(self);
     ATab.Parent:= PageControl1;
     fmDBInfo.Parent:= ATab;
     fmDBInfo.Left:= 0;
@@ -1580,7 +1580,7 @@ begin
   if Form = nil then
   begin
     Form:= TfmNewTable.Create(Application);
-    ATab:= TTabSheet.Create(nil);
+    ATab:= TTabSheet.Create(self);
     ATab.Parent:= PageControl1;
     Form.Parent:= ATab;
     Form.Caption:= Title;
@@ -1691,7 +1691,7 @@ begin
     if Form = nil then
     begin
       Form:= TfmUserPermissions.Create(Application);
-      ATab:= TTabSheet.Create(nil);
+      ATab:= TTabSheet.Create(self);
       ATab.Parent:= PageControl1;
       Form.Parent:= ATab;
       Form.Caption:= Title;
@@ -1770,7 +1770,7 @@ begin
   if fmPermissions = nil then
   begin
     fmPermissions:= TfmPermissionManage.Create(nil);
-    ATab:= TTabSheet.Create(nil);
+    ATab:= TTabSheet.Create(self);
     ATab.Parent:= PageControl1;
     fmPermissions.Parent:= ATab;
     fmPermissions.Left:= 0;
@@ -2350,7 +2350,7 @@ begin
     if fmTableManage = nil then
     begin
       fmTableManage:= TfmTableManage.Create(Application);
-      ATab:= TTabSheet.Create(nil);
+      ATab:= TTabSheet.Create(self);
       ATab.Parent:= PageControl1;
       fmTableManage.Parent:= ATab;
       fmTableManage.Left:= 0;
@@ -2421,7 +2421,7 @@ begin
     if ADomainForm  = nil then
     begin
       ADomainForm:= TfmViewDomain.Create(Application);
-      ATab:= TTabSheet.Create(nil);
+      ATab:= TTabSheet.Create(self);
       ATab.Parent:= PageControl1;
       ADomainForm.Parent:= ATab;
       ADomainForm.Left:= 0;
@@ -2833,7 +2833,7 @@ begin
   begin
     // No opened query window
     Result:= TfmQueryWindow.Create(Application);
-    ATab:= TTabSheet.Create(nil);
+    ATab:= TTabSheet.Create(self);
     ATab.Parent:= PageControl1;
     ATab.Caption:= ACaption;
     Result.Parent:= ATab;
@@ -3200,7 +3200,7 @@ begin
     AViewName:= SelNode.Text;
 
     // Fill ViewView grid
-    ATab:= TTabSheet.Create(nil);
+    ATab:= TTabSheet.Create(self);
     ATab.Parent:= PageControl1;
     fmViewView:= TfmViewView.Create(nil);
     fmViewView.Parent:= ATab;
@@ -3334,7 +3334,7 @@ begin
     if fmViewGen = nil then
     begin
       fmViewGen:= TfmViewGen.Create(Application);
-      ATab:= TTabSheet.Create(nil);
+      ATab:= TTabSheet.Create(self);
       ATab.Parent:= PageControl1;
       fmViewGen.Parent:= ATab;
       fmViewGen.Left:= 0;
@@ -3384,7 +3384,7 @@ begin
     if fmViewSProc = nil then
     begin
       fmViewSProc:= TfmViewSProc.Create(Application);
-      ATab:= TTabSheet.Create(nil);
+      ATab:= TTabSheet.Create(self);
       ATab.Parent:= PageControl1;
       fmViewSProc.Parent:= ATab;
       fmViewSProc.Left:= 0;
@@ -3446,7 +3446,7 @@ begin
     if fmViewTrigger = nil then
     begin
       fmViewTrigger:= TfmViewTrigger.Create(Application);
-      ATab:= TTabSheet.Create(nil);
+      ATab:= TTabSheet.Create(self);
       ATab.Parent:= PageControl1;
       fmViewTrigger.Parent:= ATab;
       fmViewTrigger.Left:= 0;
@@ -3512,7 +3512,7 @@ begin
       begin
         fmUDFInfo:= TfmUDFInfo.Create(Application);
         fmUDFInfo.Caption:= Title;
-        ATab:= TTabSheet.Create(nil);
+        ATab:= TTabSheet.Create(self);
         ATab.Parent:= PageControl1;
         fmUDFInfo.Parent:= ATab;
         ATab.Tag:= dbIndex;
