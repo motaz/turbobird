@@ -397,10 +397,10 @@ procedure TfmTableManage.edDropClick(Sender: TObject);
 begin
   if MessageDlg('Are you sure you want to delete the field: ' + sgFields.Cells[1, sgFields.Row] +
     ' with its data', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-    begin
-      fmMain.ShowCompleteQueryWindow(FDBIndex, 'Drop field', 'ALTER TABLE ' + FTableName + ' DROP ' +
-        sgFields.Cells[1, sgFields.Row], @bbRefreshClick);
-    end;
+  begin
+    fmMain.ShowCompleteQueryWindow(FDBIndex, 'Drop field', 'ALTER TABLE ' + FTableName + ' DROP ' +
+      sgFields.Cells[1, sgFields.Row], @bbRefreshClick);
+  end;
 end;
 
 procedure TfmTableManage.edEditPermissionClick(Sender: TObject);
