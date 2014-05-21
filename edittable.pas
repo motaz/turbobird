@@ -105,7 +105,6 @@ begin
     sqlTrans:= Rec.SQLTrans;
     sqEditTable.DataBase:= ibConnection;
   end;
-  //todo: deal with quoted identifiers in ATableName here and elsewhere
   sqEditTable.SQL.Text:= 'select * from ' + ATableName;
   sqEditTable.Open; // need to have open query in order to access fields below
 

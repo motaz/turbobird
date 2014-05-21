@@ -895,12 +895,12 @@ begin
     ' f.RDB$Character_LENGTH AS Characterlength, ' + {character_length seems a reserved word }
     ' f.RDB$FIELD_PRECISION AS field_precision, ' +
     ' f.RDB$FIELD_SCALE AS field_scale, ' +
-    ' f.RDB$FIELD_TYPE as Field_Type_Int, ' +
+    ' f.RDB$FIELD_TYPE as field_type_int, ' +
     ' f.RDB$FIELD_SUB_TYPE AS field_sub_type, ' +
     ' coll.RDB$COLLATION_NAME AS field_collation, ' +
     ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
-    ' f.RDB$COMPUTED_Source AS Computed_Source, ' +
-    ' dim.RDB$UPPER_BOUND AS Array_Upper_Bound, ' +
+    ' f.RDB$computed_source AS computed_source, ' +
+    ' dim.RDB$UPPER_BOUND AS array_upper_bound, ' +
     ' r.RDB$FIELD_SOURCE AS field_source ' {domain if field based on domain} +
     ' FROM RDB$RELATION_FIELDS r ' +
     ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
@@ -917,10 +917,10 @@ begin
     begin
       if (FieldByName('field_source').IsNull) or
         (trim(FieldByName('field_source').AsString)='') or
-        (SystemGeneratedFieldDomain(trim(FieldByname('field_source').AsString))) then
+        (IsFieldDomainSystemGenerated(trim(FieldByname('field_source').AsString))) then
       begin
         // Field type is not based on a domain but a standard SQL type
-        FieldType:= fmMain.GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
+        FieldType:= fmMain.GetFBTypeName(FieldByName('field_type_int').AsInteger,
           FieldByName('field_sub_type').AsInteger,
           FieldByName('field_length').AsInteger,
           FieldByName('field_precision').AsInteger,
@@ -928,12 +928,12 @@ begin
         // Array should really be [lowerbound:upperbound] (if dimension is 0)
         // but for now don't bother as arrays are not supported anyway
         // Assume 0 dimension, 1 lower bound; just fill in upper bound
-        if not(FieldByName('Array_Upper_Bound').IsNull) then
+        if not(FieldByName('array_upper_bound').IsNull) then
           FieldType := FieldType +
             ' [' +
-            FieldByName('Array_Upper_Bound').AsString +
+            FieldByName('array_upper_bound').AsString +
             ']';
-        if FieldByName('Field_Type_int').AsInteger = VarCharType then
+        if FieldByName('field_type_int').AsInteger = VarCharType then
           FieldSize:= FieldByName('CharacterLength').AsInteger
         else
           FieldSize:= FieldByName('Field_Length').AsInteger;
@@ -1117,20 +1117,23 @@ begin
       ' f.RDB$FIELD_LENGTH AS field_length, ' +
       ' f.RDB$FIELD_PRECISION AS field_precision, ' +
       ' f.RDB$FIELD_SCALE AS field_scale, ' +
-      ' f.RDB$FIELD_TYPE as Field_Type_Int, ' +
+      ' f.RDB$FIELD_TYPE as field_type_int, ' +
       ' f.RDB$FIELD_SUB_TYPE AS field_sub_type, ' +
       ' coll.RDB$COLLATION_NAME AS field_collation, ' +
       ' cset.RDB$CHARACTER_SET_NAME AS field_charset, ' +
-      ' f.RDB$COMPUTED_Source AS Computed_Source ' +
+      ' f.RDB$computed_source AS computed_source, ' +
+      ' dim.RDB$UPPER_BOUND AS array_upper_bound, ' +
+      ' r.RDB$FIELD_SOURCE AS field_source ' {domain if field based on domain} +
       ' FROM RDB$RELATION_FIELDS r ' +
       ' LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME ' +
       ' LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID ' +
       ' LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID ' +
+      ' LEFT JOIN RDB$FIELD_DIMENSIONS dim on f.RDB$FIELD_NAME = dim.RDB$FIELD_NAME '+
       ' WHERE r.RDB$RELATION_NAME=''' + ATableName + '''  ' +
       ' ORDER BY r.RDB$FIELD_POSITION;';
   sqQuery.Open;
   FieldsList.Clear;
-  // Todo: add support for array datatype (see other code referencing RDB$FIELD_DIMENSIONS table)
+  //todo: add support for array datatype, domain-based fields in gui using field_source and IsFieldDomainSystemGenerated
   while not sqQuery.EOF do
   begin
     FieldName:= Trim(sqQuery.FieldByName('field_name').AsString);

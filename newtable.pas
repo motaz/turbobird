@@ -280,7 +280,7 @@ begin
       List.Text:= GenerateCreateSQL(KeyField, GeneratorName);
       if cxCreateGen.Checked then
       begin;
-        //todo: move this generator/trigger creation to a utility function somewhere
+        //todo: move this generator/trigger creation to a utility function somewhere; likewise for other create/alter DDL code
         List.Add('');
         List.Add('-- Generator');
         List.Add('create generator ' + GeneratorName + ';');

@@ -299,7 +299,6 @@ begin
       RealStartLine:= i;
       MultiComment:= False;
       Comment:= False;
-      //todo: verify check of -- regarding string literals below.
       if (i = QueryList.Count - 1) or
          ((Trim(QueryList[i + 1]) <> '') and  (Pos('/*', Trim(QueryList[i + 1])
            ) <> 1) and

@@ -31,14 +31,15 @@ function ScriptAllSecIndices(dbIndex: Integer; var List: TStringList): Boolean;
 
 // Scripts check constraints for all tables
 function ScriptAllCheckConstraints(dbIndex: Integer; var List: TStringList): Boolean;
-// Scripts all constraints (e.g. foreign key constraints) for tables in a database
-{ For now, seems to only cover foreign keys. Todo: verify/confirm
+// Scripts all foreign key constraints for tables in a database
+{
 There are 5 kind of constraints:
     NOT NULL
     PRIMARY KEY
     UNIQUE
     FOREIGN KEY
     CHECK
+This function only covers foreign keys; the other constraints are covered elsewhere
 }
 function ScriptAllConstraints(dbIndex: Integer; var List: TStringList): Boolean;
 function ScriptObjectPermission(dbIndex: Integer; ObjName, UserName: string; var ObjType: Integer;
@@ -57,10 +58,11 @@ implementation
 uses SysTables, Main;
 
 // Tries to guess if a constraint name is system-generated.
-{ todo: find a way to search the system tables and make sure the constraint name
-is system-generated}
-function SystemGeneratedConstraint(ConstraintName: string): boolean;
+function IsConstraintSystemGenerated(ConstraintName: string): boolean;
 begin
+  { Unfortunately there does not seem to be a way to search the system tables
+  and make sure the constraint name is system-generated - we have to guess based
+  on the name}
   result:=(pos('INTEG_',uppercase(Trim(ConstraintName)))=1);
 end;
 
@@ -72,7 +74,7 @@ var
   i: Integer;
 begin
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
-  { todo: wrap create role RDB$Admin statement - in FB 2.5+ this role is present
+  { todo: (low priority) wrap create role RDB$Admin statement - in FB 2.5+ this role is present
   by default, in lower dbs it isn't. No way to find out in advance when writing
   a script. No support in FB yet for CREATE OR UPDATE ROLE so probably best
   to do it in execute block with error handling or
@@ -173,7 +175,6 @@ var
   CheckConstraint: string;
   DefaultValue: string;
 begin
-  //todo: script domains: add support for character set
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 8, Count);
   // Get domains in dependency order (if dependencies can exist between domains)
   dmSysTables.SortDependencies(List);
@@ -225,8 +226,8 @@ begin
     while not EOF do
     begin
       Skipped:= False;
-      if (FieldByName('Computed_Source').AsString = '') and {any of the following }
-       ((not (FieldByName('Field_Type_Int').AsInteger in [CStringType,CharType,VarCharType])) or
+      if (FieldByName('computed_source').AsString = '') and {any of the following }
+       ((not (FieldByName('field_type_int').AsInteger in [CStringType,CharType,VarCharType])) or
        (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
        (FieldByName('Field_Collation').IsNull)) then
       begin
@@ -235,20 +236,20 @@ begin
 
         if (FieldByName('field_source').IsNull) or
           (trim(FieldByName('field_source').AsString)='') or
-          (SystemGeneratedFieldDomain(trim(FieldByname('field_source').AsString))) then
+          (IsFieldDomainSystemGenerated(trim(FieldByname('field_source').AsString))) then
         begin
           // Field type is not based on a domain but a standard SQL type
           // Field type
-          FieldLine:= FieldLine + fmMain.GetFBTypeName(FieldByName('Field_Type_Int').AsInteger,
+          FieldLine:= FieldLine + fmMain.GetFBTypeName(FieldByName('field_type_int').AsInteger,
             FieldByName('Field_Sub_Type').AsInteger,
             FieldByName('Field_Length').AsInteger,
             FieldByName('Field_Precision').AsInteger,
             FieldByName('Field_Scale').AsInteger);
 
-          if (FieldByName('Field_Type_Int').AsInteger) in [CharType, CStringType, VarCharType] then
+          if (FieldByName('field_type_int').AsInteger) in [CharType, CStringType, VarCharType] then
             FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
 
-          if (FieldByName('Field_Type_Int').AsInteger = BlobType) then
+          if (FieldByName('field_type_int').AsInteger = BlobType) then
           begin
             BlobSubType:= fmMain.GetBlobSubTypeName(FieldByName('Field_Sub_Type').AsInteger);
             if BlobSubType<>'' then
@@ -258,8 +259,8 @@ begin
           // Rudimentary support for array datatypes (only covers 0 dimension types):
           {todo: expand to proper array type detection (low priority as arrays are
            virtually unused}
-          if not(FieldByName('Array_Upper_Bound').IsNull) then
-            FieldLine:= FieldLine + ' [' + FieldByName('Array_Upper_Bound').AsString + '] ';
+          if not(FieldByName('array_upper_bound').IsNull) then
+            FieldLine:= FieldLine + ' [' + FieldByName('array_upper_bound').AsString + '] ';
         end
         else
         begin
@@ -285,9 +286,9 @@ begin
       end;
 
       // Computed Fields
-      if FieldByName('Computed_Source').AsString <> '' then
+      if FieldByName('computed_source').AsString <> '' then
         CalculatedList.Add('ALTER TABLE ' + ATableName + ' ADD ' +
-          Trim(FieldByName('Field_Name').AsString) + ' COMPUTED BY ' + FieldByName('Computed_Source').AsString + ';');
+          Trim(FieldByName('Field_Name').AsString) + ' COMPUTED BY ' + FieldByName('computed_source').AsString + ';');
 
       Next;
 
@@ -313,7 +314,7 @@ begin
       fmMain.GetConstraintFields(ATableName, PKeyIndexName, PKFieldsList);
       // Follow isql -x (not FlameRobin) by omitting system-generated
       // constraint names and let the system generate its own names
-      if SystemGeneratedConstraint(ConstraintName) then
+      if IsConstraintSystemGenerated(ConstraintName) then
         FieldLine:= ' primary key ('
       else // User-specified, so explicilty mention constraint name
         FieldLine:= 'constraint ' + ConstraintName + ' primary key (';
@@ -515,7 +516,6 @@ end;
 
 function ScriptAllCheckConstraints(dbIndex: Integer; var List: TStringList
   ): Boolean;
-  //todo: get check constraints for domains
 begin
   dmSysTables.ScriptCheckConstraints(dbIndex,List);
 end;
@@ -560,7 +560,7 @@ var
   var
     Line: string;
   begin
-    if SystemGeneratedConstraint(ConstraintName) then
+    if IsConstraintSystemGenerated(ConstraintName) then
     begin
       // If system-generated, don't specify constraint name
       Line:= format(TemplateNoName,[TableName,CurrentFieldName,

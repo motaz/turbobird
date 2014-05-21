@@ -88,7 +88,7 @@ begin
 end;
 
 function TTopologicalSort.SearchIndex(NodeID: integer): String;
-  //Look up name for the index
+  // Look up name for the index
 begin
   if (NodeID > 0) and (NodeID <= High(Nodes)) then
   begin
@@ -262,6 +262,7 @@ begin
         end; //Invalid Dep
       end; //Invalid Node
     end; //Count
+
     // Done with the first batch, so we can increase the sort order:
     OutputSortOrder := OutputSortOrder + 1;
     {$IFDEF TOPODEBUG}

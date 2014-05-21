@@ -96,12 +96,14 @@ begin
     cbFields.Clear;
     while not fmMain.SQLQuery1.EOF do
     begin
-      FType:= fmMain.GetFBTypeName(fmMain.SQLQuery1.FieldByName('Field_Type_Int').AsInteger,
+      FType:= fmMain.GetFBTypeName(fmMain.SQLQuery1.FieldByName('field_type_int').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_sub_type').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_length').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_precision').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_scale').AsInteger);
-      //todo: verify whether this still works. Also what about other integer types?
+
+      // Only show field name if they are numeric/suitable for generators
+      // In practice, integer type fields are probably always used
       if (FType = 'INTEGER') or (FType = 'BIGINT') or (FType = 'SMALLINT') then
         cbFields.Items.Add(Trim(fmMain.SQLQuery1.FieldByName('Field_Name').AsString));
       fmMain.SQLQuery1.Next;
