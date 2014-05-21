@@ -892,7 +892,7 @@ begin
     ' r.RDB$DEFAULT_SOURCE AS field_default_source, ' {SQL text for default value}+
     ' r.RDB$NULL_FLAG AS field_not_null_constraint, ' +
     ' f.RDB$FIELD_LENGTH AS field_length, ' +
-    ' f.RDB$Character_LENGTH AS Characterlength, ' + {character_length seems a reserved word }
+    ' f.RDB$Character_LENGTH AS characterlength, ' + {character_length seems a reserved word }
     ' f.RDB$FIELD_PRECISION AS field_precision, ' +
     ' f.RDB$FIELD_SCALE AS field_scale, ' +
     ' f.RDB$FIELD_TYPE as field_type_int, ' +
@@ -934,18 +934,18 @@ begin
             FieldByName('array_upper_bound').AsString +
             ']';
         if FieldByName('field_type_int').AsInteger = VarCharType then
-          FieldSize:= FieldByName('CharacterLength').AsInteger
+          FieldSize:= FieldByName('characterlength').AsInteger
         else
-          FieldSize:= FieldByName('Field_Length').AsInteger;
+          FieldSize:= FieldByName('field_length').AsInteger;
       end
       else
       begin
         // Field is based on a domain
         FieldType:= trim(FieldByName('field_source').AsString);
       end;
-      NotNull:= FieldByName('Field_not_null_constraint').AsString = '1';
-      DefaultValue:= FieldByName('Field_Default_Source').AsString;
-      Description:= FieldByName('Field_Description').AsString;
+      NotNull:= FieldByName('field_not_null_constraint').AsString = '1';
+      DefaultValue:= FieldByName('field_default_source').AsString;
+      Description:= FieldByName('field_description').AsString;
     end;
   end;
   sqQuery.Close;

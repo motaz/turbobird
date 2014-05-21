@@ -241,17 +241,17 @@ begin
           // Field type is not based on a domain but a standard SQL type
           // Field type
           FieldLine:= FieldLine + fmMain.GetFBTypeName(FieldByName('field_type_int').AsInteger,
-            FieldByName('Field_Sub_Type').AsInteger,
-            FieldByName('Field_Length').AsInteger,
-            FieldByName('Field_Precision').AsInteger,
-            FieldByName('Field_Scale').AsInteger);
+            FieldByName('field_sub_type').AsInteger,
+            FieldByName('field_length').AsInteger,
+            FieldByName('field_precision').AsInteger,
+            FieldByName('field_scale').AsInteger);
 
           if (FieldByName('field_type_int').AsInteger) in [CharType, CStringType, VarCharType] then
-            FieldLine:= FieldLine + '(' + FieldByName('CharacterLength').AsString + ') ';
+            FieldLine:= FieldLine + '(' + FieldByName('characterlength').AsString + ') ';
 
           if (FieldByName('field_type_int').AsInteger = BlobType) then
           begin
-            BlobSubType:= fmMain.GetBlobSubTypeName(FieldByName('Field_Sub_Type').AsInteger);
+            BlobSubType:= fmMain.GetBlobSubTypeName(FieldByName('field_sub_type').AsInteger);
             if BlobSubType<>'' then
               FieldLine:= FieldLine + ' ' + BlobSubType;
           end;
@@ -268,7 +268,7 @@ begin
           FieldLine:= FieldLine + ' ' + trim(FieldByName('field_source').AsString);
         end;
         // Default value
-        DefaultValue:= Trim(FieldByName('Field_Default_Source').AsString);
+        DefaultValue:= Trim(FieldByName('field_default_source').AsString);
         if DefaultValue <> '' then
         begin
           if pos('default', LowerCase(DefaultValue)) <> 1 then
