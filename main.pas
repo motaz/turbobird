@@ -196,9 +196,9 @@ type
     FCurrentHistoryFile: string;
     FActivated: Boolean;
     function FindCustomForm(ATitle: string; AClass: TClass): TComponent;
+    // Show new generator form
     procedure InitNewGen(DatabaseIndex: Integer);
     function GetServerNameNode(ServerName: string): TTreeNode;
-    function RemoveSpecialChars(AText: string): string;
     // Remove RegisteredDatabases and clean up memory held by its objects
     procedure ReleaseRegisteredDatabases;
     // Set connection for SQLQuery1 to selected registered database
@@ -208,12 +208,14 @@ type
     // This procedure will receive the events that are logged by the connection:
     procedure GetLogEvent(Sender: TSQLConnection; EventType: TDBEventType; Const Msg : String);
   public
+    // Array of database connection details as stored in turbobird.reg file
     RegisteredDatabases: array of TDatabaseRec;
     Version: string;
     VersionDate: string;
     Major, Minor, ReleaseVersion: word;
     function GetServerName(DBName: string): string;
     function RetrieveInputParamFromSP(Body: string): string;
+    // Load registered databases from file and show them in treeview
     function LoadRegisteredDatabases: Boolean;
     function FindQueryWindow(ATitle: string): TComponent;
     function DeleteRegistration(Index: Integer): Boolean;
@@ -1348,16 +1350,6 @@ begin
   end;
 end;
 
-function TfmMain.RemoveSpecialChars(AText: string): string;
-var
-  i: Integer;
-begin
-  for i:= Length(AText) to 1 do
-    if Pos(AText[i], ' !@#$%^&*()[]{}/?<>:;"|\,.~`''') > 0 then
-      System.Delete(AText, i, 1);
-  Result:= AText;
-end;
-
 procedure TfmMain.ReleaseRegisteredDatabases;
 var
   i: Integer;
@@ -1468,6 +1460,18 @@ function TfmMain.OpenSQLHistory(DatabaseTitle: string): Boolean;
 var
   AFileName: string;
   i: Integer;
+
+  // Removes spaces, braces, brackets etc
+  function RemoveSpecialChars(AText: string): string;
+  var
+    i: Integer;
+  begin
+    for i:= Length(AText) to 1 do
+      if Pos(AText[i], ' !@#$%^&*()[]{}/?<>:;"|\,.~`''') > 0 then
+        System.Delete(AText, i, 1);
+    Result:= AText;
+  end;
+
 begin
   try
     AFileName:= getConfigurationDirectory + LowerCase(RemoveSpecialChars(DatabaseTitle)) + '.history';
