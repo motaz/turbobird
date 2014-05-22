@@ -3,7 +3,6 @@ object fmViewView: TfmViewView
   Height = 300
   Top = 201
   Width = 501
-  AlphaBlend = True
   Caption = 'fmViewView'
   ClientHeight = 300
   ClientWidth = 501
