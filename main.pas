@@ -54,7 +54,7 @@ type
     lmCopyUserPermission: TMenuItem;
     lmViewFields: TMenuItem;
     lmEditField: TMenuItem;
-    lmDBIndo: TMenuItem;
+    lmDBInfo: TMenuItem;
     lmCopyRolePermission: TMenuItem;
     lmCompare: TMenuItem;
     lmGetIncrementGen: TMenuItem;
@@ -127,7 +127,7 @@ type
     procedure lmCopyUserPermissionClick(Sender: TObject);
     procedure lmCopyTableClick(Sender: TObject);
     procedure lmCreateDBClick(Sender: TObject);
-    procedure lmDBIndoClick(Sender: TObject);
+    procedure lmDBInfoClick(Sender: TObject);
     procedure lmDisconnectClick(Sender: TObject);
     procedure lmEditFieldClick(Sender: TObject);
     procedure lmGetIncrementGenClick(Sender: TObject);
@@ -475,7 +475,7 @@ begin
   mnCreateDBClick(nil);
 end;
 
-procedure TfmMain.lmDBIndoClick(Sender: TObject);
+procedure TfmMain.lmDBInfoClick(Sender: TObject);
 var
   ATab: TTabSheet;
   Title: string;

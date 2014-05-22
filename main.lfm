@@ -1970,7 +1970,7 @@ object fmMain: TfmMain
       }
       OnClick = lmCompareClick
     end
-    object lmDBIndo: TMenuItem
+    object lmDBInfo: TMenuItem
       Caption = 'Database Info'
       Bitmap.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -2008,7 +2008,7 @@ object fmMain: TfmMain
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B9BEBD36ABB0AEA0A1A6A4B09CA1
         9F51FFFFFF00FFFFFF00FFFFFF0019774A5A1D6C3B1AFFFFFF00
       }
-      OnClick = lmDBIndoClick
+      OnClick = lmDBInfoClick
     end
     object MenuItem8: TMenuItem
       Caption = '-'
