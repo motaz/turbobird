@@ -11,7 +11,7 @@ uses
 
 const
   // Some field types used in e.g. RDB$FIELDS
-  //todo (low priority): perhaps move to enumeration with fixed constant values
+  // todo: (low priority) perhaps move to enumeration with fixed constant values
   BlobType = 261;
   CharType = 14;
   CStringType = 40; // probably null-terminated string used for UDFs

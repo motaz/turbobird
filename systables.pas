@@ -1134,7 +1134,6 @@ begin
       ' ORDER BY r.RDB$FIELD_POSITION;';
   sqQuery.Open;
   FieldsList.Clear;
-  //todo: add support for array datatype, domain-based fields in gui using field_source and IsFieldDomainSystemGenerated
   while not sqQuery.EOF do
   begin
     FieldName:= Trim(sqQuery.FieldByName('field_name').AsString);
