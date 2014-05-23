@@ -7,17 +7,9 @@ interface
 uses
   Classes, SysUtils, IBConnection, sqldb, memds, FileUtil, LResources, Forms,
   Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
-  ExtCtrls, Buttons, StdCtrls, TableManage,dbugintf, turbocommon;
+  ExtCtrls, Buttons, StdCtrls, TableManage, dbugintf, turbocommon;
 
 {$i turbocommon.inc}
-
-const
-  // Some field types used in e.g. RDB$FIELDS
-  //todo (low priority): perhaps move to enumeration with fixed constant values
-  BlobType = 261;
-  CharType = 14;
-  CStringType = 40; // probably null-terminated string used for UDFs
-  VarCharType = 37;
 
 type
   TDatabaseRec = record
@@ -221,11 +213,6 @@ type
     function DeleteRegistration(Index: Integer): Boolean;
     // Returns BLOB subtype clause depending on subtype
     function GetBlobSubTypeName(SubType: integer): string;
-    // Returns field type DDL given a RDB$FIELD_TYPE value as well
-    // as subtype/length/scale (use -1 for empty/unknown values)
-    function GetFBTypeName(Index: Integer;
-      SubType: integer=-1; FieldLength: integer=-1; Precision: integer=-1;
-      Scale: integer=-1): string;
     // Get name of index used for primary key
     // Also returns name of constraint used
     function GetPrimaryKeyIndexName(DatabaseIndex: Integer; ATableName: string; var ConstraintName: string): string;
@@ -250,6 +237,7 @@ type
     procedure FillAndShowConstraintsForm(Form: TfmTableManage; ATableName: string; dbIndex: Integer);
     procedure ShowCompleteQueryWindow(DatabaseIndex: Integer; ATitle, AQueryText: string;
       OnCommitProcedure: TNotifyEvent = nil);
+    // Gets fields info and fills TableManage form(!) grids with info
     procedure ViewTableFields(ATableName: string; dbIndex: Integer; AStringGrid: TStringGrid);
     procedure ShowIndicesManagement(AForm: TForm; DatabaseIndex: Integer; ATableName: string);
     function GetTableNames(dbIndex: Integer): string;
@@ -272,8 +260,6 @@ type
 var
   fmMain: TfmMain;
 
-// Tries to guess if an RDB$RELATION_FIELDS.RDB$FIELD_SOURCE domain name for a column is system-generated.
-function IsFieldDomainSystemGenerated(FieldSource: string): boolean;
 
 implementation
 
@@ -285,13 +271,6 @@ uses CreateDb, ViewView, ViewTrigger, ViewSProc, ViewGen, NewTable, NewGen,
      NewDomain, SysTables, Scriptdb, UserPermissions, BackupRestore, UnitFirebirdServices, CreateUser, ChangePass,
      PermissionManage, CopyTable, About, NewEditField, dbInfo, Comparison;
 
-
-function IsFieldDomainSystemGenerated(FieldSource: string): boolean;
-begin
-  // Unfortunately there does not seem to be a way to search the system tables to find out
-  // if the constraint name is system-generated
-  result:=(pos('RDB$',uppercase(Trim(FieldSource)))=1);
-end;
 
 procedure TfmMain.mnExitClick(Sender: TObject);
 begin
@@ -2371,6 +2350,7 @@ begin
     ATab.Tag:= dbIndex;
     fmTableManage.Init(dbIndex, SelNode.Text);
     fmTableManage.PageControl1.TabIndex:= 0;
+    // Fields
     ViewTableFields(SelNode.Text, dbIndex, fmTableManage.sgFields);
 
     // Indices
@@ -2380,7 +2360,7 @@ begin
     FillAndShowConstraintsForm(fmTableManage, SelNode.Text, dbIndex);
 
     // Triggers
-    fmTableManage.ViewTriggers;
+    fmTableManage.FillTriggers;
 
     // Permissions
     fmTableManage.FillPermissions;
@@ -3089,10 +3069,13 @@ begin
 end;
 
 (***************  View Table Fields/ Fields Management  ***************)
-
+{ todo: should be moved to tablemanage.pas if possible; even better split out
+between non-GUI query part and GUI updater part}
 procedure TfmMain.ViewTableFields(ATableName: string; dbIndex: Integer;
   AStringGrid: TStringGrid);
 var
+  FieldSize: integer;
+  FieldType: string;
   i: Integer;
   PKFieldsList: TStringList;
   DefaultValue: string;
@@ -3117,21 +3100,8 @@ begin
         Cells[1, RowCount - 1]:= Trim(FieldByName('Field_Name').AsString);
 
         // Field Type
-        Cells[2, RowCount - 1]:= GetFBTypeName(FieldByName('field_type_int').AsInteger,
-          FieldByName('Field_Sub_Type').AsInteger,
-          FieldByName('Field_Length').AsInteger,
-          FieldByName('Field_Precision').AsInteger,
-          FieldByName('Field_Scale').AsInteger);
-
-        // Correct field type if it is an array type
-        // Array should really be [upper_bound dim0,upperbound dim1,..]
-        // but for now don't bother as arrays are not supported anyway
-        // Assume dimension 0, just fill in upper bound
-        if not(FieldByName('array_upper_bound').IsNull) then
-          Cells[2, RowCount - 1]:=Cells[2, RowCount - 1] +
-            ' [' +
-            SQLQuery1.FieldByName('array_upper_bound').AsString +
-            ']';
+        GetFieldType(SQLQuery1,FieldType,FieldSize);
+        Cells[2, RowCount - 1]:= FieldType;
 
         // Computed fields (Calculated)
         if FieldByName('computed_source').AsString <> '' then
@@ -4138,63 +4108,6 @@ begin
   end;
 end;
 
-(**************  Get Firebird Type name  *****************)
-
-function TfmMain.GetFBTypeName(Index: Integer;
-  SubType: integer=-1; FieldLength: integer=-1;
-  Precision: integer=-1; Scale: integer=-1
-  ): string;
-begin
-  //todo: (low priority) add Firebird 3.0 beta BOOLEAN datatype number
-  case Index of
-    // See also
-    // http://firebirdsql.org/manual/migration-mssql-data-types.html
-    // http://stackoverflow.com/questions/12070162/how-can-i-get-the-table-description-fields-and-types-from-firebird-with-dbexpr
-    BlobType : Result:= 'BLOB';
-    14 : Result:= 'CHAR';
-    CStringType : Result:= 'CSTRING'; // probably null-terminated string used for UDFs
-    12 : Result:= 'DATE';
-    11 : Result:= 'D_FLOAT';
-    16 : Result:= 'BIGINT'; // Further processed below
-    27 : Result:= 'DOUBLE PRECISION';
-    10 : Result:= 'FLOAT';
-    8  : Result:= 'INTEGER'; // further processed below
-    9  : Result:= 'QUAD'; // unknown what this is=> see IB6 Language Reference RDB$FIELD_TYPE
-    7  : Result:= 'SMALLINT'; // further processed below
-    13 : Result:= 'TIME';
-    35 : Result:= 'TIMESTAMP';
-    VarCharType : Result:= 'VARCHAR';
-  else
-    Result:= 'Unknown Type';
-  end;
-  // Subtypes for numeric types
-  if Index in [7, 8, 16] then
-  begin
-    if SubType = 0 then {integer}
-    begin
-      case Index of
-        7: Result:= 'SMALLINT';
-        8: Result:= 'INTEGER';
-        16: Result:= 'BIGINT';
-      end;
-    end
-    else
-    begin
-      // Numeric/decimal: use precision/scale
-      if SubType = 1 then
-        Result:= 'Numeric('
-      else
-      if SubType = 2 then
-        Result:= 'Decimal(';
-
-      if Precision=-1 then {sensible default}
-        Result:= Result + '2,'
-      else
-        Result:= Result + IntToStr(Precision)+',';
-      Result:= Result + IntToStr(Abs(Scale)) + ') ';
-    end;
-  end;
-end;
 
 (*******************  Get Primary Key fields  ************************)
 

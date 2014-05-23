@@ -5,7 +5,7 @@ unit Scriptdb;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, turbocommon;
 
 
 function ScriptAllRoles(dbIndex: Integer; var List: TStringList): Boolean;
@@ -240,7 +240,7 @@ begin
         begin
           // Field type is not based on a domain but a standard SQL type
           // Field type
-          FieldLine:= FieldLine + fmMain.GetFBTypeName(FieldByName('field_type_int').AsInteger,
+          FieldLine:= FieldLine + GetFBTypeName(FieldByName('field_type_int').AsInteger,
             FieldByName('field_sub_type').AsInteger,
             FieldByName('field_length').AsInteger,
             FieldByName('field_precision').AsInteger,

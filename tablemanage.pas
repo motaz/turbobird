@@ -89,9 +89,14 @@ type
   public
     PKeyName, ConstraintName: string;
     procedure Init(dbIndex: Integer; TableName: string);
+    // Fill grid with constraint info
+    { Todo: fillconstraints relies on a query being set correctly elsewhere; get
+    rid of that - see e.g. FillPermissions }
     procedure FillConstraints(dbIndex: Integer);
-    procedure ViewTriggers;
+    // Get info on permissions and fill grid with it
     procedure FillPermissions;
+    // Get info on triggers and fill grid with it
+    procedure FillTriggers;
   end;
 
 var
@@ -357,7 +362,7 @@ end;
 procedure TfmTableManage.bbRefreshTriggersClick(Sender: TObject);
 begin
   FSQLTrans.Commit;
-  ViewTriggers;
+  FillTriggers;
   Parent.Show;
   Show;
 end;
@@ -379,10 +384,8 @@ begin
     Cells[2, RowCount - 1]:= FieldByName('OtherFieldName').AsString;
     Cells[3, RowCount - 1]:= FieldByName('KeyName').AsString;
     Next;
-
   end;
   SQLQuery1.Close;
-
 end;
 
 procedure TfmTableManage.cbIndexTypeChange(Sender: TObject);
@@ -470,11 +473,11 @@ begin
   SQLQuery1.Close;
 end;
 
-procedure TfmTableManage.ViewTriggers;
+procedure TfmTableManage.FillTriggers;
 begin
   SQLQuery1.Close;
-  SQLQuery1.SQL.Text:= 'SELECT RDB$Trigger_Name, RDB$Trigger_Inactive FROM RDB$TRIGGERS WHERE RDB$SYSTEM_FLAG=0 ' +
-    'and RDB$Relation_Name = ''' + FTableName + '''';
+  SQLQuery1.SQL.Text:= Format('SELECT RDB$Trigger_Name, RDB$Trigger_Inactive FROM RDB$TRIGGERS WHERE RDB$SYSTEM_FLAG=0 ' +
+    'and RDB$Relation_Name = ''%s'' ',[FTableName]);
   SQLQuery1.Open;
   sgTriggers.RowCount:= 1;
   with sgTriggers, SQLQuery1 do
@@ -499,6 +502,9 @@ var
   ObjType: Integer;
   Permissions: string;
 begin
+  {todo: analyse transaction behaviour. Why do we have an explicit commit here? Also,
+  get rid of the implicit rollbacks and use a separate read only transaction for extracting
+  DDL and other read only info}
   FSQLTrans.Commit;
   UsersList:= TStringList.Create;
   try

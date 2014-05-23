@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, sqldb, IBConnection, FileUtil, LResources, Forms, Controls,
-  Dialogs, dbugintf;
+  Dialogs, dbugintf, turbocommon;
 
 type
 
@@ -657,7 +657,7 @@ begin
 
   if sqQuery.RecordCount > 0 then
   begin
-    DomainType:= fmMain.GetFBTypeName(sqQuery.FieldByName('RDB$FIELD_TYPE').AsInteger,
+    DomainType:= GetFBTypeName(sqQuery.FieldByName('RDB$FIELD_TYPE').AsInteger,
       sqQuery.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
       sqQuery.FieldByName('RDB$FIELD_LENGTH').AsInteger,
       sqQuery.FieldByName('RDB$FIELD_PRECISION').AsInteger,
@@ -915,12 +915,13 @@ begin
   begin
     with sqQuery do
     begin
+      //todo: harmonize with implementation in turbocommon
       if (FieldByName('field_source').IsNull) or
         (trim(FieldByName('field_source').AsString)='') or
         (IsFieldDomainSystemGenerated(trim(FieldByname('field_source').AsString))) then
       begin
         // Field type is not based on a domain but a standard SQL type
-        FieldType:= fmMain.GetFBTypeName(FieldByName('field_type_int').AsInteger,
+        FieldType:= GetFBTypeName(FieldByName('field_type_int').AsInteger,
           FieldByName('field_sub_type').AsInteger,
           FieldByName('field_length').AsInteger,
           FieldByName('field_precision').AsInteger,

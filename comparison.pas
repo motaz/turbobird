@@ -1562,7 +1562,6 @@ var
   DomainSize: Integer;
   Line: string;
 begin
-  //todo: align this with regular script code for domains, including collations
   if FModifiedDomainsList.Count > 0 then
   begin
     FQueryWindow.meQuery.Lines.Add('');

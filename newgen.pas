@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, IBConnection, sqldb, FileUtil, LResources, Forms, Controls,
-  Graphics, Dialogs, StdCtrls, Buttons;
+  Graphics, Dialogs, StdCtrls, Buttons, turbocommon;
 
 type
 
@@ -96,7 +96,7 @@ begin
     cbFields.Clear;
     while not fmMain.SQLQuery1.EOF do
     begin
-      FType:= fmMain.GetFBTypeName(fmMain.SQLQuery1.FieldByName('field_type_int').AsInteger,
+      FType:= GetFBTypeName(fmMain.SQLQuery1.FieldByName('field_type_int').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_sub_type').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_length').AsInteger,
         fmMain.SQLQuery1.FieldByName('field_precision').AsInteger,
