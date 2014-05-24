@@ -275,6 +275,7 @@
         <Filename Value="neweditfield.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmNewEditField"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewEditField"/>
       </Unit22>

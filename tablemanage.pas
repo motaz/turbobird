@@ -291,7 +291,7 @@ begin
   with fmNewEditField do
   begin
     Init(FDBIndex, FTableName, foNew, '', '', '', '', 0, 0, True, bbRefresh);
-    Caption:= 'Add new field on Table: ' + FTableName;
+    Caption:= 'Add new field to Table: ' + FTableName;
     Show;
   end;
 end;

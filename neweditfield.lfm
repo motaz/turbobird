@@ -1,7 +1,7 @@
 object fmNewEditField: TfmNewEditField
-  Left = 639
+  Left = 442
   Height = 336
-  Top = 391
+  Top = 254
   Width = 320
   ActiveControl = edFieldName
   BorderIcons = [biSystemMenu]
@@ -11,68 +11,68 @@ object fmNewEditField: TfmNewEditField
   ClientWidth = 320
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.2.2.0'
   object Label1: TLabel
-    Left = 10
-    Height = 18
+    Left = 8
+    Height = 13
     Top = 14
-    Width = 77
+    Width = 52
     Caption = 'Field Name'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 8
-    Height = 18
+    Height = 13
     Top = 48
-    Width = 69
+    Width = 49
     Caption = 'Field Type'
     ParentColor = False
   end
   object Label3: TLabel
-    Left = 10
-    Height = 18
+    Left = 8
+    Height = 13
     Top = 81
-    Width = 28
+    Width = 19
     Caption = 'Size'
     ParentColor = False
   end
   object Label4: TLabel
-    Left = 10
-    Height = 18
+    Left = 8
+    Height = 13
     Top = 116
-    Width = 77
+    Width = 53
     Caption = 'Field Order'
     ParentColor = False
   end
   object Label5: TLabel
     Left = 8
-    Height = 18
+    Height = 13
     Top = 192
-    Width = 92
+    Width = 64
     Caption = 'Default Value'
     ParentColor = False
   end
   object edFieldName: TEdit
     Left = 101
-    Height = 27
+    Height = 21
     Top = 12
     Width = 139
     TabOrder = 0
   end
   object cbType: TComboBox
     Left = 101
-    Height = 31
+    Height = 21
     Top = 40
     Width = 139
     Color = 16249563
-    ItemHeight = 0
+    ItemHeight = 13
     OnChange = cbTypeChange
     Style = csDropDownList
     TabOrder = 1
   end
   object seSize: TSpinEdit
     Left = 101
-    Height = 27
+    Height = 21
     Top = 77
     Width = 50
     MaxValue = 10000
@@ -80,9 +80,9 @@ object fmNewEditField: TfmNewEditField
   end
   object cxAllowNull: TCheckBox
     Left = 8
-    Height = 22
+    Height = 17
     Top = 152
-    Width = 92
+    Width = 65
     Caption = 'Allow Null'
     Checked = True
     State = cbChecked
@@ -100,7 +100,7 @@ object fmNewEditField: TfmNewEditField
   end
   object seOrder: TSpinEdit
     Left = 101
-    Height = 27
+    Height = 21
     Top = 112
     Width = 50
     MaxValue = 10000
@@ -109,22 +109,22 @@ object fmNewEditField: TfmNewEditField
   end
   object edDefault: TEdit
     Left = 112
-    Height = 27
+    Height = 21
     Top = 186
     Width = 116
     TabOrder = 6
   end
   object Label6: TLabel
-    Left = 10
-    Height = 18
+    Left = 8
+    Height = 13
     Top = 232
-    Width = 115
+    Width = 78
     Caption = 'Field Description'
     ParentColor = False
   end
   object edDescription: TEdit
-    Left = 10
-    Height = 27
+    Left = 8
+    Height = 21
     Top = 250
     Width = 294
     TabOrder = 7
