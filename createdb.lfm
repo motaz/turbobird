@@ -179,7 +179,7 @@ object fmCreateDB: TfmCreateDB
     Top = 170
     Width = 124
     ItemHeight = 13
-    ItemIndex = 0
+    ItemIndex = 42
     Items.Strings = (
       'NONE'
       'TRIM'
@@ -235,7 +235,7 @@ object fmCreateDB: TfmCreateDB
       'WIN1258'
     )
     TabOrder = 6
-    Text = 'NONE'
+    Text = 'UTF8'
   end
   object Image1: TImage
     Left = 384

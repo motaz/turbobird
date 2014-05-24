@@ -128,8 +128,8 @@ LazarusResources.Add('TfmCreateDB','FORMDATA',[
   +'Width'#2'['#6'Cancel'#9#7'Caption'#6#6'Cancel'#5'Color'#4#219#242#247#0#4'K'
   +'ind'#7#8'bkCancel'#11'ModalResult'#2#2#8'TabOrder'#2#5#0#0#9'TComboBox'#9'c'
   +'bCharset'#4'Left'#2'W'#6'Height'#2#21#3'Top'#3#170#0#5'Width'#2'|'#10'ItemH'
-  +'eight'#2#13#9'ItemIndex'#2#0#13'Items.Strings'#1#6#4'NONE'#6#4'TRIM'#6#5'AS'
-  ,'CII'#6#5'BIG_5'#6#6'CP943C'#6#4'CYRL'#6#6'DOS437'#6#6'DOS737'#6#6'DOS775'#6
+  +'eight'#2#13#9'ItemIndex'#2'*'#13'Items.Strings'#1#6#4'NONE'#6#4'TRIM'#6#5'A'
+  ,'SCII'#6#5'BIG_5'#6#6'CP943C'#6#4'CYRL'#6#6'DOS437'#6#6'DOS737'#6#6'DOS775'#6
   +#6'DOS850'#6#6'DOS852'#6#6'DOS857'#6#6'DOS858'#6#6'DOS860'#6#6'DOS861'#6#6'D'
   +'OS862'#6#6'DOS863'#6#6'DOS864'#6#6'DOS865'#6#6'DOS866'#6#6'DOS869'#6#9'EUCJ'
   +'_0208'#6#3'GBK'#6#7'GB_2312'#6#9'ISO8859_1'#6#10'ISO8859_13'#6#9'ISO8859_2'
@@ -137,7 +137,7 @@ LazarusResources.Add('TfmCreateDB','FORMDATA',[
   +#9'ISO8859_8'#6#9'ISO8859_9'#6#5'KOI8R'#6#5'KOI8U'#6#8'KSC_5601'#6#4'NEXT'#6
   +#6'OCTETS'#6#9'SJIS_0208'#6#6'TIS620'#6#11'UNICODE_FSS'#6#4'UTF8'#6#7'WIN125'
   +'0'#6#7'WIN1251'#6#7'WIN1252'#6#7'WIN1253'#6#7'WIN1254'#6#7'WIN1255'#6#7'WIN'
-  +'1256'#6#7'WIN1257'#6#7'WIN1258'#0#8'TabOrder'#2#6#4'Text'#6#4'NONE'#0#0#6'T'
+  +'1256'#6#7'WIN1257'#6#7'WIN1258'#0#8'TabOrder'#2#6#4'Text'#6#4'UTF8'#0#0#6'T'
   +'Image'#6'Image1'#4'Left'#3#128#1#6'Height'#2'L'#3'Top'#2'`'#5'Width'#2'O'#12
   +'Picture.Data'#10'@'#21#0#0#23'TPortableNetworkGraphic$'#21#0#0#137'PNG'#13
   +#10#26#10#0#0#0#13'IHDR'#0#0#0'H'#0#0#0'H'#8#6#0#0#0'U'#237#179'G'#0#0#20#235
