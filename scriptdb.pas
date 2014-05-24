@@ -257,7 +257,7 @@ begin
           end;
 
           // Rudimentary support for array datatypes (only covers 0 dimension types):
-          {todo: expand to proper array type detection (low priority as arrays are
+          {todo: (low priority) expand to proper array type detection though arrays are
            virtually unused}
           if not(FieldByName('array_upper_bound').IsNull) then
             FieldLine:= FieldLine + ' [' + FieldByName('array_upper_bound').AsString + '] ';

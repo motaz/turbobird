@@ -76,13 +76,18 @@ type
     // Get permissions that specified user has for indicated object
     function GetObjectUserPermission(dbIndex: Integer; ObjectName, UserName: string; var ObjType: Integer): string;
 
+    // Add field types into List
     procedure GetBasicTypes(List: TStrings);
+    // Gets domain types; used in addition to basic types for GUI selections
     procedure GetDomainTypes(dbIndex: Integer; List: TStrings);
     function GetDefaultTypeSize(dbIndex: Integer; TypeName: string): Integer;
     function GetDomainTypeSize(dbIndex: Integer; DomainTypeName: string): Integer;
 
-    function GetFieldInfo(dbIndex: Integer; TableName, FieldName: string; var FieldType: string;
-      var FieldSize: Integer; var NotNull: Boolean; var DefaultValue, Description : string): Boolean;
+    function GetFieldInfo(dbIndex: Integer; TableName, FieldName: string;
+      var FieldType: string;
+      var FieldSize: integer; var FieldScale: integer;
+      var NotNull: Boolean;
+      var DefaultValue, CharacterSet, Collation, Description : string): Boolean;
 
     function GetDatabaseInfo(dbIndex: Integer; var DatabaseName, CharSet, CreationDate, ServerTime: string;
       var ODSVerMajor, ODSVerMinor, Pages, PageSize: Integer;
@@ -828,7 +833,10 @@ end;
 
 procedure TdmSysTables.GetBasicTypes(List: TStrings);
 begin
-  List.CommaText:= List.CommaText + 'SMALLINT,INTEGER,BIGINT,VARCHAR,FLOAT,"DOUBLE PRECISION",CHAR,DATE,TIME,' +
+  List.CommaText:= List.CommaText +
+    'SMALLINT,INTEGER,BIGINT,VARCHAR,'+
+    'FLOAT,"DOUBLE PRECISION",DECIMAL,NUMERIC,'+
+    'CHAR,DATE,TIME,' +
     'TIMESTAMP,CSTRING,D_FLOAT,QUAD,BLOB';
 end;
 
@@ -883,8 +891,11 @@ begin
 end;
 
 
-function TdmSysTables.GetFieldInfo(dbIndex: Integer; TableName, FieldName: string; var FieldType: string;
-  var FieldSize: Integer; var NotNull: Boolean; var DefaultValue, Description: string): Boolean;
+function TdmSysTables.GetFieldInfo(dbIndex: Integer; TableName, FieldName: string;
+  var FieldType: string;
+  var FieldSize: integer; var FieldScale: integer;
+  var NotNull: Boolean;
+  var DefaultValue, CharacterSet, Collation, Description : string): Boolean;
 begin
   Init(dbIndex);
   sqQuery.SQL.Text:= 'SELECT r.RDB$FIELD_NAME AS field_name, ' +
@@ -944,9 +955,13 @@ begin
         // Field is based on a domain
         FieldType:= trim(FieldByName('field_source').AsString);
       end;
+      FieldScale:=FieldByName('field_scale').AsInteger;
       NotNull:= FieldByName('field_not_null_constraint').AsString = '1';
+      Collation:= trim(FieldByName('field_collation').AsString);
+      CharacterSet:= trim(FieldByName('field_charset').AsString);
+      // Note: no trim here - defaultvalue could be an empty string
       DefaultValue:= FieldByName('field_default_source').AsString;
-      Description:= FieldByName('field_description').AsString;
+      Description:= trim(FieldByName('field_description').AsString);
     end;
   end;
   sqQuery.Close;

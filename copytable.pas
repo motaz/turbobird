@@ -175,7 +175,7 @@ var
   i: Integer;
   Count: Integer;
 begin
-  dmSysTables.sqQuery.Close; //todo: (low priority) is this really necessary?
+  dmSysTables.sqQuery.Close; //todo: (low priority) is clsoing sqquery really necessary?
   FSourceIndex:= SourceIndex;
   laSourceDatabase.Caption:= fmMain.RegisteredDatabases[SourceIndex].RegRec.Title;
   cbDestDatabase.Clear;

@@ -34,7 +34,7 @@ type
     cbSortType: TComboBox;
     clbFields: TCheckListBox;
     cxUnique: TCheckBox;
-    edEditPermission: TBitBtn;
+    bbEditPermission: TBitBtn;
     edDrop: TBitBtn;
     edIndexName: TEdit;
     GroupBox1: TGroupBox;
@@ -78,9 +78,12 @@ type
     procedure bbRefreshReferencesClick(Sender: TObject);
     procedure cbIndexTypeChange(Sender: TObject);
     procedure edDropClick(Sender: TObject);
-    procedure edEditPermissionClick(Sender: TObject);
+    procedure bbEditPermissionClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure sgFieldsDblClick(Sender: TObject);
+    procedure sgPermissionsDblClick(Sender: TObject);
+    procedure sgTriggersDblClick(Sender: TObject);
   private
     FDBIndex: Integer;
     FTableName: string;
@@ -129,26 +132,52 @@ begin
   end;
 end;
 
+procedure TfmTableManage.sgFieldsDblClick(Sender: TObject);
+begin
+  // Double clicking on a row lets you edit the field
+  bbEditClick(Sender);
+end;
+
+procedure TfmTableManage.sgPermissionsDblClick(Sender: TObject);
+begin
+  // Double clicking allows user to edit permissions
+  bbEditPermissionClick(Sender);
+end;
+
+procedure TfmTableManage.sgTriggersDblClick(Sender: TObject);
+begin
+  // Double clicking allows user to edit trigger
+  bbEditTriggerClick(Sender);
+end;
+
 
 procedure TfmTableManage.bbEditClick(Sender: TObject);
 var
   fmNewEditField: TfmNewEditField;
-  FieldName, FieldType, DefaultValue, Description: string;
-  FieldOrder, FieldSize: Integer;
+  FieldName, FieldType,
+  DefaultValue, Characterset, Collation, Description: string;
+  FieldOrder, FieldSize, FieldScale: Integer;
   AllowNull: Boolean;
 begin
   fmNewEditField:= TfmNewEditField.Create(nil);
+  {todo: getting info from gui elements that got it from a function that got it
+   from a query is awful. Rework to use e.g. the function}
   with sgFields, fmNewEditField do
   begin
+    Characterset:= ''; //todo: support character set in field editing!!!
+    Collation:= ''; //todo: support collation
     FieldName:= Cells[1, Row];
     FieldType:= Cells[2, Row];
     FieldSize:= StrtoInt(Cells[3, Row]);
+    FieldScale:= -13; //todo support fieldscale in field editing!!!
     AllowNull:= Boolean(StrToInt(Cells[4, Row]));
     DefaultValue:= Cells[5, Row];
     Description:= Cells[6, Row];
     FieldOrder:= Row;
-    fmNewEditField.Init(FDBIndex, FTableName, foEdit, FieldName, FieldType, DefaultValue, Description, FieldSize,
-      FieldOrder, AllowNull, bbRefresh);
+    fmNewEditField.Init(FDBIndex, FTableName, foEdit,
+      FieldName, FieldType, Characterset, Collation,
+      DefaultValue, Description,
+      FieldSize, FieldScale, FieldOrder, AllowNull, bbRefresh);
 
     Caption:= 'Edit field: ' + OldFieldName;
 
@@ -290,7 +319,9 @@ begin
   fmNewEditField:= TfmNewEditField.Create(nil);
   with fmNewEditField do
   begin
-    Init(FDBIndex, FTableName, foNew, '', '', '', '', 0, 0, True, bbRefresh);
+    Init(FDBIndex, FTableName, foNew,
+      '', '', '', '', '', '',
+      0, 0, 0, True, bbRefresh);
     Caption:= 'Add new field to Table: ' + FTableName;
     Show;
   end;
@@ -406,7 +437,7 @@ begin
   end;
 end;
 
-procedure TfmTableManage.edEditPermissionClick(Sender: TObject);
+procedure TfmTableManage.bbEditPermissionClick(Sender: TObject);
 var
   fmPermissions: TfmPermissionManage;
   UserType: Integer;

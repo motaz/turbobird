@@ -716,10 +716,10 @@ var
   Line: string;
   ATableName: string;
   AFieldName: string;
-  FieldSize: Integer;
-  FieldType, DefaultValue, Description: string;
-  CFieldType, CDefaultValue, CDescription: string;
-  CFieldSize: Integer;
+  FieldSize, CFieldSize: integer;
+  FieldScale, CFieldScale: integer;
+  FieldType, DefaultValue, Characterset, Collation, Description: string;
+  CFieldType, CDefaultValue, CCharacterset, CCollation, CDescription: string;
   NotNull, CNotNull: Boolean;
 begin
   meLog.Lines.Add('');
@@ -739,14 +739,22 @@ begin
     AFieldName:= Line;
 
     // Read all field properties
-    dmSysTables.GetFieldInfo(FDBIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
-    dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName, CFieldType, CFieldSize, CNotNull,
-      CDefaultValue, CDescription);
+    dmSysTables.GetFieldInfo(FDBIndex, ATableName, AFieldName,
+      FieldType, FieldSize, FieldScale, NotNull,
+      DefaultValue, CharacterSet, Collation, Description);
+    dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName,
+      CFieldType, CFieldSize, CFieldScale, CNotNull,
+      CDefaultValue, CCharacterSet, CCollation, CDescription);
 
     // Compare
-    if (FieldType <> CFieldType) or ((FieldSize <> CFieldSize) and (not cxIgnoreLength.Checked)) or
-      (NotNull <> CNotNull) or (DefaultValue <> CDefaultValue)
-      or (Description <> CDescription) then
+    if (FieldType <> CFieldType) or
+      ((FieldSize <> CFieldSize) and (not cxIgnoreLength.Checked)) or
+      ((FieldScale <> CFieldScale) and (not cxIgnoreLength.Checked)) or
+      (NotNull <> CNotNull) or
+      (Characterset <> CCharacterset) or
+      (Collation <> CCollation) or
+      (DefaultValue <> CDefaultValue) or
+      (Description <> CDescription) then
       begin
         meLog.Lines.Add(' ' + FExistFieldsList[i]);
         FModifiedFieldsList.Add(FExistFieldsList[i]);
@@ -1196,14 +1204,13 @@ begin
 end;
 
 procedure TfmComparison.ScriptMissingFields;
-
 var
   i: Integer;
   ATableName, AFieldName: string;
   Line: string;
-  FieldSize: Integer;
+  FieldSize, FieldScale: Integer;
   NotNull: Boolean;
-  DefaultValue, Description: string;
+  DefaultValue, Characterset, Collation, Description: string;
   FieldType: string;
   TableSpaces: Integer;
   FieldSpaces: Integer;
@@ -1220,23 +1227,37 @@ begin
     ATableName:= copy(Line, 1, Pos(',', Line) - 1);
     System.Delete(Line, 1, Pos(',', Line));
     AFieldName:= Line;
-    dmSysTables.GetFieldInfo(FDBIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
+    dmSysTables.GetFieldInfo(FDBIndex, ATableName, AFieldName,
+      FieldType, FieldSize, FieldScale, NotNull,
+      DefaultValue, CharacterSet, Collation, Description);
 
     // Script new field
     Line:= FieldType;
-    if Pos('CHAR', Line) > 0 then
-      Line:= Line + '(' + IntToStr(FieldSize) + ')';
-
+    if (Pos('CHAR', Line) > 0) or (Pos('CSTRING', Line) > 0) then
+      Line:= Line + '(' + IntToStr(FieldSize) + ')'
+    else if (Pos('DECIMAL', Line) > 0) or (Pos('NUMERIC', Line) > 0) then
+      Line:= Line + '(' +
+        IntToStr(FieldSize) + ',' +
+        IntToStr(FieldScale) + ')';
 
     // Default value
-    if Trim(DefaultValue) <> '' then
+    if trim(DefaultValue) <> '' then
     begin
-      if (Pos('CHAR', FieldType) > 0) and (Pos('''', DefaultValue) = 0) then
+      if ((Pos('CHAR', FieldType) > 0) or (Pos('CSTRING', FieldType) > 0)) and
+        (Pos('''', DefaultValue) = 0) then
         DefaultValue:= ' ''' + DefaultValue + '''';
       if Pos('default', LowerCase(DefaultValue)) = 0 then
         DefaultValue:= ' default ' + DefaultValue;
       Line:= Line + ' ' + DefaultValue;
+    end;
 
+    // Character set/collation for string type fields
+    if (Pos('CHAR', Line) > 0) or (Pos('CSTRING', Line) > 0) then
+    begin
+      if (Characterset<>'') then
+        Line:= Line + ' character set ' + Characterset;
+      if (Collation<>'') then
+        Line:= Line + ' collation ' + Collation;
     end;
 
     // Null/Not null
@@ -1253,9 +1274,7 @@ begin
 
     FQueryWindow.meQuery.Lines.Add('ALTER TABLE ' + ATableName + Space(TableSpaces) +
       ' ADD ' + AFieldName + Space(FieldSpaces) + ' ' + Line + ';');
-
   end;
-
 end;
 
 procedure TfmComparison.ScriptModifiedFields;
@@ -1263,12 +1282,12 @@ var
   i: Integer;
   ATableName, AFieldName: string;
   Line: string;
-  FieldType, DefaultValue, Description: string;
-  FieldSize: Integer;
-  CFieldType, CDefaultValue, CDescription: string;
-  CFieldSize: Integer;
+  FieldType, DefaultValue, Characterset, Collation, Description: string;
+  cFieldType, cDefaultValue, cCharacterset, cCollation, cDescription: string;
+  FieldSize, cFieldSize: integer;
+  FieldScale, cFieldScale: integer;
   NullFlag: string;
-  NotNull, CNotNull: Boolean;
+  NotNull, cNotNull: Boolean;
   ScriptList: TStringList;
 begin
   if FModifiedFieldsList.Count > 0 then
@@ -1287,9 +1306,13 @@ begin
       System.Delete(Line, 1, Pos(',', Line));
       AFieldName:= Line;
 
-      dmSysTables.GetFieldInfo(FDBIndex, ATableName, AFieldName, FieldType, FieldSize, NotNull, DefaultValue, Description);
-      dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName, AFieldName, CFieldType, CFieldSize, CNotNull,
-        cDefaultValue, cDescription);
+      //todo: (high priority) test comparison with and without collations, character set, numeric, decimal datatype with scale change
+      dmSysTables.GetFieldInfo(FDBIndex, ATableName,
+        AFieldName, FieldType, FieldSize, FieldScale, NotNull,
+        DefaultValue, Characterset, Collation, Description);
+      dmSysTables.GetFieldInfo(cbComparedDatabase.ItemIndex, ATableName,
+        AFieldName, CFieldType, CFieldSize, CFieldScale, CNotNull,
+        cDefaultValue, cCharacterset, cCollation, cDescription);
 
       ScriptList.Clear;
       // check type/size change
@@ -1297,8 +1320,14 @@ begin
       begin
         Line:= 'ALTER TABLE ' + ATableName + ' ALTER ' + AFieldName + ' TYPE ' + FieldType;
 
-        if Pos('CHAR', FieldType) > 0 then
-          Line:= Line + '(' + IntToStr(FieldSize) + ')';
+        if (Pos('CHAR', FieldType) > 0) or
+           (FieldType = 'CSTRING') then
+          Line:= Line + '(' + IntToStr(FieldSize) + ')'
+        else if (FieldType = 'DECIMAL') or
+           (FieldType = 'NUMERIC') then
+          Line:= Line + '(' +
+            IntToStr(FieldSize) + ',' +
+            IntToStr(FieldScale) + ')';
         Line:= Line + ';';
         ScriptList.Add(Line);
       end;
@@ -1322,6 +1351,12 @@ begin
         ScriptList.Add('and RDB$RELATION_NAME = ''' + ATableName + ''';');
       end;
 
+      // todo: Collation/character set changes: find a way to perform these
+      if Characterset <> cCharacterset then
+        ScriptList.Add('-- WARNING: Character set changed from '+Characterset+' to '+cCharacterset+'. Please update manually.');
+      if Collation <> cCollation then
+        ScriptList.Add('-- WARNING: Collation changed from '+Collation+' to '+cCollation+'. Please update manually.');
+
       // Default value
       if DefaultValue <> cDefaultValue then
       begin
@@ -1332,7 +1367,6 @@ begin
       FQueryWindow.meQuery.Lines.Add('');
       FQueryWindow.meQuery.Lines.Add('-- ' + AFieldName + ' on ' + ATableName);
       FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
-
     end;
   finally
     ScriptList.Free;

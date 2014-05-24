@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, IBConnection, FileUtil, LResources, Forms, Controls,
-  Graphics, Dialogs, StdCtrls, Buttons, ExtCtrls;
+  Graphics, Dialogs, StdCtrls, Buttons, ExtCtrls, turbocommon;
 
 type
 
@@ -29,6 +29,7 @@ type
     SaveDialog1: TSaveDialog;
     procedure bbCreateClick(Sender: TObject);
     procedure btBrowseClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { private declarations }
   public
@@ -50,6 +51,15 @@ begin
   begin
     edNewDatabase.Text:= SaveDialog1.FileName;
   end;
+end;
+
+procedure TfmCreateDB.FormCreate(Sender: TObject);
+begin
+  // Load available character sets. Because we are not connected to a server,
+  // we cannot retrieve the available charater sets.
+  // Perhaps this can be done through the Services API but not high priority
+  CbCharSet.Items.AddStrings(FBCharacterSets);
+  CbCharSet.ItemIndex:=DefaultFBCharacterSet;
 end;
 
 procedure TfmCreateDB.bbCreateClick(Sender: TObject);

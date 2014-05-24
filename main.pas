@@ -517,20 +517,25 @@ var
   dbIndex: Integer;
   FieldName: string;
   FieldType, DefaultValue: string;
-  FSize: Integer;
-  Description: string;
+  Size, Scale: Integer;
+  Description, Characterset, Collation: string;
   NotNull: Boolean;
 begin
   SelNode:= tvMain.Selected;
   dbIndex:= SelNode.Parent.Parent.Parent.OverlayIndex;
   FieldName:= Copy(SelNode.Text, 1, Pos(' ', SelNode.Text) - 1);
-  if dmSysTables.GetFieldInfo(dbIndex, SelNode.Parent.Text, FieldName, FieldType, FSize, NotNull,
-    DefaultValue, Description) then
+  if dmSysTables.GetFieldInfo(dbIndex, SelNode.Parent.Text, FieldName,
+    FieldType, Size, Scale, NotNull,
+    DefaultValue, Characterset, Collation, Description) then
   begin
     fmNewEditField:= TfmNewEditField.Create(nil);
-    fmNewEditField.Init(dbIndex, SelNode.Parent.Text, foEdit, FieldName, FieldType, DefaultValue, Description, FSize,
-      SelNode.OverlayIndex, not NotNull,  nil);
-
+    fmNewEditField.Init(dbIndex, SelNode.Parent.Text, foEdit,
+      FieldName, FieldType,
+      CharacterSet, Collation,
+      DefaultValue, Description,
+      Size, Scale,
+      SelNode.OverlayIndex, not NotNull,
+      nil);
     fmNewEditField.Show;
   end
   else

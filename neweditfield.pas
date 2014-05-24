@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Spin, Buttons;
+  StdCtrls, Spin, Buttons, turbocommon;
 
 type
   TFormMode = (foNew, foEdit);
@@ -15,6 +15,8 @@ type
 
   TfmNewEditField = class(TForm)
     bbAdd: TBitBtn;
+    cbCharset: TComboBox;
+    cbCollation: TComboBox;
     cbType: TComboBox;
     cxAllowNull: TCheckBox;
     edDescription: TEdit;
@@ -26,11 +28,17 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Label7: TLabel;
+    lblCharset: TLabel;
+    lblCollation: TLabel;
     seSize: TSpinEdit;
     seOrder: TSpinEdit;
+    seScale: TSpinEdit;
     procedure bbAddClick(Sender: TObject);
+    procedure cbCharsetChange(Sender: TObject);
     procedure cbTypeChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
   private
     FDBIndex: Integer;
     FTableName: string;
@@ -39,14 +47,22 @@ type
     fFormMode: TFormMode;
     OldFieldName: string;
     OldFieldType: string;
-    OldFieldSize: Integer;
+    OldFieldSize: integer;
+    OldFieldScale: integer;
     OldAllowNull: Boolean;
-    OldOrder: Integer;
+    OldOrder: integer;
     OldDefault: string;
+    OldCharacterSet: string;
+    OldCollation: string;
     OldDescription: string;
-    procedure Init(dbIndex: Integer; TableName: string; FormMode: TFormMode;
-      FieldName, FieldType, DefaultValue, Description: string; FSize, FOrder: Integer; AllowNull: Boolean; RefreshButton: TBitBtn);
-
+    procedure Init(dbIndex: Integer; TableName: string;
+      FormMode: TFormMode;
+      FieldName, FieldType,
+      CharacterSet, Collation,
+      DefaultValue, Description: string;
+      Size, Scale, Order: Integer;
+      AllowNull: Boolean;
+      RefreshButton: TBitBtn);
     { public declarations }
   end; 
 
@@ -66,20 +82,25 @@ var
   Clk: TNotifyEvent;
 begin
   if FRefreshButton = nil then
-   clk:= nil
+    clk:= nil
   else
     clk:= FRefreshButton.OnClick;
 
   if fFormMode = foNew then  // New field
   begin
     Line:= cbType.Text;
-    if Pos('CHAR', Line) > 0 then
+    if (Line='CHAR') or
+      (Line='CSTRING') or
+      (Line='VARCHAR') then
       Line:= Line + '(' + IntToStr(seSize.Value) + ')';
 
     // Default value
     if Trim(edDefault.Text) <> '' then
     begin
-      if (Pos('CHAR', cbType.Text) > 0) and (Pos('''', edDefault.Text) = 0) then
+      if ((cbType.Text='CHAR') or
+        (cbType.Text='CSTRING') or
+        (cbType.Text='VARCHAR')) and
+        (Pos('''', edDefault.Text) = 0) then
         Line:= Line + ' default ''' + edDefault.Text + ''''
       else
         Line:= Line + ' default ' + edDefault.Text;
@@ -89,10 +110,12 @@ begin
     if not cxAllowNull.Checked then
       Line:= Line + ' not null';
 
-    fmMain.ShowCompleteQueryWindow(FDBIndex, 'Add new field on Table: ' + FTableName,
-      'ALTER TABLE ' + FTableName + ' ADD ' + edFieldName.Text + ' ' + Line, Clk);
+    fmMain.ShowCompleteQueryWindow(FDBIndex, 'Add new field to Table: ' + FTableName,
+      'ALTER TABLE ' + FTableName +
+      ' ADD ' + edFieldName.Text + ' ' + Line,
+      Clk);
   end
-  else  // Upate
+  else  // Update
   begin
     Line:= '';
     // Check name change
@@ -100,15 +123,28 @@ begin
       Line:= 'ALTER TABLE ' + FTableName + ' ALTER ' + OldFieldName + ' TO ' +
       edFieldName.Text + ';' + LineEnding;
 
-    // check type/size change
-    if (cbType.Text <> OldFieldType) or (seSize.Value <> OldFieldSize) then
+    // Check type/size/scale change
+    if (cbType.Text <> OldFieldType) or
+      (seSize.Value <> OldFieldSize) or
+      (seScale.Value <> OldFieldScale) then
     begin
-      Line:= Line + 'ALTER TABLE ' + FTableName + ' ALTER ' + UpperCase(Trim(edFieldName.Text))
-        + ' TYPE ' + cbType.Text;
+      Line:= Line + 'ALTER TABLE ' + FTableName +
+        ' ALTER ' + UpperCase(Trim(edFieldName.Text)) +
+        ' TYPE ' + cbType.Text;
 
-      if Pos('CHAR', Line) > 0 then
+      if (cbType.Text='NUMERIC') or
+       (cbType.Text='DECIMAL') then
+        Line:= Line + '(' + IntToStr(seSize.Value) + ',' +
+          IntToStr(seScale.Value)+');' + LineEnding
+      else
+      if (cbType.Text='CHAR') or
+        (cbType.Text='CSTRING') or
+        (cbType.Text='VARCHAR') then
         Line:= Line + '(' + IntToStr(seSize.Value) + ');' + LineEnding;
     end;
+
+    //todo: deal with character set change when updating field
+    //todo: deal with Collation change when updating field
 
     // Field Order
     if seOrder.Value <> OldOrder then
@@ -151,9 +187,49 @@ begin
   Close;
 end;
 
+procedure TfmNewEditField.cbCharsetChange(Sender: TObject);
+var
+  Collations: TStringList;
+begin
+  // Available collations depend on the chosen character set, so update that
+  Collations:= TStringList.Create;
+  try
+    GetCollations(cbCharSet.Text,Collations);
+    cbCollation.Items.Assign(Collations);
+  finally
+    Collations.Free;
+  end;
+end;
+
 procedure TfmNewEditField.cbTypeChange(Sender: TObject);
 begin
   seSize.Value:= dmSysTables.GetDefaultTypeSize(FDBIndex, cbType.Text);
+
+  {todo: low priority allow/disallow gui elements when using domain datatypes.
+   Check what can be overridden (e.g. collate for text-type domain fields)}
+  // Allow character set, lblCollation for text type fields; otherwise disable
+  case cbType.Text of
+    'CHAR','CSTRING','VARCHAR':
+    begin
+      // Allow character set/lblCollation for text type fields
+      cbCharset.Enabled:= true;
+      cbCollation.Enabled:= true;
+      seScale.Enabled:= false;
+    end;
+    'DECIMAL','NUMERIC':
+    begin
+      // Allow scale for numeric, decimal
+      seScale.Enabled:= true;
+      cbCharset.Enabled:= false;
+      cbCollation.Enabled:= false;
+    end
+    else
+    begin
+      cbCharset.Enabled:= false;
+      cbCollation.Enabled:= false;
+      seScale.Enabled:= false;
+    end;
+  end;
 end;
 
 procedure TfmNewEditField.FormClose(Sender: TObject;
@@ -162,15 +238,28 @@ begin
   CloseAction:= caFree;
 end;
 
-procedure TfmNewEditField.Init(dbIndex: Integer; TableName: string; FormMode: TFormMode;
-  FieldName, FieldType, DefaultValue, Description: string; FSize, FOrder: Integer; AllowNull: Boolean;
+procedure TfmNewEditField.FormCreate(Sender: TObject);
+begin
+  // Load available character sets
+  // todo: (low priority) character sets should be retrieved from current database server
+  CbCharSet.Items.AddStrings(FBCharacterSets);
+  CbCharSet.ItemIndex:=DefaultFBCharacterSet;
+end;
+
+procedure TfmNewEditField.Init(dbIndex: Integer; TableName: string;
+  FormMode: TFormMode;
+  FieldName, FieldType,
+  CharacterSet, Collation,
+  DefaultValue, Description: string;
+  Size, Scale, Order: integer;
+  AllowNull: Boolean;
   RefreshButton: TBitBtn);
 begin
   cbType.Clear;
-  // Add Basic types
-  dmSysTables.GetBasicTypes(cbType.Items);
 
-  // Add Domain types
+  // Load basic datatypes for fields into combobox....
+  dmSysTables.GetBasicTypes(cbType.Items);
+  // ... add domain types for fields
   dmSysTables.GetDomainTypes(dbIndex, cbType.Items);
 
   FDBIndex:= dbIndex;
@@ -179,11 +268,14 @@ begin
   FRefreshButton:= RefreshButton;
 
   OldFieldName:= FieldName;
-  OldFieldSize:= FSize;
+  OldFieldSize:= Size;
+  OldFieldScale:= Scale;
   OldFieldType:= FieldType;
   OldAllowNull:= AllowNull;
-  OldOrder:= FOrder;
+  OldOrder:= Order;
   OldDefault:= DefaultValue;
+  OldCharacterSet:= CharacterSet;
+  OldCollation:= Collation;
   OldDescription:= Description;
 
   edFieldName.Text:= OldFieldName;
@@ -201,7 +293,7 @@ begin
   else
   begin
     bbAdd.Caption:= 'Add';
-    Caption:= 'Add new in : ' + TableName;
+    Caption:= 'Add new field in : ' + TableName;
   end;
 end;
 
