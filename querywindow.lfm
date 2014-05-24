@@ -211,7 +211,7 @@ object fmQueryWindow: TfmQueryWindow
     Align = alTop
     ResizeAnchor = akTop
   end
-  object Panel2: TPanel
+  object pnlOutputPanel: TPanel
     Left = 0
     Height = 259
     Top = 342
@@ -220,7 +220,7 @@ object fmQueryWindow: TfmQueryWindow
     ClientHeight = 259
     ClientWidth = 720
     TabOrder = 3
-    object PageControl1: TPageControl
+    object pgOutputPageCtl: TPageControl
       Left = 1
       Height = 257
       Top = 1
@@ -969,9 +969,9 @@ object fmQueryWindow: TfmQueryWindow
     top = 238
     object lmExport: TMenuItem
       Caption = 'Export Result as'
-      object lmCommaDelemited: TMenuItem
-        Caption = 'Comma Delemited'
-        OnClick = lmCommaDelemitedClick
+      object lmCommaDelimited: TMenuItem
+        Caption = 'Comma Delimited'
+        OnClick = lmCommaDelimitedClick
       end
       object lmHTML: TMenuItem
         Caption = 'HTML Table'

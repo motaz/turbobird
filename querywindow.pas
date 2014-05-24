@@ -71,7 +71,7 @@ type
     MenuItem10: TMenuItem;
     lmCut: TMenuItem;
     lmExport: TMenuItem;
-    lmCommaDelemited: TMenuItem;
+    lmCommaDelimited: TMenuItem;
     lmHTML: TMenuItem;
     lmRedo: TMenuItem;
     MenuItem2: TMenuItem;
@@ -88,9 +88,9 @@ type
     lmRunExec: TMenuItem;
     lmRunScript: TMenuItem;
     OpenDialog1: TOpenDialog;
-    PageControl1: TPageControl;
+    pgOutputPageCtl: TPageControl;
     Panel1: TPanel;
-    Panel2: TPanel;
+    pnlOutputPanel: TPanel;
     pmTab: TPopupMenu;
     pmMemo: TPopupMenu;
     pmGrid: TPopupMenu;
@@ -124,7 +124,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure lmCloseTabClick(Sender: TObject);
-    procedure lmCommaDelemitedClick(Sender: TObject);
+    procedure lmCommaDelimitedClick(Sender: TObject);
     procedure lmCopyAllClick(Sender: TObject);
     procedure lmCopyCellClick(Sender: TObject);
     procedure lmCopyClick(Sender: TObject);
@@ -221,6 +221,7 @@ type
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
     // Runs SQL script; returns result
     function ExecuteScript(Script: string): Boolean;
+    // Create a new Apply button in the specified panel
     procedure NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
     function FindSqlQuery: TSqlQuery;
     // Returns whether query is DDL or DML
@@ -257,7 +258,7 @@ var
 begin
   Commit:= TBitBtn.Create(self);
   Commit.Parent:= Pan;
-  Commit.Caption:= 'Commit';
+  Commit.Caption:= 'Commit'; //don't change this; code looks for this exact caption
   Commit.Left:= 400;
   Commit.Visible:= False;
   Commit.OnClick:= @CommitResultClick;
@@ -356,7 +357,7 @@ end;
 
 procedure TfmQueryWindow.FinishCellEditing(DataSet: TDataSet);
 begin
-  InsertModifiedRecord(Dataset.RecNo, PageControl1.TabIndex);
+  InsertModifiedRecord(Dataset.RecNo, pgOutputPageCtl.TabIndex);
 end;
 
 
@@ -415,7 +416,7 @@ var
   FieldsSQL: string;
 begin
   try
-    TabIndex:= PageControl1.TabIndex;
+    TabIndex:= pgOutputPageCtl.TabIndex;
     aTableName:= GetTableName(GetCurrentSQLText);
     RecordSet:= GetRecordSet(TabIndex);
 
@@ -514,23 +515,44 @@ begin
   except
     on e: exception do
     begin
-      ShowMessage('Error in save data: ' + e.Message);
+      ShowMessage('Error trying to save data: ' + e.Message);
     end;
   end;
 end;
 
-{ EnableApplyButton: enable save updates button when records have been modified }
+{ EnableApplyButton: enable save updates button on current tab when records have been modified }
 
 procedure TfmQueryWindow.EnableApplyButton;
 var
   i: Integer;
+  Ctl: TControl;
+  ParentPanel: TPanel;
 begin
-  for i:= 0 to High(FResultControls) do
-  if (FResultControls[i] is TBitBtn) and ((FResultControls[i] as TBitBtn).Tag = PageControl1.TabIndex) and
-    ((FResultControls[i] as TBitBtn).Caption = 'Apply') then
+  // The page has a panel that contains the button
+  ParentPanel:=nil;
+  for i:= 0 to pgOutputPageCtl.ActivePage.ControlCount-1 do
   begin
-    (FResultControls[i] as TBitBtn).Visible:= True;
-    Break;
+    Ctl:=pgOutputPageCtl.ActivePage.Controls[i];
+    if Ctl is TPanel then
+    begin
+      ParentPanel:= TPanel(Ctl); //found
+      break;
+    end;
+  end;
+  // Found the hosting panel; this should have the Apply button
+  // as well as the navigator etc
+  if assigned(ParentPanel) then
+  begin
+    for i:= 0 to ParentPanel.ControlCount-1 do
+    begin
+      Ctl:=ParentPanel.Controls[i];
+      if (Ctl is TBitBtn) and
+        ((Ctl as TBitBtn).Caption = 'Apply') then
+      begin
+        (Ctl as TBitBtn).Visible:= true;
+        Break;
+      end;
+    end;
   end;
 end;
 
@@ -748,7 +770,7 @@ end;
 procedure TfmQueryWindow.SQLScript1Exception(Sender: TObject;
   Statement: TStrings; TheException: Exception; var Continue: boolean);
 begin
-  ShowMessage(TheException.Message);
+  ShowMessage('Error running script: '+TheException.Message);
 end;
 
 
@@ -833,7 +855,7 @@ begin
     until QT.fTerminated;
 
     if QT.Error then
-      ShowMessage(QT.ErrorMsg)
+      ShowMessage('Error trying commit retaining: '+QT.ErrorMsg)
     else
     begin
       // Call OnCommit procedure if assigned, it is used to refresh table management view
@@ -951,7 +973,7 @@ begin
       application.ProcessMessages;
     until QT.fTerminated or (FCanceled);
     if QT.Error then
-      ShowMessage(QT.ErrorMsg);
+      ShowMessage('Error trying rollback retaining: '+QT.ErrorMsg);
   finally
     QT.Free;
   end;
@@ -983,8 +1005,8 @@ var
   Cnt: Integer;
 begin
   Cnt:= 0;
-  for i:= 0 to PageControl1.ControlCount - 1 do
-  if PageControl1.Pages[i].TabVisible then
+  for i:= 0 to pgOutputPageCtl.ControlCount - 1 do
+  if pgOutputPageCtl.Pages[i].TabVisible then
    Inc(Cnt);
   Result:= IntToStr(Cnt);
 end;
@@ -1104,7 +1126,7 @@ begin
   ATab:= TTabSheet.Create(self);
   BeginUpdateBounds;
   Result:= ATab;
-  ATab.Parent:= PageControl1;
+  ATab.Parent:= pgOutputPageCtl;
   ATab.Caption:= 'Result # ' + GetNewTabNum + ' ' + AdditionalTitle;
   if QueryType = qtSelectable then // Select, need record set result
   begin
@@ -1260,10 +1282,8 @@ begin
           begin
             if Assigned(FTab) then
               FTab.TabVisible:= False;
-            SetLength(FResultControls, High(FResultControls));
-            SetLength(FParentResultControls, High(FParentResultControls));
             FTab:= CreateResultTab(qtExecute, FSQLQuery, FSQLScript, FResultMemo);
-            PageControl1.ActivePage:= FTab;
+            pgOutputPageCtl.ActivePage:= FTab;
 
             FResultMemo.Text:= e.message;
             FResultMemo.Lines.Add(FQueryPart);
@@ -1369,7 +1389,7 @@ begin
               if Assigned(FTab) then
                 FTab.TabVisible:= False;
               FTab:= CreateResultTab(qtExecute, FSQLQuery, FSQLScript, FResultMemo);
-              PageControl1.ActivePage:= FTab;
+              pgOutputPageCtl.ActivePage:= FTab;
               FResultMemo.Text:= e.message;
               FResultMemo.Lines.Add(FQueryPart);
               FResultMemo.Font.Color:= clRed;
@@ -1393,7 +1413,7 @@ begin
               if Assigned(FTab) then
                 FTab.TabVisible:= False;
               FTab:= CreateResultTab(qtExecute, FSQLQuery, FSQLScript, FResultMemo);
-              PageControl1.ActivePage:= FTab;
+              pgOutputPageCtl.ActivePage:= FTab;
               FResultMemo.Text:= e.message;
               FResultMemo.Lines.Add(FQueryPart);
               FResultMemo.Lines.Add('--------');
@@ -1426,7 +1446,7 @@ begin
         FTab.TabVisible:= False;
       FTab:= CreateResultTab(qtExecute, FSQLQuery, FSQLScript, FResultMemo);
       FTab.ImageIndex:= 2;
-      PageControl1.ActivePage:= FTab;
+      pgOutputPageCtl.ActivePage:= FTab;
 
       FResultMemo.Text:= e.message;
       FResultMemo.Lines.Add('--------');
@@ -1484,7 +1504,7 @@ begin
       if Assigned(ATab) then
         ATab.TabVisible:= False;
       ATab:= CreateResultTab(qtExecute, SqlQuery, SqlScript, meResult);
-      PageControl1.ActivePage:= ATab;
+      pgOutputPageCtl.ActivePage:= ATab;
       meResult.Text:= e.Message;
       meResult.Lines.Add('--------');
       meResult.Lines.Add(Script);
@@ -1505,7 +1525,7 @@ var
 begin
   Apply:= TBitBtn.Create(self);
   Apply.Parent:= Pan;
-  Apply.Caption:= 'Apply';
+  Apply.Caption:= 'Apply'; //don't change this; code looks for this exact caption
   Apply.Left:= 300;
   Apply.Visible:= False;
   Apply.OnClick:= @ApplyClick;
@@ -1520,9 +1540,9 @@ var
   i: Integer;
 begin
   Result:= nil;
-  if PageControl1.PageCount > 0 then
+  if pgOutputPageCtl.PageCount > 0 then
   begin
-    with PageControl1.ActivePage do
+    with pgOutputPageCtl.ActivePage do
     begin
       for i:= 0 to ControlCount - 1 do
       begin
@@ -1644,7 +1664,8 @@ end;
 
 procedure TfmQueryWindow.DBGrid1DblClick(Sender: TObject);
 begin
-  ShowMessage((Sender as TDBGrid).SelectedField.AsString)
+  ShowMessage('Field contents: ' + LineEnding +
+    (Sender as TDBGrid).SelectedField.AsString)
 end;
 
 
@@ -1774,9 +1795,9 @@ begin
 end;
 
 
-{ Save query result in a comma delemited file }
+{ Save query result in a comma delimited file }
 
-procedure TfmQueryWindow.lmCommaDelemitedClick(Sender: TObject);
+procedure TfmQueryWindow.lmCommaDelimitedClick(Sender: TObject);
 var
   i: Integer;
   F: TextFile;
@@ -1873,7 +1894,7 @@ begin
     end;
   except
     on e: exception do
-      ShowMessage(e.Message);
+      ShowMessage('Error trying to copy: '+e.Message);
   end;
   grid.DataSource.DataSet.EnableControls;
 end;
@@ -1907,7 +1928,7 @@ end;
 
 procedure TfmQueryWindow.lmExportAsCommaClick(Sender: TObject);
 begin
-  lmCommaDelemitedClick(nil);
+  lmCommaDelimitedClick(nil);
 end;
 
 { Export as HTML }
@@ -2168,10 +2189,8 @@ begin
   begin
     if Assigned(FTab) then
       FTab.TabVisible:= False;
-    SetLength(FResultControls, High(FResultControls));
-    SetLength(FParentResultControls, High(FParentResultControls));
     FTab:= CreateResultTab(qtExecute, FSQLQuery, FSQLScript, FResultMemo);
-    PageControl1.ActivePage:= FTab;
+    pgOutputPageCtl.ActivePage:= FTab;
 
     FResultMemo.Text:= FQT.ErrorMsg;
     FResultMemo.Lines.Add(FQueryPart);
