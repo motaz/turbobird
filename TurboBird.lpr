@@ -46,6 +46,7 @@ const
 
 var
   SAbout: TfmAbout;
+  ErrorMessage: string;
   IBaseLibraryHandle : TLibHandle;
 begin
   Application.Initialize;
@@ -71,7 +72,19 @@ begin
 
   // Check Firebird library existence
   if (IBaseLibraryHandle = nilhandle) then
-    Application.MessageBox('Unable to load Firebird library: ' + fbclib, 'Warning', 0);
+  begin
+    ErrorMessage:= Format('Unable to load Firebird library: %s.' + LineEnding +
+      'Please follow the Firebird documentation to install the Firebird client on your system.',
+      [fbclib]);
+    {$IFDEF WINDOWS}
+    // More libraries and additional hint
+    ErrorMessage:= Format('Unable to load Firebird library: %s.' + LineEnding +
+      'Please follow the Firebird documentation to install the Firebird client on your system.' + LineEnding +
+      'Hint: you could copy the fbclient/fbembed.dll and associated dlls into the TurboBird directory.',
+      [fbclib+'/'+seclib+'/'+thirdlib]);
+    {$ENDIF}
+    Application.MessageBox(PChar(ErrorMessage), 'Warning', 0);
+  end;
 
   SAbout:= TfmAbout.Create(nil);
   SAbout.BorderStyle:= bsNone;
