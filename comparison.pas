@@ -1619,11 +1619,11 @@ begin
 
     // todo: verify if this character set clause works correctly
     if Trim(CharacterSet) <> '' then
-      FQueryWindow.meQuery.Lines.Add('characterset '+CharacterSet);
+      FQueryWindow.meQuery.Lines.Add('characterset ' + CharacterSet);
 
     // todo: verify if this collation clause works correctly
     if Trim(Collation) <> '' then
-      FQueryWindow.meQuery.Lines.Add('collation '+Collation);
+      FQueryWindow.meQuery.Lines.Add('collation ' + Collation);
 
     if Trim(DefaultValue) <> '' then
     begin

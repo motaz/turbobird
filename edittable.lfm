@@ -83,7 +83,6 @@ object fmEditTable: TfmEditTable
     Scrollbars = ssAutoBoth
     TabOrder = 1
     TitleStyle = tsNative
-    OnTitleClick = DBGrid1TitleClick
   end
   object Datasource1: TDataSource
     DataSet = sqEditTable

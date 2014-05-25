@@ -23,7 +23,6 @@ type
     Panel1: TPanel;
     sqEditTable: TSQLQuery;
     procedure bbSaveClick(Sender: TObject);
-    procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure sqEditTableAfterScroll(DataSet: TDataSet);
@@ -73,16 +72,6 @@ begin
       ShowMessage(e.Message);
     end;
   end;
-end;
-
-procedure TfmEditTable.DBGrid1TitleClick(Column: TColumn);
-begin
-  {todo: implement sorting a la
-  http://wiki.lazarus.freepascal.org/Grids_Reference_Page#Sorting_columns_or_rows_in_DBGrid_with_sort_arrows_in_column_header}
-{ if sqEditTable.IndexFieldNames = Column.Field.FieldName then
-   sqEditTable.IndexFieldNames := Column.Field.FieldName //+ 'DESC'
- else
-   sqEditTable.IndexFieldNames := Column.Field.FieldName}
 end;
 
 procedure TfmEditTable.sqEditTableAfterScroll(DataSet: TDataSet);

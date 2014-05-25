@@ -28,9 +28,8 @@ LazarusResources.Add('TfmEditTable','FORMDATA',[
   +'olLines'#10'dgRowLines'#6'dgTabs'#21'dgAlwaysShowSelection'#15'dgConfirmDel'
   +'ete'#14'dgCancelOnExit'#19'dgHeaderHotTracking'#18'dgHeaderPushedLook'#17'd'
   +'gAutoSizeColumns'#0#10'Scrollbars'#7#10'ssAutoBoth'#8'TabOrder'#2#1#10'Titl'
-  +'eStyle'#7#8'tsNative'#12'OnTitleClick'#7#17'DBGrid1TitleClick'#0#0#11'TData'
-  +'Source'#11'Datasource1'#7'DataSet'#7#11'sqEditTable'#4'left'#3#216#1#3'top'
-  +#2'0'#0#0#9'TSQLQuery'#11'sqEditTable'#9'FieldDefs'#14#0#14'AutoCalcFields'#8
-  +#11'AfterScroll'#7#22'sqEditTableAfterScroll'#6'Params'#14#0#4'left'#3'e'#1#3
-  +'top'#2#20#0#0#0
+  +'eStyle'#7#8'tsNative'#0#0#11'TDataSource'#11'Datasource1'#7'DataSet'#7#11's'
+  +'qEditTable'#4'left'#3#216#1#3'top'#2'0'#0#0#9'TSQLQuery'#11'sqEditTable'#9
+  +'FieldDefs'#14#0#14'AutoCalcFields'#8#11'AfterScroll'#7#22'sqEditTableAfterS'
+  +'croll'#6'Params'#14#0#4'left'#3'e'#1#3'top'#2#20#0#0#0
 ]);
