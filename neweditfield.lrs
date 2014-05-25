@@ -42,12 +42,12 @@ LazarusResources.Add('TfmNewEditField','FORMDATA',[
   +'wHint'#9#8'TabOrder'#2#3#0#0#9'TComboBox'#9'cbCharset'#4'Left'#2'e'#6'Heigh'
   +'t'#2#21#4'Hint'#6'@New field character setIF IT DIFFERS from database chara'
   +'cter set'#3'Top'#3#224#0#5'Width'#2'|'#7'Enabled'#8#10'ItemHeight'#2#13#8'O'
-  +'nChange'#7#15'cbCharsetChange'#8'TabOrder'#2#8#4'Text'#6#4'NONE'#0#0#6'TLab'
-  +'el'#10'lblCharset'#4'Left'#2#8#6'Height'#2#13#3'Top'#3#228#0#5'Width'#2'&'#7
-  +'Caption'#6#7'Charset'#11'ParentColor'#8#0#0#6'TLabel'#12'lblCollation'#4'Le'
-  +'ft'#2#8#6'Height'#2#13#3'Top'#3#12#1#5'Width'#2')'#7'Caption'#6#9'Collation'
-  +#11'ParentColor'#8#0#0#9'TComboBox'#11'cbCollation'#4'Left'#2'e'#6'Height'#2
-  +#21#4'Hint'#6'<Collation of new field IF IT DIFFERS from database collation'
-  +#3'Top'#3#8#1#5'Width'#2'|'#7'Enabled'#8#10'ItemHeight'#2#13#14'ParentShowHi'
-  +'nt'#8#8'ShowHint'#9#8'TabOrder'#2#9#0#0#0
+  +'nChange'#7#15'cbCharsetChange'#8'TabOrder'#2#8#0#0#6'TLabel'#10'lblCharset'
+  +#4'Left'#2#8#6'Height'#2#13#3'Top'#3#228#0#5'Width'#2'&'#7'Caption'#6#7'Char'
+  +'set'#11'ParentColor'#8#0#0#6'TLabel'#12'lblCollation'#4'Left'#2#8#6'Height'
+  +#2#13#3'Top'#3#12#1#5'Width'#2')'#7'Caption'#6#9'Collation'#11'ParentColor'#8
+  +#0#0#9'TComboBox'#11'cbCollation'#4'Left'#2'e'#6'Height'#2#21#4'Hint'#6'<Col'
+  +'lation of new field IF IT DIFFERS from database collation'#3'Top'#3#8#1#5'W'
+  +'idth'#2'|'#7'Enabled'#8#10'ItemHeight'#2#13#14'ParentShowHint'#8#8'ShowHint'
+  +#9#8'TabOrder'#2#9#0#0#0
 ]);

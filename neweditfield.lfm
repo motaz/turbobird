@@ -168,7 +168,6 @@ object fmNewEditField: TfmNewEditField
     ItemHeight = 13
     OnChange = cbCharsetChange
     TabOrder = 8
-    Text = 'NONE'
   end
   object lblCharset: TLabel
     Left = 8

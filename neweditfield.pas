@@ -192,7 +192,8 @@ procedure TfmNewEditField.cbCharsetChange(Sender: TObject);
 var
   Collations: TStringList;
 begin
-  // Available collations depend on the chosen character set, so update that
+  // Available collations depend on the chosen character set,
+  // so update that whenever user changes character set
   Collations:= TStringList.Create;
   try
     GetCollations(cbCharSet.Text,Collations);
@@ -244,7 +245,9 @@ begin
   // Load available character sets
   // todo: (low priority) character sets should be retrieved from current database server
   CbCharSet.Items.AddStrings(FBCharacterSets);
-  CbCharSet.ItemIndex:=DefaultFBCharacterSet;
+  // Do not set a default value, but leave it empty, because specifying a charset
+  // is not mandatory - it should only be done if the charset differs from the
+  // db charset
 end;
 
 procedure TfmNewEditField.Init(dbIndex: Integer; TableName: string;

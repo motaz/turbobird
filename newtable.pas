@@ -95,7 +95,8 @@ begin
       // Default value
       if Trim(StringGrid1.Cells[5, i]) <> '' then
       begin
-        if (Pos('CHAR', FieldType) > 0) and (Pos('''', StringGrid1.Cells[5, i]) = 0) then
+        if ((Pos('CHAR', FieldType) > 0) or (FieldType='CSTRING')) and
+          (Pos('''', StringGrid1.Cells[5, i]) = 0) then
           FieldLine:= FieldLine + ' default ' + QuotedStr(StringGrid1.Cells[5, i])
         else
           FieldLine:= FieldLine + ' default ' + StringGrid1.Cells[5, i];
