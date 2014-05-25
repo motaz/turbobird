@@ -474,7 +474,7 @@ begin
           end;
 
           // Update current record
-          // todo: high priority: add facility for inserting records
+          // todo: (high priority) add facility for inserting records
           if FieldsSQL <> '' then
           begin
             UpdateQuery.Close;
@@ -513,10 +513,6 @@ begin
               end;
             end;
             UpdateQuery.SQL.Add(WhereClause);
-            {$IFDEF DEBUG}
-            //todo: debug
-            SendDebug('going to run update query: '+Updatequery.sql.text);
-            {$ENDIF DEBUG}
             UpdateQuery.ExecSQL;
             (Sender as TBitBtn).Visible:= False;
 

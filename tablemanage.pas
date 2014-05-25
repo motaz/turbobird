@@ -169,7 +169,7 @@ begin
     FieldName:= Cells[1, Row];
     FieldType:= Cells[2, Row];
     FieldSize:= StrtoInt(Cells[3, Row]);
-    FieldScale:= -13; //todo support fieldscale in field editing!!!
+    FieldScale:= 0; //todo support fieldscale in field editing!!!
     AllowNull:= Boolean(StrToInt(Cells[4, Row]));
     DefaultValue:= Cells[5, Row];
     Description:= Cells[6, Row];

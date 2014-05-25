@@ -143,8 +143,9 @@ begin
         Line:= Line + '(' + IntToStr(seSize.Value) + ');' + LineEnding;
     end;
 
-    //todo: deal with character set change when updating field
-    //todo: deal with Collation change when updating field
+    //Character set and collation
+    Line:= Line + '-- warning: character set changed for field ' + edFieldName.Text + '. Please do this manually (e.g. with the fbclone tool)' + LineEnding;
+    Line:= Line + '-- warning: collation changed for field ' + edFieldName.Text + '. Please do this manually (e.g. with the fbclone tool)' + LineEnding;
 
     // Field Order
     if seOrder.Value <> OldOrder then

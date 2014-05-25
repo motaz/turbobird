@@ -1352,11 +1352,10 @@ begin
         ScriptList.Add('and RDB$RELATION_NAME = ' + QuotedStr(ATableName) + ';');
       end;
 
-      // todo: Collation/character set changes: find a way to perform these
       if Characterset <> cCharacterset then
-        ScriptList.Add('-- WARNING: Character set changed from '+Characterset+' to '+cCharacterset+'. Please update manually.');
+        ScriptList.Add('-- WARNING: Character set changed from '+Characterset+' to '+cCharacterset+'. Please update manually (e.g. using the fbclone tool).');
       if Collation <> cCollation then
-        ScriptList.Add('-- WARNING: Collation changed from '+Collation+' to '+cCollation+'. Please update manually.');
+        ScriptList.Add('-- WARNING: Collation changed from '+Collation+' to '+cCollation+'. Please update manually (e.g. using the fbclone tool).');
 
       // Default value
       if DefaultValue <> cDefaultValue then
