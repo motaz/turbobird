@@ -120,8 +120,8 @@ begin
     begin
       RemoveParamClosing(Params);
       List.Add(Params);
-      List.Add('ENTRY_POINT ''' + EntryPoint + '''');
-      List.Add('MODULE_NAME ''' + ModuleName + ''';');
+      List.Add('ENTRY_POINT ' + QuotedStr(EntryPoint));
+      List.Add('MODULE_NAME ' + QuotedStr(ModuleName) + ';');
       List.Add('');
     end;
   end;
@@ -272,7 +272,7 @@ begin
         if DefaultValue <> '' then
         begin
           if pos('default', LowerCase(DefaultValue)) <> 1 then
-            DefaultValue:= ' default ''' + DefaultValue + '''';
+            DefaultValue:= ' default ' + QuotedStr(DefaultValue);
           FieldLine:= FieldLine + ' ' + DefaultValue;
         end;
 

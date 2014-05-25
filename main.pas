@@ -318,7 +318,7 @@ begin
       // Create user
       dmSysTables.Init(dbIndex);
       dmSysTables.sqQuery.Close;
-      dmSysTables.sqQuery.SQL.Text:= 'create user ' + edUserName.Text + ' password ''' + edPassword.Text  + '''';
+      dmSysTables.sqQuery.SQL.Text:= 'create user ' + edUserName.Text + ' password ' + QuotedStr(edPassword.Text);
       dmSysTables.sqQuery.ExecSQL;
 
       // Grant rule
@@ -366,8 +366,8 @@ begin
     try
        dmSysTables.Init(tvMain.Selected.Parent.Parent.OverlayIndex);
        dmSysTables.sqQuery.Close;
-       dmSysTables.sqQuery.SQL.Text:= 'alter user ' + tvMain.Selected.Text + ' password ''' +
-         fmChangePass.edPassword.Text + '''';
+       dmSysTables.sqQuery.SQL.Text:= 'alter user ' + tvMain.Selected.Text +
+         ' password ' + QuotedStr(fmChangePass.edPassword.Text);
        dmSysTables.sqQuery.ExecSQL;
        dmSysTables.stTrans.Commit;
        MessageDlg('Password has been changed', mtInformation, [mbOk], 0);
@@ -665,7 +665,7 @@ begin
 
         for i:= 1 to StringGrid1.RowCount - 1 do
           if Pos('CHAR', StringGrid1.Cells[2, i]) > 0 then
-            Line:= Line + '''' + StringGrid1.Cells[0, i] + ''', '
+            Line:= Line + QuotedStr(StringGrid1.Cells[0, i]) + ', '
           else
             Line:= Line + StringGrid1.Cells[0, i] + ', ';
         if WithParams then
@@ -1263,8 +1263,9 @@ begin
 
     if Trim(fmNewDomain.edDefault.Text) <> '' then
     begin
-      if Pos('char', LowerCase(fmNewDomain.cbType.Text)) > 0 then
-        meQuery.Lines.Add('default ''' + fmNewDomain.edDefault.Text + '''')
+      if (Pos('char', LowerCase(fmNewDomain.cbType.Text)) > 0) or
+        (LowerCase(fmNewDomain.cbType.Text)='cstring') then
+        meQuery.Lines.Add('default ' + QuotedStr(fmNewDomain.edDefault.Text))
       else
         meQuery.Lines.Add('DEFAULT ' + fmNewDomain.edDefault.Text);
     end;
@@ -1613,8 +1614,8 @@ begin
     QWindow.meQuery.Lines.Add('DECLARE EXTERNAL FUNCTION "' + AFuncName + '"');
     QWindow.meQuery.Lines.Add('-- (int, varchar(100))');
     QWindow.meQuery.Lines.Add('RETURNS (int)');
-    QWindow.meQuery.Lines.Add('ENTRY_POINT ''' + entryPoint + '''');
-    QWindow.meQuery.Lines.Add('MODULE_NAME ''' + modulename + ''' ;');
+    QWindow.meQuery.Lines.Add('ENTRY_POINT ' + QuotedStr(entryPoint));
+    QWindow.meQuery.Lines.Add('MODULE_NAME ' + QuotedStr(modulename) + ';');
     QWindow.Show;
   end;
 end;
@@ -2082,7 +2083,7 @@ begin
         // Script triggers
         SQLQuery1.Close;
         SQLQuery1.SQL.Text:= 'SELECT RDB$Trigger_Name, RDB$Trigger_Inactive FROM RDB$TRIGGERS WHERE RDB$SYSTEM_FLAG=0 ' +
-          'and RDB$Relation_Name = ''' + aTableName + '''';
+          'and RDB$Relation_Name = ' + QuotedStr(aTableName);
         SQLQuery1.Open;
         with SQLQuery1 do
         while not EOF do

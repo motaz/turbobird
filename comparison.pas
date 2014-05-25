@@ -456,8 +456,8 @@ begin
         begin
           RemoveParamClosing(Params);
           ScriptList.Add(Params);
-          ScriptList.Add('ENTRY_POINT ''' + EntryPoint + '''');
-          ScriptList.Add('MODULE_NAME ''' + ModuleName + ''';');
+          ScriptList.Add('ENTRY_POINT ' + QuotedStr(EntryPoint));
+          ScriptList.Add('MODULE_NAME ' + QuotedStr(ModuleName) + ';');
           ScriptList.Add('');
         end;
         FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
@@ -1245,7 +1245,7 @@ begin
     begin
       if ((Pos('CHAR', FieldType) > 0) or (Pos('CSTRING', FieldType) > 0)) and
         (Pos('''', DefaultValue) = 0) then
-        DefaultValue:= ' ''' + DefaultValue + '''';
+        DefaultValue:= ' ' + QuotedStr(DefaultValue);
       if Pos('default', LowerCase(DefaultValue)) = 0 then
         DefaultValue:= ' default ' + DefaultValue;
       Line:= Line + ' ' + DefaultValue;
@@ -1346,9 +1346,10 @@ begin
       // Description
       if Description <> CDescription then
       begin
-        ScriptList.Add('UPDATE RDB$RELATION_FIELDS set RDB$DESCRIPTION = ''' + Description + '''');
-        ScriptList.Add('where RDB$FIELD_NAME = ''' + UpperCase(AFieldName) + '''');
-        ScriptList.Add('and RDB$RELATION_NAME = ''' + ATableName + ''';');
+        ScriptList.Add('UPDATE RDB$RELATION_FIELDS ' +
+          'set RDB$DESCRIPTION = ' + QuotedStr(Description));
+        ScriptList.Add('where RDB$FIELD_NAME = ' + QuotedStr(UpperCase(AFieldName)));
+        ScriptList.Add('and RDB$RELATION_NAME = ' + QuotedStr(ATableName) + ';');
       end;
 
       // todo: Collation/character set changes: find a way to perform these
@@ -1360,9 +1361,10 @@ begin
       // Default value
       if DefaultValue <> cDefaultValue then
       begin
-        ScriptList.Add('UPDATE RDB$RELATION_FIELDS set RDB$Default_Source = ''' + DefaultValue + ''' ');
-        ScriptList.Add('where RDB$FIELD_NAME = ''' + UpperCase(AFieldName) + '''');
-        ScriptList.Add('and RDB$RELATION_NAME = ''' + ATableName + ''';');
+        ScriptList.Add('UPDATE RDB$RELATION_FIELDS ' +
+          'set RDB$Default_Source = ' + QuotedStr(DefaultValue) + ' ');
+        ScriptList.Add('where RDB$FIELD_NAME = ' + QuotedStr(UpperCase(AFieldName)));
+        ScriptList.Add('and RDB$RELATION_NAME = ' + QuotedStr(ATableName) + ';');
       end;
       FQueryWindow.meQuery.Lines.Add('');
       FQueryWindow.meQuery.Lines.Add('-- ' + AFieldName + ' on ' + ATableName);
@@ -1579,8 +1581,8 @@ begin
       FQueryWindow.meQuery.Lines.Add('');
       FQueryWindow.meQuery.Lines.Add('DECLARE EXTERNAL FUNCTION "' + FunctionName + '"(');
       FQueryWindow.meQuery.Lines.Add(Params);
-      FQueryWindow.meQuery.Lines.Add('ENTRY_POINT ''' + EntryPoint + '''');
-      FQueryWindow.meQuery.Lines.Add('MODULE_NAME ''' + ModuleName + ''' ;');
+      FQueryWindow.meQuery.Lines.Add('ENTRY_POINT ' + QuotedStr(EntryPoint));
+      FQueryWindow.meQuery.Lines.Add('MODULE_NAME ' + QuotedStr(ModuleName) + ' ;');
 
       FQueryWindow.meQuery.Lines.Add('');
     end;

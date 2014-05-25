@@ -593,8 +593,8 @@ begin
     'where Con.RDB$COnstraint_Name = Refc.RDB$Const_Name_UQ ' +
     '  and Refc.RDB$COnstraint_Name = Ind.RDB$Index_Name' +
     '  and Refc.RDB$COnstraint_Name = Seg.RDB$Index_Name' +
-    '  and Ind.RDB$Relation_Name = ''' + UpperCase(ATableName) + ''' ' +
-    '  and Refc.RDB$Constraint_Name = ''' + ConstraintName + '''';
+    '  and Ind.RDB$Relation_Name = ' + QuotedStr(UpperCase(ATableName)) + ' ' +
+    '  and Refc.RDB$Constraint_Name = ' + QuotedStr(ConstraintName);
   sqQuery.Open;
   Result:= sqQuery.RecordCount > 0;
   with sqQuery do
@@ -618,7 +618,8 @@ function TdmSysTables.GetExceptionInfo(ExceptionName: string; var Msg, Descripti
   SqlQuery: string): Boolean;
 begin
   sqQuery.Close;
-  sqQuery.SQL.Text:= 'select * from RDB$EXCEPTIONS where RDB$EXCEPTION_NAME = ''' + ExceptionName + '''';
+  sqQuery.SQL.Text:= 'select * from RDB$EXCEPTIONS ' +
+   'where RDB$EXCEPTION_NAME = ' + QuotedStr(ExceptionName);
   sqQuery.Open;
   Result:= sqQuery.RecordCount > 0;
   if Result then
@@ -626,7 +627,7 @@ begin
     Msg:= sqQuery.FieldByName('RDB$MESSAGE').AsString;
     Description:= sqQuery.FieldByName('RDB$DESCRIPTION').AsString;
     SqlQuery:= 'CREATE EXCEPTION ' + ExceptionName + LineEnding +
-      '''' + Msg + ''';';
+      QuotedStr(Msg) + ';';
     if Description<>'' then
       SQLQuery:= SQLQuery + LineEnding +
         'UPDATE RDB$EXCEPTIONS set ' + LineEnding +
@@ -685,7 +686,7 @@ function TdmSysTables.GetConstraintForeignKeyFields(AIndexName: string; SqlQuery
 begin
   SQLQuery.Close;
   SQLQuery.SQL.Text:= 'select RDB$Index_Name as IndexName, RDB$Field_name as FieldName from RDB$INDEX_SEGMENTS ' +
-    'where RDB$Index_name = ''' + UpperCase(Trim(AIndexName)) + '''';
+    'where RDB$Index_name = ' + QuotedStr(UpperCase(Trim(AIndexName)));
   SQLQuery.Open;
   while not SQLQuery.EOF do
   begin
@@ -762,7 +763,7 @@ begin
   Init(dbIndex);
   sqQuery.Close;
   sqQuery.SQL.Text:= 'select distinct RDB$User, RDB$User_Type from RDB$USER_PRIVILEGES  ' +
-    'where RDB$Relation_Name = ''' + ObjectName + '''';
+    'where RDB$Relation_Name = ' + QuotedStr(ObjectName);
   sqQuery.Open;
   while not sqQuery.EOF do
   begin
@@ -811,8 +812,9 @@ function TdmSysTables.GetObjectUserPermission(dbIndex: Integer; ObjectName, User
 begin
   Init(dbIndex);
   sqQuery.Close;
-  sqQuery.SQL.Text:= 'select * from RDB$User_Privileges where RDB$Relation_Name = ''' +
-    ObjectName + ''' and RDB$User = ''' + UserName + '''';
+  sqQuery.SQL.Text:= 'select * from RDB$User_Privileges ' +
+    'where RDB$Relation_Name = ' + QuotedStr(ObjectName) + ' ' +
+    'and RDB$User = ' + QuotedStr(UserName);
   sqQuery.Open;
   Result:= '';
   if sqQuery.RecordCount >  0 then

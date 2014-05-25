@@ -101,7 +101,7 @@ begin
         (cbType.Text='CSTRING') or
         (cbType.Text='VARCHAR')) and
         (Pos('''', edDefault.Text) = 0) then
-        Line:= Line + ' default ''' + edDefault.Text + ''''
+        Line:= Line + ' default ' + QuotedStr(edDefault.Text)
       else
         Line:= Line + ' default ' + edDefault.Text;
     end;
@@ -161,16 +161,17 @@ begin
       else
         NullFlag:= '1';
         Line:= Line + 'UPDATE RDB$RELATION_FIELDS SET RDB$NULL_FLAG = ' + NullFlag + LineEnding +
-          'WHERE RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) + ''' AND RDB$RELATION_NAME = ''' +
-          FTableName + '''' + LineEnding;
+          'WHERE RDB$FIELD_NAME = ' + QuotedStr(UpperCase(Trim(edFieldName.Text))) + ' ' +
+          'AND RDB$RELATION_NAME = ' + QuotedStr(FTableName) + LineEnding;
     end;
 
     // Description
     if edDescription.Text <> OldDescription then
     begin
-      Line:= Line + 'UPDATE RDB$RELATION_FIELDS set RDB$DESCRIPTION = ''' + edDescription.Text +
-        '''  where RDB$FIELD_NAME = ''' + UpperCase(Trim(edFieldName.Text)) +
-        ''' and RDB$RELATION_NAME = ''' + FTableName + ''';' + LineEnding;
+      Line:= Line + 'UPDATE RDB$RELATION_FIELDS ' +
+        'set RDB$DESCRIPTION = ' + QuotedStr(edDescription.Text) + ' ' +
+        'where RDB$FIELD_NAME = ' + QuotedStr(UpperCase(Trim(edFieldName.Text))) + ' ' +
+        'and RDB$RELATION_NAME = ' + QuotedStr(FTableName) + ';' + LineEnding;
     end;
 
     // Default value
