@@ -2676,7 +2676,7 @@ object fmQueryWindow: TfmQueryWindow
       OnClick = lmCopyAllClick
     end
     object lmExportAsComma: TMenuItem
-      Caption = 'Export Grid as Comma Delimited'
+      Caption = 'Export Grid as Comma Delemited'
       OnClick = lmExportAsCommaClick
     end
     object lmExportAsHTML: TMenuItem

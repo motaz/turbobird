@@ -592,7 +592,6 @@ var
   Ctl: TControl;
   ParentPanel: TPanel;
 begin
-  //todo: priority high test whether this works
   // The page has a panel that contains the button
   ParentPanel:=nil;
   for i:= 0 to pgOutputPageCtl.ActivePage.ControlCount-1 do
@@ -1968,12 +1967,20 @@ begin
   SaveDialog1.DefaultExt:= '.htm';
   SqlQuery:= nil;
   SqlQuery:= GetCurrentSelectQuery;
+
+  // Check for results being present:
   if not(assigned(SqlQuery)) then
-    ShowMessage('There is no record set in result')
-  else
+  begin
+    MessageDlg('There is no record set in result', mtError, [mbOk], 0);
+    exit;
+  end;
   if (not SQLQuery.Active) or (SQLQuery.RecordCount = 0) then
-    MessageDlg('No data', mtError, [mbOk], 0)
-  else // Valid data, let's try to save:
+  begin
+    MessageDlg('No data', mtError, [mbOk], 0);
+    exit;
+  end;
+
+  // We know there's valid data, let's try to save:
   if SaveDialog1.Execute then
   begin
     SQLQuery.DisableControls;
@@ -2111,46 +2118,28 @@ end;
 
 procedure TfmQueryWindow.QueryAfterScroll(DataSet: TDataSet);
 var
+  Ctl: TControl;
   TabSheet: TTabSheet;
   i: Integer;
 begin
   TabSheet:= nil;
 
   // Get DataSet's TTabsheet
-  //todo: high
-  //showmessage('todo: priority high same approach as apply button');
-  {
-  for i:= 0 to High(FResultControls) do
+  // The query object's tag should be the tab index number
+  if (Dataset is TSQLQuery) then
+    TabSheet:= pgOutputPageCtl.Pages[TSQLQuery(DataSet).Tag];
+
+  if assigned(TabSheet) then
   begin
-    if (FResultControls[i] <> nil) and
-      (DataSet = FResultControls[i]) then
+    for i:= 0 to TabSheet.ControlCount-1 do
     begin
-      TabSheet:= FParentResultControls[i] as TTabSheet;
-      Break;
-    end;
-  end;
-  }
-  // Search for status bar inside current query result TTabSheet
-  if TabSheet <> nil then
-  begin
-    //todo: high
-    //showmessage('todo: priority high same approach as apply button');
-    {
-    for i:= 0 to High(FResultControls) do
-    begin
-      if FResultControls[i] <> nil then
-      begin
-        if (FParentResultControls[i] <> nil) and ((FParentResultControls[i] as TTabSheet) = TabSheet)
-          and (FResultControls[i] is TStatusBar) then
-        begin
-          // Display current record and number of total records in status bar
-          (FResultControls[i] as TStatusBar).SimpleText:= IntToStr(DataSet.RecordCount) +
+      Ctl:= TabSheet.Controls[i];
+      if (Ctl is TStatusBar) then
+        // Display current record and number of total records in status bar
+        TStatusBar(Ctl).SimpleText:= IntToStr(DataSet.RecordCount) +
           ' records fetched. At record # ' + IntToStr(DataSet.RecNo);
-          break;
-        end;
-      end;
+        break;
     end;
-    }
   end;
 end;
 
