@@ -3210,7 +3210,6 @@ procedure TfmMain.lmViewFieldsClick(Sender: TObject);
 var
   Node: TTreeNode;
   dbIndex: Integer;
-  FieldsList: TStringList;
   FieldTitle: string;
   FieldNode: TTreeNode;
   PKFieldsList: TStringList;
@@ -3233,7 +3232,6 @@ begin
         GetConstraintFields(Node.Text, PKIndexName, PKFieldsList);
 
       // Fields
-      FieldsList:= TStringList.Create;
       GetFields(dbIndex, Node.Text, nil);
       i:= 1;
       with SQLQuery1 do
