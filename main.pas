@@ -123,6 +123,7 @@ type
     procedure lmDisconnectClick(Sender: TObject);
     procedure lmEditFieldClick(Sender: TObject);
     procedure lmGetIncrementGenClick(Sender: TObject);
+    // Show all records in table
     procedure lmOpenSystemTableClick(Sender: TObject);
     procedure lmActivateTrigClick(Sender: TObject);
     procedure lmCallStoreProcClick(Sender: TObject);
@@ -162,6 +163,7 @@ type
     procedure lmUserPermManagementClick(Sender: TObject);
     procedure lmViewDomainClick(Sender: TObject);
     procedure lmDisplayViewClick(Sender: TObject);
+    // Expand table field nodes
     procedure lmViewFieldsClick(Sender: TObject);
     procedure lmViewGenClick(Sender: TObject);
     procedure lmViewStoredProcedureClick(Sender: TObject);
@@ -588,7 +590,6 @@ begin
     QWindow.bbRunClick(nil);
     QWindow.Show;
   end;
-
 end;
 
 procedure TfmMain.lmActivateTrigClick(Sender: TObject);
@@ -3268,7 +3269,6 @@ begin
             FieldNode.SelectedIndex:= 27;
           end;
           Inc(i);
-
          end;
         Next;
       end;
@@ -3827,7 +3827,7 @@ begin
           Rec:= RegisteredDatabases[Node.Parent.OverlayIndex].RegRec;
         end;
       end;
-      3: // Object Item Level, like some tables, procedures.
+      3: // Object Item Level, like tables, procedures....
       begin
         ParentText:= Node.Parent.Text;
         if Pos('(', ParentText) > 0 then
@@ -3844,7 +3844,11 @@ begin
           'Views': lmDisplay1000VClick(nil);
           'Stored Procedures': lmViewStoredProcedureClick(nil);
           'Functions': lmViewUDFClick(nil);
-          'System Tables': lmOpenSystemTableClick(nil);
+          'System Tables':
+          begin
+            lmViewFieldsClick(nil); // also works for system tables
+            lmOpenSystemTableClick(nil);
+          end;
           'Domains': lmViewDomainClick(nil);
           'Roles': lmPermissionsClick(nil);
           'Exceptions': lmScriptExceptionClick(nil);

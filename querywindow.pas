@@ -474,13 +474,13 @@ begin
           end;
 
           // Update current record
-          // todo: (high priority) add facility for inserting records
+          // todo: (high priority) add facility for inserting records.
           if FieldsSQL <> '' then
           begin
             UpdateQuery.Close;
             UpdateQuery.SQL.Text:= 'update ' + TableName + ' set ' + FieldsSQL;
 
-            WhereClause:= 'where ';
+            WhereClause:= ' where ';
             // where clause
             for x:= 0 to KeyList.Count - 1 do
             begin
