@@ -443,7 +443,7 @@ begin
         // Get primary key fields
         fmMain.GetIndexFields(TableName, PKIndexName, UpdateQuery, KeyList);
         fmMain.GetFields(FDBIndex, TableName, FieldsList);
-        WhereClause:= 'where ';
+        WhereClause:= ' where ';
 
         UserData.DisableControls;
         // Check modified records
