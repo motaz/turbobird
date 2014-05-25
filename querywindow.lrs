@@ -1,5 +1,3 @@
-{ This is an automatically generated lazarus resource file }
-
 LazarusResources.Add('TfmQueryWindow','FORMDATA',[
   'TPF0'#14'TfmQueryWindow'#13'fmQueryWindow'#4'Left'#3#21#2#6'Height'#3'Y'#2#3
   +'Top'#3#204#0#5'Width'#3#208#2#13'ActiveControl'#7#6'Panel1'#7'Caption'#6#13
@@ -2504,7 +2502,7 @@ LazarusResources.Add('TfmQueryWindow','FORMDATA',[
   +'ion'#6#10'Copy field'#7'OnClick'#7#15'lmCopyCellClick'#0#0#9'TMenuItem'#9'l'
   +'mCopyAll'#7'Caption'#6#15'Copy all result'#7'OnClick'#7#14'lmCopyAllClick'#0
   +#0#9'TMenuItem'#15'lmExportAsComma'#7'Caption'#6#30'Export Grid as Comma Del'
-  +'emited'#7'OnClick'#7#20'lmExportAsCommaClick'#0#0#9'TMenuItem'#14'lmExportA'
+  +'imited'#7'OnClick'#7#20'lmExportAsCommaClick'#0#0#9'TMenuItem'#14'lmExportA'
   +'sHTML'#7'Caption'#6#19'Export Grid as HTML'#7'OnClick'#7#19'lmExportAsHTMLC'
   +'lick'#0#0#0#14'TSynCompletion'#14'SynCompletion1'#8'Position'#2#0#13'LinesI'
   +'nWindow'#2#6#13'SelectedColor'#7#11'clHighlight'#13'CaseSensitive'#8#5'Widt'

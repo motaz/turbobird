@@ -164,8 +164,8 @@ begin
    from a query is awful. Rework to use e.g. the function}
   with sgFields, fmNewEditField do
   begin
-    Characterset:= ''; //todo: support character set in field editing!!!
-    Collation:= ''; //todo: support collation
+    Characterset:= ''; //todo: support character set in field editing: add column to grid
+    Collation:= ''; //todo: support collation in field editing: add column to grid
     FieldName:= Cells[1, Row];
     FieldType:= Cells[2, Row];
     FieldSize:= StrtoInt(Cells[3, Row]);

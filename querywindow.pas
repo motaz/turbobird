@@ -222,7 +222,6 @@ type
     function ExecuteScript(Script: string): Boolean;
     // Create a new Apply button in the specified panel
     procedure NewApplyButton(var Pan: TPanel; var ATab: TTabSheet);
-    function FindSqlQuery: TSqlQuery;
     // Returns whether query is DDL or DML
     function GetSQLType(Query: string; var Command: string): string;
     // Tries to split up text into separate queries
@@ -1575,31 +1574,6 @@ begin
 end;
 
 
-{ FindSQLQuery: Return current TSQLQuery component from current query window }
-
-function TfmQueryWindow.FindSqlQuery: TSqlQuery;
-var
-  i: Integer;
-begin
-  Result:= nil;
-  if pgOutputPageCtl.PageCount > 0 then
-  begin
-    with pgOutputPageCtl.ActivePage do
-    begin
-      for i:= 0 to ControlCount - 1 do
-      begin
-        //todo: directly go to sqlquery?
-        if Controls[i] is TDBGrid then
-        begin
-          Result:= TSqlQuery((Controls[i] as TDBGrid).DataSource.DataSet);
-          Break;
-        end;
-      end;
-    end;
-  end;
-end;
-
-
 { GetSQLType: get SQL type of current SQL text }
 
 function TfmQueryWindow.GetSQLType(Query: string; var Command: string): string;
@@ -1719,15 +1693,15 @@ var
   SqlQuery: TSQLQuery;
 //    indexoption : TIndexOptions;
 begin
-  SqlQuery:= FindSqlQuery;
-  if  SqlQuery <> Nil then
-  if SqlQuery.IndexFieldNames = Column.Field.FieldName then
+  SQLQuery:= nil;
+  SqlQuery:= GetCurrentSelectQuery;
+  if (assigned(SqlQuery)) and
+    (SqlQuery.IndexFieldNames = Column.Field.FieldName) then
     SqlQuery.IndexFieldNames := Column.Field.FieldName //+ 'DESC'
-  //   indexoption :=[ixDescending];
-  //   SqlQuery.AddIndex('',Column.Field.FieldName,indexoption,'');
+    //   indexoption :=[ixDescending];
+    //   SqlQuery.AddIndex('',Column.Field.FieldName,indexoption,'');
   else
     SqlQuery.IndexFieldNames := Column.Field.FieldName
-
 end;
 
 
@@ -1847,44 +1821,45 @@ var
   SqlQuery: TSQLQuery;
 begin
   SaveDialog1.DefaultExt:= '.txt';
-  SqlQuery:= FindSqlQuery;
-  if SqlQuery = nil then
+  SqlQuery:= nil;
+  SqlQuery:= GetCurrentSelectQuery;
+  if not(assigned(SqlQuery)) then
   begin
     ShowMessage('There is no recordset in result');
     Exit;
   end;
-  if (not SQLQuery.Active) or (SQLQuery.RecordCount = 0) then
+  if (not SqlQuery.Active) or (SqlQuery.RecordCount = 0) then
     MessageDlg('No data', mtError, [mbOk], 0)
   else
   if SaveDialog1.Execute then
   begin
-    SQLQuery.DisableControls;
-    SQLQuery.First;
+    SqlQuery.DisableControls;
+    SqlQuery.First;
     AssignFile(F, SaveDialog1.FileName);
     Rewrite(F);
-    for i:= 0 to SQLQuery.FieldCount - 1 do
+    for i:= 0 to SqlQuery.FieldCount - 1 do
     begin
-      Write(F, '"', SQLQuery.Fields[i].FieldName, '"');
-      if i = SQLQuery.FieldCount - 1 then
+      Write(F, '"', SqlQuery.Fields[i].FieldName, '"');
+      if i = SqlQuery.FieldCount - 1 then
         Writeln(F)
       else
         Write(F, ', ');
     end;
 
-    while not SQLQuery.EOF do
+    while not SqlQuery.EOF do
     begin
-      for i:= 0 to SQLQuery.FieldCount - 1 do
+      for i:= 0 to SqlQuery.FieldCount - 1 do
       begin
-        Write(F, '"', SQLQuery.Fields[i].AsString, '"');
-        if i = SQLQuery.FieldCount - 1 then
+        Write(F, '"', SqlQuery.Fields[i].AsString, '"');
+        if i = SqlQuery.FieldCount - 1 then
           Writeln(F)
         else
           Write(F, ', ');
       end;
-      SQLQuery.Next;
+      SqlQuery.Next;
     end;
     CloseFile(F);
-    SQLQuery.EnableControls;
+    SqlQuery.EnableControls;
   end;
 
 end;
@@ -1967,7 +1942,7 @@ begin
 end;
 
 
-{ Export to comma delimeted file }
+{ Export to comma delimited file }
 
 procedure TfmQueryWindow.lmExportAsCommaClick(Sender: TObject);
 begin
@@ -1991,8 +1966,9 @@ var
   SqlQuery: TSQLQuery;
 begin
   SaveDialog1.DefaultExt:= '.htm';
-  SqlQuery:= FindSqlQuery;
-  if SqlQuery = nil then
+  SqlQuery:= nil;
+  SqlQuery:= GetCurrentSelectQuery;
+  if not(assigned(SqlQuery)) then
     ShowMessage('There is no record set in result')
   else
   if (not SQLQuery.Active) or (SQLQuery.RecordCount = 0) then
