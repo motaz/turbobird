@@ -76,7 +76,7 @@ object fmCreateDB: TfmCreateDB
     TabOrder = 3
   end
   object bbCreate: TBitBtn
-    Left = 11
+    Left = 367
     Height = 35
     Top = 215
     Width = 96
@@ -160,10 +160,10 @@ object fmCreateDB: TfmCreateDB
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
     }
     OnClick = bbCreateClick
-    TabOrder = 4
+    TabOrder = 6
   end
   object bbCancel: TBitBtn
-    Left = 120
+    Left = 261
     Height = 35
     Top = 215
     Width = 91
@@ -180,7 +180,7 @@ object fmCreateDB: TfmCreateDB
     Top = 170
     Width = 124
     ItemHeight = 13
-    TabOrder = 6
+    TabOrder = 4
   end
   object Image1: TImage
     Left = 384

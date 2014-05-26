@@ -1,38 +1,38 @@
 object fmBackupRestore: TfmBackupRestore
   Left = 402
   Height = 445
-  Top = 295
+  Top = 201
   Width = 496
   Caption = 'Backup/Resore database'
   ClientHeight = 445
   ClientWidth = 496
   Position = poScreenCenter
-  LCLVersion = '1.0.4.0'
+  LCLVersion = '1.2.2.0'
   object GroupBox1: TGroupBox
     Left = 0
     Height = 288
     Top = 0
     Width = 496
     Align = alTop
-    ClientHeight = 284
+    ClientHeight = 270
     ClientWidth = 492
     Color = clWhite
     ParentColor = False
     TabOrder = 0
     object Label1: TLabel
       Left = 12
-      Height = 18
+      Height = 13
       Top = 10
-      Width = 105
+      Width = 75
       Caption = 'Operation Type'
       ParentColor = False
     end
     object cbOperation: TComboBox
       Left = 142
-      Height = 27
+      Height = 21
       Top = 6
       Width = 204
-      ItemHeight = 0
+      ItemHeight = 13
       ItemIndex = 0
       Items.Strings = (
         'Backup'
@@ -44,27 +44,27 @@ object fmBackupRestore: TfmBackupRestore
     end
     object Label2: TLabel
       Left = 13
-      Height = 18
+      Height = 13
       Top = 89
-      Width = 128
+      Width = 93
       Caption = 'Targeted Database'
       ParentColor = False
     end
     object Label3: TLabel
       Left = 14
-      Height = 18
+      Height = 13
       Top = 142
-      Width = 77
+      Width = 53
       Caption = 'Backup File'
       ParentColor = False
     end
     object edBackup: TEdit
       Left = 102
-      Height = 27
+      Height = 21
       Top = 137
       Width = 305
       Anchors = [akTop, akLeft, akRight]
-      TabOrder = 1
+      TabOrder = 3
     end
     object SpeedButton1: TSpeedButton
       Left = 421
@@ -72,28 +72,27 @@ object fmBackupRestore: TfmBackupRestore
       Top = 142
       Width = 23
       Anchors = [akTop, akRight]
-      NumGlyphs = 0
       OnClick = SpeedButton1Click
     end
     object bbStart: TBitBtn
-      Left = 6
+      Left = 354
       Height = 40
-      Top = 246
+      Top = 224
       Width = 131
       Caption = 'Start'
       Color = 16249563
       Kind = bkAll
       OnClick = bbStartClick
-      TabOrder = 2
+      TabOrder = 6
     end
     object edTargetDatabase: TEdit
       Left = 142
-      Height = 27
+      Height = 21
       Top = 86
       Width = 264
       Anchors = [akTop, akLeft, akRight]
       ParentBidiMode = False
-      TabOrder = 3
+      TabOrder = 2
     end
     object sbBrowseTargetdb: TSpeedButton
       Left = 421
@@ -101,35 +100,34 @@ object fmBackupRestore: TfmBackupRestore
       Top = 91
       Width = 23
       Anchors = [akTop, akRight]
-      NumGlyphs = 0
       OnClick = sbBrowseTargetdbClick
     end
     object Label4: TLabel
       Left = 14
-      Height = 18
+      Height = 13
       Top = 177
-      Width = 72
+      Width = 51
       Caption = 'User name'
       ParentColor = False
     end
     object edUserName: TEdit
       Left = 102
-      Height = 27
+      Height = 21
       Top = 177
       Width = 145
       TabOrder = 4
     end
     object Label5: TLabel
       Left = 13
-      Height = 18
+      Height = 13
       Top = 217
-      Width = 67
+      Width = 46
       Caption = 'Password'
       ParentColor = False
     end
     object edPassword: TEdit
       Left = 102
-      Height = 27
+      Height = 21
       Top = 209
       Width = 145
       EchoMode = emPassword
@@ -138,20 +136,20 @@ object fmBackupRestore: TfmBackupRestore
     end
     object Label6: TLabel
       Left = 14
-      Height = 18
+      Height = 13
       Top = 51
-      Width = 33
+      Width = 22
       Caption = 'Host'
       ParentColor = False
     end
     object edHost: TEdit
       Left = 142
-      Height = 27
+      Height = 21
       Top = 48
       Width = 262
       Anchors = [akTop, akLeft, akRight]
       ParentBidiMode = False
-      TabOrder = 6
+      TabOrder = 1
     end
     object Image1: TImage
       Left = 406
@@ -347,13 +345,13 @@ object fmBackupRestore: TfmBackupRestore
     TabOrder = 1
   end
   object OpenDialog1: TOpenDialog
-    left = 384
-    top = 144
+    left = 456
+    top = 104
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.fbk'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 384
-    top = 208
+    left = 456
+    top = 176
   end
 end
