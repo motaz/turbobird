@@ -210,7 +210,7 @@ procedure TfmNewEditField.cbTypeEditingDone(Sender: TObject);
 begin
   seSize.Value:= dmSysTables.GetDefaultTypeSize(FDBIndex, cbType.Text);
 
-  {todo: low priority allow/disallow gui elements when using domain datatypes.
+  {todo: (low priority) allow/disallow gui elements when using domain datatypes.
    Check what can be overridden (e.g. collate for text-type domain fields)}
   // Allow character set, lblCollation for text type fields; otherwise disable
   case cbType.Text of
