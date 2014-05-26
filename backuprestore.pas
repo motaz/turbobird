@@ -163,18 +163,18 @@ begin
         if cbOperation.ItemIndex = 0 then
           StartBackup
         else
-        begin
           StartRestore;
-          // Delete temp file when restore from zip is done
-          if TempFile<>'' then
-          begin
-            Sleep(40); //give file system chance to update locks etc
-            DeleteFile(TempFile);
-          end;
-        end;
 
         while ServiceQuery(Res) do
           meLog.Lines.Add(Res);
+
+        if (TempFile<>'' {using zip file}) and
+          (cbOperation.ItemIndex <> 0 {restore}) then
+        // Delete temp file when restore from zip is done
+        begin
+          Sleep(40); //give file system chance to update locks etc
+          DeleteFile(TempFile);
+        end;
       finally
         DetachService;
       end;
