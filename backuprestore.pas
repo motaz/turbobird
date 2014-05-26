@@ -249,7 +249,6 @@ begin
         FBKZippedFile:= ExtractFileName(UserFile);
         if LowerCase(ExtractFileExt(FBKZippedFile))='.zip' then
           FBKZippedFile:= ChangeFileExt(FBKZippedFile,''); //get rid of ending .zip
-          //Delete(FBKZippedFile,1+length(FBKZippedFile)-length('.zip'),length(FBKZippedFile));
         if LowerCase(ExtractFileExt(FBKZippedFile))<>'.fbk' then
           FBKZippedFile:= FBKZippedFile+'.fbk'; //add extension if not specified
         Zipper.Entries.AddFileEntry(TempFile, FBKZippedFile);
