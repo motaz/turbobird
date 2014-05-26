@@ -31,7 +31,9 @@ type
     procedure SetHostName(const AValue: String);
     procedure SetPassword(const AValue: String);
     procedure SetUserName(const AValue: String);
+    // Raise exception if we cannot attach to service
     procedure RaiseIfNotAttachedService(const S: String);
+    // Run backup or restore depending on BR
     procedure StartBackupRestore(BR: Byte);
     procedure RaiseServiceErr;
 
@@ -41,7 +43,9 @@ type
     function AttachService: Boolean;
     function DetachService: Boolean;
 
+    // Runs a backup on a database
     procedure StartBackup;
+    // Restores a backup file to database
     procedure StartRestore;
     function ServiceQuery(out S: String): Boolean; //Returns True if there is more output.
     // Runs sweep on database
@@ -126,7 +130,7 @@ begin
     isc_action_svc_backup: Msg := 'BACKUP';
     isc_action_svc_restore: Msg := 'RESTORE';
   else
-    Exit;
+    raise EFBServiceError.CreateFmt('Invalid parameter value %d passed to StartBackupRestore',[BR]);
   end;
 
   RaiseIfNotAttachedService(Msg);
@@ -159,7 +163,7 @@ begin
     B := isc_spb_options; // options
     S := S + Char(B);
                           // followed now by for-byte bitmask
-    N := isc_spb_res_replace; // this says replace db file if it exist.
+    N := isc_spb_res_replace; // this says replace db file if it exists.
     B := N mod 256;     // Now, the bytes order in number must be inverted!
     S := S + Char(B);
     N := N div 256;
@@ -178,7 +182,6 @@ begin
 
   if isc_service_start(@FArrIStatus, @FPServHandl, nil, W, @Buff) <> 0 then
     RaiseServiceErr;
-
 end;
 
 procedure TFirebirdServices.RaiseServiceErr;

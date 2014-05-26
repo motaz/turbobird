@@ -35,8 +35,8 @@ type
     seOrder: TSpinEdit;
     seScale: TSpinEdit;
     procedure bbAddClick(Sender: TObject);
-    procedure cbCharsetChange(Sender: TObject);
-    procedure cbTypeChange(Sender: TObject);
+    procedure cbCharsetEditingDone(Sender: TObject);
+    procedure cbTypeEditingDone(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private
@@ -189,7 +189,7 @@ begin
   Close;
 end;
 
-procedure TfmNewEditField.cbCharsetChange(Sender: TObject);
+procedure TfmNewEditField.cbCharsetEditingDone(Sender: TObject);
 var
   Collations: TStringList;
 begin
@@ -204,7 +204,9 @@ begin
   end;
 end;
 
-procedure TfmNewEditField.cbTypeChange(Sender: TObject);
+
+
+procedure TfmNewEditField.cbTypeEditingDone(Sender: TObject);
 begin
   seSize.Value:= dmSysTables.GetDefaultTypeSize(FDBIndex, cbType.Text);
 

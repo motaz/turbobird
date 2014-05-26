@@ -1,20 +1,20 @@
 object fmBackupRestore: TfmBackupRestore
   Left = 402
-  Height = 445
-  Top = 201
+  Height = 550
+  Top = 154
   Width = 496
-  Caption = 'Backup/Resore database'
-  ClientHeight = 445
+  Caption = 'Backup/Restore database'
+  ClientHeight = 550
   ClientWidth = 496
   Position = poScreenCenter
   LCLVersion = '1.2.2.0'
   object GroupBox1: TGroupBox
     Left = 0
-    Height = 288
+    Height = 328
     Top = 0
     Width = 496
     Align = alTop
-    ClientHeight = 270
+    ClientHeight = 310
     ClientWidth = 492
     Color = clWhite
     ParentColor = False
@@ -345,13 +345,17 @@ object fmBackupRestore: TfmBackupRestore
     TabOrder = 1
   end
   object OpenDialog1: TOpenDialog
-    left = 456
-    top = 104
+    Filter = '*.fbk, *.fbk.zip|*.fbk;*.fbk.zip|*|*'
+    FilterIndex = 0
+    left = 16
+    top = 272
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.fbk'
+    Filter = '*.fbk.zip|*.fbk.zip|*.fbk|*.fbk|*|*'
+    FilterIndex = 0
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 456
-    top = 176
+    left = 104
+    top = 272
   end
 end

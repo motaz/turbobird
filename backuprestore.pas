@@ -59,12 +59,11 @@ begin
   if ((cbOperation.ItemIndex = 0) and (SaveDialog1.Execute)) or
    ((cbOperation.ItemIndex = 1) and (OpenDialog1.Execute)) then
   begin
-    if cbOperation.ItemIndex = 0 then
+    if cbOperation.ItemIndex = 0 then //backup
       edBackup.Text:= SaveDialog1.FileName
-    else
+    else //restore
       edBackup.Text:= OpenDialog1.FileName;
   end;
-
 end;
 
 procedure TfmBackupRestore.Init(Title, Database, User, Password: string);
@@ -82,7 +81,12 @@ begin
   end
   else
   begin
+    // Assume local host for *nix, embedded for Windows
+    {$IFDEF MSWINDOWS}
+    edHost.Text := '';
+    {$ELSE}
     edHost.Text := 'localhost';
+    {$ENDIF}
     edTargetDatabase.Text := FDatabase;
   end;
 end;

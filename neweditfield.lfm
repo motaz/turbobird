@@ -70,7 +70,7 @@ object fmNewEditField: TfmNewEditField
     AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
     Color = 16249563
     ItemHeight = 13
-    OnChange = cbTypeChange
+    OnEditingDone = cbTypeEditingDone
     ParentShowHint = False
     ShowHint = True
     Style = csDropDownList
@@ -166,7 +166,7 @@ object fmNewEditField: TfmNewEditField
     Width = 124
     Enabled = False
     ItemHeight = 13
-    OnChange = cbCharsetChange
+    OnEditingDone = cbCharsetEditingDone
     TabOrder = 8
   end
   object lblCharset: TLabel

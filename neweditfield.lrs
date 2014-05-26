@@ -19,35 +19,35 @@ LazarusResources.Add('TfmNewEditField','FORMDATA',[
   +'Box'#6'cbType'#4'Left'#2'e'#6'Height'#2#21#4'Hint'#6#24'Data type for this '
   +'field'#3'Top'#2'('#5'Width'#3#139#0#12'AutoComplete'#9#16'AutoCompleteText'
   +#11#12'cbactEnabled'#22'cbactEndOfLineComplete'#20'cbactSearchAscending'#0#5
-  +'Color'#4#219#242#247#0#10'ItemHeight'#2#13#8'OnChange'#7#12'cbTypeChange'#14
-  +'ParentShowHint'#8#8'ShowHint'#9#5'Style'#7#14'csDropDownList'#8'TabOrder'#2
-  +#1#0#0#9'TSpinEdit'#6'seSize'#4'Left'#2'e'#6'Height'#2#21#4'Hint'#6'=Size of'
-  +' field. For text fields: size in characters, not bytes'#3'Top'#2'M'#5'Width'
-  +#2'2'#8'MaxValue'#3#16''''#14'ParentShowHint'#8#8'ShowHint'#9#8'TabOrder'#2#2
-  +#0#0#9'TCheckBox'#11'cxAllowNull'#4'Left'#2#8#6'Height'#2#17#3'Top'#3#152#0#5
-  +'Width'#2'A'#7'Caption'#6#10'Allow Null'#7'Checked'#9#5'State'#7#9'cbChecked'
-  +#8'TabOrder'#2#5#0#0#7'TBitBtn'#5'bbAdd'#4'Left'#3#230#0#6'Height'#2#30#3'To'
-  +'p'#3'y'#1#5'Width'#2'K'#7'Caption'#6#3'Add'#5'Color'#4#219#242#247#0#7'OnCl'
-  +'ick'#7#10'bbAddClick'#8'TabOrder'#2#6#0#0#9'TSpinEdit'#7'seOrder'#4'Left'#2
-  +'e'#6'Height'#2#21#3'Top'#2'p'#5'Width'#2'2'#8'MaxValue'#3#16''''#8'TabOrder'
-  +#2#4#5'Value'#2#1#0#0#5'TEdit'#9'edDefault'#4'Left'#2'e'#6'Height'#2#21#3'To'
-  +'p'#3#186#0#5'Width'#3#204#0#8'TabOrder'#2#7#0#0#6'TLabel'#6'Label6'#4'Left'
-  +#2#8#6'Height'#2#13#3'Top'#3'A'#1#5'Width'#2'N'#7'Caption'#6#17'Field Descri'
-  +'ption'#11'ParentColor'#8#0#0#5'TEdit'#13'edDescription'#4'Left'#2#8#6'Heigh'
-  +'t'#2#21#3'Top'#3'S'#1#5'Width'#3')'#1#8'TabOrder'#2#10#0#0#6'TLabel'#6'Labe'
-  +'l7'#4'Left'#3#168#0#6'Height'#2#13#3'Top'#2'Q'#5'Width'#2#25#7'Caption'#6#5
-  +'Scale'#11'ParentColor'#8#0#0#9'TSpinEdit'#7'seScale'#4'Left'#3#208#0#6'Heig'
-  +'ht'#2#21#4'Hint'#6'0Sets decimal scale for numeric/decimal datatypes'#3'Top'
-  +#2'M'#5'Width'#2'2'#7'Enabled'#8#8'MaxValue'#2#18#14'ParentShowHint'#8#8'Sho'
-  +'wHint'#9#8'TabOrder'#2#3#0#0#9'TComboBox'#9'cbCharset'#4'Left'#2'e'#6'Heigh'
-  +'t'#2#21#4'Hint'#6'@New field character setIF IT DIFFERS from database chara'
-  +'cter set'#3'Top'#3#224#0#5'Width'#2'|'#7'Enabled'#8#10'ItemHeight'#2#13#8'O'
-  +'nChange'#7#15'cbCharsetChange'#8'TabOrder'#2#8#0#0#6'TLabel'#10'lblCharset'
-  +#4'Left'#2#8#6'Height'#2#13#3'Top'#3#228#0#5'Width'#2'&'#7'Caption'#6#7'Char'
-  +'set'#11'ParentColor'#8#0#0#6'TLabel'#12'lblCollation'#4'Left'#2#8#6'Height'
-  +#2#13#3'Top'#3#12#1#5'Width'#2')'#7'Caption'#6#9'Collation'#11'ParentColor'#8
-  +#0#0#9'TComboBox'#11'cbCollation'#4'Left'#2'e'#6'Height'#2#21#4'Hint'#6'<Col'
-  +'lation of new field IF IT DIFFERS from database collation'#3'Top'#3#8#1#5'W'
-  +'idth'#2'|'#7'Enabled'#8#10'ItemHeight'#2#13#14'ParentShowHint'#8#8'ShowHint'
-  +#9#8'TabOrder'#2#9#0#0#0
+  +'Color'#4#219#242#247#0#10'ItemHeight'#2#13#13'OnEditingDone'#7#17'cbTypeEdi'
+  +'tingDone'#14'ParentShowHint'#8#8'ShowHint'#9#5'Style'#7#14'csDropDownList'#8
+  +'TabOrder'#2#1#0#0#9'TSpinEdit'#6'seSize'#4'Left'#2'e'#6'Height'#2#21#4'Hint'
+  +#6'=Size of field. For text fields: size in characters, not bytes'#3'Top'#2
+  +'M'#5'Width'#2'2'#8'MaxValue'#3#16''''#14'ParentShowHint'#8#8'ShowHint'#9#8
+  +'TabOrder'#2#2#0#0#9'TCheckBox'#11'cxAllowNull'#4'Left'#2#8#6'Height'#2#17#3
+  +'Top'#3#152#0#5'Width'#2'A'#7'Caption'#6#10'Allow Null'#7'Checked'#9#5'State'
+  +#7#9'cbChecked'#8'TabOrder'#2#5#0#0#7'TBitBtn'#5'bbAdd'#4'Left'#3#230#0#6'He'
+  +'ight'#2#30#3'Top'#3'y'#1#5'Width'#2'K'#7'Caption'#6#3'Add'#5'Color'#4#219
+  +#242#247#0#7'OnClick'#7#10'bbAddClick'#8'TabOrder'#2#6#0#0#9'TSpinEdit'#7'se'
+  +'Order'#4'Left'#2'e'#6'Height'#2#21#3'Top'#2'p'#5'Width'#2'2'#8'MaxValue'#3
+  +#16''''#8'TabOrder'#2#4#5'Value'#2#1#0#0#5'TEdit'#9'edDefault'#4'Left'#2'e'#6
+  +'Height'#2#21#3'Top'#3#186#0#5'Width'#3#204#0#8'TabOrder'#2#7#0#0#6'TLabel'#6
+  +'Label6'#4'Left'#2#8#6'Height'#2#13#3'Top'#3'A'#1#5'Width'#2'N'#7'Caption'#6
+  +#17'Field Description'#11'ParentColor'#8#0#0#5'TEdit'#13'edDescription'#4'Le'
+  +'ft'#2#8#6'Height'#2#21#3'Top'#3'S'#1#5'Width'#3')'#1#8'TabOrder'#2#10#0#0#6
+  +'TLabel'#6'Label7'#4'Left'#3#168#0#6'Height'#2#13#3'Top'#2'Q'#5'Width'#2#25#7
+  +'Caption'#6#5'Scale'#11'ParentColor'#8#0#0#9'TSpinEdit'#7'seScale'#4'Left'#3
+  +#208#0#6'Height'#2#21#4'Hint'#6'0Sets decimal scale for numeric/decimal data'
+  +'types'#3'Top'#2'M'#5'Width'#2'2'#7'Enabled'#8#8'MaxValue'#2#18#14'ParentSho'
+  +'wHint'#8#8'ShowHint'#9#8'TabOrder'#2#3#0#0#9'TComboBox'#9'cbCharset'#4'Left'
+  +#2'e'#6'Height'#2#21#4'Hint'#6'@New field character setIF IT DIFFERS from da'
+  +'tabase character set'#3'Top'#3#224#0#5'Width'#2'|'#7'Enabled'#8#10'ItemHeig'
+  +'ht'#2#13#13'OnEditingDone'#7#20'cbCharsetEditingDone'#8'TabOrder'#2#8#0#0#6
+  +'TLabel'#10'lblCharset'#4'Left'#2#8#6'Height'#2#13#3'Top'#3#228#0#5'Width'#2
+  +'&'#7'Caption'#6#7'Charset'#11'ParentColor'#8#0#0#6'TLabel'#12'lblCollation'
+  +#4'Left'#2#8#6'Height'#2#13#3'Top'#3#12#1#5'Width'#2')'#7'Caption'#6#9'Colla'
+  +'tion'#11'ParentColor'#8#0#0#9'TComboBox'#11'cbCollation'#4'Left'#2'e'#6'Hei'
+  +'ght'#2#21#4'Hint'#6'<Collation of new field IF IT DIFFERS from database col'
+  +'lation'#3'Top'#3#8#1#5'Width'#2'|'#7'Enabled'#8#10'ItemHeight'#2#13#14'Pare'
+  +'ntShowHint'#8#8'ShowHint'#9#8'TabOrder'#2#9#0#0#0
 ]);
