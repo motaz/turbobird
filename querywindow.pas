@@ -9,7 +9,7 @@ uses
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
   SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType,
-  modsqlscript, dbugintf, turbocommon, variants;
+  modsqlscript, dbugintf, turbocommon, variants, strutils;
 
 type
 
@@ -182,13 +182,11 @@ type
     FAText: string;
     FModifyCount: Integer;
     FCounter: Integer;
-    FModifiedRecords: array of array of Integer;
 
     // Makes commit button in current tabsheet visible
     procedure EnableCommitButton;
     procedure ExecuteQuery;
     function GetNewTabNum: string;
-    procedure FinishCellEditing(DataSet: TDataSet);
     // Gets TSQLQuery of current result tabsheet - only if it is a select query
     function GetCurrentSelectQuery: TSQLQuery;
     // Gets both querytype and whether SQL is DML or DDL
@@ -201,7 +199,6 @@ type
     procedure RemoveAllSingleLineComments(QueryList: TStringList);
     procedure RemoveEmptyLines(QueryList: TStringList;
       var SecondRealStart: Integer; const RealStartLine: Integer);
-    procedure InsertModifiedRecord(RecordNo, TabIndex: Integer);
     procedure ApplyClick(Sender: TObject);
     procedure EnableApplyButton;
     function GetTableName(SQLText: string): string;
@@ -228,6 +225,7 @@ type
     function GetSQLSegment(QueryList: TStringList; StartLine: Integer;
       var QueryType: TQueryTypes; var EndLine: Integer;
       var SQLSegment: string; var IsDDL: Boolean): Boolean;
+    procedure QueryAfterPost(DataSet: TDataSet);
     procedure QueryAfterScroll(DataSet: TDataSet);
     // Run query; use aQueryType to force running as e.g. script or open query
     procedure CallExecuteQuery(aQueryType: TQueryTypes);
@@ -351,50 +349,6 @@ end;
 { TQueryThread }
 
 
-{ FinishCellEditing: Insert current just edited record in ModifiedRecords array }
-
-procedure TfmQueryWindow.FinishCellEditing(DataSet: TDataSet);
-begin
-  InsertModifiedRecord(Dataset.RecNo, pgOutputPageCtl.TabIndex);
-end;
-
-
-
-{ InsertModifiedRecord: insert modified query record in ModifiedRecords array }
-
-procedure TfmQueryWindow.InsertModifiedRecord(RecordNo, TabIndex: Integer);
-var
-  i: Integer;
-  Exists: Boolean;
-begin
-  Exists:= False;
-  if TabIndex > High(FModifiedRecords) then // Insert new tab
-  begin
-    SetLength(FModifiedRecords, TabIndex + 1);
-  end;
-
-  // Check if record already inserted
-  for i:= 0 to High(FModifiedRecords[TabIndex]) do
-  begin
-    if FModifiedRecords[TabIndex][i] = RecordNo then
-    begin
-      Exists:= True;
-      Break;
-    end;
-  end;
-
-  if not Exists then  // Insert record pointer
-  begin
-    setLength(FModifiedRecords[TabIndex], Length(FModifiedRecords[TabIndex]) + 1);
-    FModifiedRecords[TabIndex][High(FModifiedRecords[TabIndex])]:= RecordNo;
-  end;
-
-  // Enable apply/save button
-  if Length(FModifiedRecords[TabIndex]) = 1 then
-  begin
-    EnableApplyButton;
-  end;
-end;
 
 
 { ApplyClick: Save Updates for the query }
@@ -426,115 +380,17 @@ begin
       {$ENDIF}
       exit;
     end;
-    TableName:= GetTableName(UserData.SQL.Text);
+    UserData.ApplyUpdates; // lets query run InsertSQL, UpdateSQL, DeleteSQL
 
-    // Get primary key name
-    PKIndexName:= fmMain.GetPrimaryKeyIndexName(FDBIndex, TableName, ConstraintName);
-    if PKIndexName <> '' then
-    begin
-      KeyList:= TStringList.Create;
-      Fieldslist:= TStringList.Create;
-      UpdateQuery:= TSQLQuery.Create(nil);
-      try
-        UpdateQuery.DataBase:= FIBConnection;
-        UpdateQuery.Transaction:= FSQLTrans;
+    (Sender as TBitBtn).Visible:= False;
 
-        // Get primary key fields
-        fmMain.GetIndexFields(TableName, PKIndexName, UpdateQuery, KeyList);
-        fmMain.GetFields(FDBIndex, TableName, FieldsList);
-        WhereClause:= ' where ';
-
-        UserData.DisableControls;
-        // Check modified records
-        for i:= Low(FModifiedRecords[TabIndex]) to High(FModifiedRecords[TabIndex]) do
-        begin
-          FieldsSQL:= '';
-          UserData.RecNo:= FModifiedRecords[TabIndex][i];
-          // For each record, check modified fields:
-          for x:= 0 to UserData.FieldCount - 1 do
-          begin
-            if (FieldsList.IndexOf(UserData.Fields[x].FieldName) <> -1) and  // Field exists in origional table
-              (UserData.Fields[x].NewValue <> UserData.Fields[x].OldValue) then // field data has been modified
-            begin
-              if FieldsSQL <> '' then
-                FieldsSQL += ',';
-              FieldsSQL += UserData.Fields[x].FieldName + '=';
-
-              // Typecast field values according to their main type
-              case UserData.Fields[x].DataType of
-                ftInteger, ftSmallint: FieldsSQL += IntToStr(UserData.Fields[x].NewValue);
-                ftFloat: FieldsSQL += FloatToStr(UserData.Fields[x].NewValue);
-                ftTimeStamp, ftDateTime: FieldsSQL += QuotedStr(DateTimeToStr(UserData.Fields[x].NewValue));
-                ftTime: FieldsSQL += QuotedStr(TimeToStr(UserData.Fields[x].NewValue));
-                ftDate: FieldsSQL += QuotedStr(DateToStr(UserData.Fields[x].NewValue));
-              else // Other types like string
-                FieldsSQL += QuotedStr(UserData.Fields[x].NewValue);
-              end;
-            end;
-          end;
-
-          // Update current record
-          // todo: (high priority) add facility for inserting records.
-          if FieldsSQL <> '' then
-          begin
-            UpdateQuery.Close;
-            UpdateQuery.SQL.Text:= 'update ' + TableName + ' set ' + FieldsSQL;
-
-            WhereClause:= ' where ';
-            // where clause
-            for x:= 0 to KeyList.Count - 1 do
-            begin
-              if Trim(KeyList[x]) <> '' then
-              begin
-                { Typecast key values
-                If the old value was null the, typecast will fail so try to
-                deal with that }
-                try
-                  case UserData.Fields[x].DataType of
-                    ftInteger, ftSmallint:
-                      WhereClause += KeyList[x] + ' = ' + IntToStr(UserData.Fields[x].OldValue);
-                    ftFloat:
-                      WhereClause += KeyList[x] + ' = ' + FloatToStr(UserData.Fields[x].OldValue);
-                  else
-                    WhereClause += KeyList[x] + ' = ' + QuotedStr(UserData.Fields[x].OldValue);
-                  end;
-                except
-                  on E: EVariantTypeCastError do
-                  begin
-                    // Only ignore typecast errors;
-                    // let higher level handle the rest
-                    // Assume field was NULL
-                    WhereClause += KeyList[x] + ' IS NULL';
-                  end;
-                end;
-
-                if x < KeyList.Count - 1 then
-                  WhereClause += ' and ';
-              end;
-            end;
-            UpdateQuery.SQL.Add(WhereClause);
-            UpdateQuery.ExecSQL;
-            (Sender as TBitBtn).Visible:= False;
-
-            // Auto commit
-            if cxAutoCommit.Checked then
-              FSQLTrans.CommitRetaining
-            else
-              EnableCommitButton;
-          end;
-        end;
-
-        // Reset FModifiedRecords pointer
-        FModifiedRecords[TabIndex]:= nil;
-        UserData.EnableControls;
-      finally
-        FieldsList.Free;
-        KeyList.Free;
-        UpdateQuery.Free;
-      end;
-    end
+    // Auto commit
+    if cxAutoCommit.Checked then
+      FSQLTrans.CommitRetaining
     else
-      ShowMessage('There is no primary key on the table: ' + TableName);
+      EnableCommitButton;
+
+    UserData.EnableControls;
   except
     on e: exception do
     begin
@@ -1120,7 +976,7 @@ end;
 
 { GetQuery: get query text from editor }
 
-function TfmQueryWindow.GetQuery(QueryContents: TStrings): boolean;
+function TfmQueryWindow.GetQuery(QueryContents: tstrings): boolean;
 var
   Seltext: string;
 begin
@@ -1164,8 +1020,8 @@ begin
     aSqlQuery:= TSQLQuery.Create(self);
     aSqlQuery.DataBase:= FIBConnection;
     aSqlQuery.Transaction:= FSQLTrans;
+    aSqlQuery.AfterPost:= @QueryAfterPost; //detect user-edited grid
     aSqlQuery.AfterScroll:= @QueryAfterScroll;
-    aSqlQuery.AfterPost:= @FinishCellEditing;
     aSqlQuery.Tag:= ATab.TabIndex; //Query points to tabsheet number
     {Tab points to query object so we can look it up more easily via the
     tab sheet if we need to enable Apply/Commit buttons etc}
@@ -1254,6 +1110,9 @@ var
   IsDDL: Boolean;
   Affected: Integer;
   fQueryType: TQueryTypes;
+  TempQuery: TSQLQuery;
+  SanitizedSQL: string;
+  i: integer;
 begin
   try
     // Script
@@ -1290,6 +1149,32 @@ begin
           FTab.Hint:= FQueryPart;
           FTab.ShowHint:= True;
           FSQLQuery.SQL.Text:= FQueryPart;
+
+          // Work around sqldb not detecting insert/updatesql for FIRST x queries
+          // Massage the SQL, assign it to a temp query and use the insertquery
+          // etc generated by sqldb.
+          // Support for ROWS x TO y at the end of the statement could be
+          // added perhaps
+
+          if (pos('select first ',lowercase(FQueryPart))=1) then
+          begin
+            // Get rid of the select first x part by copying everything after
+            // the third word
+            SanitizedSQL:= ExtractWordPos(3, FQueryPart, StdWordDelims,i);
+            if i>0 then
+            begin
+              SanitizedSQL:= 'select ' + trim(copy(FQueryPart, i+length(SanitizedSQL), maxint));
+              TempQuery:= TSQLQuery.Create(nil);
+              try
+                TempQuery.ParseSQL:= true;
+                FSQLQuery.InsertSQL:= TempQuery.InsertSQL;
+                FSQLQuery.UpdateSQL:= TempQuery.UpdateSQL;
+                FSQLQuery.DeleteSQL:= TempQuery.DeleteSQL;
+              finally
+                TempQuery.Free;
+              end;
+            end;
+          end;
 
           // Create thread to open dataset
           FQT:= TQueryThread.Create(qaOpen);
@@ -1660,6 +1545,12 @@ begin
       Break;
     end;
   end;
+end;
+
+procedure TfmQueryWindow.QueryAfterPost(DataSet: TDataSet);
+begin
+  // User has edited cells, so let him save
+  EnableApplyButton;
 end;
 
 
