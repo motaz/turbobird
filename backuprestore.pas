@@ -6,7 +6,10 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons, ExtCtrls, Zipper;
+  StdCtrls, Buttons, ExtCtrls, Zipper, dbugintf
+  {$IFDEF MSWINDOWS}
+  , shlobj {for special folders}
+  {$ENDIF};
 
 type
 
@@ -34,11 +37,20 @@ type
     SpeedButton1: TSpeedButton;
     sbBrowseTargetdb: TSpeedButton;
     procedure bbStartClick(Sender: TObject);
+    procedure edBackupEditingDone(Sender: TObject);
+    procedure edTargetDatabaseEditingDone(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure sbBrowseTargetdbClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
   private
     { private declarations }
     FDatabase: string; //doesn't really seem to be used anywhere
+    { if true, user wrote/selected the backup filename himself.
+    if false, system has generated/can generate a backup filename based on db}
+    FUserSpecifiedBackupFile: boolean;
+    // If backup combobox selected and user has not edited backup filename,
+    // write a system-generated backup filename
+    procedure SetBackupFileName;
   public
     procedure Init(Title, Database, User, Password: string);
     { public declarations }
@@ -53,6 +65,18 @@ implementation
 
 uses UnitFirebirdServices;
 
+{$IFDEF MSWINDOWS}
+function GetDesktopPath: string;
+var
+  DesktopPath: array[0..MaxPathLen] of char; //Allocate memory
+begin
+  DesktopPath := '';
+  SHGetSpecialFolderPath(0, DesktopPath, CSIDL_DESKTOPDIRECTORY, False);
+  result:=IncludeTrailingPathDelimiter(DesktopPath);
+end;
+{$ENDIF}
+
+
 procedure TfmBackupRestore.SpeedButton1Click(Sender: TObject);
 begin
   SaveDialog1.DefaultExt:= '.fbk';
@@ -60,9 +84,41 @@ begin
    ((cbOperation.ItemIndex = 1) and (OpenDialog1.Execute)) then
   begin
     if cbOperation.ItemIndex = 0 then //backup
-      edBackup.Text:= SaveDialog1.FileName
+    begin
+      edBackup.Text:= SaveDialog1.FileName;
+      FUserSpecifiedBackupFile:= false; //indicate user explicitly set filename
+    end
     else //restore
       edBackup.Text:= OpenDialog1.FileName;
+  end;
+end;
+
+procedure TfmBackupRestore.SetBackupFileName;
+var
+  TargetDir: string;
+  TargetFile: string;
+begin
+  // Let system generate a sensible backup name based on database
+  if (cbOperation.ItemIndex = 0 {backup}) and
+    (not(FUserSpecifiedBackupFile)) then
+  begin
+    // Use home directory on *nix, desktop on windows; fallback to
+    // current dir for any others
+    TargetDir:= ExtractFilePath(ParamStr(0));
+    {$IFDEF MSWINDOWS}
+    TargetDir:= GetDesktopPath;
+    {$ENDIF}
+    {$IFDEF UNIX}
+    TargetDir:= ExpandFileName('~'); //user's home directory
+    {$ENDIF}
+    TargetFile:= trim(Sysutils.ExtractFileName(edTargetDatabase.Text));
+    if LowerCase(ExtractFileExt(TargetFile))='.fdb' then
+      TargetFile:= ChangeFileExt(TargetFile, '.fbk.zip')
+    else
+      TargetFile:= TargetFile + '.fbk.zip';
+    TargetFile:= formatdatetime('yyyymmdd', Now) + TargetFile;
+    edBackup.Text:= TargetDir +
+      TargetFile;
   end;
 end;
 
@@ -89,6 +145,7 @@ begin
     {$ENDIF}
     edTargetDatabase.Text := FDatabase;
   end;
+  SetBackupFileName;
 end;
 
 procedure TfmBackupRestore.bbStartClick(Sender: TObject);
@@ -190,10 +247,9 @@ begin
         Zipper.FileName:= UserFile; //target is the user-selected backup file
         // Figure out the name of the .fbk file to be put in the zip file
         FBKZippedFile:= ExtractFileName(UserFile);
-        // ChangeFileExt apparently cannot remove the extension, so do it manually
-        //ChangeFileExt(FBKZippedFile,''); //get rid of ending .zip
         if LowerCase(ExtractFileExt(FBKZippedFile))='.zip' then
-          Delete(FBKZippedFile,1+length(FBKZippedFile)-length('.zip'),length(FBKZippedFile));
+          FBKZippedFile:= ChangeFileExt(FBKZippedFile,''); //get rid of ending .zip
+          //Delete(FBKZippedFile,1+length(FBKZippedFile)-length('.zip'),length(FBKZippedFile));
         if LowerCase(ExtractFileExt(FBKZippedFile))<>'.fbk' then
           FBKZippedFile:= FBKZippedFile+'.fbk'; //add extension if not specified
         Zipper.Entries.AddFileEntry(TempFile, FBKZippedFile);
@@ -211,6 +267,24 @@ begin
   finally
     FireBirdServices.Free;
   end;
+end;
+
+procedure TfmBackupRestore.edBackupEditingDone(Sender: TObject);
+begin
+  if trim(edBackup.Text)='' then
+    FUserSpecifiedBackupFile:=false
+  else
+    FUserSpecifiedBackupFile:=true;
+end;
+
+procedure TfmBackupRestore.edTargetDatabaseEditingDone(Sender: TObject);
+begin
+  SetBackupFileName;
+end;
+
+procedure TfmBackupRestore.FormCreate(Sender: TObject);
+begin
+  FUserSpecifiedBackupFile:= false; //System can suggest backup filenames
 end;
 
 

@@ -6,6 +6,7 @@ object fmBackupRestore: TfmBackupRestore
   Caption = 'Backup/Restore database'
   ClientHeight = 445
   ClientWidth = 496
+  OnCreate = FormCreate
   Position = poScreenCenter
   LCLVersion = '1.2.2.0'
   object GroupBox1: TGroupBox
@@ -64,6 +65,7 @@ object fmBackupRestore: TfmBackupRestore
       Top = 137
       Width = 305
       Anchors = [akTop, akLeft, akRight]
+      OnEditingDone = edBackupEditingDone
       TabOrder = 3
     end
     object SpeedButton1: TSpeedButton
@@ -93,6 +95,7 @@ object fmBackupRestore: TfmBackupRestore
       Width = 264
       Anchors = [akTop, akLeft, akRight]
       ParentBidiMode = False
+      OnEditingDone = edTargetDatabaseEditingDone
       TabOrder = 2
     end
     object sbBrowseTargetdb: TSpeedButton
