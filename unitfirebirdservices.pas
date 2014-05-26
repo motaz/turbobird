@@ -7,7 +7,7 @@ unit UnitFirebirdServices;
 interface
 
 uses
-  Classes, SysUtils, ibase60dyn, LCLProc;
+  Classes, SysUtils, ibase60dyn, LazUTF8;
 
 type
 
@@ -17,13 +17,13 @@ type
 
   TFirebirdServices = class(TObject)
   private
-    FBkpName: String;
+    FBackupFile: String;
     FDBName: String;
     FHostName: String;
     FPassword: String;
     FUserName: String;
     FVerboseOutput: Boolean;
-    FPServHandl: pisc_svc_handle;
+    FPServiceHandle: pisc_svc_handle;
     FArrIStatus: array [0..19] of ISC_STATUS;
 
     procedure SetBkpName(const AValue: String);
@@ -36,7 +36,6 @@ type
     // Run backup or restore depending on BR
     procedure StartBackupRestore(BR: Byte);
     procedure RaiseServiceErr;
-
   public
     constructor Create;
     destructor Destroy; override;
@@ -52,11 +51,17 @@ type
     procedure StartSweep;
     function ServiceAttached: Boolean;
 
+    // Name/IP address of host for database connection
     property HostName: String read FHostName write SetHostName;
+    // Database name for connection
     property DBName: String read FDBName write SetDBName;
-    property BkpName: String read FBkpName write SetBkpName;
+    // File that contains a Firebird .fbk file
+    property BackupFile: String read FBackupFile write SetBkpName;
+    // Username for database connection
     property UserName: String read FUserName write SetUserName;
+    // Password for database connection
     property Password: String read FPassword write SetPassword;
+    // If true, give verbose output when running services functions
     property VerboseOutput: Boolean read FVerboseOutput write FVerboseOutput;
   end;
 
@@ -86,11 +91,11 @@ end;
 
 procedure TFirebirdServices.SetBkpName(const AValue: String);
 begin
-  if FBkpName <> AValue then begin
+  if FBackupFile <> AValue then begin
     if ServiceAttached then
       raise EFBServiceError.Create('You cannot change backup file name when service is attached!!!');
 
-    FBkpName := AValue;
+    FBackupFile := AValue;
   end;
 end;
 
@@ -147,12 +152,12 @@ begin
 
   B := isc_spb_bkp_file; // this cluster describes backup file
   S := S + Char(B);
-  W := Length(FBkpName);
+  W := Length(FBackupFile);
   B := W mod 256;
   S := S + Char(B);
   B := W div 256;
   S := S + Char(B);
-  S := S + FBkpName;
+  S := S + FBackupFile;
 
   if FVerboseOutput then begin
     B := isc_spb_verbose; // verbose output
@@ -180,7 +185,7 @@ begin
   W := Length(S);
   Buff := S;
 
-  if isc_service_start(@FArrIStatus, @FPServHandl, nil, W, @Buff) <> 0 then
+  if isc_service_start(@FArrIStatus, @FPServiceHandle, nil, W, @Buff) <> 0 then
     RaiseServiceErr;
 end;
 
@@ -210,7 +215,7 @@ begin
   for I := Low(ResultBuff) to High(ResultBuff) do
     ResultBuff[I] := #0;
 
-  isc_service_query(@FArrIStatus, @FPServHandl, nil, 0, nil,
+  isc_service_query(@FArrIStatus, @FPServiceHandle, nil, 0, nil,
                      Length(S2), @RequestBuff, Length(ResultBuff), @ResultBuff);
 
   Result := False;
@@ -271,23 +276,23 @@ begin
 
   Buff := S;
 
-  if isc_service_start(@FArrIStatus, @FPServHandl, nil, W, @Buff) <> 0 then
+  if isc_service_start(@FArrIStatus, @FPServiceHandle, nil, W, @Buff) <> 0 then
     RaiseServiceErr;
 end;
 
 function TFirebirdServices.ServiceAttached: Boolean;
 begin
-  Result := FPServHandl <> nil;
+  Result := FPServiceHandle <> nil;
 end;
 
 constructor TFirebirdServices.Create;
 begin
   inherited Create;
 
-  FPServHandl := nil;
+  FPServiceHandle := nil;
   FVerboseOutput := True;
   FHostName := '';
-  FBkpName := '';
+  FBackupFile := '';
   FDBName := '';
   FUserName := '';
   FPassword := '';
@@ -336,7 +341,7 @@ begin
 
   Buff := S;
 
-  Result := isc_service_attach(@FArrIStatus, W1, @ServiceName, @FPServHandl, W2, @Buff) = 0;
+  Result := isc_service_attach(@FArrIStatus, W1, @ServiceName, @FPServiceHandle, W2, @Buff) = 0;
 
   if not Result then
     RaiseServiceErr;
@@ -345,12 +350,12 @@ end;
 function TFirebirdServices.DetachService: Boolean;
 begin
   Result := True;
-  if FPServHandl <> nil then begin
-    Result := isc_service_detach(@FArrIStatus, @FPServHandl) = 0;
+  if FPServiceHandle <> nil then begin
+    Result := isc_service_detach(@FArrIStatus, @FPServiceHandle) = 0;
     if not Result then
       RaiseServiceErr;
 
-    FPServHandl := nil;
+    FPServiceHandle := nil;
   end;
 end;
 

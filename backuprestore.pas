@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons, ExtCtrls;
+  StdCtrls, Buttons, ExtCtrls, Zipper;
 
 type
 
@@ -95,7 +95,14 @@ procedure TfmBackupRestore.bbStartClick(Sender: TObject);
 var
   FireBirdServices: TFirebirdServices;
   Res: Ansistring;
+  TempDir: string; //directory for temp files (including path delimiter)
+  TempFile: string; //if not empty: used for intermediate file when zipping/unzipping
+  Unzipper: TUnzipper;
+  UserFile: string; //file the user chose: either backup destination or restore source
+  FBKZippedFile: string; //name of fbk file when zip compressing
+  Zipper: TZipper;
 begin
+  TempDir:= GetTempDir(false);
   FireBirdServices:= TFirebirdServices.Create;
   try
     FireBirdServices.VerboseOutput:= True;
@@ -104,17 +111,67 @@ begin
     begin
       HostName:= edHost.Text;
       DBName:= edTargetDatabase.Text;
-      UserName := edUserName.Text;
-      Password := edPassword.Text;
-      BkpName := Trim(edBackup.Text);
+      UserName:= edUserName.Text;
+      Password:= edPassword.Text;
+      UserFile:= trim(edBackup.Text);
+
+      if LowerCase(ExtractFileExt(UserFile))='.zip' then
+      begin
+        if cbOperation.ItemIndex = 0 then
+        begin
+          // Backup: set up destination for backup process
+          TempFile:= GetTempFilename(TempDir,'B');
+        end
+        else
+        begin
+          // Restore: unzip .fbk into temporary file
+          TempFile:= sysutils.GetTempFilename;
+          Unzipper:= TUnzipper.Create;
+          try
+            Unzipper.FileName:= UserFile;
+            Unzipper.OutputPath:= TempDir;
+            Unzipper.Examine;
+            if Unzipper.Entries.Count=0 then
+            begin
+              ShowMessage(Format('%s contains no files. Aborting.',[UserFile]));
+              exit;
+            end;
+            if Unzipper.Entries.Count<>1 then
+            begin
+              ShowMessage(Format('%s has more than 1 files. Only zip files with one .fbk file are supported. Aborting.',[UserFile]));
+              exit;
+            end;
+            meLog.Lines.Add('Going to unzip file ' + UserFile + ':' + Unzipper.Entries[0].DiskFileName + ' into directory ' + TempDir);
+            Unzipper.UnZipAllFiles; //we know we're unzipping just 1 file
+            TempFile:= TempDir +
+              ExtractFileName(Unzipper.Entries[0].DiskFileName);
+          finally
+            Unzipper.Free;
+          end;
+        end;
+      end;
 
       try
-        AttachService;
+        if TempFile='' then
+          BackupFile:= UserFile // no zip files involved
+        else
+          {backup to temp, then zip later or
+          restore from temp file}
+          BackupFile:= TempFile;
 
+        AttachService;
         if cbOperation.ItemIndex = 0 then
           StartBackup
         else
+        begin
           StartRestore;
+          // Delete temp file when restore from zip is done
+          if TempFile<>'' then
+          begin
+            Sleep(40); //give file system chance to update locks etc
+            DeleteFile(TempFile);
+          end;
+        end;
 
         while ServiceQuery(Res) do
           meLog.Lines.Add(Res);
@@ -122,6 +179,34 @@ begin
         DetachService;
       end;
       meLog.Lines.Add('');
+    end;
+
+    if (tempfile<>'' {user wants zip file}) and
+      (cbOperation.ItemIndex = 0 {backup}) then
+    begin
+      // Zip up the resulting backup
+      Zipper:= TZipper.Create;
+      try
+        Zipper.FileName:= UserFile; //target is the user-selected backup file
+        // Figure out the name of the .fbk file to be put in the zip file
+        FBKZippedFile:= ExtractFileName(UserFile);
+        // ChangeFileExt apparently cannot remove the extension, so do it manually
+        //ChangeFileExt(FBKZippedFile,''); //get rid of ending .zip
+        if LowerCase(ExtractFileExt(FBKZippedFile))='.zip' then
+          Delete(FBKZippedFile,1+length(FBKZippedFile)-length('.zip'),length(FBKZippedFile));
+        if LowerCase(ExtractFileExt(FBKZippedFile))<>'.fbk' then
+          FBKZippedFile:= FBKZippedFile+'.fbk'; //add extension if not specified
+        Zipper.Entries.AddFileEntry(TempFile, FBKZippedFile);
+        meLog.Lines.Add('Going to compress file ' + TempFile +
+          ' as filename ' + FBKZippedFile +
+          ' in zip file ' + UserFile);
+        Zipper.ZipAllFiles; //zip up all entries (just 1 in our case)
+        // Delete temp file containing fbk
+        Sleep(40); //give filesystem chance to update locks etc
+        Sysutils.DeleteFile(TempFile);
+      finally
+        Zipper.Free;
+      end;
     end;
   finally
     FireBirdServices.Free;

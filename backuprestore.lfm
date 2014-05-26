@@ -1,10 +1,10 @@
 object fmBackupRestore: TfmBackupRestore
   Left = 402
-  Height = 550
-  Top = 154
+  Height = 445
+  Top = 201
   Width = 496
   Caption = 'Backup/Restore database'
-  ClientHeight = 550
+  ClientHeight = 445
   ClientWidth = 496
   Position = poScreenCenter
   LCLVersion = '1.2.2.0'
@@ -22,7 +22,7 @@ object fmBackupRestore: TfmBackupRestore
     object Label1: TLabel
       Left = 12
       Height = 13
-      Top = 10
+      Top = 6
       Width = 75
       Caption = 'Operation Type'
       ParentColor = False
@@ -43,9 +43,9 @@ object fmBackupRestore: TfmBackupRestore
       Text = 'Backup'
     end
     object Label2: TLabel
-      Left = 13
+      Left = 12
       Height = 13
-      Top = 89
+      Top = 86
       Width = 93
       Caption = 'Targeted Database'
       ParentColor = False
@@ -53,7 +53,7 @@ object fmBackupRestore: TfmBackupRestore
     object Label3: TLabel
       Left = 14
       Height = 13
-      Top = 142
+      Top = 137
       Width = 53
       Caption = 'Backup File'
       ParentColor = False
@@ -67,17 +67,18 @@ object fmBackupRestore: TfmBackupRestore
       TabOrder = 3
     end
     object SpeedButton1: TSpeedButton
-      Left = 421
+      Left = 416
       Height = 22
-      Top = 142
+      Top = 133
       Width = 23
       Anchors = [akTop, akRight]
+      Caption = '...'
       OnClick = SpeedButton1Click
     end
     object bbStart: TBitBtn
       Left = 354
       Height = 40
-      Top = 224
+      Top = 257
       Width = 131
       Caption = 'Start'
       Color = 16249563
@@ -95,17 +96,18 @@ object fmBackupRestore: TfmBackupRestore
       TabOrder = 2
     end
     object sbBrowseTargetdb: TSpeedButton
-      Left = 421
+      Left = 416
       Height = 22
-      Top = 91
+      Top = 85
       Width = 23
       Anchors = [akTop, akRight]
+      Caption = '...'
       OnClick = sbBrowseTargetdbClick
     end
     object Label4: TLabel
       Left = 14
       Height = 13
-      Top = 177
+      Top = 176
       Width = 51
       Caption = 'User name'
       ParentColor = False
@@ -113,14 +115,14 @@ object fmBackupRestore: TfmBackupRestore
     object edUserName: TEdit
       Left = 102
       Height = 21
-      Top = 177
+      Top = 176
       Width = 145
       TabOrder = 4
     end
     object Label5: TLabel
-      Left = 13
+      Left = 12
       Height = 13
-      Top = 217
+      Top = 216
       Width = 46
       Caption = 'Password'
       ParentColor = False
@@ -128,7 +130,7 @@ object fmBackupRestore: TfmBackupRestore
     object edPassword: TEdit
       Left = 102
       Height = 21
-      Top = 209
+      Top = 216
       Width = 145
       EchoMode = emPassword
       PasswordChar = '-'
@@ -137,7 +139,7 @@ object fmBackupRestore: TfmBackupRestore
     object Label6: TLabel
       Left = 14
       Height = 13
-      Top = 51
+      Top = 48
       Width = 22
       Caption = 'Host'
       ParentColor = False
@@ -152,9 +154,9 @@ object fmBackupRestore: TfmBackupRestore
       TabOrder = 1
     end
     object Image1: TImage
-      Left = 406
+      Left = 408
       Height = 76
-      Top = 10
+      Top = 0
       Width = 79
       Picture.Data = {
         1754506F727461626C654E6574776F726B477261706869638A14000089504E47
@@ -328,8 +330,8 @@ object fmBackupRestore: TfmBackupRestore
   end
   object meLog: TMemo
     Left = 4
-    Height = 149
-    Top = 292
+    Height = 109
+    Top = 332
     Width = 488
     Align = alClient
     BorderSpacing.Left = 2
