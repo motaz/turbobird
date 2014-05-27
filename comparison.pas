@@ -384,7 +384,7 @@ begin
 
     FQueryWindow.meQuery.Lines.Add('');
 
-    for x:= 1 to NumObjects do
+    for x:= 0 to NumObjects-1 do
     begin
       if (x = 1) and cxTables.Checked then // Tables
       for i:= 0 to FDBObjectsList[x].Count - 1 do
@@ -1651,7 +1651,7 @@ end;
 
 procedure TfmComparison.ScriptRemovedDBObjects;
 var
-  x: Integer;
+  ObjectType: TObjectType;
   ObjName: string;
   i: Integer;
   IsPrimary: Boolean;
@@ -1663,130 +1663,130 @@ var
 begin
   FieldsList:= TStringList.Create;
   try
-    for x:= NumObjects downto 1 do
+    for ObjectType:= high(TObjectType) downto low(TObjectType) do
     begin
-      if (x = 1) and cxTables.Checked then
+      if (ObjectType = otTables) and cxTables.Checked then
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Tables');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           FQueryWindow.meQuery.Lines.Add('drop table ' + ObjName + ';');
         end;
       end
       else
-      if (x = 2) and cxGenerators.Checked then
+      if (ObjectType = otGenerators) and cxGenerators.Checked then
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Generators');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           FQueryWindow.meQuery.Lines.Add('drop generator ' + ObjName + ';');
         end;
       end
       else
-      if (x = 3) and cxTriggers.Checked then
+      if (ObjectType = otTriggers) and cxTriggers.Checked then
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Triggers');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           FQueryWindow.meQuery.Lines.Add('drop trigger ' + ObjName + ';');
         end;
       end
       else
-      if (x = 4) and cxViews.Checked then
+      if (ObjectType = otViews) and cxViews.Checked then
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Views');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           FQueryWindow.meQuery.Lines.Add('drop view "' + ObjName + '";');
         end;
       end
       else
-      if (x = 5) and cxStoredProcs.Checked then
+      if (ObjectType = otStoredProcedures) and cxStoredProcs.Checked then
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Procedures');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           FQueryWindow.meQuery.Lines.Add('drop procedure ' + ObjName + ';');
         end;
       end
       else
-      if (x = 6) and cxUDFs.Checked then
+      if (ObjectType = otUDF) and cxUDFs.Checked then
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Functions (UDFs)');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           FQueryWindow.meQuery.Lines.Add('drop external function "' + ObjName + '";');
         end;
       end
       else
-      if (x = 8) and cxDomains.Checked then
+      if (ObjectType = otDomains) and cxDomains.Checked then
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Domains');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           FQueryWindow.meQuery.Lines.Add('drop domain ' + ObjName + ';');
         end;
       end
       else
-      if (x = 9) and cxRoles.Checked then
+      if (ObjectType = otRoles) and cxRoles.Checked then
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Roles');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           FQueryWindow.meQuery.Lines.Add('drop role ' + ObjName + ';');
         end;
       end
       else
-      if (x = 12) and cxTables.Checked then // Indices are linked to tables
+      if (ObjectType = otIndexes) and cxTables.Checked then // Indices are linked to tables
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Indices');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           TableName:= Copy(ObjName, 1, Pos(',', ObjName) - 1);
           System.Delete(ObjName, 1, Pos(',', ObjName));
           IndexName:= ObjName;
@@ -1799,16 +1799,16 @@ begin
         end;
       end
       else
-      if (x = 13) and cxTables.Checked then // Constraints are linked to tables
+      if (ObjectType = otConstraints) and cxTables.Checked then // Constraints are linked to tables
       begin
-        if FDBRemovedObjectsList[x].Count > 0 then
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
         begin
           FQueryWindow.meQuery.Lines.Add('');
           FQueryWindow.meQuery.Lines.Add('-- Removed Constraints');
         end;
-        for i:= 0 to FDBRemovedObjectsList[x].Count - 1 do
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
         begin
-          ObjName:= FDBRemovedObjectsList[x][i];
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
           TableName:= Copy(ObjName, 1, Pos(',', ObjName) - 1);
           System.Delete(ObjName, 1, Pos(',', ObjName));
           ConstraintName:= ObjName;
@@ -2003,7 +2003,6 @@ begin
           meLog.Lines.Add(' ' + List[j]);
           Inc(FDiffCount);
         end;
-
       end;
     except
       on e: exception do
