@@ -50,9 +50,9 @@ type
   private
     FDBIndex: Integer;
     FDiffCount: Integer;
-    FDBObjectsList: array [0 .. NumObjects - 1] of TStringList;
-    FDBExistingObjectsList: array [0 .. NumObjects - 1] of TStringList;
-    FDBRemovedObjectsList: array [0 .. NumObjects - 1] of TStringList;
+    FDBObjectsList: array [0 .. NumObjects - 1] of TStringList; //matches turbocmmon.dbObjects
+    FDBExistingObjectsList: array [0 .. NumObjects - 1] of TStringList; //matches turbocmmon.dbObjects
+    FDBRemovedObjectsList: array [0 .. NumObjects - 1] of TStringList; //matches turbocmmon.dbObjects
     FMissingFieldsList: TStringList;
 
     FExistFieldsList: TStringList;
@@ -232,7 +232,6 @@ begin
   else
     DisplayStatus('Canceled');
   bbCancel.Enabled:= False;
-
 end;
 
 procedure TfmComparison.bbCloseClick(Sender: TObject);
@@ -531,7 +530,6 @@ begin
         end
         else
           FQueryWindow.meQuery.Lines.Add('-- Index ' + AIndexName + ' not exist on ' + ATableName);
-
       end
       else
       if (ObjectType = otConstraints) and cxTables.Checked then // Constraints are part of tables
