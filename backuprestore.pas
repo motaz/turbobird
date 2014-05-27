@@ -256,10 +256,17 @@ begin
         meLog.Lines.Add('Going to compress file ' + TempFile +
           ' as filename ' + FBKZippedFile +
           ' in zip file ' + UserFile);
-        Zipper.ZipAllFiles; //zip up all entries (just 1 in our case)
-        // Delete temp file containing fbk
-        Sleep(40); //give filesystem chance to update locks etc
-        Sysutils.DeleteFile(TempFile);
+        try
+          Zipper.ZipAllFiles; //zip up all entries (just 1 in our case)
+          // Delete temp file containing fbk
+          Sleep(40); //give filesystem chance to update locks etc
+          Sysutils.DeleteFile(TempFile);
+        except
+          on E: Exception do
+          begin
+            meLog.Lines.Add('Error compressing file. Technical details: '+E.Message);
+          end;
+        end;
       finally
         Zipper.Free;
       end;

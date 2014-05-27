@@ -532,7 +532,7 @@ begin
           FQueryWindow.meQuery.Lines.Add('');
         end
         else
-          FQueryWindow.meQuery.Lines.Add('-- Index ' + AIndexName + ' not exist on ' + ATableName);
+          FQueryWindow.meQuery.Lines.Add('-- Index ' + AIndexName + ' does not exist on ' + ATableName);
       end
       else
       if (ObjectType = otConstraints) and cxTables.Checked then // Constraints are part of tables
@@ -558,7 +558,7 @@ begin
           FQueryWindow.meQuery.Lines.Add('');
         end
         else
-          FQueryWindow.meQuery.Lines.Add('-- Constraint ' + ConstraintName + ' not exist on ' + ATableName);
+          FQueryWindow.meQuery.Lines.Add('-- Constraint ' + ConstraintName + ' does not exist on ' + ATableName);
       end;
     end;
   finally
@@ -871,7 +871,7 @@ begin
       COtherFieldNames:= dmSysTables.GetConstraintForeignKeyFields(COtherFieldName, dmSysTables.sqQuery);
 
     if not Exist then
-      meLog.Lines.Add(' -- Error: Constraint: ' + AConstraintName + ' not exist on table: ' + ATableName);
+      meLog.Lines.Add(' -- Error: Constraint: ' + AConstraintName + ' does not exist on table: ' + ATableName);
 
     // Compare
     if Exist then
