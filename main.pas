@@ -2353,6 +2353,7 @@ begin
     ATab.Tag:= dbIndex;
     fmTableManage.Init(dbIndex, SelNode.Text);
     fmTableManage.PageControl1.TabIndex:= 0;
+
     // Fields
     ViewTableFields(SelNode.Text, dbIndex, fmTableManage.sgFields);
 
@@ -2370,7 +2371,6 @@ begin
 
     fmTableManage.bbRefreshReferencesClick(nil);
     fmTableManage.Show;
-
   except
     on e: exception do
       MessageDlg('Error while opening Table Management: ' + e.Message, mtError, [mbOk], 0);
@@ -3093,45 +3093,39 @@ begin
     with AStringGrid, SQLQuery1 do
     while not EOF do
     begin
-      if (not (FieldByName('field_type_int').AsInteger in [CStringType,CharType,VarCharType])) or
-       (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-       (FieldByName('Field_Collation').IsNull) then
-      begin
-        RowCount:= RowCount + 1;
+      RowCount:= RowCount + 1;
 
-        // Field Name
-        Cells[1, RowCount - 1]:= Trim(FieldByName('Field_Name').AsString);
+      // Field Name
+      Cells[1, RowCount - 1]:= Trim(FieldByName('Field_Name').AsString);
 
-        // Field Type
-        GetFieldType(SQLQuery1,FieldType,FieldSize);
-        Cells[2, RowCount - 1]:= FieldType;
+      // Field Type
+      GetFieldType(SQLQuery1,FieldType,FieldSize);
+      Cells[2, RowCount - 1]:= FieldType;
 
-        // Computed fields (Calculated)
-        if FieldByName('computed_source').AsString <> '' then
-          Cells[2, RowCount - 1]:= FieldByName('computed_source').AsString;
+      // Computed fields (Calculated)
+      if FieldByName('computed_source').AsString <> '' then
+        Cells[2, RowCount - 1]:= FieldByName('computed_source').AsString;
 
-        // Field Size
-        if FieldByName('field_type_int').AsInteger in [CharType,CStringType,VarCharType] then
-          Cells[3, RowCount - 1]:= FieldByName('CharacterLength').AsString
-        else
-          Cells[3, RowCount - 1]:= FieldByName('Field_Length').AsString;
+      // Field Size
+      if FieldByName('field_type_int').AsInteger in [CharType,CStringType,VarCharType] then
+        Cells[3, RowCount - 1]:= FieldByName('CharacterLength').AsString
+      else // why show byte size for numerical fields like integer fields?
+        Cells[3, RowCount - 1]:= FieldByName('Field_Length').AsString;
 
-        // Null/Not null
-        if FieldByName('field_not_null_constraint').AsString = '1' then
-          Cells[4, RowCount - 1]:= '0'
-        else
-          Cells[4, RowCount - 1]:= '1';
+      // Null/Not null
+      if FieldByName('field_not_null_constraint').AsString = '1' then
+        Cells[4, RowCount - 1]:= '0'
+      else
+        Cells[4, RowCount - 1]:= '1';
 
-        // Default Value
-        DefaultValue:= FieldByName('Field_Default_Source').AsString;
-        if Pos('default', DefaultValue) > 0 then
-          DefaultValue:= Trim(StringReplace(DefaultValue, 'default', '', []));
-        Cells[5, RowCount - 1]:= DefaultValue;
+      // Default Value
+      DefaultValue:= FieldByName('Field_Default_Source').AsString;
+      if Pos('default', DefaultValue) > 0 then
+        DefaultValue:= Trim(StringReplace(DefaultValue, 'default', '', []));
+      Cells[5, RowCount - 1]:= DefaultValue;
 
-        Cells[6, RowCount - 1]:= FieldByName('Field_Description').AsString;
-      end;
+      Cells[6, RowCount - 1]:= FieldByName('Field_Description').AsString;
       Next;
-
     end;
     SQLQuery1.Close;
 
