@@ -323,7 +323,7 @@ end;
 
 procedure TfmComparison.laScriptClick(Sender: TObject);
 var
-  x: Integer;
+  ObjectType: TObjectType;
   i: Integer;
   ScriptList: TStringList;
   ViewBody: string;
@@ -384,44 +384,44 @@ begin
 
     FQueryWindow.meQuery.Lines.Add('');
 
-    for x:= 0 to NumObjects-1 do
+    for ObjectType:= low(TObjectType) to high(TobjectType) do
     begin
-      if (x = 1) and cxTables.Checked then // Tables
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otTables) and cxTables.Checked then // Tables
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
         ScriptList.Clear;
-        Scriptdb.ScriptTableAsCreate(FDBIndex, FDBObjectsList[x].Strings[i], ScriptList);
+        Scriptdb.ScriptTableAsCreate(FDBIndex, FDBObjectsList[ord(ObjectType)].Strings[i], ScriptList);
 
         FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
         FQueryWindow.meQuery.Lines.Add('');
       end
       else
-      if (x = 2) and cxGenerators.Checked then // Generators
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otGenerators) and cxGenerators.Checked then // Generators
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
         ScriptList.Clear;
 
-        FQueryWindow.meQuery.Lines.Add('create generator ' + FDBObjectsList[x].Strings[i] + ';');
+        FQueryWindow.meQuery.Lines.Add('create generator ' + FDBObjectsList[ord(ObjectType)].Strings[i] + ';');
         FQueryWindow.meQuery.Lines.Add('');
       end
       else
-      if (x = 3) and cxTriggers.Checked then // Triggers
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otTriggers) and cxTriggers.Checked then // Triggers
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
         ScriptList.Clear;
-        dmSysTables.ScriptTrigger(FDBIndex, FDBObjectsList[x].Strings[i], ScriptList, True);
+        dmSysTables.ScriptTrigger(FDBIndex, FDBObjectsList[ord(ObjectType)].Strings[i], ScriptList, True);
 
         FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
         FQueryWindow.meQuery.Lines.Add('');
       end
       else
-      if (x = 4) and cxViews.Checked then // Views
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otViews) and cxViews.Checked then // Views
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
-        fmMain.GetViewInfo(FDBIndex, FDBObjectsList[x].Strings[i], Columns, ViewBody);
+        fmMain.GetViewInfo(FDBIndex, FDBObjectsList[ord(ObjectType)].Strings[i], Columns, ViewBody);
         ScriptList.Text:= Trim(ViewBody);
 
-        FQueryWindow.meQuery.Lines.Add('CREATE VIEW "' + FDBObjectsList[x].Strings[i] + '" (' + Columns + ')');
+        FQueryWindow.meQuery.Lines.Add('CREATE VIEW "' + FDBObjectsList[ord(ObjectType)].Strings[i] + '" (' + Columns + ')');
         FQueryWindow.meQuery.Lines.Add('AS');
         ScriptList.Text:= Trim(ViewBody);
         FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
@@ -429,12 +429,12 @@ begin
         FQueryWindow.meQuery.Lines.Add('');
       end
       else
-      if (x = 5) and cxStoredProcs.Checked then // Stored proc
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otStoredProcedures) and cxStoredProcs.Checked then // Stored proc
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
-        ScriptList.Text:= fmMain.GetStoredProcBody(FDBIndex, FDBObjectsList[x].Strings[i], SPOwner);
+        ScriptList.Text:= fmMain.GetStoredProcBody(FDBIndex, FDBObjectsList[ord(ObjectType)].Strings[i], SPOwner);
         ScriptList.Insert(0, 'SET TERM ^ ;');
-        ScriptList.Insert(1, 'CREATE Procedure ' + FDBObjectsList[x].Strings[i]);
+        ScriptList.Insert(1, 'CREATE Procedure ' + FDBObjectsList[ord(ObjectType)].Strings[i]);
         ScriptList.Add('^');
         ScriptList.Add('SET TERM ; ^');
         ScriptList.Add('');
@@ -443,12 +443,12 @@ begin
         FQueryWindow.meQuery.Lines.Add('');
       end
       else
-      if (x = 6) and cxUDFs.Checked then // UDF
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otUDF) and cxUDFs.Checked then // UDF
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
         ScriptList.Clear;
-        ScriptList.Add('Declare External Function "' + FDBObjectsList[x].Strings[i] + '"');
-        if fmMain.GetUDFInfo(FDBIndex, FDBObjectsList[x].Strings[i], ModuleName, EntryPoint, Params) then
+        ScriptList.Add('Declare External Function "' + FDBObjectsList[ord(ObjectType)].Strings[i] + '"');
+        if fmMain.GetUDFInfo(FDBIndex, FDBObjectsList[ord(ObjectType)].Strings[i], ModuleName, EntryPoint, Params) then
         begin
           RemoveParamClosing(Params);
           ScriptList.Add(Params);
@@ -459,12 +459,12 @@ begin
         FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
       end
       else
-      if (x = 8) and cxDomains.Checked then // Domains
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otDomains) and cxDomains.Checked then // Domains
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
-        dmSysTables.GetDomainInfo(FDBIndex, FDBObjectsList[x].Strings[i], DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
+        dmSysTables.GetDomainInfo(FDBIndex, FDBObjectsList[ord(ObjectType)].Strings[i], DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
 
-        Line:= 'Create Domain ' + FDBObjectsList[x].Strings[i] + ' as ' + DomainType;
+        Line:= 'Create Domain ' + FDBObjectsList[ord(ObjectType)].Strings[i] + ' as ' + DomainType;
         // String size
         if Pos('CHAR', DomainType) > 0 then
           Line:= Line + '(' + IntToStr(DomainSize) + ')';
@@ -487,18 +487,18 @@ begin
         FQueryWindow.meQuery.Lines.Add('');
       end
       else
-      if (x = 9) and cxRoles.Checked then // Roles
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otRoles) and cxRoles.Checked then // Roles
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
         ScriptList.Clear;
-        FQueryWindow.meQuery.Lines.Add('create role ' + FDBObjectsList[x].Strings[i] + ';');
+        FQueryWindow.meQuery.Lines.Add('create role ' + FDBObjectsList[ord(ObjectType)].Strings[i] + ';');
         FQueryWindow.meQuery.Lines.Add('');
       end
       else
-      if (x = 12) and cxTables.Checked then // Indices
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otTables) and cxTables.Checked then // Indices are part of tables
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
-        Line:= FDBObjectsList[x].Strings[i];
+        Line:= FDBObjectsList[ord(ObjectType)].Strings[i];
         ATableName:= copy(Line, 1, Pos(',', Line) - 1);
         System.Delete(Line, 1, Pos(',', Line));
         AIndexName:= Line;
@@ -534,10 +534,10 @@ begin
 
       end
       else
-      if (x = 13) and cxTables.Checked then // Constraints
-      for i:= 0 to FDBObjectsList[x].Count - 1 do
+      if (ObjectType = otConstraints) and cxTables.Checked then // Constraints are part of tables
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
-        Line:= FDBObjectsList[x].Strings[i];
+        Line:= FDBObjectsList[ord(ObjectType)].Strings[i];
         ATableName:= copy(Line, 1, Pos(',', Line) - 1);
         System.Delete(Line, 1, Pos(',', Line));
         ConstraintName:= Line;
