@@ -2492,13 +2492,15 @@ begin
   SendDebug('GetFields: '+SQLQuery1.SQL.Text);
   {$ENDIF}
   SQLQuery1.Open;
-  // Fill field list if needed
+  // If FieldsList is nil, don't try to fill results. Calling code probably
+  // just wants the query. Let's hope so.
   if FieldsList <> nil then
   begin
     FieldsList.Clear;
     while not SQLQuery1.EOF do
     begin
       FieldName:= Trim(SQLQuery1.FieldByName('field_name').AsString);
+      // Avoid duplicate field names
       if FieldsList.IndexOf(FieldName) = -1 then
         FieldsList.Add(FieldName);
       SQLQuery1.Next;
@@ -3236,36 +3238,31 @@ begin
       while not EOF do
       begin
         AFieldName:= Trim(FieldByName('Field_Name').AsString);
-        if (not (FieldByName('field_type_int').AsInteger in [CStringType,CharType,VarCharType])) or
-         (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-         (FieldByName('Field_Collation').IsNull) then
-         begin
-           if (FieldByName('field_type_int').AsInteger) in [CharType, CStringType, VarCharType] then
-             LenStr:= FieldByName('CharacterLength').AsString
-           else
-             LenStr:= FieldByName('Field_Length').AsString;
+        if (FieldByName('field_type_int').AsInteger) in [CharType, CStringType, VarCharType] then
+          LenStr:= FieldByName('CharacterLength').AsString
+        else
+          LenStr:= FieldByName('Field_Length').AsString;
 
-          FieldTitle:= AFieldName + '   ' +
-            GetFBTypeName(SQLQuery1.FieldByName('field_type_int').AsInteger,
-              SQLQuery1.FieldByName('field_sub_type').AsInteger,
-              SQLQuery1.FieldByName('field_length').AsInteger,
-              SQLQuery1.FieldByName('field_precision').AsInteger,
-              SQLQuery1.FieldByName('field_scale').AsInteger) +
-            ' ' + LenStr;
-          FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
-          FieldNode.OverlayIndex:= i;
-          if PKFieldsList.IndexOf(AFieldname) <> -1 then // Primary key
-          begin
-            FieldNode.ImageIndex:= 28;
-            FieldNode.SelectedIndex:= 28;
-          end
-          else
-          begin
-            FieldNode.ImageIndex:= 27;
-            FieldNode.SelectedIndex:= 27;
-          end;
-          Inc(i);
-         end;
+        FieldTitle:= AFieldName + '   ' +
+        GetFBTypeName(SQLQuery1.FieldByName('field_type_int').AsInteger,
+          SQLQuery1.FieldByName('field_sub_type').AsInteger,
+          SQLQuery1.FieldByName('field_length').AsInteger,
+          SQLQuery1.FieldByName('field_precision').AsInteger,
+          SQLQuery1.FieldByName('field_scale').AsInteger) +
+          ' ' + LenStr;
+        FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
+        FieldNode.OverlayIndex:= i;
+        if PKFieldsList.IndexOf(AFieldname) <> -1 then // Primary key
+        begin
+          FieldNode.ImageIndex:= 28;
+          FieldNode.SelectedIndex:= 28;
+        end
+        else
+        begin
+          FieldNode.ImageIndex:= 27;
+          FieldNode.SelectedIndex:= 27;
+        end;
+        Inc(i);
         Next;
       end;
       SQLQuery1.Close;
