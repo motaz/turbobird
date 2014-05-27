@@ -1266,7 +1266,7 @@ begin
     begin
       if (Pos('char', LowerCase(fmNewDomain.cbType.Text)) > 0) or
         (LowerCase(fmNewDomain.cbType.Text)='cstring') then
-        meQuery.Lines.Add('default ' + QuotedStr(fmNewDomain.edDefault.Text))
+        meQuery.Lines.Add('DEFAULT ' + QuotedStr(fmNewDomain.edDefault.Text))
       else
         meQuery.Lines.Add('DEFAULT ' + fmNewDomain.edDefault.Text);
     end;

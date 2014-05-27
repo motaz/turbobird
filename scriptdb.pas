@@ -189,9 +189,11 @@ begin
     // Check constraint, if any:
     if CheckConstraint <> '' then
       List[i]:= List[i] + ' ' + CheckConstraint;
-    // Character set for text types, if any
+
+    { Character set is apparently not supported for domains, at least in FB2.5
     if CharacterSet <> '' then
       List[i]:= List[i] + ' CHARACTER SET ' + CharacterSet;
+    }
     // Collation for text types, if any:
     if Collation <> '' then
       List[i]:= List[i] + ' COLLATE ' +  Collation;

@@ -474,9 +474,12 @@ begin
         // Check constraint, if any:
         if CheckConstraint <> '' then
           Line:= Line + ' ' + CheckConstraint;
-        // Character set for text types, if any:
+
+        { Character sets not supported for domains apparently at
+        least not in Firebird 2.5
         if CharacterSet <> '' then
           Line:= Line + ' CHARACTER SET ' +  CharacterSet;
+        }
         // Collation for text types, if any:
         if Collation <> '' then
           Line:= Line + ' COLLATE ' +  Collation;
