@@ -228,10 +228,7 @@ begin
     while not EOF do
     begin
       Skipped:= False;
-      if (FieldByName('computed_source').AsString = '') and {any of the following }
-       ((not (FieldByName('field_type_int').AsInteger in [CStringType,CharType,VarCharType])) or
-       (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-       (FieldByName('Field_Collation').IsNull)) then
+      if (FieldByName('computed_source').AsString = '') then
       begin
         // Field Name
         FieldLine:= Trim(FieldByName('Field_Name').AsString) + ' ';

@@ -1936,10 +1936,7 @@ begin
     while not EOF do
     begin
       Skipped:= False;
-      if (FieldByName('computed_source').AsString = '') and { any of the following conditions }
-          ((not(FieldByName('field_type_int').AsInteger in [CStringType,CharType,VarCharType])) or
-          (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-          (FieldByName('Field_Collation').IsNull)) then
+      if (FieldByName('computed_source').AsString = '') then
       begin
         FieldNames:= FieldNames + Trim(FieldByName('Field_Name').AsString);
         ParamNames:= ParamNames + ':' + Trim(FieldByName('Field_Name').AsString);
@@ -2168,10 +2165,7 @@ begin
     while not EOF do
     begin
       Skipped:= False;
-      if (FieldByName('computed_source').AsString = '') and {any of the following conditions }
-         ((not(FieldByName('field_type_int').AsInteger in [CStringType,CharType,VarCharType])) or
-         (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-         (FieldByName('Field_Collation').IsNull)) then
+      if (FieldByName('computed_source').AsString = '') then
       begin
         AFieldName:= Trim(SQLQuery1.FieldByName('Field_Name').AsString);
         ParamAndValue:= ParamAndValue + AFieldName + ' = :' + AFieldName;
