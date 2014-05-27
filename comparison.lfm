@@ -17,8 +17,8 @@ object fmComparison: TfmComparison
     Left = 15
     Height = 13
     Top = 112
-    Width = 84
-    Caption = 'Original database'
+    Width = 125
+    Caption = 'Original (target) database'
     ParentColor = False
   end
   object laDatabase: TLabel
@@ -35,17 +35,20 @@ object fmComparison: TfmComparison
     Left = 16
     Height = 13
     Top = 143
-    Width = 97
-    Caption = 'Compared database'
+    Width = 140
+    Caption = 'Compared (source) database'
     ParentColor = False
   end
   object cbComparedDatabase: TComboBox
     Left = 159
     Height = 21
+    Hint = 'All changes from this database to the target database will be listed'
     Top = 134
     Width = 460
     ItemHeight = 13
     OnChange = cbComparedDatabaseChange
+    ParentShowHint = False
+    ShowHint = True
     Style = csDropDownList
     TabOrder = 0
   end
@@ -60,11 +63,12 @@ object fmComparison: TfmComparison
     ParentFont = False
   end
   object bbStart: TBitBtn
-    Left = 13
+    Left = 648
     Height = 30
     Top = 320
     Width = 154
     Caption = 'Start Comparison'
+    Default = True
     Glyph.Data = {
       36040000424D3604000000000000360000002800000010000000100000000100
       2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
@@ -102,7 +106,7 @@ object fmComparison: TfmComparison
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
     }
     OnClick = bbStartClick
-    TabOrder = 1
+    TabOrder = 8
   end
   object meLog: TMemo
     Left = 13
@@ -114,11 +118,11 @@ object fmComparison: TfmComparison
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssAutoBoth
-    TabOrder = 2
+    TabOrder = 1
   end
   object laScript: TLabel
     Cursor = crHandPoint
-    Left = 280
+    Left = 328
     Height = 13
     Top = 332
     Width = 193
@@ -136,7 +140,7 @@ object fmComparison: TfmComparison
     Caption = 'Compared objects'
     ClientHeight = 61
     ClientWidth = 597
-    TabOrder = 3
+    TabOrder = 2
     object cxTables: TCheckBox
       Left = 11
       Height = 17
@@ -222,7 +226,7 @@ object fmComparison: TfmComparison
     Top = 278
     Width = 135
     Caption = 'Check Removed objects'
-    TabOrder = 5
+    TabOrder = 4
   end
   object bbClose: TBitBtn
     Left = 793
@@ -235,7 +239,8 @@ object fmComparison: TfmComparison
     Font.Style = [fsBold]
     OnClick = bbCloseClick
     ParentFont = False
-    TabOrder = 6
+    TabOrder = 5
+    TabStop = False
   end
   object Label3: TLabel
     Left = 8
@@ -244,7 +249,7 @@ object fmComparison: TfmComparison
     Width = 775
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
-    Caption = 'Database comparison tool compares original database structure to another database structure.'#13#10'It generates a script to make compared database structure become like the original database.'#13#10'For instance, original database could be a development database, and compared database is an old version that'#13#10'is deployed at a customer. This tool generates script to make customer database structure '#13#10'resemble the developmenent database as much as possible.'
+    Caption = 'Database comparison tool compares original database structure to another database structure.'#13#10'It generates a script to make the compared (source) database structure become like the original (target) database.'#13#10#13#10'For instance, the original database could be a development database, and compared database is an old version that'#13#10'is deployed at a customer. This tool generates a script to make the customer database structure '#13#10'resemble the developmenent database as much as possible.'
     Color = clCream
     Font.Height = -11
     ParentColor = False
@@ -260,7 +265,7 @@ object fmComparison: TfmComparison
     Caption = 'Options'
     ClientHeight = 58
     ClientWidth = 185
-    TabOrder = 7
+    TabOrder = 6
     object cxIgnoreLength: TCheckBox
       Left = 16
       Height = 17
@@ -271,7 +276,7 @@ object fmComparison: TfmComparison
     end
   end
   object bbCancel: TBitBtn
-    Left = 184
+    Left = 552
     Height = 30
     Top = 320
     Width = 78
@@ -313,6 +318,6 @@ object fmComparison: TfmComparison
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
     }
     OnClick = bbCancelClick
-    TabOrder = 8
+    TabOrder = 7
   end
 end
