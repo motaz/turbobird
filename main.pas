@@ -2487,6 +2487,10 @@ begin
   SetConnection(DatabaseIndex);
   FSQLTransaction.Commit;
   SQLQuery1.SQL.Text:= format(QueryTemplate,[ATableName]);
+  {$IFDEF NEVER}
+  // Left for debugging
+  SendDebug('GetFields: '+SQLQuery1.SQL.Text);
+  {$ENDIF}
   SQLQuery1.Open;
   // Fill field list if needed
   if FieldsList <> nil then

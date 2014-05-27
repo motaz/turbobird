@@ -646,20 +646,31 @@ procedure TdmSysTables.GetDomainInfo(dbIndex: Integer; DomainName: string; var D
 const
   // Select domain and associated collation (if text type domain)
   // note weird double join fields required...
+  //
   QueryTemplate= 'select f.*, '+
     'coll.rdb$collation_name, '+
     'cs.rdb$character_set_name '+
     'from rdb$fields as f '+
-    'left join rdb$collations as coll on '+
-    'f.rdb$collation_id=coll.rdb$collation_id and '+
-    'f.rdb$character_set_id=coll.rdb$character_set_id '+
+    'left join '+
+    { the entire inner join in the next part is treated as one entity that
+    is left outer joined. Result: you get collation info with associated
+    character set or just NULL }
+    '( '+
+    'rdb$collations as coll '+
     'inner join rdb$character_sets as cs on '+
     'coll.rdb$character_set_id=cs.rdb$character_set_id '+
+    ') '+
+    'on f.rdb$collation_id=coll.rdb$collation_id and '+
+    'f.rdb$character_set_id=coll.rdb$character_set_id '+
     'where f.rdb$field_name=''%s'' ';
 begin
   Init(dbIndex);
   sqQuery.Close;
   sqQuery.SQL.Text:= format(QueryTemplate, [UpperCase(DomainName)]);
+  {$IFDEF NEVER}
+  // Left for debugging
+  SendDebug(sqQuery.SQL.Text);
+  {$ENDIF}
   sqQuery.Open;
 
   if sqQuery.RecordCount > 0 then
