@@ -1222,13 +1222,9 @@ begin
       clbFields.Clear;
       while not EOF do
       begin
-        if (not(FieldByName('field_type_int').AsInteger in [CStringType,CharType,VarCharType])) or
-         (Trim(FieldByName('Field_Collation').AsString) = 'NONE') or
-         (FieldByName('Field_Collation').IsNull) then
-        begin
-          if (FieldByName('field_type_int').AsInteger <> BlobType) then
-            clbFields.Items.Add(FieldByName('Field_Name').AsString);
-        end;
+        // Allow creating indexes on any field except blobs
+        if (FieldByName('field_type_int').AsInteger <> BlobType) then
+          clbFields.Items.Add(FieldByName('Field_Name').AsString);
         Next;
       end;
       Self.SQLQuery1.Close;
@@ -3238,10 +3234,17 @@ begin
       while not EOF do
       begin
         AFieldName:= Trim(FieldByName('Field_Name').AsString);
+
         if (FieldByName('field_type_int').AsInteger) in [CharType, CStringType, VarCharType] then
           LenStr:= FieldByName('CharacterLength').AsString
         else
+          {note: this shows number of bytes for numerical datatypes. Is this really wanted?
+          It's very awkward e.g. for decimal: e.g. Decimal(12,2) 8 }
           LenStr:= FieldByName('Field_Length').AsString;
+
+        // Array datatype:
+        if not(FieldByName('array_upper_bound').IsNull) then
+          LenStr:= LenStr + ' [' + FieldByName('array_upper_bound').AsString + '] ';
 
         FieldTitle:= AFieldName + '   ' +
         GetFBTypeName(SQLQuery1.FieldByName('field_type_int').AsInteger,
@@ -3252,7 +3255,9 @@ begin
           ' ' + LenStr;
         FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
         FieldNode.OverlayIndex:= i;
-        if PKFieldsList.IndexOf(AFieldname) <> -1 then // Primary key
+
+        // Visually distinguish primary keys
+        if PKFieldsList.IndexOf(AFieldname) <> -1 then
         begin
           FieldNode.ImageIndex:= 28;
           FieldNode.SelectedIndex:= 28;
