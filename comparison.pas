@@ -50,9 +50,9 @@ type
   private
     FDBIndex: Integer;
     FDiffCount: Integer;
-    FDBObjectsList: array [1 .. NumObjects] of TStringList;
-    FDBExistingObjectsList: array [1 .. NumObjects] of TStringList;
-    FDBRemovedObjectsList: array [1 .. NumObjects] of TStringList;
+    FDBObjectsList: array [0 .. NumObjects - 1] of TStringList;
+    FDBExistingObjectsList: array [0 .. NumObjects - 1] of TStringList;
+    FDBRemovedObjectsList: array [0 .. NumObjects - 1] of TStringList;
     FMissingFieldsList: TStringList;
 
     FExistFieldsList: TStringList;
@@ -1138,7 +1138,7 @@ begin
   try
     dmSysTables.GetAllConstraints(FDBIndex, OrigList, TablesList);
     dmSysTables.GetAllConstraints(cbComparedDatabase.ItemIndex, ComparedList, CTablesList);
-    FDBRemovedObjectsList[13].Clear;
+    FDBRemovedObjectsList[ord(otConstraints)].Clear;
 
     meLog.Lines.Add('');
     meLog.Lines.Add('Checking removed constraints');
@@ -1154,7 +1154,7 @@ begin
       // Compare
       if (Po = -1) or (TablesList[Po] <> CTablesList[i]) then
       begin
-        FDBRemovedObjectsList[13].Add(CTablesList[i] + ',' + ComparedList[i]);
+        FDBRemovedObjectsList[ord(otConstraints)].Add(CTablesList[i] + ',' + ComparedList[i]);
         meLog.Lines.Add(' ' + CTableslist[i] + ':' + ComparedList[i]);
         Inc(FDiffCount);
       end;
@@ -1965,7 +1965,7 @@ begin
     meLog.Lines.Add('Missing Constraints:');
     try
 
-      FDBObjectsList[13].Clear;
+      FDBObjectsList[ord(otConstraints)].Clear;
       for i:= 0 to TablesList.Count - 1 do
       begin
 
@@ -1989,7 +1989,7 @@ begin
             if ComparedList.IndexOf(List[j]) = -1 then // Add to missing constraints
             begin
               meLog.Lines.Add(' ' + List[j]);
-              FDBObjectsList[13].Add(TablesList[i] + ',' + List[j]);
+              FDBObjectsList[ord(otConstraints)].Add(TablesList[i] + ',' + List[j]);
               Inc(FDiffCount);
             end
             else
@@ -1999,7 +1999,7 @@ begin
         if List.Count > 0 then
         for j:= 0 to List.Count - 1 do
         begin
-          FDBObjectsList[13].Add(TablesList[i] + ',' + List[j]);
+          FDBObjectsList[ord(otConstraints)].Add(TablesList[i] + ',' + List[j]);
           meLog.Lines.Add(' ' + List[j]);
           Inc(FDiffCount);
         end;
