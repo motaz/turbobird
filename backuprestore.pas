@@ -34,14 +34,14 @@ type
     meLog: TMemo;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
-    SpeedButton1: TSpeedButton;
+    sbBroseBackupFile: TSpeedButton;
     sbBrowseTargetdb: TSpeedButton;
     procedure bbStartClick(Sender: TObject);
     procedure edBackupEditingDone(Sender: TObject);
     procedure edTargetDatabaseEditingDone(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure sbBrowseTargetdbClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure sbBroseBackupFileClick(Sender: TObject);
   private
     { private declarations }
     FDatabase: string; //doesn't really seem to be used anywhere
@@ -77,7 +77,7 @@ end;
 {$ENDIF}
 
 
-procedure TfmBackupRestore.SpeedButton1Click(Sender: TObject);
+procedure TfmBackupRestore.sbBroseBackupFileClick(Sender: TObject);
 begin
   SaveDialog1.DefaultExt:= '.fbk';
   if ((cbOperation.ItemIndex = 0) and (SaveDialog1.Execute)) or
@@ -162,6 +162,7 @@ begin
   TempDir:= GetTempDir(false);
   FireBirdServices:= TFirebirdServices.Create;
   try
+    Screen.Cursor := crHourglass; // inform user of long-running operation
     FireBirdServices.VerboseOutput:= True;
     meLog.Clear;
     with FireBirdServices do
@@ -264,6 +265,7 @@ begin
       end;
     end;
   finally
+    Screen.Cursor := crDefault;
     FireBirdServices.Free;
   end;
 end;

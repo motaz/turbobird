@@ -123,7 +123,7 @@ var
   Count: Integer;
 begin
   FDBIndex:= dbIndex;
-  TableNames:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+  TableNames:= dmSysTables.GetDBObjectNames(dbIndex, otTables, Count);
 
   fmNewGen.cbTables.Items.CommaText:= TableNames;
 

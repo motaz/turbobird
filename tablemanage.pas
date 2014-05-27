@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, sqldb, IBConnection, FileUtil, LResources, Forms, Controls,
-  Graphics, Dialogs, ComCtrls, Grids, Buttons, StdCtrls, CheckLst, LCLType;
+  Graphics, Dialogs, ComCtrls, Grids, Buttons, StdCtrls, CheckLst, LCLType, turbocommon;
 
 type
 
@@ -345,7 +345,7 @@ begin
   fmNewConstraint.edNewName.Text:= 'FK_' + FTableName + '_' + IntToStr(sgConstraints.RowCount);
 
   // Foreign tables
-  fmNewConstraint.cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, 1, Count);
+  fmNewConstraint.cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, otTables, Count);
   fmNewConstraint.DatabaseIndex:= FDBIndex;
 
   fmNewConstraint.laTable.Caption:= FTableName;

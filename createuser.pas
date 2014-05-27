@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons, ExtCtrls;
+  StdCtrls, Buttons, ExtCtrls, turbocommon;
 
 type
 
@@ -49,7 +49,7 @@ procedure TfmCreateUser.Init(dbIndex: Integer);
 var
   Count: Integer;
 begin
-  cbRoles.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
+  cbRoles.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otRoles, Count);
 end;
 
 initialization

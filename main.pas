@@ -708,7 +708,7 @@ begin
   // So check SavePassword instead of Password itself.
   if (ForceConnectDialog=false) and Rec.SavePassword then
   try
-    fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
+    fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otRoles, Count);
     fmEnterPass.cbRole.ItemIndex:= -1;
     fmEnterPass.cbRole.Text:= '';
     Result:= True; //this works, no need to go through a retry attempt below
@@ -921,7 +921,7 @@ begin
   SelNode:= tvMain.Selected;
   DBIndex:= SelNode.Parent.OverlayIndex;
 
-  TableNames:= dmSysTables.GetDBObjectNames(DBIndex, 1, Count);
+  TableNames:= dmSysTables.GetDBObjectNames(DBIndex, otTables, Count);
   fmCreateTrigger.cbTables.Items.CommaText:= TableNames;
   CreateNewTrigger(DBIndex, '');
 end;
@@ -1640,7 +1640,7 @@ begin
   begin
     fmEnterPass.edPassword.Clear;
     try
-      fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
+      fmEnterPass.cbRole.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otRoles, Count);
     except
     end;
     if fmEnterPass.ShowModal = mrOk then
@@ -2873,7 +2873,7 @@ begin
       // Tables
       if ANodeText = 'Tables' then
       begin
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 1, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otTables, Count);
         TableNode:= Node;
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
 
@@ -2892,7 +2892,7 @@ begin
       if ANodeText = 'Generators' then
       begin
         GenNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 2, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otGenerators, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         GenNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -2908,7 +2908,7 @@ begin
       if Node.Text = 'Triggers' then
       begin
         TrigNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 3, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otTriggers, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         TrigNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -2917,14 +2917,13 @@ begin
           Item.ImageIndex:= 8;
           Item.SelectedIndex:= 8;
         end;
-
       end
       else
         // Views
       if Node.Text = 'Views' then
       begin
         ViewsNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 4, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otViews, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         ViewsNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -2933,14 +2932,13 @@ begin
           Item.ImageIndex:= 10;
           Item.SelectedIndex:= 10;
         end;
-
       end
       else
         // Stored Procedures
       if Node.Text = 'Stored Procedures' then
       begin
         StoredProcNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 5, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otStoredProcedures, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         StoredProcNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -2949,14 +2947,13 @@ begin
           Item.ImageIndex:= 12;
           Item.SelectedIndex:= 12;
         end;
-
       end
       else
         // UDF (Functions)
       if Node.Text = 'Functions' then
       begin
         UDFNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 6, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otUDF, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         UDFNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -2965,14 +2962,13 @@ begin
           Item.ImageIndex:= 14;
           Item.SelectedIndex:= 14;
         end;
-
       end
       else
         // System Tables
       if Node.Text = 'System Tables' then
       begin
         SysTableNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 7, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otSystemTables, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         SysTableNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -2981,14 +2977,13 @@ begin
           Item.ImageIndex:= 16;
           Item.SelectedIndex:= 16;
         end;
-
       end
       else
         // Domains
       if Node.Text = 'Domains' then
       begin
         DomainsNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 8, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otDomains, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         DomainsNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -2997,14 +2992,13 @@ begin
           Item.ImageIndex:= 18;
           Item.SelectedIndex:= 18;
         end;
-
       end
       else
         // Roles
       if Node.Text = 'Roles' then
       begin
         RoleNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 9, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otRoles, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         RoleNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -3019,7 +3013,7 @@ begin
       if Node.Text = 'Exceptions' then
       begin
         ExceptionNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 10, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otExceptions, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         ExceptionNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -3034,7 +3028,7 @@ begin
       if Node.Text = 'Users' then
       begin
         UserNode:= Node;
-        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, 11, Count);
+        Objects.CommaText:= dmSysTables.GetDBObjectNames(DBIndex, otUsers, Count);
         Node.Text:= ANodeText + ' (' + IntToStr(Count) + ')';
         UserNode.DeleteChildren;
         for i:= 0 to Objects.Count - 1 do
@@ -3981,6 +3975,7 @@ begin
           CNode:= tvMain.Items.AddChild(MainNode, 'Query Window');
           CNode.ImageIndex:= 1;
           CNode.SelectedIndex:= 1;
+
           CNode:= tvMain.Items.AddChild(MainNode, 'Tables');
           CNode.ImageIndex:= 2;
           CNode.SelectedIndex:= 2;
@@ -4203,7 +4198,7 @@ function TfmMain.GetTableNames(dbIndex: Integer): string;
 var
   Count: Integer;
 begin
-  Result:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+  Result:= dmSysTables.GetDBObjectNames(dbIndex, otTables, Count);
 end;
 
 initialization

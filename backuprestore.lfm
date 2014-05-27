@@ -68,14 +68,14 @@ object fmBackupRestore: TfmBackupRestore
       OnEditingDone = edBackupEditingDone
       TabOrder = 3
     end
-    object SpeedButton1: TSpeedButton
+    object sbBroseBackupFile: TSpeedButton
       Left = 416
       Height = 22
       Top = 133
       Width = 23
       Anchors = [akTop, akRight]
       Caption = '...'
-      OnClick = SpeedButton1Click
+      OnClick = sbBroseBackupFileClick
     end
     object bbStart: TBitBtn
       Left = 354

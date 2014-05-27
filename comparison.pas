@@ -6,12 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, ComCtrls, IBConnection, sqldb, QueryWindow, LCLType;
+  Buttons, ComCtrls, IBConnection, sqldb, QueryWindow, LCLType, turbocommon;
 
-const
-  NumObjects = 13; //number of different objects in dbObjects array below
-  dbObjects: array [1 .. NumObjects] of string = ('Tables', 'Generators', 'Triggers', 'Views', 'Stored Procedures', 'UDFs',
-    'Sys Tables', 'Domains', 'Roles', 'Exceptions', 'Users', 'Indices', 'Constraints');
 
 type
 
@@ -582,42 +578,51 @@ procedure TfmComparison.CheckMissingDBObjects;
 var
   List, ComparedList: TStringList;
   Count: Integer;
-  x, i: Integer;
+  ObjectType: TObjectType;
+  i: Integer;
 begin
   List:= TStringList.Create;
   ComparedList:= TStringList.Create;
   try
-    for x:= 1 to 11 do
-    if ((x = 1) and cxTables.Checked) or
-       ((x = 2) and cxGenerators.Checked) or
-       ((x = 3) and cxTriggers.Checked) or
-       ((x = 4) and cxViews.Checked) or
-       ((x = 5) and cxStoredProcs.Checked) or
-       ((x = 6) and cxUDFs.Checked) or
-       ((x = 8) and cxDomains.Checked) or
-       ((x = 9) and cxRoles.Checked) then
+    for ObjectType:= Low(TObjectType) to High(TObjectType) do
     begin
-      meLog.Lines.Add('');
-      meLog.Lines.Add('Checking Missing ' + dbObjects[x] + ':');
-
-      List.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, x, Count);
-
-      Application.ProcessMessages;
-      if FCanceled then
-        Exit;
-      ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, x, Count);
-      FDBObjectsList[x].Clear;
-      FDBExistingObjectsList[x].Clear;
-      for i:= 0 to List.Count -1 do
-      if ComparedList.IndexOf(List[i]) = -1 then  // Not exist
+      if ((ObjectType = otTables) and cxTables.Checked) or
+         ((ObjectType = otGenerators) and cxGenerators.Checked) or
+         ((ObjectType = otTriggers) and cxTriggers.Checked) or
+         ((ObjectType = otViews) and cxViews.Checked) or
+         ((ObjectType = otStoredProcedures) and cxStoredProcs.Checked) or
+         ((ObjectType = otUDF) and cxUDFs.Checked) or
+         {otSystemTables: system tables are not compared }
+         ((ObjectType = otDomains) and cxDomains.Checked) or
+         ((ObjectType = otRoles) and cxRoles.Checked)
+         {otExceptions, otUsers are not checked;
+         constraints and indexes probably indirectly}
+         //todo: check otExceptions in CheckMissingDBObjects
+         then
       begin
-        meLog.Lines.Add(' ' + List[i]);
-        FDBObjectsList[x].Add(List[i]);
-        Inc(FDiffCount);
-      end
-      else                                        // Exist
-        FDBExistingObjectsList[x].Add(List[i]);
+        meLog.Lines.Add('');
+        meLog.Lines.Add('Checking Missing ' + dbObjects[ord(ObjectType)] + ':');
 
+        List.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, ObjectType, Count);
+
+        Application.ProcessMessages;
+        if FCanceled then
+          Exit;
+        ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, ObjectType, Count);
+        FDBObjectsList[ord(ObjectType)].Clear;
+        FDBExistingObjectsList[ord(ObjectType)].Clear;
+        for i:= 0 to List.Count -1 do
+        begin
+          if ComparedList.IndexOf(List[i]) = -1 then  // Does not exist
+          begin
+            meLog.Lines.Add(' ' + List[i]);
+            FDBObjectsList[ord(ObjectType)].Add(List[i]);
+            Inc(FDiffCount);
+          end
+          else                                        // Exists
+            FDBExistingObjectsList[ord(ObjectType)].Add(List[i]);
+        end;
+      end;
     end;
     laScript.Enabled:= True;
   finally
@@ -630,36 +635,41 @@ procedure TfmComparison.CheckRemovedDBObjects;
 var
   List, ComparedList: TStringList;
   Count: Integer;
-  x, i: Integer;
+  ObjectType: TObjectType;
+  i: Integer;
 begin
   List:= TStringList.Create;
   ComparedList:= TStringList.Create;
   try
-    for x:= 1 to 11 do
-    if ((x = 1) and cxTables.Checked) or
-       ((x = 2) and cxGenerators.Checked) or
-       ((x = 3) and cxTriggers.Checked) or
-       ((x = 4) and cxViews.Checked) or
-       ((x = 5) and cxStoredProcs.Checked) or
-       ((x = 6) and cxUDFs.Checked) or
-       ((x = 8) and cxDomains.Checked) then
+    for ObjectType:= Low(TObjectType) to High(TObjectType) do
+    if ((ObjectType = otTables) and cxTables.Checked) or
+       ((ObjectType = otGenerators) and cxGenerators.Checked) or
+       ((ObjectType = otTriggers) and cxTriggers.Checked) or
+       ((ObjectType = otViews) and cxViews.Checked) or
+       ((ObjectType = otStoredProcedures) and cxStoredProcs.Checked) or
+       ((ObjectType = otUDF) and cxUDFs.Checked) or
+       {otSystemTables: system tables are not compared }
+       ((ObjectType = otDomains) and cxDomains.Checked)
+       {otRoles, otExceptions, otUsers are not checked;
+         constraints and indexes probably indirectly}
+       //todo: check otExceptions in CheckRemovedDBObjects
+       then
     begin
       meLog.Lines.Add('');
-      meLog.Lines.Add('Checking Removed ' + dbObjects[x] + ':');
+      meLog.Lines.Add('Checking Removed ' + dbObjects[ord(ObjectType)] + ':');
 
-      List.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, x, Count);
+      List.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, ObjectType, Count);
 
-      ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, x, Count);
-      FDBRemovedObjectsList[x].Clear;
+      ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, ObjectType, Count);
+      FDBRemovedObjectsList[ord(ObjectType)].Clear;
 
       for i:= 0 to ComparedList.Count -1 do
       if List.IndexOf(ComparedList[i]) = -1 then  // Removed
       begin
         meLog.Lines.Add(' ' + ComparedList[i]);
-        FDBRemovedObjectsList[x].Add(ComparedList[i]);
+        FDBRemovedObjectsList[ord(ObjectType)].Add(ComparedList[i]);
         Inc(FDiffCount);
       end;
-
     end;
     CheckRemovedIndices;
     CheckRemovedConstraints;
@@ -1885,7 +1895,7 @@ begin
   ComparedList:= TStringList.Create;
   TablesList:= TStringList.Create;
   try
-    TablesList.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, 1, Count);
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, otTables, Count);
 
     meLog.Lines.Add('');
     meLog.Lines.Add('Missing Indices:');
@@ -1948,7 +1958,7 @@ begin
   ComparedList:= TStringList.Create;
   TablesList:= TStringList.Create;
   try
-    TablesList.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, 1, Count);
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, otTables, Count);
     FExistConstraintsList.Clear;
 
     meLog.Lines.Add('');

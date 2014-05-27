@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ComCtrls, StdCtrls, Buttons, CheckLst;
+  ComCtrls, StdCtrls, Buttons, CheckLst, turbocommon;
 
 type
 
@@ -251,7 +251,7 @@ begin
   clbRoles.Clear;
   if cbRolesUser.Text <> '' then
   begin
-    clbRoles.Items.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, 9, Count);
+    clbRoles.Items.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, otRoles, Count);
     FRoleList.Clear;
     FRoleList.CommaText:= dmSysTables.GetUserObjects(FDBIndex, cbRolesUser.Text, 13);
     SetLength(FRoleGrant, clbRoles.Count);
@@ -564,14 +564,15 @@ begin
   PageControl1.ActivePageIndex:= 0;
   FDBIndex := dbIndex;
   cbUsers.Text := AUserName;
-  cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
-  cbViews.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 4, Count);
+  cbTables.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otTables, Count);
+  cbViews.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otViews, Count);
   cbTables.Text:= ATableName;
   cbProcUsers.Text:= AUserName;
   cbViewsUsers.Text:= AUserName;
 
-  cbUsers.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count) + ',' +
-    dmSysTables.GetDBObjectNames(dbIndex, 11, Count);
+  // For users, add roles and users
+  cbUsers.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otRoles, Count) + ',' +
+    dmSysTables.GetDBObjectNames(dbIndex, otUsers, Count);
   cbProcUsers.Items.CommaText:= cbUsers.Items.CommaText;
   cbViewsUsers.Items.CommaText:= cbUsers.Items.CommaText;
 
@@ -590,7 +591,7 @@ begin
     cbRolesUser.Text:= AUserName;
     UpdateRolePermissions;
   end;
-  cbRolesUser.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 11, Count);
+  cbRolesUser.Items.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otUsers, Count);
 end;
 
 initialization

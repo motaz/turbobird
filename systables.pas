@@ -35,7 +35,7 @@ type
     procedure Init(dbIndex: Integer);
     // Gets list of object names that have type specified by TVIndex
     // Returns Count of objects in Count
-    function GetDBObjectNames(DatabaseIndex, TVIndex: Integer; var Count: Integer): string;
+    function GetDBObjectNames(DatabaseIndex: integer; ObjectType: TObjectType; var Count: Integer): string;
     // Returns object list (list of object names, i.e. tables, views) sorted by dependency
     // Limits sorting within one category (e.g. views)
     procedure SortDependencies(var ObjectList: TStringList);
@@ -155,44 +155,45 @@ end;
 
 (*****  GetDBObjectNames, like Table names, Triggers, Generators, etc according to TVIndex  ****)
 
-function TdmSysTables.GetDBObjectNames(DatabaseIndex, TVIndex: Integer;
+function TdmSysTables.GetDBObjectNames(DatabaseIndex: integer;
+  ObjectType: TObjectType;
   var Count: Integer): string;
 begin
   Init(DatabaseIndex);
   sqQuery.Close;
-  if TVIndex = 1 then // Tables
+  if ObjectType = otTables then // Tables
     sqQuery.SQL.Text:= 'select rdb$relation_name from rdb$relations where rdb$view_blr is null ' +
       ' and (rdb$system_flag is null or rdb$system_flag = 0) order by rdb$relation_name'
   else
-  if TVIndex = 2 then // Generators
+  if ObjectType = otGenerators then // Generators
     sqQuery.SQL.Text:= 'select RDB$GENERATOR_Name from RDB$GENERATORS where RDB$SYSTEM_FLAG = 0 order by rdb$generator_Name'
   else
-  if TVIndex = 3 then // Triggers
+  if ObjectType = otTriggers then // Triggers
     sqQuery.SQL.Text:= 'SELECT rdb$Trigger_Name FROM RDB$TRIGGERS WHERE RDB$SYSTEM_FLAG=0 order by rdb$Trigger_Name'
   else
-  if TVIndex = 4 then // Views
+  if ObjectType = otViews then // Views
     sqQuery.SQL.Text:= 'SELECT DISTINCT RDB$VIEW_NAME FROM RDB$VIEW_RELATIONS order by rdb$View_Name'
   else
-  if TVIndex = 5 then // Stored Procedures
+  if ObjectType = otStoredProcedures then // Stored Procedures
     sqQuery.SQL.Text:= 'SELECT RDB$Procedure_Name FROM RDB$PROCEDURES order by rdb$Procedure_Name'
   else
-  if TVIndex = 6 then // UDF
+  if ObjectType = otUDF then // UDF
     sqQuery.SQL.Text:= 'SELECT RDB$FUNCTION_NAME FROM RDB$FUNCTIONS where RDB$SYSTEM_FLAG=0 order by rdb$Function_Name'
   else
-  if TVIndex = 7 then // System Tables
+  if ObjectType = otSystemTables then // System Tables
     sqQuery.SQL.Text:= 'SELECT RDB$RELATION_NAME FROM RDB$RELATIONS where RDB$SYSTEM_FLAG=1 ' +
       'order by RDB$RELATION_NAME'
   else
-  if TVIndex = 8 then // Domains, excluding system-defined domains
+  if ObjectType = otDomains then // Domains, excluding system-defined domains
     sqQuery.SQL.Text:= 'select RDB$FIELD_NAME from RDB$FIELDS where RDB$Field_Name not like ''RDB$%''  order by rdb$Field_Name'
   else
-  if TVIndex = 9 then // Roles
+  if ObjectType = otRoles then // Roles
     sqQuery.SQL.Text:= 'select RDB$ROLE_NAME from RDB$ROLES order by rdb$Role_Name'
   else
-  if TVIndex = 10 then // Exceptions
+  if ObjectType = otExceptions then // Exceptions
     sqQuery.SQL.Text:= 'select RDB$EXCEPTION_NAME from RDB$EXCEPTIONS order by rdb$Exception_Name'
   else
-  if TVIndex = 11 then // Users
+  if ObjectType = otUsers then // Users
     sqQuery.SQL.Text:= 'select distinct RDB$User from RDB$USER_PRIVILEGES where RDB$User_Type = 8 order by rdb$User';
 
   // Put the result list as comma delimited string
@@ -846,7 +847,7 @@ procedure TdmSysTables.GetDomainTypes(dbIndex: Integer; List: TStrings);
 var
   Count: Integer;
 begin
-  List.CommaText:= List.CommaText + ',' + GetDBObjectNames(dbIndex, 8, Count);
+  List.CommaText:= List.CommaText + ',' + GetDBObjectNames(dbIndex, otDomains, Count);
 end;
 
 function TdmSysTables.GetDefaultTypeSize(dbIndex: Integer; TypeName: string): Integer;

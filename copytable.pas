@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons, SynEdit, SynHighlighterSQL, sqldb;
+  StdCtrls, Buttons, SynEdit, SynHighlighterSQL, sqldb, turbocommon;
 
 type
 
@@ -56,7 +56,7 @@ begin
   laDatabase.Caption:= fmMain.RegisteredDatabases[cbDestDatabase.ItemIndex].RegRec.DatabaseName;
   cbDestDatabase.SetFocus;
   dmSysTables.Init(cbDestDatabase.ItemIndex);
-  cbDestTable.Items.CommaText:= dmSysTables.GetDBObjectNames(cbDestDatabase.ItemIndex, 0, count);
+  cbDestTable.Items.CommaText:= dmSysTables.GetDBObjectNames(cbDestDatabase.ItemIndex, otTables, count);
   if cbDestTable.Items.IndexOf(cbSourceTable.Text) <> -1 then
     cbDestTable.Text:= cbSourceTable.Text;
 end;
@@ -184,7 +184,8 @@ begin
   for i:= 0 to High(fmMain.RegisteredDatabases) do
     cbDestDatabase.Items.Add(fmMain.RegisteredDatabases[i].RegRec.Title);
   laDatabase.Caption:= '';
-  cbSourceTable.Items.CommaText:= dmSysTables.GetDBObjectNames(SourceIndex, 1, count);
+
+  cbSourceTable.Items.CommaText:= dmSysTables.GetDBObjectNames(SourceIndex, otTables, count);
   cbSourceTable.Text:= ATableName;
   SynSQLSyn1.TableNames.Text:= cbSourceTable.Text;
   cbSourceTableChange(nil);

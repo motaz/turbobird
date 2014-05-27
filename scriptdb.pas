@@ -73,7 +73,7 @@ var
   Count: Integer;
   i: Integer;
 begin
-  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 9, Count);
+  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otRoles, Count);
   { todo: (low priority) wrap create role RDB$Admin statement - in FB 2.5+ this role is present
   by default, in lower dbs it isn't. No way to find out in advance when writing
   a script. No support in FB yet for CREATE OR UPDATE ROLE so probably best
@@ -109,7 +109,7 @@ var
   ModuleName, EntryPoint, Params: string;
 begin
   FunctionsList:= TStringList.Create;
-  FunctionsList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 6, Count);
+  FunctionsList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otUDF, Count);
   // Get functions in dependency order:
   dmSysTables.SortDependencies(FunctionsList);
   List.Clear;
@@ -139,7 +139,7 @@ var
   Description,Message: string; {not actually used here}
   i: Integer;
 begin
-  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 10, Count);
+  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otExceptions, Count);
   for i:= 0 to List.Count - 1 do
   begin
     dmSysTables.GetExceptionInfo(List[i],Message, Description, CreateStatement);
@@ -155,7 +155,7 @@ var
   Count: Integer;
   i: Integer;
 begin
-  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 2, Count);
+  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otGenerators, Count);
   for i:= 0 to List.Count - 1 do
     List[i]:= 'Create Generator ' + List[i] + ' ;';
   Result:= List.Count > 0;
@@ -175,7 +175,7 @@ var
   CheckConstraint: string;
   DefaultValue: string;
 begin
-  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 8, Count);
+  List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otDomains, Count);
   // Get domains in dependency order (if dependencies can exist between domains)
   dmSysTables.SortDependencies(List);
   for i:= 0 to List.Count - 1 do
@@ -350,7 +350,7 @@ begin
   TablesList:= TStringList.Create;
   TableScript:= TStringList.Create;
   try
-    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otTables, Count);
     List.Clear;
     for i:= 0 to TablesList.Count - 1 do
     begin
@@ -378,7 +378,7 @@ begin
   ProceduresList:= TStringList.Create;
   ProcedureScript:= TStringList.Create;
   try
-    ProceduresList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 5, Count);
+    ProceduresList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otStoredProcedures, Count);
     // Get procedures in dependency order:
     dmSysTables.SortDependencies(ProceduresList);
     List.Clear;
@@ -415,7 +415,7 @@ begin
   ViewsList:= TStringList.Create;
   ViewsBodyList:= TStringList.Create;
   try
-    ViewsList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 4, Count);
+    ViewsList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otViews, Count);
     // Get procedures in dependency order:
     dmSysTables.SortDependencies(ViewsList);
     List.Clear;
@@ -448,7 +448,7 @@ begin
   TriggersList:= TStringList.Create;
   TriggerScript:= TStringList.Create;
   try
-    TriggersList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 3, Count);
+    TriggersList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otTriggers, Count);
     List.Clear;
     for i:= 0 to TriggersList.Count - 1 do
     begin
@@ -479,7 +479,7 @@ begin
   TablesList:= TStringList.Create;
   FieldsList:= TStringList.Create;
   try
-    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otTables, Count);
     List.Clear;
     for i:= 0 to TablesList.Count - 1 do
     begin
@@ -585,7 +585,7 @@ var
 begin
   TablesList:= TStringList.Create;
   try
-    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, 1, Count);
+    TablesList.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otTables, Count);
     // Get tables in dependency order - probably won't matter much in this case:
     dmSysTables.SortDependencies(TablesList);
     List.Clear;

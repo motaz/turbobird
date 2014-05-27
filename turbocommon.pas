@@ -229,6 +229,36 @@ const
     ('WIN_PTBR','WIN1252')
     );
 
+type
+  // Types of objects in database
+  // Note: the order and count must match the array below
+  // Also, do not assign values to the individual enums; code depends
+  // on them starting with 0 and being contiguous
+  TObjectType = (
+    otTables,
+    otGenerators,
+    otTriggers,
+    otViews,
+    otStoredProcedures,
+    otUDF {User-Defined functions},
+    otSystemTables,
+    otDomains {excludes system domains},
+    otRoles,
+    otExceptions,
+    otUsers,
+    otIndexes,
+    otConstraints
+    );
+
+const
+  NumObjects = 13; //number of different objects in dbObjects array below
+  dbObjects: array [0 .. NumObjects-1] of string =
+    ('Tables', 'Generators', 'Triggers',
+    'Views', 'Stored Procedures', 'UDFs',
+    'Sys Tables', 'Domains', 'Roles',
+    'Exceptions', 'Users', 'Indices',
+    'Constraints');
+
 // Retrieve available collations for specified Characterset into Collations
 function GetCollations(const Characterset: string; var Collations: TStringList): boolean;
 

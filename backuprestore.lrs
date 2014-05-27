@@ -18,51 +18,51 @@ LazarusResources.Add('TfmBackupRestore','FORMDATA',[
   +#3#137#0#5'Width'#2'5'#7'Caption'#6#11'Backup File'#11'ParentColor'#8#0#0#5
   +'TEdit'#8'edBackup'#4'Left'#2'f'#6'Height'#2#21#3'Top'#3#137#0#5'Width'#3'1'
   +#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#13'OnEditingDone'#7#19'edBa'
-  +'ckupEditingDone'#8'TabOrder'#2#3#0#0#12'TSpeedButton'#12'SpeedButton1'#4'Le'
-  +'ft'#3#160#1#6'Height'#2#22#3'Top'#3#133#0#5'Width'#2#23#7'Anchors'#11#5'akT'
-  +'op'#7'akRight'#0#7'Caption'#6#3'...'#7'OnClick'#7#17'SpeedButton1Click'#0#0
-  +#7'TBitBtn'#7'bbStart'#4'Left'#3'b'#1#6'Height'#2'('#3'Top'#3#1#1#5'Width'#3
-  +#131#0#7'Caption'#6#5'Start'#5'Color'#4#219#242#247#0#4'Kind'#7#5'bkAll'#7'O'
-  +'nClick'#7#12'bbStartClick'#8'TabOrder'#2#6#0#0#5'TEdit'#16'edTargetDatabase'
-  +#4'Left'#3#142#0#6'Height'#2#21#3'Top'#2'V'#5'Width'#3#8#1#7'Anchors'#11#5'a'
-  +'kTop'#6'akLeft'#7'akRight'#0#14'ParentBidiMode'#8#13'OnEditingDone'#7#27'ed'
-  +'TargetDatabaseEditingDone'#8'TabOrder'#2#2#0#0#12'TSpeedButton'#16'sbBrowse'
-  +'Targetdb'#4'Left'#3#160#1#6'Height'#2#22#3'Top'#2'U'#5'Width'#2#23#7'Anchor'
-  +'s'#11#5'akTop'#7'akRight'#0#7'Caption'#6#3'...'#7'OnClick'#7#21'sbBrowseTar'
-  +'getdbClick'#0#0#6'TLabel'#6'Label4'#4'Left'#2#14#6'Height'#2#13#3'Top'#3#176
-  +#0#5'Width'#2'3'#7'Caption'#6#9'User name'#11'ParentColor'#8#0#0#5'TEdit'#10
-  +'edUserName'#4'Left'#2'f'#6'Height'#2#21#3'Top'#3#176#0#5'Width'#3#145#0#8'T'
-  +'abOrder'#2#4#0#0#6'TLabel'#6'Label5'#4'Left'#2#12#6'Height'#2#13#3'Top'#3
-  +#216#0#5'Width'#2'.'#7'Caption'#6#8'Password'#11'ParentColor'#8#0#0#5'TEdit'
-  +#10'edPassword'#4'Left'#2'f'#6'Height'#2#21#3'Top'#3#216#0#5'Width'#3#145#0#8
-  +'EchoMode'#7#10'emPassword'#12'PasswordChar'#6#1'-'#8'TabOrder'#2#5#0#0#6'TL'
-  +'abel'#6'Label6'#4'Left'#2#14#6'Height'#2#13#3'Top'#2'0'#5'Width'#2#22#7'Cap'
-  +'tion'#6#4'Host'#11'ParentColor'#8#0#0#5'TEdit'#6'edHost'#4'Left'#3#142#0#6
-  +'Height'#2#21#3'Top'#2'0'#5'Width'#3#6#1#7'Anchors'#11#5'akTop'#6'akLeft'#7
-  +'akRight'#0#14'ParentBidiMode'#8#8'TabOrder'#2#1#0#0#6'TImage'#6'Image1'#4'L'
-  +'eft'#3#152#1#6'Height'#2'L'#3'Top'#2#0#5'Width'#2'O'#12'Picture.Data'#10#166
-  +#20#0#0#23'TPortableNetworkGraphic'#138#20#0#0#137'PNG'#13#10#26#10#0#0#0#13
-  +'IHDR'#0#0#0'H'#0#0#0'H'#8#6#0#0#0'U'#237#179'G'#0#0#0#4'sBIT'#8#8#8#8'|'#8
-  +'d'#136#0#0#0#9'pHYs'#0#0#15#146#0#0#15#146#1#4#168'~'#160#0#0#0#25'tEXtSoft'
-  +'ware'#0'www.inkscape.org'#155#238'<'#26#0#0#0#25'tEXtTitle'#0'DataBase (2 B'
-  +'locks)ne'#254#165#0#0#0#24'tEXtAuthor'#0'Jean-Victor Balin'#236'J'#17'L'#0#0
-  +#0'''tEXtDescription'#0'jean.victor.balin@gmail.com'#216#218#231'Q'#0#0#0#24
-  +'tEXtCreation Time'#0'2009-11-09b%w,'#0#0#0'ItEXtCopyright'#0'Public Domain '
-  +'http://creativecommons.org/licenses/publicdomain/Y'#195#254#202#0#0#19#18'I'
-  +'DATx'#156#237'\[l\'#215'u]'#251#156's'#31#243' 9'#148'8|'#201#146'('#217#150
-  +#31#138#31'q\'#191#146'8J'#147#166'V'#13#168'I]'#165#8#144#254#4#133#209'~'
-  +#20'H'#220'&'#1#250#209#140#16#160'('#250#213#244#171'-'#242'B'#2'''m'#245#19
-  +#164'i'#131#166#142#205'8~6'#150#237#216#154#216#150#173'GD'#153#20'9$g'#200
-  +'y'#221#199'9{'#247'c'#134#20')Q'#145'-'#139#164'>'#178#128#11#14'f'#238#229
-  +#217'w'#205#222#251#156#189#206#190'C"'#130#223#226#226'P'#155'm'#192#213#142
-  +#223#18't'#9#152#203#189#240#200#145'''>'#208#138#232'o'#172#179#187#156#181
-  +#131#214#185'^v.t'#206#25#199#142#156'c0;q'#214'9'#235'\'#228#156#173';'#230
-  +#138#136#156#18#197'_'#251#179'?'#253#243#199#175#228#141#172#23'h'#173#28'D'
-  +'D'#4#0#165'R'#137'V'#190#255#208'C'#7'nu"'#255#20''''#209#221#173'V'#203'w'
-  +#206#129#153#225#152#193#29'B'#192#204#157#247#28'/'#191'fv`'#215'='#175'{'
-  +#164#137#181'Z'#211#203'a&x'#228#248#177#211'O'#175#28#167'T*'#9#0#200'U'#144
-  +' '#215'"'#136'>'#253#233'O'#171'J'#165'B{'#246#236'!'#0#248#171'/}'#225'['
-  +#237#168'y'#176#213'l'#249#214#185#229#27'^&'#227'2'#8'Z:'#191#243#158#164
+  +'ckupEditingDone'#8'TabOrder'#2#3#0#0#12'TSpeedButton'#17'sbBroseBackupFile'
+  +#4'Left'#3#160#1#6'Height'#2#22#3'Top'#3#133#0#5'Width'#2#23#7'Anchors'#11#5
+  +'akTop'#7'akRight'#0#7'Caption'#6#3'...'#7'OnClick'#7#22'sbBroseBackupFileCl'
+  +'ick'#0#0#7'TBitBtn'#7'bbStart'#4'Left'#3'b'#1#6'Height'#2'('#3'Top'#3#1#1#5
+  +'Width'#3#131#0#7'Caption'#6#5'Start'#5'Color'#4#219#242#247#0#4'Kind'#7#5'b'
+  +'kAll'#7'OnClick'#7#12'bbStartClick'#8'TabOrder'#2#6#0#0#5'TEdit'#16'edTarge'
+  +'tDatabase'#4'Left'#3#142#0#6'Height'#2#21#3'Top'#2'V'#5'Width'#3#8#1#7'Anch'
+  +'ors'#11#5'akTop'#6'akLeft'#7'akRight'#0#14'ParentBidiMode'#8#13'OnEditingDo'
+  +'ne'#7#27'edTargetDatabaseEditingDone'#8'TabOrder'#2#2#0#0#12'TSpeedButton'
+  +#16'sbBrowseTargetdb'#4'Left'#3#160#1#6'Height'#2#22#3'Top'#2'U'#5'Width'#2
+  +#23#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#3'...'#7'OnClick'#7#21
+  +'sbBrowseTargetdbClick'#0#0#6'TLabel'#6'Label4'#4'Left'#2#14#6'Height'#2#13#3
+  +'Top'#3#176#0#5'Width'#2'3'#7'Caption'#6#9'User name'#11'ParentColor'#8#0#0#5
+  +'TEdit'#10'edUserName'#4'Left'#2'f'#6'Height'#2#21#3'Top'#3#176#0#5'Width'#3
+  +#145#0#8'TabOrder'#2#4#0#0#6'TLabel'#6'Label5'#4'Left'#2#12#6'Height'#2#13#3
+  +'Top'#3#216#0#5'Width'#2'.'#7'Caption'#6#8'Password'#11'ParentColor'#8#0#0#5
+  +'TEdit'#10'edPassword'#4'Left'#2'f'#6'Height'#2#21#3'Top'#3#216#0#5'Width'#3
+  +#145#0#8'EchoMode'#7#10'emPassword'#12'PasswordChar'#6#1'-'#8'TabOrder'#2#5#0
+  +#0#6'TLabel'#6'Label6'#4'Left'#2#14#6'Height'#2#13#3'Top'#2'0'#5'Width'#2#22
+  +#7'Caption'#6#4'Host'#11'ParentColor'#8#0#0#5'TEdit'#6'edHost'#4'Left'#3#142
+  +#0#6'Height'#2#21#3'Top'#2'0'#5'Width'#3#6#1#7'Anchors'#11#5'akTop'#6'akLeft'
+  +#7'akRight'#0#14'ParentBidiMode'#8#8'TabOrder'#2#1#0#0#6'TImage'#6'Image1'#4
+  +'Left'#3#152#1#6'Height'#2'L'#3'Top'#2#0#5'Width'#2'O'#12'Picture.Data'#10
+  +#166#20#0#0#23'TPortableNetworkGraphic'#138#20#0#0#137'PNG'#13#10#26#10#0#0#0
+  +#13'IHDR'#0#0#0'H'#0#0#0'H'#8#6#0#0#0'U'#237#179'G'#0#0#0#4'sBIT'#8#8#8#8'|'
+  +#8'd'#136#0#0#0#9'pHYs'#0#0#15#146#0#0#15#146#1#4#168'~'#160#0#0#0#25'tEXtSo'
+  +'ftware'#0'www.inkscape.org'#155#238'<'#26#0#0#0#25'tEXtTitle'#0'DataBase (2'
+  +' Blocks)ne'#254#165#0#0#0#24'tEXtAuthor'#0'Jean-Victor Balin'#236'J'#17'L'#0
+  +#0#0'''tEXtDescription'#0'jean.victor.balin@gmail.com'#216#218#231'Q'#0#0#0
+  +#24'tEXtCreation Time'#0'2009-11-09b%w,'#0#0#0'ItEXtCopyright'#0'Public Doma'
+  +'in http://creativecommons.org/licenses/publicdomain/Y'#195#254#202#0#0#19#18
+  +'IDATx'#156#237'\[l\'#215'u]'#251#156's'#31#243' 9'#148'8|'#201#146'('#217
+  +#150#31#138#31'q\'#191#146'8J'#147#166'V'#13#168'I]'#165#8#144#254#4#133#209
+  +'~'#20'H'#220'&'#1#250#209#140#16#160'('#250#213#244#171'-'#242'B'#2'''m'#245
+  +#19#164'i'#131#166#142#205'8~6'#150#237#216#154#216#150#173'GD'#153#20'9$g'
+  +#200'y'#221#199'9{'#247'c'#134#20')Q'#145'-'#139#164'>'#178#128#11#14'f'#238
+  +#229#217'w'#205#222#251#156#189#206#190'C"'#130#223#226#226'P'#155'm'#192#213
+  +#142#223#18't'#9#152#203#189#240#200#145'''>'#208#138#232'o'#172#179#187#156
+  +#181#131#214#185'^v.t'#206#25#199#142#156'c0;q'#214'9'#235'\'#228#156#173';'
+  +#230#138#136#156#18#197'_'#251#179'?'#253#243#199#175#228#141#172#23'h'#173
+  +#28'DD'#4#0#165'R'#137'V'#190#255#208'C'#7'nu"'#255#20''''#209#221#173'V'#203
+  +'w'#206#129#153#225#152#193#29'B'#192#204#157#247#28'/'#191'fv`'#215'='#175
+  +'{'#164#137#181'Z'#211#203'a&x'#228#248#177#211'O'#175#28#167'T*'#9#0#200'U'
+  +#144' '#215'"'#136'>'#253#233'O'#171'J'#165'B{'#246#236'!'#0#248#171'/}'#225
+  +'['#237#168'y'#176#213'l'#249#214#185#229#27'^&'#227'2'#8'Z:'#191#243#158#164
   +#185'\'#246''''#245'Z'#235#161#163'G'#143#242#177'c'#199#164'X,'#202#222#189
   +'{'#165'T*'#201'f'#18#181#28'bDD"'#192#161'C%'#221'h4'#244#216#216#24'}'#230
   ,'3'#127'4'#186'm'#251#206#23'j'#139#213'~'#231#28#214#207'N'#241#234#139#245
