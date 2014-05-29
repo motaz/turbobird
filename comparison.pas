@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, ComCtrls, IBConnection, sqldb, QueryWindow, LCLType, turbocommon;
+  Buttons, ComCtrls, IBConnection, sqldb, QueryWindow, LCLType, turbocommon,
+  dbugintf;
 
 
 type
@@ -167,71 +168,76 @@ begin
   meLog.Visible:= False;
   FDiffCount:= 0;
   StatusBar1.Color:= clBlue;
-  DisplayStatus('Searching for missing DB Objects...');
   bbCancel.Enabled:= True;
   FCanceled:= False;
 
-  CheckMissingDBObjects;
-  Application.ProcessMessages;
+  Screen.Cursor := crHourglass;
+  try
+    DisplayStatus('Searching for missing DB Objects...');
+    CheckMissingDBObjects;
+    Application.ProcessMessages;
 
-  if cxTables.Checked and not FCanceled then
-  begin
-    CheckMissingIndices;
+    if cxTables.Checked and not FCanceled then
+    begin
+      CheckMissingIndices;
+      if not FCanceled then
+        CheckMissingConstraints;
+      if not FCanceled then
+        CheckMissingFields;
+      if not FCanceled then
+        CheckModifiedFields;
+      if not FCanceled then
+        CheckModifiedIndices;
+      if not FCanceled then
+        CheckModifiedConstraints;
+    end;
+    Application.ProcessMessages;
+
+    DisplayStatus('Searching for modified DB Objects...');
+    if cxViews.Checked and not FCanceled then
+      CheckModifiedViews;
+    Application.ProcessMessages;
+
+    if cxTriggers.Checked and not FCanceled then
+      CheckModifiedTriggers;
+    Application.ProcessMessages;
+
+    if cxStoredProcs.Checked and not FCanceled then
+      CheckModifiedProcedures;
+    Application.ProcessMessages;
+
+    if cxUDFs.Checked and not FCanceled then
+      CheckModifiedFunctions;
+    Application.ProcessMessages;
+
+    if cxDomains.Checked and not FCanceled then
+      CheckModifiedDomains;
+    Application.ProcessMessages;
+
+    DisplayStatus('Searching for removed DB Objects...');
+
+    if cxRemovedObjects.Checked and not FCanceled then
+      CheckRemovedDBObjects;
+    Application.ProcessMessages;
+
+    if cxTables.Checked and cxRemovedObjects.Checked and not FCanceled then
+      CheckRemovedFields;
+    Application.ProcessMessages;
+
+    StatusBar1.Color:= clDefault;
     if not FCanceled then
-      CheckMissingConstraints;
-    if not FCanceled then
-      CheckMissingFields;
-    if not FCanceled then
-      CheckModifiedFields;
-    if not FCanceled then
-      CheckModifiedIndices;
-    if not FCanceled then
-      CheckModifiedConstraints;
+    begin
+      DisplayStatus('Comparison Finished, ' + IntToStr(FDiffCount) + ' difference(s) found');
+      if FDiffCount = 0 then
+        meLog.Text:= 'No difference';
+      meLog.Visible:= True;
+    end
+    else
+      DisplayStatus('Canceled');
+    bbCancel.Enabled:= False;
+  finally
+    Screen.Cursor := crDefault;
   end;
-  Application.ProcessMessages;
-
-  DisplayStatus('Searching for modified db Objects...');
-  if cxViews.Checked and not FCanceled then
-    CheckModifiedViews;
-  Application.ProcessMessages;
-
-  if cxTriggers.Checked and not FCanceled then
-    CheckModifiedTriggers;
-  Application.ProcessMessages;
-
-  if cxStoredProcs.Checked and not FCanceled then
-    CheckModifiedProcedures;
-  Application.ProcessMessages;
-
-  if cxUDFs.Checked and not FCanceled then
-    CheckModifiedFunctions;
-  Application.ProcessMessages;
-
-  if cxDomains.Checked and not FCanceled then
-    CheckModifiedDomains;
-  Application.ProcessMessages;
-
-  DisplayStatus('Searching for removed db Objects...');
-
-  if cxRemovedObjects.Checked and not FCanceled then
-    CheckRemovedDBObjects;
-  Application.ProcessMessages;
-
-  if cxTables.Checked and cxRemovedObjects.Checked and not FCanceled then
-    CheckRemovedFields;
-  Application.ProcessMessages;
-
-  StatusBar1.Color:= clDefault;
-  if not FCanceled then
-  begin
-    DisplayStatus('Comparison Finished, ' + IntToStr(FDiffCount) + ' difference(s) found');
-    if FDiffCount = 0 then
-      meLog.Text:= 'No difference';
-    meLog.Visible:= True;
-  end
-  else
-    DisplayStatus('Canceled');
-  bbCancel.Enabled:= False;
 end;
 
 procedure TfmComparison.bbCloseClick(Sender: TObject);
@@ -634,7 +640,8 @@ end;
 
 procedure TfmComparison.CheckRemovedDBObjects;
 var
-  List, ComparedList: TStringList;
+  List: TStringList; //objects in current db
+  ComparedList: TStringList; //objects in compared db
   Count: Integer;
   ObjectType: TObjectType;
   i: Integer;
@@ -660,8 +667,18 @@ begin
       meLog.Lines.Add('Checking Removed ' + dbObjects[ord(ObjectType)] + ':');
 
       List.CommaText:= dmSysTables.GetDBObjectNames(FDBIndex, ObjectType, Count);
+      {$IFDEF NEVER}
+      //Left for debugging
+      Senddebug('current '+dbobjects[ord(ObjectType)]+': '+List.CommaText);
+      Sleep(40);
+      {$ENDIF}
 
       ComparedList.CommaText:= dmSysTables.GetDBObjectNames(cbComparedDatabase.ItemIndex, ObjectType, Count);
+      {$IFDEF NEVER}
+      //Left for debugging
+      Senddebug('compared '+dbobjects[ord(ObjectType)]+': '+ComparedList.CommaText);
+      Sleep(40);
+      {$ENDIF}
       FDBRemovedObjectsList[ord(ObjectType)].Clear;
 
       for i:= 0 to ComparedList.Count -1 do

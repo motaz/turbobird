@@ -268,9 +268,12 @@ object fmComparison: TfmComparison
     object cxRemovedObjects: TCheckBox
       Left = 11
       Height = 17
+      Hint = 'Check objects present in source but removed in target database'
       Top = 22
       Width = 132
       Caption = 'Check removed objects'
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 1
     end
   end

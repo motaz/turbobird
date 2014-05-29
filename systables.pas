@@ -200,7 +200,7 @@ begin
   sqQuery.Open;
   while not sqQuery.EOF do
   begin
-    Result:= Result + sqQuery.Fields[0].AsString;
+    Result:= Result + Trim(sqQuery.Fields[0].AsString);
     sqQuery.Next;
     if not sqQuery.EOF then
       Result:= Result + ',';
