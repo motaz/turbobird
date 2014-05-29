@@ -311,7 +311,7 @@ begin
   with fmCreateUser do
   try
     SelNode:= tvMain.Selected;
-    dbIndex:= SelNode.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Data);
     Init(dbIndex);
     edUserName.Clear;
     edPassword.Clear;
@@ -350,7 +350,7 @@ var
   SelNode: TTreeNode;
 begin
   SelNode:= tvMain.Selected;
-  with RegisteredDatabases[tvMain.Selected.OverlayIndex].RegRec do
+  with RegisteredDatabases[PtrInt(tvMain.Selected.Data)].RegRec do
     fmBackupRestore.Init(SelNode.Text, DatabaseName, UserName, Password);
   fmBackupRestore.cbOperation.Enabled:= True;
   fmBackupRestore.Show;
@@ -366,7 +366,7 @@ begin
   if fmChangePass.ShowModal = mrOK then
   begin
     try
-       dmSysTables.Init(tvMain.Selected.Parent.Parent.OverlayIndex);
+       dmSysTables.Init(PtrInt(tvMain.Selected.Parent.Parent.Data));
        dmSysTables.sqQuery.Close;
        dmSysTables.sqQuery.SQL.Text:= 'alter user ' + tvMain.Selected.Text +
          ' password ' + QuotedStr(fmChangePass.edPassword.Text);
@@ -386,7 +386,7 @@ var
   Title: string;
   ATab: TTabSheet;
 begin
-  dbIndex:= tvMain.Selected.OverlayIndex;
+  dbIndex:= PtrInt(tvMain.Selected.Data);
 
   // Check if password is saved - it may be empty, which can be valid for
   // e.g. embedded databases
@@ -433,7 +433,7 @@ begin
   if InputQuery('Permission', 'Please type a User/Role name to copy perissions to', NewUser) then
   begin
     UserName:= tvMain.Selected.Text;
-    dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(tvMain.Selected.Parent.Parent.Data);
     List:= TStringList.Create;
     try
       Scriptdb.ScriptUserAllPermissions(dbIndex, UserName, List, NewUser);
@@ -446,7 +446,7 @@ end;
 
 procedure TfmMain.lmCopyTableClick(Sender: TObject);
 begin
-  fmCopyTable.Init(tvMain.Selected.Parent.Parent.OverlayIndex, tvMain.Selected.Text);
+  fmCopyTable.Init(PtrInt(tvMain.Selected.Parent.Parent.Data), tvMain.Selected.Text);
   fmCopyTable.Show;
 end;
 
@@ -463,7 +463,7 @@ var
   dbIndex: Integer;
 begin
   Title:= 'Database information for: ' + tvMain.Selected.Text;
-  dbIndex:= tvMain.Selected.OverlayIndex;
+  dbIndex:= PtrInt(tvMain.Selected.Data);
 
   fmDBInfo:= FindCustomForm(Title, TfmDBInfo) as TfmDBInfo;
 
@@ -496,7 +496,7 @@ var
   j: Integer;
   TabSheet: TTabSheet;
 begin
-  dbIndex:= tvMain.Selected.OverlayIndex;
+  dbIndex:= PtrInt(tvMain.Selected.Data);
   RegisteredDatabases[dbIndex].IBConnection.Close;
   for i:= PageControl1.PageCount - 1 downto 0 do
     if (PageControl1.Pages[i] as TComponent).Tag = dbIndex then
@@ -524,7 +524,7 @@ var
   NotNull: Boolean;
 begin
   SelNode:= tvMain.Selected;
-  dbIndex:= SelNode.Parent.Parent.Parent.OverlayIndex;
+  dbIndex:= PtrInt(SelNode.Parent.Parent.Parent.Data);
   FieldName:= Copy(SelNode.Text, 1, Pos(' ', SelNode.Text) - 1);
   if dmSysTables.GetFieldInfo(dbIndex, SelNode.Parent.Text, FieldName,
     FieldType, Size, Scale, NotNull,
@@ -536,7 +536,7 @@ begin
       CharacterSet, Collation,
       DefaultValue, Description,
       Size, Scale,
-      SelNode.OverlayIndex, not NotNull,
+      PtrInt(SelNode.Data), not NotNull,
       nil);
     fmNewEditField.Show;
   end
@@ -553,7 +553,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
 
     AGenName:= SelNode.Text;
 
@@ -585,7 +585,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, SelNode.Text);
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Parent.Data), SelNode.Text);
     QWindow.meQuery.Lines.Text:= 'select * from ' + SelNode.Text;
     QWindow.bbRunClick(nil);
     QWindow.Show;
@@ -597,7 +597,7 @@ var
   SelNode: TTreeNode;
 begin
   SelNode:= tvMain.Selected;
-  if ChangeTriggerActivity(SelNode.Parent.Parent.OverlayIndex, SelNode.Text, True) then
+  if ChangeTriggerActivity(PtrInt(SelNode.Parent.Parent.Data), SelNode.Text, True) then
     MessageDlg('Trigger has been activated', mtInformation, [mbOk], 0);
 end;
 
@@ -623,7 +623,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     AProcName:= SelNode.Text;
-    Body:= GetStoredProcBody(SelNode.Parent.Parent.OverlayIndex, AProcName, SPOwner);
+    Body:= GetStoredProcBody(PtrInt(SelNode.Parent.Parent.Data), AProcName, SPOwner);
     Params:= RetrieveInputParamFromSP(Body);
     withParams:= Params <> '';
     with fmCallProc do
@@ -654,7 +654,7 @@ begin
 
       if (Called) or (not WithParams) then
       begin
-        QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Call procedure: ' + AProcName);
+        QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Parent.Data), 'Call procedure: ' + AProcName);
         QWindow.meQuery.lines.Clear;
         if Pos('suspend', LowerCase(Body)) > 0 then
           Line:= 'select * from ' + AProcName
@@ -687,7 +687,7 @@ end;
 
 procedure TfmMain.lmConnectAsClick(Sender: TObject);
 begin
-  if ConnectToDBAs(tvMain.Selected.OverlayIndex, True) then
+  if ConnectToDBAs(PtrInt(tvMain.Selected.Data), True) then
     tvMain.Selected.Expand(False)
   else
     tvMain.Selected.Collapse(False);
@@ -815,7 +815,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    InitNewGen(SelNode.Parent.Parent.OverlayIndex);
+    InitNewGen(PtrInt(SelNode.Parent.Parent.Data));
     fmNewGen.edGenName.Text:= SelNode.Text;
     fmNewGen.edGenName.Enabled:= False;
     fmNewGen.cxTrigger.Checked:= True;
@@ -835,7 +835,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   if InputQuery('Create new stored procedure', 'Please enter new procedure name', AProcName) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.OverlayIndex, 'Create new stored procedure');
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Data), 'Create new stored procedure');
     QWindow.meQuery.Lines.Clear;
  //   QWindow.meQuery.Lines.Add('SET TERM ^;');
     QWindow.meQuery.Lines.Add('CREATE PROCEDURE ' + AProcName);
@@ -919,7 +919,7 @@ var
   Count: Integer;
 begin
   SelNode:= tvMain.Selected;
-  DBIndex:= SelNode.Parent.OverlayIndex;
+  DBIndex:= PtrInt(SelNode.Parent.Data);
 
   TableNames:= dmSysTables.GetDBObjectNames(DBIndex, otTables, Count);
   fmCreateTrigger.cbTables.Items.CommaText:= TableNames;
@@ -938,7 +938,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   if InputQuery('Create new view', 'Please enter new view name', AViewName) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.OverlayIndex, 'Create new view');
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Data), 'Create new view');
     QWindow.meQuery.Lines.Clear;
     QWindow.meQuery.Lines.Add('CREATE VIEW "' + AViewName + '" (');
     QWindow.meQuery.Lines.Add('Field1Name, Field2Name) ');
@@ -954,7 +954,7 @@ var
   SelNode: TTreeNode;
 begin
   SelNode:= tvMain.Selected;
-  if ChangeTriggerActivity(SelNode.Parent.Parent.OverlayIndex, SelNode.Text, False) then
+  if ChangeTriggerActivity(PtrInt(SelNode.Parent.Parent.Data), SelNode.Text, False) then
     MessageDlg('Trigger has been DeActivated', mtInformation, [mbOk], 0);
 end;
 
@@ -968,7 +968,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex,  'Select first 1000 from ' + SelNode.Text);
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Parent.Data),  'Select first 1000 from ' + SelNode.Text);
     QWindow.meQuery.Lines.Text:= 'select first 1000 * from "' + SelNode.Text + '"';
     QWindow.bbRunClick(nil);
     QWindow.Show;
@@ -986,7 +986,7 @@ begin
   if MessageDlg('Are you sure you want to delete ' + SelNode.Text + ' permanently', mtConfirmation,
     [mbYes, mbNo], 0) = mrYes then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Drop Exception');
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Parent.Data), 'Drop Exception');
     QWindow.meQuery.Lines.Clear;
     QWindow.meQuery.Lines.Add('DROP EXCEPTION ' + SelNode.Text + ';');
     QWindow.Show;
@@ -1006,7 +1006,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     ATableName:= SelNode.Text;
     Rec:= RegisteredDatabases[dbIndex];
     EditForm:= TfmEditDataFullRec(FindCustomForm(Rec.RegRec.Title + ': Edit Data (Form) for Table : ' +
@@ -1036,7 +1036,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     AProcName:= SelNode.Text;
-    DBIndex:= SelNode.Parent.Parent.OverlayIndex;
+    DBIndex:= PtrInt(SelNode.Parent.Parent.Data);
     SPBody:= GetStoredProcBody(DBIndex, AProcName, SPOwner);
 
     // Procedure body
@@ -1066,7 +1066,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ATableName:= SelNode.Text;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     Rec:= RegisteredDatabases[dbIndex];
     EditWindow:= TfmEditTable(FindCustomForm(Rec.RegRec.Title + ': Edit Data for Table : ' + ATableName, TfmEditTable));
     if EditWindow = nil then
@@ -1093,10 +1093,10 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ATriggerName:= SelNode.Text;
-    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Edit Trigger ' + ATriggerName);
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Parent.Data), 'Edit Trigger ' + ATriggerName);
 
     QWindow.meQuery.Lines.Clear;
-    dmSysTables.ScriptTrigger(SelNode.Parent.Parent.OverlayIndex, ATriggerName, QWindow.meQuery.Lines);
+    dmSysTables.ScriptTrigger(PtrInt(SelNode.Parent.Parent.Data), ATriggerName, QWindow.meQuery.Lines);
     QWindow.Show;
   end;
 
@@ -1115,9 +1115,9 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     AViewName:= SelNode.Text;
-    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Edit view ' + AViewName);
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Parent.Data), 'Edit view ' + AViewName);
 
-    GetViewInfo(SelNode.Parent.Parent.OverlayIndex, AViewName, Columns, ViewBody);
+    GetViewInfo(PtrInt(SelNode.Parent.Parent.Data), AViewName, Columns, ViewBody);
     QWindow.meQuery.Lines.Clear;
     QWindow.meQuery.Lines.Add('DROP VIEW "' + AViewName + '";');
     QWindow.meQuery.Lines.Add('');
@@ -1251,7 +1251,7 @@ begin
   if fmNewDomain.ShowModal = mrOk then
   with QWindow do
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.OverlayIndex, 'Create new domain');
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Data), 'Create new domain');
     meQuery.Lines.Clear;
     Line:= 'CREATE DOMAIN ' + fmNewDomain.edName.Text + ' AS ' + fmNewDomain.cbType.Text;
     if Pos('char', LowerCase(fmNewDomain.cbType.Text)) > 0 then
@@ -1280,7 +1280,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.OverlayIndex, 'Create new Exception');
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Data), 'Create new Exception');
     QWindow.meQuery.Lines.Clear;
     QWindow.meQuery.Lines.Add('CREATE EXCEPTION Exception_name_1 ''exception message'';');
     QWindow.Show;
@@ -1537,7 +1537,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    InitNewGen(SelNode.Parent.OverlayIndex);
+    InitNewGen(PtrInt(SelNode.Parent.Data));
     fmNewGen.edGenName.Clear;
     fmNewGen.edGenName.Enabled:= True;
     fmNewGen.cxTrigger.Checked:= False;
@@ -1557,7 +1557,7 @@ var
   ATab: TTabSheet;
 begin
   SelNode:= tvMain.Selected;
-  dbIndex:= SelNode.Parent.OverlayIndex;
+  dbIndex:= PtrInt(SelNode.Parent.Data);
   Rec:= RegisteredDatabases[dbIndex];
 
   Title:= SelNode.Parent.Text + ': New Table';
@@ -1606,7 +1606,7 @@ begin
   if InputQuery('Create new function', 'Please enter module name (Library)', ModuleName) then
   if InputQuery('Create new function', 'Please enter entry point (External function name)', EntryPoint) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.OverlayIndex, 'Create new function');
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Data), 'Create new function');
     QWindow.meQuery.Lines.Clear;
     QWindow.meQuery.Lines.Add('DECLARE EXTERNAL FUNCTION "' + AFuncName + '"');
     QWindow.meQuery.Lines.Add('-- (int, varchar(100))');
@@ -1629,7 +1629,7 @@ var
   Count: Integer;
   dbIndex: Integer;
 begin
-  dbIndex:= tvMain.Selected.OverlayIndex;
+  dbIndex:= PtrInt(tvMain.Selected.Data);
   Rec:= RegisteredDatabases[dbIndex].RegRec;
   // Password form
   if (Rec.Password = '') and (not tvMain.Selected.Expanded) then
@@ -1666,7 +1666,7 @@ var
   ATab: TTabSheet;
   Title: string;
 begin
-  dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
+  dbIndex:= PtrInt(tvMain.Selected.Parent.Parent.Data);
   UserName:= tvMain.Selected.Text;
   List:= TStringList.Create;
   try
@@ -1768,7 +1768,7 @@ begin
   else
     ATab:= fmViewGen.Parent as TTabSheet;
   PageControl1.ActivePage:= ATab;
-  dbIndex:= tvMain.Selected.Parent.Parent.OverlayIndex;
+  dbIndex:= PtrInt(tvMain.Selected.Parent.Parent.Data);
   ATab.Tag:= dbIndex;
   fmPermissions.Init(dbIndex, '', tvMain.Selected.Text, 2);
   fmPermissions.Show;
@@ -1787,7 +1787,7 @@ var
   List: TStringList;
   dbIndex: Integer;
 begin
-  dbIndex:= tvMain.Selected.OverlayIndex;
+  dbIndex:= PtrInt(tvMain.Selected.Data);
   QueryWindow:= ShowQueryWindow(dbIndex, 'Database Script');
   Screen.Cursor:= crSQLWait;
   List:= TStringList.Create;
@@ -1902,7 +1902,7 @@ var
 begin
   SelNode:= tvMain.Selected;
   if dmSysTables.GetExceptionInfo(SelNode.Text, Msg, Desc, Script) then
-    ShowCompleteQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Script Exception ' + SelNode.Text, Script, nil);
+    ShowCompleteQueryWindow(PtrInt(SelNode.Parent.Parent.Data), 'Script Exception ' + SelNode.Text, Script, nil);
 end;
 
 (**************  Script table as Insert stored procedure ************)
@@ -1923,7 +1923,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ATableName:= SelNode.Text;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     QWindow:= ShowQueryWindow(dbIndex, 'Script Table as insert : ' + ATableName);
     GetFields(dbIndex, ATableName, nil);
     QWindow.meQuery.Lines.Clear;
@@ -2015,7 +2015,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ATableName:= SelNode.Text;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     ScriptList:= TStringList.Create;
     try
       ScriptTableAsCreate(dbIndex, ATableName, ScriptList);
@@ -2153,7 +2153,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     ATableName:= SelNode.Text;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     QWindow:= ShowQueryWindow(dbIndex, 'Script Table as update: ' + ATableName);
     GetFields(dbIndex, ATableName, nil);
     QWindow.meQuery.Lines.Clear;
@@ -2248,7 +2248,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     Rec:= RegisteredDatabases[dbIndex];
     SetConnection(dbIndex);
 
@@ -2275,7 +2275,7 @@ var
   Lines: string;
   s: string;
 begin
-  dbIndex:= tvMain.Selected.OverlayIndex;
+  dbIndex:= PtrInt(tvMain.Selected.Data);
   FireBirdServices:= TFirebirdServices.Create;
   try
     FireBirdServices.VerboseOutput:= True;
@@ -2322,7 +2322,7 @@ var
 begin
   try
     SelNode:= tvMain.Selected;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
 
     Title:= RegisteredDatabases[dbIndex].RegRec.Title +  ': Management of : ' + SelNode.Text;
     // Fields
@@ -2415,7 +2415,7 @@ begin
       ATab:= ADomainForm.Parent as TTabSheet;
     PageControl1.ActivePage:= ATab;
 
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     dmSysTables.GetDomainInfo(dbIndex, ADomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
     ATab.Tag:= dbIndex;
     if Pos('default', LowerCase(DefaultValue)) = 1 then
@@ -2856,7 +2856,7 @@ var
   Count: Integer;
   ANodeText: string;
 begin
-  DBIndex:= Node.Parent.OverlayIndex;
+  DBIndex:= PtrInt(Node.Parent.Data);
   Rec:= RegisteredDatabases[DBIndex].RegRec;
   Screen.Cursor:= crSQLWait;
   Objects:= TStringList.Create;
@@ -3160,7 +3160,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     Rec:= RegisteredDatabases[dbIndex];
     AViewName:= SelNode.Text;
 
@@ -3205,7 +3205,7 @@ var
 begin
   try
     Node:= tvMain.Selected;
-    dbIndex:= Node.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(Node.Parent.Parent.Data);
     Node.DeleteChildren;
 
     // Primary Keys
@@ -3242,7 +3242,7 @@ begin
           SQLQuery1.FieldByName('field_scale').AsInteger) +
           ' ' + LenStr;
         FieldNode:= tvMain.Items.AddChild(Node, FieldTitle);
-        FieldNode.OverlayIndex:= i;
+        FieldNode.Data:= Pointer(i); //store field order in node's data property
 
         // Visually distinguish primary keys
         if PKFieldsList.IndexOf(AFieldname) <> -1 then
@@ -3284,7 +3284,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     Rec:= RegisteredDatabases[dbIndex];
     SQLQuery1.Close;
     SetConnection(dbIndex);
@@ -3342,7 +3342,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
     AProcName:= SelNode.Text;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     SPBody:= GetStoredProcBody(dbIndex, AProcName, SPOwner);
     Title:= SelNode.Parent.Parent.Text +  ': StoredProcedure : ' + AProcName;
     // Fill SProc Parameters
@@ -3403,7 +3403,7 @@ begin
   begin
     ATriggerName:= SelNode.Text;
     Title:= SelNode.Parent.Parent.Text +  ': Trigger : ' + ATriggerName;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
     dmSysTables.GetTriggerInfo(dbIndex, ATriggerName, BeforeAfter, OnTable,
       Event, Body, TriggerEnabled, TriggerPosition);
 
@@ -3468,7 +3468,7 @@ begin
   begin
     AFuncName:= SelNode.Text;
     Title:= SelNode.Parent.Parent.Text + ': UDF: ' + AFuncName;
-    dbIndex:= SelNode.Parent.Parent.OverlayIndex;
+    dbIndex:= PtrInt(SelNode.Parent.Parent.Data);
 
     if GetUDFInfo(dbIndex, AFuncName, ModuleName, EntryPoint, Params) then
     with fmUDFINfo do
@@ -3515,7 +3515,7 @@ begin
     // Move selection to tables above so object is not in use when deleting it
     SelNode.Collapse(true);
     SelNode.Parent.Selected:=true;
-    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Drop Table');
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Parent.Data), 'Drop Table');
     QWindow.meQuery.Lines.Clear;
     QWindow.meQuery.Lines.Add('DROP TABLE ' + SelNode.Text + ';');
     QWindow.Show;
@@ -3565,9 +3565,9 @@ begin
   begin
     fmReg.NewReg:= False;
     fmReg.bbReg.Caption:= 'Save';
-    fmreg.RecPos:= RegisteredDatabases[SelNode.OverlayIndex].Index;
+    fmreg.RecPos:= RegisteredDatabases[PtrInt(SelNode.Data)].Index;
 
-    Rec:= RegisteredDatabases[SelNode.OverlayIndex].OrigRegRec;
+    Rec:= RegisteredDatabases[PtrInt(SelNode.Data)].OrigRegRec;
     fmReg.edDatabaseName.Text:= Rec.DatabaseName;
     fmReg.edTitle.Text:= Rec.Title;
     fmReg.edUserName.Text:= Rec.UserName;
@@ -3596,7 +3596,7 @@ begin
   if (SelNode <> nil) and (SelNode.Parent <> nil) and (SelNode.Parent.Parent = nil) then
   if MessageDlg('Are you sure you want to Unregister this database', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
-    DeleteRegistration(RegisteredDatabases[SelNode.OverlayIndex].Index);
+    DeleteRegistration(RegisteredDatabases[PtrInt(SelNode.Data)].Index);
     LoadRegisteredDatabases;
   end;
   SelNode:= nil;
@@ -3612,7 +3612,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.Parent.OverlayIndex, 'Select first 1000 from ' + SelNode.Text);
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Parent.Data), 'Select first 1000 from ' + SelNode.Text);
     QWindow.meQuery.Lines.Text:= 'select first 1000 * from "' + SelNode.Text + '"';
     QWindow.bbRunClick(nil);
     QWindow.Show;
@@ -3629,7 +3629,7 @@ begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
   begin
-    QWindow:= ShowQueryWindow(SelNode.Parent.OverlayIndex, 'Create new Role');
+    QWindow:= ShowQueryWindow(PtrInt(SelNode.Parent.Data), 'Create new Role');
     QWindow.meQuery.Lines.Clear;
     QWindow.meQuery.Lines.Add('CREATE ROLE role_name;');
     QWindow.Show;
@@ -3804,13 +3804,13 @@ begin
       begin
         if tvMain.Selected.Text = 'Query Window' then
         begin
-          QWindow:= ShowQueryWindow(tvMain.Selected.Parent.OverlayIndex, 'Query Window');
+          QWindow:= ShowQueryWindow(PtrInt(tvMain.Selected.Parent.Data), 'Query Window');
           QWindow.Show;
         end
         else  // Expand object
         begin
           tvMainExpanded(nil, Node);
-          Rec:= RegisteredDatabases[Node.Parent.OverlayIndex].RegRec;
+          Rec:= RegisteredDatabases[PtrInt(Node.Parent.Data)].RegRec;
         end;
       end;
       3: // Object Item Level, like tables, procedures....
@@ -3863,12 +3863,12 @@ begin
   if (Node <> nil) then
   if (Node.Parent <> nil) and (Node.Parent.Parent = nil) then   // Expand database
   begin
-    Rec:= RegisteredDatabases[Node.OverlayIndex].RegRec;
-    RegisteredDatabases[Node.OverlayIndex].RegRec.LastOpened:= Now;
-    RegisteredDatabases[Node.OverlayIndex].OrigRegRec.LastOpened:= Now;
+    Rec:= RegisteredDatabases[PtrInt(Node.Data)].RegRec;
+    RegisteredDatabases[PtrInt(Node.Data)].RegRec.LastOpened:= Now;
+    RegisteredDatabases[PtrInt(Node.Data)].OrigRegRec.LastOpened:= Now;
     // Password form
     if Rec.Password = '' then
-    if ConnectToDBAs(Node.OverlayIndex) then
+    if ConnectToDBAs(PtrInt(Node.Data)) then
       Node.Expand(False)
     else
       Node.Collapse(False);
@@ -3963,7 +3963,7 @@ begin
           MainNode:= tvMain.Items.AddChild(ServerNode, Rec.Title);
           MainNode.ImageIndex:= 0;
           MainNode.SelectedIndex:= 3;
-          MainNode.OverlayIndex:= i;
+          MainNode.Data:= Pointer(i);
           tvMain.PopupMenu:= pmDatabase;
 
           CNode:= tvMain.Items.AddChild(MainNode, 'Query Window');
