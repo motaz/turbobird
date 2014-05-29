@@ -1431,7 +1431,6 @@ begin
           Line:= Line + 'index ' + AIndexName + ' on ' + ATableName;
 
           Line:= Line + ' (' + FieldsList.CommaText + ') ;';
-
         end;
 
         FQueryWindow.meQuery.Lines.Add(Line);

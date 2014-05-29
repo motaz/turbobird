@@ -1,5 +1,6 @@
 unit Scriptdb;
 
+{ Non-GUI unit that allows you to script a database's object DDL statements }
 {$mode objfpc}{$H+}
 
 interface
