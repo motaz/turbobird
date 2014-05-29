@@ -209,15 +209,15 @@ begin
         end;
       end;
 
-      try
-        if TempFile='' then
-          BackupFile:= UserFile // no zip files involved
-        else
-          {backup to temp, then zip later or
-          restore from temp file}
-          BackupFile:= TempFile;
+      if TempFile='' then
+        BackupFile:= UserFile // no zip files involved
+      else
+        {backup to temp, then zip later or
+        restore from temp file}
+        BackupFile:= TempFile;
 
-        AttachService;
+      AttachService;
+      try
         if cbOperation.ItemIndex = 0 then
           StartBackup
         else
