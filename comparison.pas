@@ -1393,7 +1393,7 @@ begin
         ScriptList.Add('and RDB$RELATION_NAME = ' + QuotedStr(ATableName) + ';');
       end;
       FQueryWindow.meQuery.Lines.Add('');
-      FQueryWindow.meQuery.Lines.Add('-- ' + AFieldName + ' on ' + ATableName);
+      FQueryWindow.meQuery.Lines.Add('-- ' + AFieldName + ' in table ' + ATableName);
       FQueryWindow.meQuery.Lines.AddStrings(ScriptList);
     end;
   finally
