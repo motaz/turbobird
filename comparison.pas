@@ -710,26 +710,26 @@ begin
     meLog.Lines.Add('Missing fields');
     FMissingFieldsList.Clear;
     FExistFieldsList.Clear;
-    for i:= 0 to FDBExistingObjectsList[1].Count - 1 do
+    for i:= 0 to FDBExistingObjectsList[ord(otTables)].Count - 1 do
     begin
       // Check for cancel button press
       Application.ProcessMessages;
       if FCanceled then
         Exit;
 
-      dmSysTables.GetTableFields(FDBIndex, FDBExistingObjectsList[1].Strings[i], FieldsList);
-      dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, FDBExistingObjectsList[1].Strings[i], ComparedList);
+      dmSysTables.GetTableFields(FDBIndex, FDBExistingObjectsList[ord(otTables)].Strings[i], FieldsList);
+      dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, FDBExistingObjectsList[ord(otTables)].Strings[i], ComparedList);
 
       // Get missing fields
       for j:= 0 to FieldsList.Count - 1 do
         if ComparedList.IndexOf(FieldsList[j]) = -1 then // Add to missing list
         begin
-          meLog.Lines.Add(' ' + FDBExistingObjectsList[1].Strings[i] + ': ' + FieldsList[j]);
-          FMissingFieldsList.Add(FDBExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
+          meLog.Lines.Add(' ' + FDBExistingObjectsList[ord(otTables)].Strings[i] + ': ' + FieldsList[j]);
+          FMissingFieldsList.Add(FDBExistingObjectsList[ord(otTables)].Strings[i] + ',' + FieldsList[j]);
           Inc(FDiffCount);
         end
         else                                             // Add to existing list
-          FExistFieldsList.Add(FDBExistingObjectsList[1].Strings[i] + ',' + FieldsList[j]);
+          FExistFieldsList.Add(FDBExistingObjectsList[ord(otTables)].Strings[i] + ',' + FieldsList[j]);
     end;
   finally
     FieldsList.Free;
@@ -916,14 +916,14 @@ begin
   meLog.Lines.Add('Modified Views');
   FModifiedViewsList.Clear;
 
-  for i:= 0 to FDBExistingObjectsList[4].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[ord(otViews)].Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
     if FCanceled then
       Exit;
 
-    ViewName:= FDBExistingObjectsList[4][i];
+    ViewName:= FDBExistingObjectsList[ord(otViews)][i];
     fmMain.GetViewInfo(FDBIndex, ViewName, Columns, Body);
 
     // Compare
@@ -954,14 +954,14 @@ begin
   meLog.Lines.Add('Modified Triggers');
   FModifiedTriggersList.Clear;
 
-  for i:= 0 to FDBExistingObjectsList[3].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[ord(otTriggers)].Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
     if FCanceled then
       Exit;
 
-    TriggerName:= FDBExistingObjectsList[3][i];
+    TriggerName:= FDBExistingObjectsList[ord(otTriggers)][i];
     dmSysTables.GetTriggerInfo(FDBIndex, TriggerName, AfterBefor, OnTable, Event, Body, TriggerEnabled, TPosition);
 
     // Read all trigger properties
@@ -993,14 +993,14 @@ begin
   meLog.Lines.Add('Modified Procedures');
   FModifiedProceduresList.Clear;
 
-  for i:= 0 to FDBExistingObjectsList[5].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[ord(otStoredProcedures)].Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
     if FCanceled then
       Exit;
 
-    ProcName:= FDBExistingObjectsList[5][i];
+    ProcName:= FDBExistingObjectsList[ord(otStoredProcedures)][i];
 
     // Read procedure script
     Body:= fmMain.GetStoredProcBody(FDBIndex, ProcName, SPOwner);
@@ -1028,14 +1028,14 @@ begin
   meLog.Lines.Add('Modified Functions');
   FModifiedFunctionsList.Clear;
 
-  for i:= 0 to FDBExistingObjectsList[6].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[ord(otUDF)].Count - 1 do
   begin
     // Check for cancel button press
     Application.ProcessMessages;
     if FCanceled then
       Exit;
 
-    FunctionName:= FDBExistingObjectsList[6][i];
+    FunctionName:= FDBExistingObjectsList[ord(otUDF)][i];
 
     // Get function properties
     fmMain.GetUDFInfo(FDBIndex, FunctionName, ModuleName, EntryPoint, Params);
@@ -1067,14 +1067,14 @@ begin
   meLog.Lines.Add('Modified domains');
   FModifiedDomainsList.Clear;
 
-  for i:= 0 to FDBExistingObjectsList[8].Count - 1 do
+  for i:= 0 to FDBExistingObjectsList[ord(otDomains)].Count - 1 do
   begin
     // Check for pressed cancel button
     Application.ProcessMessages;
     if FCanceled then
       Exit;
 
-    DomainName:= FDBExistingObjectsList[8][i];
+    DomainName:= FDBExistingObjectsList[ord(otDomains)][i];
 
     // Read all domain properties
     dmSysTables.GetDomainInfo(FDBIndex, DomainName, DomainType, DomainSize, DefaultValue, CheckConstraint, CharacterSet, Collation);
@@ -1112,7 +1112,7 @@ begin
   try
     dmSysTables.GetAllIndices(FDBIndex, OrigList, TablesList);
     dmSysTables.GetAllIndices(cbComparedDatabase.ItemIndex, ComparedList, CTablesList);
-    FDBRemovedObjectsList[12].Clear;
+    FDBRemovedObjectsList[ord(otIndexes)].Clear;
 
     meLog.Lines.Add('');
     meLog.Lines.Add('Checking removed indices');
@@ -1127,7 +1127,7 @@ begin
       // Compare
       if (Po = -1) or (TablesList[Po] <> CTablesList[i]) then
       begin
-        FDBRemovedObjectsList[12].Add(CTablesList[i] + ',' + ComparedList[i]);
+        FDBRemovedObjectsList[ord(otIndexes)].Add(CTablesList[i] + ',' + ComparedList[i]);
         meLog.Lines.Add(' ' + CTableslist[i] + ':' + ComparedList[i]);
         Inc(FDiffCount);
       end;
@@ -1198,7 +1198,7 @@ begin
     meLog.Lines.Add('');
     meLog.Lines.Add('Removed fields');
     FRemovedFieldsList.Clear;
-    for i:= 0 to FDBExistingObjectsList[1].Count - 1 do
+    for i:= 0 to FDBExistingObjectsList[ord(otTables)].Count - 1 do
     begin
       // Check for cancel button press
       Application.ProcessMessages;
@@ -1206,15 +1206,15 @@ begin
         Break;
 
       // Read all table fields
-      dmSysTables.GetTableFields(FDBIndex, FDBExistingObjectsList[1].Strings[i], FieldsList);
-      dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, FDBExistingObjectsList[1].Strings[i], ComparedList);
+      dmSysTables.GetTableFields(FDBIndex, FDBExistingObjectsList[ord(otTables)].Strings[i], FieldsList);
+      dmSysTables.GetTableFields(cbComparedDatabase.ItemIndex, FDBExistingObjectsList[ord(otTables)].Strings[i], ComparedList);
 
       // Get missing fields
       for j:= 0 to ComparedList.Count - 1 do
         if FieldsList.IndexOf(ComparedList[j]) = -1 then // Add to missing list
         begin
-          meLog.Lines.Add(' ' + FDBExistingObjectsList[1].Strings[i] + ': ' + ComparedList[j]);
-          FRemovedFieldsList.Add(FDBExistingObjectsList[1].Strings[i] + ',' + ComparedList[j]);
+          meLog.Lines.Add(' ' + FDBExistingObjectsList[ord(otTables)].Strings[i] + ': ' + ComparedList[j]);
+          FRemovedFieldsList.Add(FDBExistingObjectsList[ord(otTables)].Strings[i] + ',' + ComparedList[j]);
           Inc(FDiffCount);
         end;
     end;
@@ -1222,7 +1222,6 @@ begin
     FieldsList.Free;
     ComparedList.Free;
   end;
-
 end;
 
 procedure TfmComparison.InitializeQueryWindow;
@@ -1916,7 +1915,7 @@ begin
 
     meLog.Lines.Add('');
     meLog.Lines.Add('Missing Indices:');
-    FDBObjectsList[12].Clear;
+    FDBObjectsList[ord(otIndexes)].Clear;
     FExistIndicesList.Clear;
     try
       for i:= 0 to TablesList.Count - 1 do
@@ -1936,7 +1935,7 @@ begin
             if ComparedList.IndexOf(List[j]) = -1 then // Add to missing indices
             begin
               meLog.Lines.Add(' ' + List[j]);
-              FDBObjectsList[12].Add(TablesList[i] + ',' + List[j]);
+              FDBObjectsList[ord(otIndexes)].Add(TablesList[i] + ',' + List[j]);
               Inc(FDiffCount);
             end
             else
@@ -1946,7 +1945,7 @@ begin
         if List.Count > 0 then
         for j:= 0 to List.Count - 1 do
         begin
-          FDBObjectsList[12].Add(TablesList[i] + ',' + List[j]);
+          FDBObjectsList[ord(otIndexes)].Add(TablesList[i] + ',' + List[j]);
           meLog.Lines.Add(' ' + List[j]);
           Inc(FDiffCount);
         end;
