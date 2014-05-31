@@ -6,7 +6,7 @@ unit Scriptdb;
 interface
 
 uses
-  Classes, SysUtils, turbocommon;
+  Classes, SysUtils, turbocommon, dialogs;
 
 
 function ScriptAllRoles(dbIndex: Integer; var List: TStringList): Boolean;
@@ -223,6 +223,7 @@ begin
   ScriptList.Clear;
   ScriptList.Add('create table ' + ATableName + ' (');
   CalculatedList:= TStringList.Create;
+
   try
     // Fields
     with fmMain.SQLQuery1 do

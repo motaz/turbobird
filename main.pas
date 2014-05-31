@@ -2474,7 +2474,8 @@ begin
   SQLQuery1.Close;
   {A bit unclear why the transaction needs to be committed but at least do it
   before changing the query's transaction}
-  FSQLTransaction.Commit;
+  if (Assigned(FSQLTransaction)) then
+    FSQLTransaction.Commit;
   Rec:= RegisteredDatabases[DatabaseIndex];
   SetConnection(DatabaseIndex);
   SQLQuery1.SQL.Text:= format(QueryTemplate,[ATableName]);
