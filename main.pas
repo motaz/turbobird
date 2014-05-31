@@ -2114,7 +2114,7 @@ begin
 
           QWindow.meQuery.Lines.AddStrings(List);
         end;
-
+        Triggers.Free;
         QWindow.meQuery.Lines.Add('');
 
         // Script permissions
