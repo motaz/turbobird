@@ -1,11 +1,11 @@
 object fmComparison: TfmComparison
-  Left = 175
+  Left = 303
   Height = 628
-  Top = 38
-  Width = 758
+  Top = 182
+  Width = 710
   Caption = 'Database comparison'
   ClientHeight = 628
-  ClientWidth = 758
+  ClientWidth = 710
   KeyPreview = True
   OnClose = FormClose
   OnCreate = FormCreate
@@ -15,17 +15,17 @@ object fmComparison: TfmComparison
   LCLVersion = '1.2.2.0'
   object Label1: TLabel
     Left = 15
-    Height = 13
+    Height = 17
     Top = 112
-    Width = 125
+    Width = 174
     Caption = 'Original (target) database'
     ParentColor = False
   end
   object laDatabase: TLabel
-    Left = 159
-    Height = 13
+    Left = 226
+    Height = 17
     Top = 112
-    Width = 64
+    Width = 80
     Caption = 'laDatabase'
     Font.Style = [fsBold]
     ParentColor = False
@@ -33,19 +33,19 @@ object fmComparison: TfmComparison
   end
   object Label2: TLabel
     Left = 16
-    Height = 13
+    Height = 17
     Top = 143
-    Width = 140
+    Width = 195
     Caption = 'Compared (source) database'
     ParentColor = False
   end
   object cbComparedDatabase: TComboBox
-    Left = 159
-    Height = 21
+    Left = 226
+    Height = 31
     Hint = 'All changes from this database to the target database will be listed'
-    Top = 134
+    Top = 136
     Width = 460
-    ItemHeight = 13
+    ItemHeight = 0
     OnChange = cbComparedDatabaseChange
     ParentShowHint = False
     ShowHint = True
@@ -53,17 +53,17 @@ object fmComparison: TfmComparison
     TabOrder = 0
   end
   object laComparedDatabase: TLabel
-    Left = 159
-    Height = 13
-    Top = 168
-    Width = 10
+    Left = 226
+    Height = 17
+    Top = 176
+    Width = 11
     Caption = '[]'
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
   end
   object bbStart: TBitBtn
-    Left = 542
+    Left = 549
     Height = 30
     Top = 288
     Width = 154
@@ -109,10 +109,10 @@ object fmComparison: TfmComparison
     TabOrder = 3
   end
   object meLog: TMemo
-    Left = 13
-    Height = 236
+    Left = 15
+    Height = 272
     Top = 328
-    Width = 673
+    Width = 674
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Name = 'Courier 10 Pitch'
     ParentFont = False
@@ -122,10 +122,10 @@ object fmComparison: TfmComparison
   end
   object laScript: TLabel
     Cursor = crHandPoint
-    Left = 224
-    Height = 13
-    Top = 305
-    Width = 193
+    Left = 16
+    Height = 17
+    Top = 296
+    Width = 272
     Caption = 'Script differences in compared database'
     Font.Style = [fsUnderline]
     ParentColor = False
@@ -136,57 +136,57 @@ object fmComparison: TfmComparison
     Left = 15
     Height = 79
     Top = 192
-    Width = 513
+    Width = 488
     Caption = 'Compared objects'
-    ClientHeight = 61
-    ClientWidth = 509
+    ClientHeight = 60
+    ClientWidth = 484
     TabOrder = 2
     object cxTables: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Top = 4
-      Width = 51
+      Width = 69
       Caption = 'Tables'
       TabOrder = 0
     end
     object cxGenerators: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Top = 32
-      Width = 74
+      Width = 102
       Caption = 'Generators'
       TabOrder = 1
     end
     object cxTriggers: TCheckBox
       Left = 151
-      Height = 17
+      Height = 24
       Top = 4
-      Width = 59
+      Width = 80
       Caption = 'Triggers'
       TabOrder = 2
     end
     object cxViews: TCheckBox
       Left = 151
-      Height = 17
+      Height = 24
       Top = 34
-      Width = 47
+      Width = 66
       Caption = 'Views'
       TabOrder = 3
     end
     object cxStoredProcs: TCheckBox
       Left = 262
-      Height = 17
+      Height = 24
       Top = 4
-      Width = 81
+      Width = 113
       Caption = 'Stored Procs'
       TabOrder = 4
     end
     object cxUDFs: TCheckBox
       Left = 262
-      Height = 17
+      Height = 24
       Hint = 'User Defined Functions'
       Top = 32
-      Width = 45
+      Width = 61
       Caption = 'UDFs'
       ParentShowHint = False
       ShowHint = True
@@ -194,26 +194,26 @@ object fmComparison: TfmComparison
     end
     object cxDomains: TCheckBox
       Left = 390
-      Height = 17
+      Height = 24
       Top = 4
-      Width = 60
+      Width = 85
       Caption = 'Domains'
       TabOrder = 6
     end
     object cxRoles: TCheckBox
       Left = 390
-      Height = 17
+      Height = 24
       Top = 34
-      Width = 46
+      Width = 63
       Caption = 'Roles'
       TabOrder = 7
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 20
-    Top = 608
-    Width = 758
+    Height = 21
+    Top = 607
+    Width = 710
     Panels = <    
       item
         Width = 50
@@ -221,9 +221,9 @@ object fmComparison: TfmComparison
     SimplePanel = False
   end
   object bbClose: TBitBtn
-    Left = 684
+    Left = 676
     Height = 24
-    Top = 6
+    Top = 0
     Width = 27
     Anchors = [akTop, akRight]
     Caption = ' X  '
@@ -238,9 +238,9 @@ object fmComparison: TfmComparison
     Left = 13
     Height = 98
     Top = 8
-    Width = 712
+    Width = 697
     AutoSize = False
-    Caption = 'Database comparison tool compares original database structure to another database structure.'#13#10'It generates a script to make the compared (source) database structure become like the original (target) database.'#13#10#13#10'For instance, the original database could be a development database, and compared database is an old version that'#13#10'is deployed at a customer. This tool generates a script to make the customer database structure '#13#10'resemble the developmenent database as much as possible.'
+    Caption = 'Database comparison tool compares original database structure to another database structure.'#13#10'It generates a script to make the compared (source) database structure become like the original (target) database.'#13#10'For instance, the original database could be a development database, and compared database is an old version that'#13#10'is deployed at a customer. This tool generates a script to make the customer database structure '#13#10'resemble the developmenent database as much as possible.'
     Color = clCream
     Font.Height = -11
     ParentColor = False
@@ -249,28 +249,28 @@ object fmComparison: TfmComparison
     WordWrap = True
   end
   object GroupBox2: TGroupBox
-    Left = 528
+    Left = 504
     Height = 76
     Top = 195
-    Width = 168
+    Width = 199
     Caption = 'Options'
-    ClientHeight = 58
-    ClientWidth = 164
+    ClientHeight = 57
+    ClientWidth = 195
     TabOrder = 6
     object cxIgnoreLength: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Top = 1
-      Width = 113
+      Width = 154
       Caption = 'Ignore fields length'
       TabOrder = 0
     end
     object cxRemovedObjects: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Hint = 'Check objects present in source but removed in target database'
       Top = 22
-      Width = 132
+      Width = 182
       Caption = 'Check removed objects'
       ParentShowHint = False
       ShowHint = True
