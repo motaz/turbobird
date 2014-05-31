@@ -1006,6 +1006,7 @@ begin
   BeginUpdateBounds;
   Result:= ATab;
   ATab.Parent:= pgOutputPageCtl;
+  pgOutputPageCtl.ActivePage:= ATab; //set focus to new tab
   ATab.Caption:= 'Result # ' + GetNewTabNum + ' ' + AdditionalTitle;
   if QueryType = qtSelectable then // Select, need record set result
   begin

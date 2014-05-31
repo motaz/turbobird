@@ -519,7 +519,6 @@ begin
             Line:= 'alter table ' + ATableName + LineEnding +
             'add constraint ' + AIndexName + LineEnding +
             'primary key (' + FieldsList.CommaText + ');';
-
           end
           else
           begin
