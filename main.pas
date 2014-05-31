@@ -2010,6 +2010,8 @@ var
   i: Integer;
   UserName: string;
   ObjType: Integer;
+  Triggers: TStringList;
+  j: Integer;
 begin
   SelNode:= tvMain.Selected;
   if (SelNode <> nil) and (SelNode.Parent <> nil) then
@@ -2064,11 +2066,13 @@ begin
             Line:= Line + 'index ' + Trim(FieldByName('RDB$Index_name').AsString) + ' on ' + ATableName;
 
             GetIndexFields(ATableName, Trim(FieldByName('RDB$Index_Name').AsString), fmMain.SQLQuery1, List);
+
             Line:= Line + ' (' + List.CommaText + ') ;';
             QWindow.meQuery.Lines.Add(Line);
           end;
           Next;
         end;
+
         QWindow.meQuery.Lines.Add('');
         SQLQuery1.Close;
         dmSysTables.sqQuery.Close;
@@ -2078,11 +2082,19 @@ begin
         SQLQuery1.SQL.Text:= 'SELECT RDB$Trigger_Name, RDB$Trigger_Inactive FROM RDB$TRIGGERS WHERE RDB$SYSTEM_FLAG=0 ' +
           'and RDB$Relation_Name = ' + QuotedStr(aTableName);
         SQLQuery1.Open;
+        Triggers:= TStringList.Create;
         with SQLQuery1 do
         while not EOF do
         begin
+          Triggers.Add(Fields[0].AsString);
+          Next;
+        end;
+        SQLQuery1.Close;
+        for j:= 0 to Triggers.Count - 1 do
+        begin
           List.Clear;
-          dmSysTables.ScriptTrigger(dbIndex, Trim(SQLQuery1.Fields[0].AsString), List, True);
+          dmSysTables.ScriptTrigger(dbIndex, Trim(Triggers[j]), List, True);
+
           // Search for generators
           Line:= '';
           for i:= 0 to List.Count - 1 do
@@ -2096,19 +2108,18 @@ begin
            // Script Generator
            if Trim(Line) <> '' then
            begin
-             QWindow.meQuery.Lines.Add('Create Generator ' +Line + ';');
+             QWindow.meQuery.Lines.Add('Create Generator ' + Line + ';');
              QWindow.meQuery.Lines.Add('');
            end;
 
           QWindow.meQuery.Lines.AddStrings(List);
-          Next;
         end;
-        SQLQuery1.Close;
 
         QWindow.meQuery.Lines.Add('');
 
         // Script permissions
         List.CommaText:= dmSysTables.GetDBUsers(dbIndex);
+
 
         for i:= 0 to List.Count - 1 do
         begin
