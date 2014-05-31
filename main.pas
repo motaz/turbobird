@@ -2044,7 +2044,7 @@ begin
       SQLQuery1.Close;
       QWindow.meQuery.Lines.Add('');
 
-      // Script Secondary indices
+      // Script indices
       PKIndexName:= GetPrimaryKeyIndexName(dbIndex, ATableName, ConstraintName);
       List:= TStringList.Create;
       try
@@ -2066,7 +2066,6 @@ begin
             GetIndexFields(ATableName, Trim(FieldByName('RDB$Index_Name').AsString), fmMain.SQLQuery1, List);
             Line:= Line + ' (' + List.CommaText + ') ;';
             QWindow.meQuery.Lines.Add(Line);
-
           end;
           Next;
         end;
@@ -2473,9 +2472,11 @@ var
   FieldName: string;
 begin
   SQLQuery1.Close;
+  {A bit unclear why the transaction needs to be committed but at least do it
+  before changing the query's transaction}
+  FSQLTransaction.Commit;
   Rec:= RegisteredDatabases[DatabaseIndex];
   SetConnection(DatabaseIndex);
-  FSQLTransaction.Commit;
   SQLQuery1.SQL.Text:= format(QueryTemplate,[ATableName]);
   {$IFDEF NEVER}
   // Left for debugging
@@ -2691,7 +2692,6 @@ begin
     Result:= True;
     FSQLTransaction.Commit;
     AddToSQLHistory(Rec.RegRec.Title, 'DDL', SQLQuery1.SQL.Text);
-
   except
     on e: exception do
     begin
@@ -3289,9 +3289,7 @@ begin
     SQLQuery1.Close;
     SetConnection(dbIndex);
     AGenName:= SelNode.Text;
-    SQLQuery1.Close;
     SQLQuery1.SQL.Text:= 'select GEN_ID(' + AGenName + ', 0) from RDB$Database;';
-
     SQLQuery1.Open;
 
     // Fill ViewGen form
@@ -4112,7 +4110,6 @@ function TfmMain.GetPrimaryKeyIndexName(DatabaseIndex: Integer; ATableName: stri
 begin
   SQLQuery1.Close;
   SetConnection(DatabaseIndex);
-  SQLQuery1.Close;
   SQLQuery1.SQL.Text:= 'select RDB$Index_name, RDB$Constraint_Name from RDB$RELATION_CONSTRAINTS ' +
     'where RDB$Relation_Name = ''' + UpperCase(ATableName) + ''' and RDB$Constraint_Type = ''PRIMARY KEY'' ';
   SQLQuery1.Open;
@@ -4146,7 +4143,6 @@ begin
   KeyFields.Clear;
   SQLQuery1.Close;
   SetConnection(DatabaseIndex);
-  SQLQuery1.Close;
   SQLQuery1.SQL.Text:=format(Template,[UpperCase(ATableName)]);
   SQLQuery1.Open;
   while not(SQLQuery1.EOF) do
