@@ -330,6 +330,7 @@ procedure TfmComparison.laScriptClick(Sender: TObject);
 var
   ObjectType: TObjectType;
   i: Integer;
+  ObjectCounter: integer;
   ScriptList: TStringList;
   ViewBody: string;
   Columns: string;
@@ -355,12 +356,22 @@ begin
   ScriptList:= TStringList.Create;
   FieldsList:= TStringList.Create;
   try
+    // Do this in rough order of dependency so a table can depend on a domain
     if cxRemovedObjects.Checked then
     begin
       ScriptRemovedDBObjects;
       if cxTables.Checked then
         ScriptRemovedFields;
     end;
+
+    // Tables etc can depend on domains so have domains in front
+    if cxDomains.Checked then
+      ScriptModifiedDomains;
+
+    // Presumably table check constraints can depend on UDFs so put
+    // UDFs fairly in front
+    if cxUDFs.Checked then
+      ScriptModifiedFunctions;
 
     if cxTables.Checked then
     begin
@@ -379,18 +390,34 @@ begin
     if cxStoredProcs.Checked then
       ScriptModifiedProcedures;
 
-    if cxUDFs.Checked then
-      ScriptModifiedFunctions;
-
-    if cxDomains.Checked then
-      ScriptModifiedDomains;
-
     dmSysTables.Init(FDBIndex);
 
     FQueryWindow.meQuery.Lines.Add('');
 
-    for ObjectType:= low(TObjectType) to high(TobjectType) do
+    // Easiest would have been to have
+    // for ObjectType:= low(TObjectType) to high(TObjectType)
+    // but that does not take dependencies into account
+    // e.g. domains need to be created before tables that depend on them
+    // So we use a manual mapping table
+    for ObjectCounter:= ord(low(TObjectType)) to ord(high(TObjectType)) do
     begin
+      case ObjectCounter of
+        ord(otTables): ObjectType:= otRoles; //these depend on nothing
+        ord(otGenerators): ObjectType:= otExceptions; //these depend on nothing
+        ord(otTriggers): ObjectType:= otDomains; //tables,views,procs can depend
+        ord(otViews): ObjectType:= otUDF; //table check constraints can depend on these
+        ord(otStoredProcedures): ObjectType:= otSystemTables; //for completeness
+        ord(otUDF): ObjectType:= otTables; //from here on, more or less follow regular order
+        ord(otSystemTables): ObjectType:= otGenerators;
+        ord(otDomains): ObjectType:= otTriggers;
+        ord(otRoles): ObjectType:= otViews;
+        ord(otExceptions): ObjectType:= otStoredProcedures;
+        ord(otUsers): ObjectType:= otIndexes;
+        ord(otIndexes): ObjectType:= otConstraints;
+        ord(otConstraints): ObjectType:= otUsers; //for completeness
+        else raise Exception.Create('Technical error: laScriptClick: update case clause with all TObjectTypes');
+      end;
+
       if (ObjectType = otTables) and cxTables.Checked then // Tables
       for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
@@ -1338,7 +1365,6 @@ begin
       System.Delete(Line, 1, Pos(',', Line));
       AFieldName:= Line;
 
-      //todo: (high priority) test comparison with and without collations, character set, numeric, decimal datatype with scale change
       dmSysTables.GetFieldInfo(FDBIndex, ATableName,
         AFieldName, FieldType, FieldSize, FieldScale, NotNull,
         DefaultValue, Characterset, Collation, Description);
@@ -1647,11 +1673,9 @@ begin
     if Trim(CheckConstraint) <> '' then
       FQueryWindow.meQuery.Lines.Add(CheckConstraint);
 
-    // todo: verify if this character set clause works correctly
     if Trim(CharacterSet) <> '' then
       FQueryWindow.meQuery.Lines.Add('characterset ' + CharacterSet);
 
-    // todo: verify if this collation clause works correctly
     if Trim(Collation) <> '' then
       FQueryWindow.meQuery.Lines.Add('collation ' + Collation);
 
