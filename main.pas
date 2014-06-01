@@ -2083,38 +2083,42 @@ begin
           'and RDB$Relation_Name = ' + QuotedStr(aTableName);
         SQLQuery1.Open;
         Triggers:= TStringList.Create;
-        with SQLQuery1 do
-        while not EOF do
-        begin
-          Triggers.Add(Fields[0].AsString);
-          Next;
+        try
+          with SQLQuery1 do
+          while not EOF do
+          begin
+            Triggers.Add(Trim(Fields[0].AsString));
+            Next;
+          end;
+          SQLQuery1.Close;
+          for j:= 0 to Triggers.Count - 1 do
+          begin
+            List.Clear;
+            dmSysTables.ScriptTrigger(dbIndex, Triggers[j], List, True);
+
+            // Search for generators
+            Line:= '';
+            for i:= 0 to List.Count - 1 do
+              if Pos('gen_id', LowerCase(List[i])) > 0 then
+              begin
+                Line:= Copy(List[i], Pos('gen_id', LowerCase(List[i])), Length(List[i]));
+                System.Delete(Line, 1, Pos('(', Line));
+                Line:= Trim(Copy(Line, 1, Pos(', ', Line) - 1));
+              end;
+
+             // Script Generator
+             if Trim(Line) <> '' then
+             begin
+               QWindow.meQuery.Lines.Add('Create Generator ' + Line + ';');
+               QWindow.meQuery.Lines.Add('');
+             end;
+
+            QWindow.meQuery.Lines.AddStrings(List);
+          end;
+        finally
+          Triggers.Free;
         end;
-        SQLQuery1.Close;
-        for j:= 0 to Triggers.Count - 1 do
-        begin
-          List.Clear;
-          dmSysTables.ScriptTrigger(dbIndex, Trim(Triggers[j]), List, True);
 
-          // Search for generators
-          Line:= '';
-          for i:= 0 to List.Count - 1 do
-            if Pos('gen_id', LowerCase(List[i])) > 0 then
-            begin
-              Line:= Copy(List[i], Pos('gen_id', LowerCase(List[i])), Length(List[i]));
-              System.Delete(Line, 1, Pos('(', Line));
-              Line:= Trim(Copy(Line, 1, Pos(', ', Line) - 1));
-            end;
-
-           // Script Generator
-           if Trim(Line) <> '' then
-           begin
-             QWindow.meQuery.Lines.Add('Create Generator ' + Line + ';');
-             QWindow.meQuery.Lines.Add('');
-           end;
-
-          QWindow.meQuery.Lines.AddStrings(List);
-        end;
-        Triggers.Free;
         QWindow.meQuery.Lines.Add('');
 
         // Script permissions
