@@ -524,9 +524,9 @@ begin
           begin
             Line:= 'create ';
             if Unique then
-              Line:= Line + 'Unique ';
+              Line:= Line + 'unique ';
             if not Ascending then
-              Line:= Line + 'Descending ';
+              Line:= Line + 'descending ';
 
             Line:= Line + 'index ' + AIndexName + ' on ' + ATableName;
 
@@ -852,8 +852,8 @@ var
   KeyName, CurrentTableName, CurrentFieldName,
   OtherTablename, OtherFieldName, UpdateRole, DeleteRole: string;
   CKeyName, CCurrentTableName, CCurrentFieldName,
-  COtherTablename, COtherFieldName, CUpdateRole, CDeleteRole: string;
-  Exist: Boolean;
+  COtherTablename, COtherFieldName, CUpdateRule, CDeleteRule: string;
+  Exists: Boolean;
   OtherFieldNames, COtherFieldNames: string;
 begin
   meLog.Lines.Add('');
@@ -873,35 +873,41 @@ begin
     AConstraintName:= Line;
 
     // Read all contraint properties
-    Exist:= (dmSysTables.GetConstraintInfo(FDBIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
+    Exists:= (dmSysTables.GetConstraintInfo(FDBIndex, ATableName, AConstraintName, KeyName, CurrentTableName, CurrentFieldName,
         OtherTablename, OtherFieldName, UpdateRole, DeleteRole));
 
-    if Exist then
+    if Exists then
       OtherFieldNames:= dmSysTables.GetConstraintForeignKeyFields(OtherFieldName, dmSysTables.sqQuery);
 
-    if Exist then
-    Exist:= dmSysTables.GetConstraintInfo(cbComparedDatabase.ItemIndex, ATableName, AConstraintName, CKeyName,
-      CCurrentTableName, CCurrentFieldName, COtherTablename, COtherFieldName, CUpdateRole, CDeleteRole);
+    if Exists then
+    begin
+      Exists:= dmSysTables.GetConstraintInfo(cbComparedDatabase.ItemIndex, ATableName,
+        AConstraintName, CKeyName,
+        CCurrentTableName, CCurrentFieldName,
+        COtherTablename, COtherFieldName,
+        CUpdateRule, CDeleteRule);
+    end;
 
-    if Exist then
-      COtherFieldNames:= dmSysTables.GetConstraintForeignKeyFields(COtherFieldName, dmSysTables.sqQuery);
-
-    if not Exist then
-      meLog.Lines.Add(' -- Error: Constraint: ' + AConstraintName + ' does not exist on table: ' + ATableName);
+    if Exists then
+      COtherFieldNames:= dmSysTables.GetConstraintForeignKeyFields(COtherFieldName, dmSysTables.sqQuery)
+    else
+      meLog.Lines.Add('-- Error: Constraint: ' + AConstraintName + ' does not exist on table: ' + ATableName);
 
     // Compare
-    if Exist then
-    if (CurrentTableName <> CCurrentTableName) or (CurrentFieldName <> CCurrentFieldName) or
-       (OtherTablename <> COtherTablename) or (OtherFieldNames <> COtherFieldNames) or (UpdateRole <> CUpdateRole) or
-       (DeleteRole <> CDeleteRole) then
+    if Exists and (
+      (CurrentTableName <> CCurrentTableName) or
+      (CurrentFieldName <> CCurrentFieldName) or
+      (OtherTablename <> COtherTablename) or
+      (OtherFieldNames <> COtherFieldNames) or
+      (UpdateRole <> CUpdateRule) or
+      (DeleteRole <> CDeleteRule)
+      ) then
     begin
       meLog.Lines.Add(' ' + FExistConstraintsList[i]);
       FModifiedConstraintsList.Add(FExistConstraintsList[i]);
       Inc(FDiffCount);
     end;
-
   end;
-
 end;
 
 procedure TfmComparison.CheckModifiedViews;
