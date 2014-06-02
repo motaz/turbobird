@@ -84,6 +84,7 @@ type
     function GetDefaultTypeSize(dbIndex: Integer; TypeName: string): Integer;
     function GetDomainTypeSize(dbIndex: Integer; DomainTypeName: string): Integer;
 
+    // Gets details of field for given database/table/field
     function GetFieldInfo(dbIndex: Integer; TableName, FieldName: string;
       var FieldType: string;
       var FieldSize: integer; var FieldScale: integer;
@@ -978,9 +979,11 @@ begin
       begin
         // Field is based on a domain
         FieldType:= trim(FieldByName('field_source').AsString);
+        // Reset other value to avoid strange values
+        FieldSize:= 0;
       end;
-      FieldScale:=FieldByName('field_scale').AsInteger;
-      NotNull:= FieldByName('field_not_null_constraint').AsString = '1';
+      FieldScale:= FieldByName('field_scale').AsInteger;
+      NotNull:= (FieldByName('field_not_null_constraint').AsString = '1');
       Collation:= trim(FieldByName('field_collation').AsString);
       CharacterSet:= trim(FieldByName('field_charset').AsString);
       // Note: no trim here - defaultvalue could be an empty string

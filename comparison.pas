@@ -538,6 +538,7 @@ begin
       for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
         ScriptList.Clear;
+        FQueryWindow.meQuery.Lines.Add('-- CREATE OR ALTER EXCEPTION supported since Firebird 2.0');
         if (dmSysTables.GetExceptionInfo(FDBIndex, FDBObjectsList[ord(ObjectType)].Strings[i],
           ExceptionMesage, ExceptionDescription, ExceptionSQL, true)) then
           FQueryWindow.meQuery.Lines.Add(ExceptionSQL)
@@ -794,7 +795,7 @@ var
   NotNull, CNotNull: Boolean;
 begin
   meLog.Lines.Add('');
-  meLog.Lines.Add('Modified fields');
+  meLog.Lines.Add('Modified Fields');
   FModifiedFieldsList.Clear;
 
   for i:= 0 to FExistFieldsList.Count - 1 do
@@ -1113,7 +1114,7 @@ var
   DomainSize, CDomainSize: Integer;
 begin
   meLog.Lines.Add('');
-  meLog.Lines.Add('Modified domains');
+  meLog.Lines.Add('Modified Domains');
   FModifiedDomainsList.Clear;
 
   for i:= 0 to FDBExistingObjectsList[ord(otDomains)].Count - 1 do
@@ -1372,7 +1373,7 @@ begin
     if FModifiedFieldsList.Count > 0 then
     begin
       FQueryWindow.meQuery.Lines.Add('');
-      FQueryWindow.meQuery.Lines.Add('-- Modified fields');
+      FQueryWindow.meQuery.Lines.Add('-- Modified Fields');
     end;
 
     for i:= 0 to FModifiedFieldsList.Count - 1 do
