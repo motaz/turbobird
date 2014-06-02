@@ -94,12 +94,16 @@ var
 begin
   R:= Pos('returns', LowerCase(AParams));
   if R > 0 then
+  begin
     for i:= R downto 0 do
+    begin
       if AParams[i] = ')' then
       begin
         Delete(AParams, i, 1);
         Break;
       end;
+    end;
+  end;
 end;
 
 function ScriptAllFunctions(dbIndex: Integer; var List: TStringList): Boolean;

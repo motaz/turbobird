@@ -275,6 +275,9 @@ function GetFBTypeName(Index: Integer;
 // Tries to guess if an RDB$RELATION_FIELDS.RDB$FIELD_SOURCE domain name for a column is system-generated.
 function IsFieldDomainSystemGenerated(FieldSource: string): boolean;
 
+// Tries to guess if an index name is a system generated primary key index
+function IsPrimaryIndexSystemGenerated(IndexName: string): boolean;
+
 // Given TIBConnection parameters, sets transaction isolation level
 procedure SetTransactionIsolation(Params: TStringList);
 
@@ -405,7 +408,15 @@ function IsFieldDomainSystemGenerated(FieldSource: string): boolean;
 begin
   // Unfortunately there does not seem to be a way to search the system tables to find out
   // if the constraint name is system-generated
-  result:=(pos('RDB$',uppercase(Trim(FieldSource)))=1);
+  result:= (pos('RDB$',uppercase(Trim(FieldSource)))=1);
+end;
+
+function IsPrimaryIndexSystemGenerated(IndexName: string): boolean;
+begin
+  // todo: investigate if there is a system-generated flag or something to find
+  // out instead of using heuristics on the index name. I donot think so but it
+  // could be possible
+  result:= (pos('RDB$PRIMARY',uppercase(Trim(IndexName)))=1);
 end;
 
 
