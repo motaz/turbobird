@@ -9,6 +9,9 @@ uses
   Classes, SysUtils, turbocommon, dialogs;
 
 
+// Scripts all roles; changes List to contain the CREATE ROLE SQL statements
+// Will deal with existing RDB$ADMIN role (FB 2.5+ has this present by default;
+// earlier db versions do not)
 function ScriptAllRoles(dbIndex: Integer; var List: TStringList): Boolean;
 // Scripts all UDF functions in a database
 function ScriptAllFunctions(dbIndex: Integer; var List: TStringList): Boolean;
@@ -70,18 +73,50 @@ end;
 (********************  Script Roles  ***********************)
 
 function ScriptAllRoles(dbIndex: Integer; var List: TStringList): Boolean;
+const
+  AdminRole= 'RDB$ADMIN';
 var
   Count: Integer;
+  HasRDBAdmin: boolean;
   i: Integer;
 begin
+  HasRDBAdmin:= false;
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otRoles, Count);
-  { todo: (low priority) wrap create role RDB$Admin statement - in FB 2.5+ this role is present
+  { Wwrap creates role RDB$Admin statement - in FB 2.5+ this role is present
   by default, in lower dbs it isn't. No way to find out in advance when writing
-  a script. No support in FB yet for CREATE OR UPDATE ROLE so probably best
-  to do it in execute block with error handling or
-  first check system tables for role existence, again with execute block }
-  for i:= 0 to List.Count - 1 do
-    List[i]:= 'Create Role ' + List[i] + ';';
+  a script. No support in FB yet for CREATE OR UPDATE ROLE so best
+  to do it in execute block with error handling }
+  i:= 0;
+  while i<List.Count do
+  begin
+    if uppercase(List[i]) = AdminRole then
+    begin
+      // Delete now; recreate at beginning with line endings
+      HasRDBAdmin:= true;
+      List.Delete(i);
+    end
+    else
+    begin
+      // Normal role
+      List[i]:= 'Create Role ' + List[i] + ';';
+      inc(i);
+    end;
+  end;
+  if HasRDBAdmin then
+  begin
+    // Insert special role at beginning for easy editing
+    List.Insert(0, '-- use set term for isql etc. Needs to be changed for FlameRobin etc.');
+    List.Insert(1, 'set term !! ;'); //temporarily change terminator
+    List.Insert(2, 'Execute block As ');
+    List.Insert(3, 'Begin ');
+    List.Insert(4, '  Execute statement ''Create Role ' + AdminRole + ';''; ');
+    List.Insert(5, '  When any do ');
+    List.Insert(6, '  begin ');
+    List.Insert(7, '    -- ignore errors creating role (e.g. if it already exists) ');
+    List.Insert(8, '  end ');
+    List.Insert(9, 'End!! '); //closes block using changed terminator
+    List.Insert(10, 'set term ; !!');
+  end;
   Result:= List.Count > 0;
 end;
 

@@ -283,6 +283,7 @@
         <Filename Value="calen.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmCalen"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Calen"/>
       </Unit23>

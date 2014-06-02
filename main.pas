@@ -51,6 +51,7 @@ type
     lmCompare: TMenuItem;
     lmGetIncrementGen: TMenuItem;
     lmDropTable: TMenuItem;
+    lmRecalculateStatistics: TMenuItem;
     mnExit: TMenuItem;
     mnCreateDB: TMenuItem;
     mnRegDB: TMenuItem;
@@ -170,6 +171,7 @@ type
     procedure lmViewTriggerClick(Sender: TObject);
     procedure lmViewUDFClick(Sender: TObject);
     procedure lmDropTableClick(Sender: TObject);
+    procedure lmRecalculateStatisticsClick(Sender: TObject);
     procedure mnExitClick(Sender: TObject);
     procedure mnCreateDBClick(Sender: TObject);
     procedure mnRegDBClick(Sender: TObject);
@@ -1877,14 +1879,13 @@ begin
         ScriptAllPermissions(dbIndex, List);
         Lines.AddStrings(List);
         Lines.Add('');
-
       end;
       QueryWindow.Show;
     except
-      on e: exception do
+      on E: Exception do
       begin
         Screen.Cursor:= crDefault;
-        ShowMessage(e.Message);
+        ShowMessage(E.Message);
       end;
     end;
   finally
@@ -2292,6 +2293,7 @@ var
 begin
   dbIndex:= PtrInt(tvMain.Selected.Data);
   FireBirdServices:= TFirebirdServices.Create;
+  Screen.Cursor:= crSQLWait;
   try
     FireBirdServices.VerboseOutput:= True;
     with FireBirdServices, RegisteredDatabases[dbIndex] do
@@ -2309,17 +2311,18 @@ begin
         StartSweep;
         while ServiceQuery(S) do
           Lines:= Lines + S;
-
-        ShowMessage('Sweep database: ' + AdbName + ' Completed');
+        Screen.Cursor:= crDefault;
+        ShowMessage('Sweep database: ' + AdbName + ' completed');
       except
-        on e: exception do
+        on E: Exception do
         begin
-          MessageDlg('Error: ' + e.Message, mtError, [mbOK], 0);
+          MessageDlg('Error: ' + E.Message, mtError, [mbOK], 0);
         end;
       end;
       DetachService;
     end;
   finally
+    Screen.Cursor:= crDefault;
     FireBirdServices.Free;
   end;
 end;
@@ -3535,6 +3538,18 @@ begin
     QWindow.meQuery.Lines.Add('DROP TABLE ' + SelNode.Text + ';');
     QWindow.Show;
   end;
+end;
+
+procedure TfmMain.lmRecalculateStatisticsClick(Sender: TObject);
+begin
+  //Recalculate index statistics. May take a while for big dbs.
+  Screen.Cursor:= crSQLWait;
+  try
+    dmSysTables.RecalculateIndexStatistics(PtrInt(tvMain.Selected.Data));
+  finally
+    Screen.Cursor:= crDefault;
+  end;
+  ShowMessage('Recalculation of index statistics complete.');
 end;
 
 (********  Create new database  ********)

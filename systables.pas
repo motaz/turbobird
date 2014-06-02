@@ -36,6 +36,12 @@ type
     // Gets list of object names that have type specified by TVIndex
     // Returns count of objects in Count
     function GetDBObjectNames(DatabaseIndex: integer; ObjectType: TObjectType; var Count: Integer): string;
+
+    // Recalculates index statistics for all fields in database
+    // Useful when a large amount of inserts/deletes may have changed the statistics
+    // and indexes are not as efficient as they could be.
+    function RecalculateIndexStatistics(dbIndex: integer): boolean;
+
     // Returns object list (list of object names, i.e. tables, views) sorted by dependency
     // Limits sorting within one category (e.g. views)
     procedure SortDependencies(var ObjectList: TStringList);
@@ -95,9 +101,11 @@ type
       var ODSVerMajor, ODSVerMinor, Pages, PageSize: Integer;
       var ProcessList: TStringList; var ErrorMsg: string): Boolean;
 
+    // Gets index info for a certain database+table
     function GetIndices(dbIndex: Integer; ATableName: string; PrimaryIndexName: string;
       var List: TStringList): Boolean;
 
+    // Gets all index info for a certain database
     function GetAllIndices(dbIndex: Integer; List, TablesList: TStringList): Boolean;
 
     function GetPrimaryKeyIndexName(dbIndex: Integer; ATableName: string; var ConstraintName: string): string;
@@ -211,6 +219,48 @@ begin
   end;
   Count:= sqQuery.RecordCount;
   sqQuery.Close;
+end;
+
+function TdmSysTables.RecalculateIndexStatistics(dbIndex: integer): boolean;
+var
+  i: integer;
+  Indices, Tables: TStringList;
+  TransActive: boolean;
+begin
+  result:= false;
+  Init(dbIndex);
+  sqQuery.Close;
+  Indices:= TStringList.Create;
+  Tables:= TStringList.Create;
+  try
+    if not(GetAllIndices(dbIndex, Indices, Tables)) then
+    begin
+      {$IFDEF DEBUG}
+      SendDebug('RecalculateIndexStatistics: GetAllIndices call failed.');
+      {$ENDIF}
+      exit(false);
+    end;
+
+    // Loop through all indices and reset statistics
+    TransActive:= stTrans.Active;
+    if (TransActive) then
+      stTrans.Commit;
+    for i:= 0 to Indices.Count-1 do
+    begin
+      stTrans.StartTransaction;
+      sqQuery.SQL.Text:= format('SET statistics INDEX %s',[Indices[i]]);
+      sqQuery.ExecSQL;
+      { Commit after each index; no need to batch it all up in one
+      big atomic transaction...}
+      stTrans.Commit;
+    end;
+    if TransActive then
+      stTrans.StartTransaction; //leave transaction the way we found it
+  finally
+    Indices.Free;
+    Tables.Free;
+  end;
+  result:= true;
 end;
 
 procedure TdmSysTables.SortDependencies(var ObjectList: TStringList);
@@ -1039,9 +1089,9 @@ begin
     sqQuery.Close;
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
-      ErrorMsg:= e.Message;
+      ErrorMsg:= E.Message;
       Result:= False;
     end;
   end;
@@ -1067,15 +1117,17 @@ begin
     end;
   end;
   sqQuery.Close
-
 end;
 
 function TdmSysTables.GetAllIndices(dbIndex: Integer; List, TablesList: TStringList): Boolean;
+const
+  SQL = 'SELECT * FROM RDB$INDICES ' +
+    'WHERE RDB$FOREIGN_KEY IS NULL ' +
+    'and RDB$system_flag = 0';
 begin
   Init(dbIndex);
   sqQuery.Close;
-  sqQuery.SQL.Text:= 'SELECT * FROM RDB$INDICES WHERE  RDB$FOREIGN_KEY IS NULL ' +
-   'and RDB$system_flag = 0';
+  sqQuery.SQL.Text:= SQL;
   sqQuery.Open;
   Result:= sqQuery.RecordCount > 0;
   List.Clear;
