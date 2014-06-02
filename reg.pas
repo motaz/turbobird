@@ -146,7 +146,7 @@ begin
     CloseFile(F);
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
       ShowMessage('Error: ' + e.Message);
@@ -185,7 +185,7 @@ begin
     CloseFile(F);
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
       ShowMessage('Error: ' + e.Message);
@@ -211,7 +211,7 @@ begin
       ShowMessage('Unable to connect: '+ d.Message + LineEnding +
         'Details: GDS error code: '+inttostr(d.GDSErrorCode));
     end;
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
       ShowMessage('Unable to connect: ' + e.Message);
@@ -265,7 +265,7 @@ begin
     CloseFile(F);
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
     end;

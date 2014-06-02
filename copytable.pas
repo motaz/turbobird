@@ -156,7 +156,7 @@ begin
         dmSysTables.sqQuery.Close;
         Close;
       except
-        on e: exception do
+        on E: Exception do
         begin
           MessageDlg('Error while copy: ' + e.Message, mtError, [mbOk], 0);
           SQLTrans.Rollback;

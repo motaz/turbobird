@@ -67,7 +67,7 @@ begin
     if FSQLTrans.Active then
       FSQLTrans.CommitRetaining;
   except
-    on e: exception do
+    on E: Exception do
     begin
       ShowMessage(e.Message);
     end;

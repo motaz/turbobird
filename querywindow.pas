@@ -387,7 +387,7 @@ begin
 
     UserData.EnableControls;
   except
-    on e: exception do
+    on E: Exception do
     begin
       ShowMessage('Error trying to save data: ' + e.Message);
     end;
@@ -604,7 +604,7 @@ begin
     Error:= False;
     fTerminated:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       Error:= True;
       ErrorMsg:= e.Message;
@@ -624,7 +624,7 @@ begin
     DoJob;
     fTerminated:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       Error:= True;
       ErrorMsg:= e.Message;
@@ -1302,7 +1302,7 @@ begin
             FResultMemo.Lines.Add('----');
             FResultMemo.Lines.Add(FQueryPart);
           except
-            on e: exception do
+            on E: Exception do
             begin
               if Assigned(FTab) then
                 FTab.TabVisible:= False;
@@ -1326,7 +1326,7 @@ begin
               fmMain.AddToSQLHistory(FRegRec.Title, SqlType, FQueryPart);
             end;
           except
-            on e: exception do
+            on E: Exception do
             begin
               if Assigned(FTab) then
                 FTab.TabVisible:= False;
@@ -1358,7 +1358,7 @@ begin
         FFinished:= True;
     end;
   except
-    on e: exception do
+    on E: Exception do
     begin
       if Assigned(FTab) then
         FTab.TabVisible:= False;
@@ -1413,7 +1413,7 @@ begin
       SQLScript.Free;
     end;
   except
-    on e: exception do
+    on E: Exception do
     begin
       {$IFDEF DEBUG}
       SendDebug('ExecuteScript failed; error '+E.Message);
@@ -1794,7 +1794,7 @@ begin
       List.Free;
     end;
   except
-    on e: exception do
+    on E: Exception do
       ShowMessage('Error trying to copy: '+e.Message);
   end;
   grid.DataSource.DataSet.EnableControls;

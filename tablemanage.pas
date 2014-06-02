@@ -474,7 +474,7 @@ begin
     SQLQuery2.Close;
     SQLQuery2.DataBase:= FIBConnection;
   except
-    on e: exception do
+    on E: Exception do
     begin
       MessageDlg('Error while initalizing Table Management: ' + e.Message, mtError, [mbOk], 0);
     end;

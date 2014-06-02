@@ -362,7 +362,7 @@ begin
     sqQuery.Close;
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       MessageDlg('Error: ' + e.Message, mtError, [mbOk], 0);
       Result:= False;
@@ -402,7 +402,7 @@ begin
     sqQuery.Close;
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       MessageDlg('Error: ' + e.Message, mtError, [mbOk], 0);
     end;

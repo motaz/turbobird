@@ -762,7 +762,7 @@ begin
     end;
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
       Result:= False;
   end;
 end;

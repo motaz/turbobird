@@ -338,7 +338,7 @@ begin
       lmRefresh.Click;
     end;
   except
-    on e: exception do
+    on E: Exception do
     begin
       MessageDlg('Error while creating new user: ' + e.Message, mtError, [mbOk], 0);
     end;
@@ -376,7 +376,7 @@ begin
        dmSysTables.stTrans.Commit;
        MessageDlg('Password has been changed', mtInformation, [mbOk], 0);
     except
-      on e: exception do
+      on E: Exception do
         ShowMessage('Error while changing password: ' + e.Message);
     end;
   end;
@@ -1411,7 +1411,7 @@ begin
     end;
 
   except
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
       ShowMessage(e.Message);
@@ -1429,7 +1429,7 @@ begin
     Result:= True;
 
   except
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
       ShowMessage(e.Message)
@@ -1474,7 +1474,7 @@ begin
       try
         mdsHistory.LoadFromFile(AFileName);
       except
-        on e: exception do
+        on E: Exception do
           mdsHistory.SaveToFile(AFileName);
       end;
     end
@@ -1493,7 +1493,7 @@ begin
     FCurrentHistoryFile:= AFileName;
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
       ShowMessage(e.Message);
@@ -2384,7 +2384,7 @@ begin
     fmTableManage.bbRefreshReferencesClick(nil);
     fmTableManage.Show;
   except
-    on e: exception do
+    on E: Exception do
       MessageDlg('Error while opening Table Management: ' + e.Message, mtError, [mbOk], 0);
   end;
 end;
@@ -2637,7 +2637,7 @@ begin
       BodyList.Free;
     end;
   except
-    on e: exception do
+    on E: Exception do
       MessageDlg('Error while getting stored procedure information: ' + e.Message, mtError, [mbOk], 0);
   end;
 end;
@@ -2713,7 +2713,7 @@ begin
     FSQLTransaction.Commit;
     AddToSQLHistory(Rec.RegRec.Title, 'DDL', SQLQuery1.SQL.Text);
   except
-    on e: exception do
+    on E: Exception do
     begin
       ShowMessage('Error: ' + e.Message);
       Result:= False;
@@ -2813,7 +2813,7 @@ begin
     SQLQuery1.Close;
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       ShowMessage(e.Message);
       FIBConnection.Close;
@@ -3058,7 +3058,7 @@ begin
       if not Node.Expanded then
         Node.Expand(False);
     except
-      on e: exception do
+      on E: Exception do
       begin
         Screen.Cursor:= crDefault;
         ShowMessage(e.Message);
@@ -3160,7 +3160,7 @@ begin
       PKFieldsList.Free;
     end;
   except
-    on e: exception do
+    on E: Exception do
       MessageDlg('Error while reading table fields: ' + e.Message, mtError, [mbOk], 0);
   end;
 end;
@@ -3284,7 +3284,7 @@ begin
       PKFieldsList.Free;
     end;
   except
-    on e: exception do
+    on E: Exception do
       ShowMessage(E.Message);
   end;
 end;
@@ -4056,10 +4056,10 @@ begin
     end;
     Result:= True;
   except
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
-      ShowMessage('Error: ' + e.message);
+      ShowMessage('Error: ' + E.Message);
     end;
   end;
 end;

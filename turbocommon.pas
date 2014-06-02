@@ -413,12 +413,8 @@ end;
 
 function IsPrimaryIndexSystemGenerated(IndexName: string): boolean;
 begin
-  // todo: investigate if there is a system-generated flag or something to find
-  // out instead of using heuristics on the index name. I donot think so but it
-  // could be possible
   result:= (pos('RDB$PRIMARY',uppercase(Trim(IndexName)))=1);
 end;
-
 
 end.
 

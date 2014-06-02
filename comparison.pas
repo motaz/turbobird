@@ -1644,7 +1644,7 @@ begin
     end;
 
   except
-  on e: exception do
+  on E: Exception do
   begin
     ShowMessage(e.Message);
   end;
@@ -2159,7 +2159,7 @@ begin
         end;
       end;
     except
-      on e: exception do
+      on E: Exception do
       begin
         meLog.Lines.Add('---- Error while comparing constraints: ' + e.Message);
       end;

@@ -122,7 +122,7 @@ begin
       http.Free
     end;
   except
-    on e: exception do
+    on E: Exception do
     begin
       FSuccess:= False;
       FErrorMessage:= e.Message;
@@ -276,7 +276,7 @@ begin
       List.Free;
     end;
   except
-    on e: exception do
+    on E: Exception do
     begin
       Result:= False;
       ResMsg:= e.Message;
