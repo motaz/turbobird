@@ -1901,7 +1901,8 @@ var
   Script, Msg, Desc: string;
 begin
   SelNode:= tvMain.Selected;
-  if dmSysTables.GetExceptionInfo(SelNode.Text, Msg, Desc, Script) then
+  if dmSysTables.GetExceptionInfo(PtrInt(tvMain.Selected.Data), SelNode.Text,
+    Msg, Desc, Script, false) then
     ShowCompleteQueryWindow(PtrInt(SelNode.Parent.Parent.Data), 'Script Exception ' + SelNode.Text, Script, nil);
 end;
 

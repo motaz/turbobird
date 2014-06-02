@@ -23,6 +23,7 @@ type
     cxRemovedObjects: TCheckBox;
     cxDomains: TCheckBox;
     cxRoles: TCheckBox;
+    cxExceptions: TCheckBox;
     cxTriggers: TCheckBox;
     cxGenerators: TCheckBox;
     cxTables: TCheckBox;
@@ -110,6 +111,8 @@ type
     procedure ScriptModifiedFunctions;
     procedure ScriptModifiedDomains;
 
+    // Outputs script to remove db objects to query window
+    // Requires FDBRemovedObjectsList to be filled in advance
     procedure ScriptRemovedDBObjects;
     procedure ScriptRemovedFields;
   public
@@ -342,6 +345,7 @@ var
   Collation: string;
   DomainType, DefaultValue: string;
   DomainSize: Integer;
+  ExceptionMesage, ExceptionDescription, ExceptionSQL: string;
   ATableName, AIndexName: string;
   FieldsList: TStringList;
   Unique, Ascending: Boolean;
@@ -530,6 +534,18 @@ begin
         FQueryWindow.meQuery.Lines.Add('');
       end
       else
+      if (ObjectType = otExceptions) and cxExceptions.Checked then // Exceptions
+      for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
+      begin
+        ScriptList.Clear;
+        if (dmSysTables.GetExceptionInfo(FDBIndex, FDBObjectsList[ord(ObjectType)].Strings[i],
+          ExceptionMesage, ExceptionDescription, ExceptionSQL, true)) then
+          FQueryWindow.meQuery.Lines.Add(ExceptionSQL)
+        else
+          raise Exception.Create('Error scripting exception '+FDBObjectsList[ord(ObjectType)].Strings[i]);
+        FQueryWindow.meQuery.Lines.Add('');
+      end
+      else
       if (ObjectType = otTables) and cxTables.Checked then // Indices are part of tables
       for i:= 0 to FDBObjectsList[ord(ObjectType)].Count - 1 do
       begin
@@ -627,10 +643,9 @@ begin
          ((ObjectType = otUDF) and cxUDFs.Checked) or
          {otSystemTables: system tables are not compared }
          ((ObjectType = otDomains) and cxDomains.Checked) or
-         ((ObjectType = otRoles) and cxRoles.Checked)
-         {otExceptions, otUsers are not checked;
-         constraints and indexes probably indirectly}
-         //todo: check otExceptions in CheckMissingDBObjects
+         ((ObjectType = otRoles) and cxRoles.Checked) or
+         ((ObjectType = otExceptions) and cxExceptions.Checked)
+         {otUsers are not compared}
          then
       begin
         meLog.Lines.Add('');
@@ -683,10 +698,10 @@ begin
        ((ObjectType = otStoredProcedures) and cxStoredProcs.Checked) or
        ((ObjectType = otUDF) and cxUDFs.Checked) or
        {otSystemTables: system tables are not compared }
-       ((ObjectType = otDomains) and cxDomains.Checked)
-       {otRoles, otExceptions, otUsers are not checked;
-         constraints and indexes probably indirectly}
-       //todo: check otExceptions in CheckRemovedDBObjects
+       ((ObjectType = otDomains) and cxDomains.Checked) or
+       ((ObjectTYpe = otRoles) and cxRoles.Checked) or
+       ((ObjectType = otExceptions) and cxExceptions.Checked)
+       {otUsers are not checked}
        then
     begin
       meLog.Lines.Add('');
@@ -708,11 +723,13 @@ begin
       FDBRemovedObjectsList[ord(ObjectType)].Clear;
 
       for i:= 0 to ComparedList.Count -1 do
-      if List.IndexOf(ComparedList[i]) = -1 then  // Removed
       begin
-        meLog.Lines.Add(' ' + ComparedList[i]);
-        FDBRemovedObjectsList[ord(ObjectType)].Add(ComparedList[i]);
-        Inc(FDiffCount);
+        if List.IndexOf(ComparedList[i]) = -1 then  // Removed
+        begin
+          meLog.Lines.Add(' ' + ComparedList[i]);
+          FDBRemovedObjectsList[ord(ObjectType)].Add(ComparedList[i]);
+          Inc(FDiffCount);
+        end;
       end;
     end;
     CheckRemovedIndices;
@@ -1821,6 +1838,20 @@ begin
         end;
       end
       else
+      if (ObjectType = otExceptions) and cxExceptions.Checked then
+      begin
+        if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
+        begin
+          FQueryWindow.meQuery.Lines.Add('');
+          FQueryWindow.meQuery.Lines.Add('-- Removed Exceptions');
+        end;
+        for i:= 0 to FDBRemovedObjectsList[ord(ObjectType)].Count - 1 do
+        begin
+          ObjName:= FDBRemovedObjectsList[ord(ObjectType)][i];
+          FQueryWindow.meQuery.Lines.Add('drop exception ' + ObjName + ';');
+        end;
+      end
+      else
       if (ObjectType = otIndexes) and cxTables.Checked then // Indices are linked to tables
       begin
         if FDBRemovedObjectsList[ord(ObjectType)].Count > 0 then
@@ -1863,7 +1894,6 @@ begin
   finally
     FieldsList.Free;
   end;
-
 end;
 
 procedure TfmComparison.ScriptRemovedFields;
@@ -1903,6 +1933,7 @@ begin
   cxUDFs.Checked:= True;
   cxTriggers.Checked:= True;
   cxRoles.Checked:= True;
+  cxExceptions.Checked:= True;
   cxRemovedObjects.Checked:= False;
 
   laScript.Enabled:= False;

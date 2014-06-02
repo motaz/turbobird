@@ -143,7 +143,8 @@ begin
   List.CommaText:= dmSysTables.GetDBObjectNames(dbIndex, otExceptions, Count);
   for i:= 0 to List.Count - 1 do
   begin
-    dmSysTables.GetExceptionInfo(List[i],Message, Description, CreateStatement);
+    dmSysTables.GetExceptionInfo(dbIndex, List[i],
+      Message, Description, CreateStatement, false);
     List[i]:= CreateStatement;
   end;
   Result:= List.Count > 0;

@@ -34,7 +34,7 @@ type
       var ConstraintsArray: TConstraintCounts);
     procedure Init(dbIndex: Integer);
     // Gets list of object names that have type specified by TVIndex
-    // Returns Count of objects in Count
+    // Returns count of objects in Count
     function GetDBObjectNames(DatabaseIndex: integer; ObjectType: TObjectType; var Count: Integer): string;
     // Returns object list (list of object names, i.e. tables, views) sorted by dependency
     // Limits sorting within one category (e.g. views)
@@ -58,14 +58,15 @@ type
     // Expects array that has been filled by FillCompositeFKConstraints
     function GetCompositeFKConstraint(const ConstraintName: string; ConstraintsArray: TConstraintCounts): integer;
 
-    function GetConstraintInfo(dbIndex: Integer; ATableName, ConstraintName: string; var KeyName,
+    function GetConstraintInfo(dbIndex: integer; ATableName, ConstraintName: string; var KeyName,
         CurrentTableName, CurrentFieldName, OtherTableName, OtherFieldName, UpdateRule, DeleteRule: string): Boolean;
 
     // Gets information about exception.
-    // Returns CREATE EXCEPTION statement in SQLQuery.
-    function GetExceptionInfo(ExceptionName: string; var Msg, Description, SqlQuery: string): Boolean;
+    // Returns CREATE EXCEPTION statement in SQLQuery, or
+    // CREATE OR ALTER EXCEPTION if CreateOrAlter is true
+    function GetExceptionInfo(dbIndex: integer; ExceptionName: string; var Msg, Description, SqlQuery: string; CreateOrAlter: boolean): Boolean;
     // Gets information about domain
-    procedure GetDomainInfo(dbIndex: Integer; DomainName: string; var DomainType: string;
+    procedure GetDomainInfo(dbIndex: integer; DomainName: string; var DomainType: string;
       var DomainSize: Integer; var DefaultValue: string; var CheckConstraint: string; var CharacterSet: string; var Collation: string);
     function GetConstraintForeignKeyFields(AIndexName: string; SqlQuery: TSQLQuery): string;
 
@@ -136,6 +137,8 @@ end;
 
 procedure TdmSysTables.Init(dbIndex: Integer);
 begin
+  // todo: first step: do not close, reopen connection if we're using the correct
+  // connection/transaction already
   with fmMain.RegisteredDatabases[dbIndex] do
   begin
     if IBConnection.Connected then
@@ -196,7 +199,7 @@ begin
   if ObjectType = otUsers then // Users
     sqQuery.SQL.Text:= 'select distinct RDB$User from RDB$USER_PRIVILEGES where RDB$User_Type = 8 order by rdb$User';
 
-  // Put the result list as comma delimited string
+  // Save the result list as comma delimited string
   sqQuery.Open;
   while not sqQuery.EOF do
   begin
@@ -615,19 +618,26 @@ end;
 
 (*********  Get Exception Info ***************)
 
-function TdmSysTables.GetExceptionInfo(ExceptionName: string; var Msg, Description,
-  SqlQuery: string): Boolean;
+function TdmSysTables.GetExceptionInfo(dbIndex: integer; ExceptionName: string; var Msg, Description,
+  SqlQuery: string; CreateOrAlter: boolean): Boolean;
+var
+  CreatePart: string;
 begin
   sqQuery.Close;
+  init(dbIndex);
   sqQuery.SQL.Text:= 'select * from RDB$EXCEPTIONS ' +
    'where RDB$EXCEPTION_NAME = ' + QuotedStr(ExceptionName);
   sqQuery.Open;
   Result:= sqQuery.RecordCount > 0;
   if Result then
   begin
+    if CreateOrAlter then
+      CreatePart:= 'CREATE OR ALTER EXCEPTION ' {Since Firebird 2.0; create or replace existing}
+    else
+      CreatePart:= 'CREATE EXCEPTION ';
     Msg:= sqQuery.FieldByName('RDB$MESSAGE').AsString;
     Description:= sqQuery.FieldByName('RDB$DESCRIPTION').AsString;
-    SqlQuery:= 'CREATE EXCEPTION ' + ExceptionName + LineEnding +
+    SqlQuery:= CreatePart + ExceptionName + LineEnding +
       QuotedStr(Msg) + ';';
     if Description<>'' then
       SQLQuery:= SQLQuery + LineEnding +
