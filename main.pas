@@ -3086,7 +3086,7 @@ begin
 end;
 
 (***************  View Table Fields/ Fields Management  ***************)
-{ todo: should be moved to tablemanage.pas if possible; even better split out
+{ todo: getting table field data should be moved to tablemanage.pas if possible; even better split out
 between non-GUI query part and GUI updater part}
 procedure TfmMain.ViewTableFields(ATableName: string; dbIndex: Integer;
   AStringGrid: TStringGrid);

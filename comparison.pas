@@ -510,7 +510,7 @@ begin
         // Default value, if any
         if DefaultValue<>'' then
           Line:= Line + ' ' + DefaultValue;
-        //todo: domain comparison: verify if this collate/constraint works
+
         // Check constraint, if any:
         if CheckConstraint <> '' then
           Line:= Line + ' ' + CheckConstraint;
