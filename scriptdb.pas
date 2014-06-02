@@ -105,7 +105,7 @@ begin
   if HasRDBAdmin then
   begin
     // Insert special role at beginning for easy editing
-    List.Insert(0, '-- use set term for isql etc. Needs to be changed for FlameRobin etc.');
+    List.Insert(0, '-- use set term for isql, FlameRobin etc. Execute block supported since FB 2.0');
     List.Insert(1, 'set term !! ;'); //temporarily change terminator
     List.Insert(2, 'Execute block As ');
     List.Insert(3, 'Begin ');
