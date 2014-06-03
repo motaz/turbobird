@@ -3541,15 +3541,28 @@ begin
 end;
 
 procedure TfmMain.lmRecalculateStatisticsClick(Sender: TObject);
+var
+  Message: string;
 begin
   //Recalculate index statistics. May take a while for big dbs.
+  Message:= '';
   Screen.Cursor:= crSQLWait;
   try
-    dmSysTables.RecalculateIndexStatistics(PtrInt(tvMain.Selected.Data));
+    try
+      dmSysTables.RecalculateIndexStatistics(PtrInt(tvMain.Selected.Data));
+    except
+      on E: Exception do
+      begin
+        Message:= E.Message
+      end;
+    end;
   finally
     Screen.Cursor:= crDefault;
   end;
-  ShowMessage('Recalculation of index statistics complete.');
+  if Message='' then
+    ShowMessage('Recalculation of index statistics complete.')
+  else
+    ShowMessage('Error recalculating index statistics: '+Message);
 end;
 
 (********  Create new database  ********)
