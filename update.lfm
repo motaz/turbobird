@@ -1,16 +1,16 @@
 object fmUpdate: TfmUpdate
-  Left = 587
-  Height = 314
-  Top = 265
+  Left = 384
+  Height = 356
+  Top = 258
   Width = 501
   BorderStyle = bsDialog
   Caption = 'Version update'
-  ClientHeight = 314
+  ClientHeight = 356
   ClientWidth = 501
   OnActivate = FormActivate
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '1.2.0.3'
+  LCLVersion = '1.2.2.0'
   object Label1: TLabel
     Left = 8
     Height = 13
@@ -66,18 +66,18 @@ object fmUpdate: TfmUpdate
     Left = 16
     Height = 17
     Top = 176
-    Width = 130
-    Caption = 'connect through proxy'
+    Width = 132
+    Caption = 'Connect through proxy'
     OnChange = cxProxyChange
     ParentBidiMode = False
     TabOrder = 4
   end
   object GroupBox1: TGroupBox
     Left = 15
-    Height = 108
+    Height = 132
     Top = 198
     Width = 472
-    ClientHeight = 90
+    ClientHeight = 114
     ClientWidth = 468
     TabOrder = 5
     Visible = False
@@ -195,7 +195,7 @@ object fmUpdate: TfmUpdate
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    left = 320
-    top = 88
+    left = 360
+    top = 16
   end
 end

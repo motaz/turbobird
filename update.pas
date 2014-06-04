@@ -167,7 +167,7 @@ end;
 
 procedure TfmUpdate.bbDownloadClick(Sender: TObject);
 begin
-  stStatus.Caption:= 'Downloading.. please wait';
+  stStatus.Caption:= 'Downloading... please wait';
   bbDownload.Enabled:= False;
   bbSearch.Enabled:= False;
   cxProxy.Enabled:= False;
