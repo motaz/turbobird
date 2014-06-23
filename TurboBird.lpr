@@ -27,10 +27,10 @@ trunksqlscript, turbocommon;
 
 const
   Major = 1;
-  Minor = 0;
-  Release = 3;
+  Minor = 1;
+  Release = 9;
 
-  VersionDate = '2010 - April 2014';
+  VersionDate = '2010 - June 2014';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
     fbclib = 'libfbclient.' + sharedsuffix;
