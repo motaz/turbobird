@@ -12,20 +12,20 @@ object fmComparison: TfmComparison
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '1.2.2.0'
+  LCLVersion = '1.2.4.0'
   object Label1: TLabel
     Left = 15
-    Height = 13
+    Height = 17
     Top = 112
-    Width = 125
+    Width = 174
     Caption = 'Original (target) database'
     ParentColor = False
   end
   object laDatabase: TLabel
     Left = 226
-    Height = 13
+    Height = 17
     Top = 112
-    Width = 64
+    Width = 80
     Caption = 'laDatabase'
     Font.Style = [fsBold]
     ParentColor = False
@@ -33,19 +33,19 @@ object fmComparison: TfmComparison
   end
   object Label2: TLabel
     Left = 16
-    Height = 13
+    Height = 17
     Top = 143
-    Width = 140
+    Width = 195
     Caption = 'Compared (source) database'
     ParentColor = False
   end
   object cbComparedDatabase: TComboBox
     Left = 226
-    Height = 21
+    Height = 31
     Hint = 'All changes from this database to the target database will be listed'
     Top = 136
     Width = 460
-    ItemHeight = 13
+    ItemHeight = 0
     OnChange = cbComparedDatabaseChange
     ParentShowHint = False
     ShowHint = True
@@ -54,18 +54,18 @@ object fmComparison: TfmComparison
   end
   object laComparedDatabase: TLabel
     Left = 226
-    Height = 13
+    Height = 17
     Top = 176
-    Width = 10
+    Width = 11
     Caption = '[]'
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
   end
   object bbStart: TBitBtn
-    Left = 549
+    Left = 13
     Height = 30
-    Top = 315
+    Top = 312
     Width = 154
     Caption = 'Start Comparison'
     Default = True
@@ -122,10 +122,10 @@ object fmComparison: TfmComparison
   end
   object laScript: TLabel
     Cursor = crHandPoint
-    Left = 16
-    Height = 13
-    Top = 323
-    Width = 193
+    Left = 272
+    Height = 17
+    Top = 325
+    Width = 272
     Caption = 'Script differences in compared database'
     Font.Style = [fsUnderline]
     ParentColor = False
@@ -138,55 +138,55 @@ object fmComparison: TfmComparison
     Top = 192
     Width = 488
     Caption = 'Compared objects'
-    ClientHeight = 94
+    ClientHeight = 93
     ClientWidth = 484
     TabOrder = 2
     object cxTables: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Top = 4
-      Width = 51
+      Width = 69
       Caption = 'Tables'
       TabOrder = 0
     end
     object cxGenerators: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Top = 32
-      Width = 74
+      Width = 102
       Caption = 'Generators'
       TabOrder = 1
     end
     object cxTriggers: TCheckBox
       Left = 151
-      Height = 17
+      Height = 24
       Top = 4
-      Width = 59
+      Width = 80
       Caption = 'Triggers'
       TabOrder = 2
     end
     object cxViews: TCheckBox
       Left = 151
-      Height = 17
+      Height = 24
       Top = 34
-      Width = 47
+      Width = 66
       Caption = 'Views'
       TabOrder = 3
     end
     object cxStoredProcs: TCheckBox
       Left = 262
-      Height = 17
+      Height = 24
       Top = 4
-      Width = 81
+      Width = 113
       Caption = 'Stored Procs'
       TabOrder = 4
     end
     object cxUDFs: TCheckBox
       Left = 262
-      Height = 17
+      Height = 24
       Hint = 'User Defined Functions'
       Top = 32
-      Width = 45
+      Width = 61
       Caption = 'UDFs'
       ParentShowHint = False
       ShowHint = True
@@ -194,33 +194,33 @@ object fmComparison: TfmComparison
     end
     object cxDomains: TCheckBox
       Left = 390
-      Height = 17
+      Height = 24
       Top = 4
-      Width = 60
+      Width = 85
       Caption = 'Domains'
       TabOrder = 6
     end
     object cxRoles: TCheckBox
       Left = 390
-      Height = 17
+      Height = 24
       Top = 34
-      Width = 46
+      Width = 63
       Caption = 'Roles'
       TabOrder = 7
     end
     object cxExceptions: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Top = 61
-      Width = 72
+      Width = 100
       Caption = 'Exceptions'
       TabOrder = 8
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 20
-    Top = 608
+    Height = 21
+    Top = 607
     Width = 710
     Panels = <    
       item
@@ -262,23 +262,23 @@ object fmComparison: TfmComparison
     Top = 195
     Width = 199
     Caption = 'Options'
-    ClientHeight = 90
+    ClientHeight = 89
     ClientWidth = 195
     TabOrder = 6
     object cxIgnoreLength: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Top = 1
-      Width = 113
+      Width = 154
       Caption = 'Ignore fields length'
       TabOrder = 0
     end
     object cxRemovedObjects: TCheckBox
       Left = 11
-      Height = 17
+      Height = 24
       Hint = 'Check objects present in source but removed in target database'
       Top = 22
-      Width = 132
+      Width = 182
       Caption = 'Check removed objects'
       ParentShowHint = False
       ShowHint = True
@@ -286,9 +286,9 @@ object fmComparison: TfmComparison
     end
   end
   object bbCancel: TBitBtn
-    Left = 440
+    Left = 176
     Height = 30
-    Top = 315
+    Top = 312
     Width = 78
     Caption = 'Cancel'
     Glyph.Data = {
