@@ -176,7 +176,6 @@ type
     FQueryPart: string;
     FTab: TTabSheet;
     FResultMemo: TMemo;
-//    FSQLQuery: TSQLQuery;
     FSQLScript: TModSQLScript;
     // Text for caption
     FAText: string;
@@ -1152,7 +1151,7 @@ begin
       begin
         FTab:= nil;
         try
-          fSQLQuery:= TSQLQuery.Create(nil);
+          fSQLQuery:= TSQLQuery.Create(self);
           fSQLQuery.DataBase:= FIBConnection;
           fSQLQuery.Transaction:= FSQLTrans;
           FTab:= CreateResultTab(qtSelectable, FSQLQuery, FSQLScript, FResultMemo);
