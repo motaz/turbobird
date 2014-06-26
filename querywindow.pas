@@ -203,6 +203,7 @@ type
     procedure EnableApplyButton;
     function GetTableName(SQLText: string): string;
     procedure CommitResultClick(Sender: TObject);
+    procedure HidePreviousResultTabs;
   protected
     // This procedure will receive the events that are logged by the connection:
     procedure GetLogEvent(Sender: TSQLConnection; EventType: TDBEventType; Const Msg : String);
@@ -496,6 +497,15 @@ procedure TfmQueryWindow.CommitResultClick(Sender: TObject);
 begin
   FSQLTrans.CommitRetaining;
   (Sender as TBitBtn).Visible:= False;
+end;
+
+procedure TfmQueryWindow.HidePreviousResultTabs;
+var
+  i: Integer;
+begin
+  for i:= 0 to ComponentCount - 1 do
+    if (Components[i] is TTabSheet) and ((Components[i] as TControl).Parent = pgOutputPageCtl) then
+      (Components[i] as TTabSheet).TabVisible:= False;
 end;
 
 procedure TfmQueryWindow.GetLogEvent(Sender: TSQLConnection;
@@ -1245,7 +1255,7 @@ begin
 
               // Auto commit
               if cxAutoCommit.Checked then
-                FSQLTrans.Commit;
+                FSQLTrans.CommitRetaining;
               FQT.Free;
             end
             else
@@ -1276,7 +1286,7 @@ begin
 
                 // Auto commit
                 if cxAutoCommit.Checked then
-                  FSQLTrans.Commit;
+                  FSQLTrans.CommitRetaining;
               finally
                 FQT.Free;
               end;
@@ -1402,7 +1412,7 @@ begin
 
       // Auto commit
       if cxAutoCommit.Checked then
-        FSQLTrans.Commit;
+        FSQLTrans.CommitRetaining;
 
       Result:= True;
       meResult.Lines.Text:= FormatDateTime('hh:nn:ss.z', Now) + ' - Script Executed. It took (H:M:S.MS) ' +
@@ -2039,6 +2049,7 @@ begin
     exit;
   end;
   FStartLine:= 0;
+  HidePreviousResultTabs;
 
   // Disable buttons to prevent query interrupt
   tbRun.Enabled:= False;
