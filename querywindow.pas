@@ -176,7 +176,7 @@ type
     FQueryPart: string;
     FTab: TTabSheet;
     FResultMemo: TMemo;
-    FSQLQuery: TSQLQuery;
+//    FSQLQuery: TSQLQuery;
     FSQLScript: TModSQLScript;
     // Text for caption
     FAText: string;
@@ -1120,6 +1120,7 @@ var
   TempQuery: TSQLQuery;
   SanitizedSQL: string;
   i: integer;
+  fSQLQuery: TSQLQuery;
 begin
   try
     // Script
@@ -1151,6 +1152,9 @@ begin
       begin
         FTab:= nil;
         try
+          fSQLQuery:= TSQLQuery.Create(nil);
+          fSQLQuery.DataBase:= FIBConnection;
+          fSQLQuery.Transaction:= FSQLTrans;
           FTab:= CreateResultTab(qtSelectable, FSQLQuery, FSQLScript, FResultMemo);
           FTab.ImageIndex:= 6;
           FTab.Hint:= FQueryPart;
@@ -2100,13 +2104,16 @@ end;
 { SQL thread termination }
 
 procedure TfmQueryWindow.ThreadTerminated(Sender: TObject);
+var
+  aSQLQuery: TSQLQuery;
 begin
   // Raise exception if an error occured during thread execution (Open)
   if FQT.Error then
   begin
     if Assigned(FTab) then
       FTab.TabVisible:= False;
-    FTab:= CreateResultTab(qtExecute, FSQLQuery, FSQLScript, FResultMemo);
+    aSQLQuery:= (Sender as TQueryThread).Query;
+    FTab:= CreateResultTab(qtExecute, aSQLQuery, FSQLScript, FResultMemo);
     pgOutputPageCtl.ActivePage:= FTab;
 
     FResultMemo.Text:= FQT.ErrorMsg;
