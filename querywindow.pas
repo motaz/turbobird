@@ -381,7 +381,7 @@ begin
 
     // Auto commit
     if cxAutoCommit.Checked then
-      FSQLTrans.CommitRetaining
+      FSQLTrans.Commit
     else
       EnableCommitButton;
 
@@ -1631,7 +1631,7 @@ begin
   // Check if the transaction is active; then commit it
   if FSQLTrans.Active then
   begin
-    FSQLTrans.CommitRetaining;
+    FSQLTrans.Commit;
     if OnCommit <> nil then
       OnCommit(self);
     OnCommit:= nil;

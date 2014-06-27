@@ -28,7 +28,7 @@ trunksqlscript, turbocommon;
 const
   Major = 1;
   Minor = 1;
-  Release = 9;
+  Release = 91;
 
   VersionDate = '2010 - June 2014';
 {$IFDEF Unix}
