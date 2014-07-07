@@ -181,6 +181,7 @@ type
     FAText: string;
     FModifyCount: Integer;
     FCounter: Integer;
+    OutputTabsList: TStrings;
 
     // Makes commit button in current tabsheet visible
     procedure EnableCommitButton;
@@ -202,7 +203,7 @@ type
     procedure EnableApplyButton;
     function GetTableName(SQLText: string): string;
     procedure CommitResultClick(Sender: TObject);
-    procedure HidePreviousResultTabs;
+    procedure RemovePreviousResultTabs;
   protected
     // This procedure will receive the events that are logged by the connection:
     procedure GetLogEvent(Sender: TSQLConnection; EventType: TDBEventType; Const Msg : String);
@@ -498,13 +499,12 @@ begin
   (Sender as TBitBtn).Visible:= False;
 end;
 
-procedure TfmQueryWindow.HidePreviousResultTabs;
+procedure TfmQueryWindow.RemovePreviousResultTabs;
 var
   i: Integer;
 begin
-  for i:= 0 to ComponentCount - 1 do
-    if (Components[i] is TTabSheet) and ((Components[i] as TControl).Parent = pgOutputPageCtl) then
-      (Components[i] as TTabSheet).TabVisible:= False;
+  for i:= 0 to OutputTabsList.Count - 1 do
+    OutputTabsList.Objects[i].Free;
 end;
 
 procedure TfmQueryWindow.GetLogEvent(Sender: TSQLConnection;
@@ -906,6 +906,7 @@ procedure TfmQueryWindow.Init(dbIndex: Integer);
 begin
   FDBIndex:= dbIndex;
   FRegRec:= fmMain.RegisteredDatabases[dbIndex].RegRec;
+  OutputTabsList:= TStringList.Create;
 
   // Set instances of FIBConnection and SQLTransaction for the current Query Window
   SetTransactionIsolation(FSQLTrans.Params);
@@ -1011,7 +1012,8 @@ var
   Nav: TDBNavigator;
   Pan: TPanel;
 begin
-  ATab:= TTabSheet.Create(self);
+  ATab:= TTabSheet.Create(nil);
+  OutputTabsList.AddObject('', ATab);
   BeginUpdateBounds;
   Result:= ATab;
   ATab.Parent:= pgOutputPageCtl;
@@ -1034,8 +1036,9 @@ begin
     ATab.Tag:= PtrInt(aSQLQuery);
 
     // Status Bar
-    StatusBar:= TStatusBar.Create(self);
+    StatusBar:= TStatusBar.Create(ATab);
     StatusBar.Parent:= ATab;
+    StatusBar.Tag:= aSqlQuery.Tag;
 
     // Datasource
     DataSource:= TDataSource.Create(self);
@@ -1637,6 +1640,8 @@ begin
     OnCommit:= nil;
   end;
   FIBConnection.Close;
+  OutputTabsList.Free;
+  RemovePreviousResultTabs;
   CloseAction:= caFree;
 end;
 
@@ -2032,10 +2037,13 @@ begin
     begin
       Ctl:= TabSheet.Controls[i];
       if (Ctl is TStatusBar) then
+      begin
         // Display current record and number of total records in status bar
         TStatusBar(Ctl).SimpleText:= IntToStr(DataSet.RecordCount) +
           ' records fetched. At record # ' + IntToStr(DataSet.RecNo);
         break;
+
+      end;
     end;
   end;
 end;
@@ -2052,7 +2060,7 @@ begin
     exit;
   end;
   FStartLine:= 0;
-  HidePreviousResultTabs;
+  RemovePreviousResultTabs;
 
   // Disable buttons to prevent query interrupt
   tbRun.Enabled:= False;
