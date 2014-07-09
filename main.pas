@@ -5,8 +5,8 @@ unit main;
 interface
 
 uses
-  Classes, SysUtils, IBConnection, sqldb, memds, FileUtil, LResources, Forms,
-  Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
+  Classes, SysUtils, IBConnection, sqldb, sqldblib, memds, FileUtil, LResources,
+  Forms, Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
   ExtCtrls, Buttons, StdCtrls, TableManage, dbugintf, turbocommon;
 
 {$i turbocommon.inc}

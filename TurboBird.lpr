@@ -1,8 +1,8 @@
 {***************************************************************************}
 {  TurboBird: FireBird database administration and management tool          }
-{  Developed by: Motaz Abdel Azeem http://code.sd/                          }
+{  Started by  : Motaz Abdel Azeem http://code.sd/                          }
 {  Start development :  5.Dec.2009                                          }
-{  Last updated      : 12.Apr.2014                                          }
+{  Last updated      :  9.Apr.2014                                          }
 {  License           : GPL for GUI, LGPL for Units                          }
 {***************************************************************************}
 
@@ -23,17 +23,17 @@ uses
   UserPermissions, TableManage, BackupRestore, CreateUser, ChangePass,
   PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo,
   sysutils, Comparison, Update, topologicalsort, UnitFirebirdServices, 
-trunksqlscript, turbocommon;
+  trunksqlscript, turbocommon, sqldblib;
 
 const
   Major = 1;
   Minor = 1;
-  Release = 91;
+  Release = 92;
 
   VersionDate = '2010 - June 2014';
 {$IFDEF Unix}
 {$DEFINE extdecl:=cdecl}
-    fbclib = 'libfbclient.' + sharedsuffix;
+    fbclib = 'libfbclient.' + sharedsuffix + '.2';
 {$ENDIF}
 {$IFDEF Windows}
   {$DEFINE extdecl:=stdcall}
@@ -48,8 +48,18 @@ var
   SAbout: TfmAbout;
   ErrorMessage: string;
   IBaseLibraryHandle : TLibHandle;
+  SLib: TSQLDBLibraryLoader;
 begin
   Application.Initialize;
+
+  // Load library using SQLDBLibraryLoader in Linux
+  {$IFDEF UNIX}
+  SLib:= TSQLDBLibraryLoader.Create(nil);
+  SLib.ConnectionType:= 'Firebird';
+  SLib.LibraryName:= 'libfbclient.so.2';
+  SLib.Enabled:= True;
+  {$ENDIF}
+
   {$IFDEF DEBUG}
   // Requires the build mode to set -dDEBUG in Project Options/Other and
   // defining -gh/heaptrace on

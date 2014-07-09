@@ -503,8 +503,11 @@ procedure TfmQueryWindow.RemovePreviousResultTabs;
 var
   i: Integer;
 begin
-  for i:= 0 to OutputTabsList.Count - 1 do
+  for i:= OutputTabsList.Count - 1 downto 0 do
+  begin
     OutputTabsList.Objects[i].Free;
+    OutputTabsList.Delete(i);
+  end;
 end;
 
 procedure TfmQueryWindow.GetLogEvent(Sender: TSQLConnection;
@@ -906,7 +909,12 @@ procedure TfmQueryWindow.Init(dbIndex: Integer);
 begin
   FDBIndex:= dbIndex;
   FRegRec:= fmMain.RegisteredDatabases[dbIndex].RegRec;
-  OutputTabsList:= TStringList.Create;
+
+  // Remove old tabs in case of opening the same QueryWindow
+  if Assigned(OutputTabsList) then
+    RemovePreviousResultTabs
+  else
+    OutputTabsList:= TStringList.Create;
 
   // Set instances of FIBConnection and SQLTransaction for the current Query Window
   SetTransactionIsolation(FSQLTrans.Params);
@@ -1650,6 +1658,7 @@ end;
 
 procedure TfmQueryWindow.FormCreate(Sender: TObject);
 begin
+  OutputTabsList:= nil;
   {$IFNDEF DEBUG}
   // Do not log to debug server if built as release instead of debug
   SetDebuggingEnabled(false);
