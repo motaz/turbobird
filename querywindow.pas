@@ -1165,6 +1165,8 @@ begin
           fSQLQuery:= TSQLQuery.Create(self);
           fSQLQuery.DataBase:= FIBConnection;
           fSQLQuery.Transaction:= FSQLTrans;
+          if cxAutoCommit.Checked then
+            FSQLTrans.Commit;
           FTab:= CreateResultTab(qtSelectable, FSQLQuery, FSQLScript, FResultMemo);
           FTab.ImageIndex:= 6;
           FTab.Hint:= FQueryPart;
@@ -1181,8 +1183,8 @@ begin
           begin
             // Get rid of the select first x part by copying everything after
             // the third word
-            SanitizedSQL:= ExtractWordPos(3, FQueryPart, StdWordDelims,i);
-            if i>0 then
+            SanitizedSQL:= ExtractWordPos(3, FQueryPart, StdWordDelims, i);
+            if i > 0 then
             begin
               SanitizedSQL:= 'select ' + trim(copy(FQueryPart, i+length(SanitizedSQL), maxint));
               TempQuery:= TSQLQuery.Create(nil);
@@ -1200,6 +1202,7 @@ begin
           // Create thread to open dataset
           FQT:= TQueryThread.Create(qaOpen);
           FQT.Query:= FSQLQuery;
+          FQT.Trans:= FSQLTrans;
           // FQT.OnTerminate:= @ThreadTerminated;
           FAText:= FTab.Caption;
           FTab.Caption:= 'Running..';
@@ -1251,6 +1254,7 @@ begin
               // Execute the statement in thread
               FQT:= TQueryThread.Create(qaDDL);
               FQT.Connection:= FIBConnection;
+              FQT.Trans:= FSQLTrans;
               FQT.Statement:= FQueryPart;
               FQT.Resume;
               FAText:= FTab.Caption;
@@ -1285,6 +1289,7 @@ begin
               FQT:= TQueryThread.Create(qaExec);
               try
                 FQT.Query:= FSQLQuery;
+                FQT.Trans:= FSQLTrans;
                 FQT.Resume;
                 FAText:= FTab.Caption;
                 FTab.Caption:= 'Running..';
