@@ -44,13 +44,14 @@ interface
 
 {$IF FPC_FULLVERSION<20701}
 uses
-  Classes, SysUtils, sqlscript, db, dbconst, sqldb, trunksqlscript;
+  Classes, SysUtils, db, dbconst, sqldb, trunksqlscript;
 {$ELSE}
 uses
   Classes, SysUtils, db, sqldb;
 {$ENDIF}
 
 {$IF FPC_FULLVERSION<20701}
+// Only use this customised version for non-trunk FPC
 type
   { TModCustomSQLQuery }
     TModCustomSQLQuery = class(TCustomSQLQuery)
@@ -152,6 +153,7 @@ constructor TModSQLScript.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FQuery := TModCustomSQLQuery.Create(nil);
+  CommentsInSQL:=false; //don't process comments by default
   FQuery.ParamCheck := false; // Do not parse for parameters; breaks use of e.g. select bla into :bla in Firebird procedures
   FQuery.ParseSQL:= false; //added for extra protection against messing with parameters
 end;
@@ -176,7 +178,7 @@ end;
 {$ELSE}
 // In FPC trunk, we can just use existing code
 type
-  TModSQLScript = TSQLscript;
+  TModSQLScript = TSQLScript;
 implementation
 {$ENDIF}
 end.
