@@ -9,7 +9,7 @@ uses
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
   SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType,
-  modsqlscript, dbugintf, turbocommon, variants, strutils;
+  dbugintf, turbocommon, variants, strutils;
 
 type
 
@@ -176,7 +176,7 @@ type
     FQueryPart: string;
     FTab: TTabSheet;
     FResultMemo: TMemo;
-    FSQLScript: TModSQLScript;
+    FSQLScript: TSQLScript;
     // Text for caption
     FAText: string;
     FModifyCount: Integer;
@@ -214,7 +214,7 @@ type
     // Get query text from GUI/memo into
     // QueryContents
     function GetQuery(QueryContents: tstrings): boolean;
-    function CreateResultTab(QueryType: TQueryTypes; var aSqlQuery: TSQLQuery; var aSQLScript: TModSQLScript;
+    function CreateResultTab(QueryType: TQueryTypes; var aSqlQuery: TSQLQuery; var aSQLScript: TSQLScript;
       var meResult: TMemo; AdditionalTitle: string = ''): TTabSheet;
     // Runs SQL script; returns result
     function ExecuteScript(Script: string): Boolean;
@@ -688,7 +688,7 @@ procedure TfmQueryWindow.tbCommitClick(Sender: TObject);
 var
   meResult: TMemo;
   SqlQuery: TSQLQuery;
-  SqlScript: TModSQLScript;
+  SqlScript: TSQLScript;
   ATab: TTabSheet;
   QT: TQueryThread;
 begin
@@ -812,7 +812,7 @@ procedure TfmQueryWindow.tbRollbackClick(Sender: TObject);
 var
   meResult: TMemo;
   SqlQuery: TSQLQuery;
-  SqlScript: TModSQLScript;
+  SqlScript: TSQLScript;
   ATab: TTabSheet;
   QT: TQueryThread;
 begin
@@ -1010,7 +1010,7 @@ end;
 { Create new result tab depending on query type }
 
 function TfmQueryWindow.CreateResultTab(QueryType: TQueryTypes;
-  var aSqlQuery: TSQLQuery; var aSQLScript: TModSQLScript; var meResult: TMemo;
+  var aSqlQuery: TSQLQuery; var aSQLScript: TSQLScript; var meResult: TMemo;
   AdditionalTitle: string): TTabSheet;
 var
   ATab: TTabSheet;
@@ -1106,7 +1106,7 @@ begin
         // Clean up to avoid memory leak
         if assigned(aSQLScript) then
           aSQLScript.Free;
-        aSQLScript:= TModSQLScript.Create(self);
+        aSQLScript:= TSQLScript.Create(self);
         aSQLScript.DataBase:= FIBConnection;
         aSQLScript.Transaction:= FSQLTrans;
         aSQLScript.CommentsInSQL:= true;
@@ -1411,7 +1411,7 @@ function TfmQueryWindow.ExecuteScript(Script: string): Boolean;
 var
   StartTime: TDateTime;
   SqlQuery: TSQLQuery;
-  SqlScript: TModSQLScript;
+  SqlScript: TSQLScript;
   meResult: TMemo;
   ATab: TTabSheet;
 begin
