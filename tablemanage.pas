@@ -268,10 +268,10 @@ begin
   Delete(Fields, Length(Fields), 1);
 
   if Trim(Fields) = '' then
-    MessageDlg('Error', 'Your should select one field at least', mtError, [mbOk], 0)
+    MessageDlg('Error', 'You should select at least one field', mtError, [mbOk], 0)
   else
   if Trim(edIndexName.Text) = '' then
-    MessageDlg('Error', 'Your should enter new index name', mtError, [mbOk], 0)
+    MessageDlg('Error', 'You should enter the new index name', mtError, [mbOk], 0)
   else
   begin
     QWindow:= fmMain.ShowQueryWindow(FDBIndex, 'Create new index');

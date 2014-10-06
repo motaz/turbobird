@@ -108,6 +108,7 @@ type
     // Gets all index info for a certain database
     function GetAllIndices(dbIndex: Integer; List, TablesList: TStringList): Boolean;
 
+    // Gets index names associated with a primary key
     function GetPrimaryKeyIndexName(dbIndex: Integer; ATableName: string; var ConstraintName: string): string;
 
     function GetIndexInfo(dbIndex: Integer; ATableName, AIndexName: string;

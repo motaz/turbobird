@@ -43,6 +43,7 @@ type
   private
     FDBIndex: Integer;
     function Validate: Boolean;
+    // Get field count using stringgrid count
     function GetFieldsCount: Integer;
     function GetClosestType(ATypePart: string): string;
     { private declarations }
