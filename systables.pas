@@ -45,12 +45,14 @@ type
     // Returns object list (list of object names, i.e. tables, views) sorted by dependency
     // Limits sorting within one category (e.g. views)
     procedure SortDependencies(var ObjectList: TStringList);
+    // Gets information on specified trigger
     function GetTriggerInfo(DatabaseIndex: Integer; ATriggername: string;
       var AfterBefore, OnTable, Event, Body: string; var TriggerEnabled: Boolean;
       var TriggerPosition: Integer): Boolean;
     // Scripts all check constraints for a database's tables as alter table
     // statement, adding the SQL to List
     function ScriptCheckConstraints(dbIndex: Integer; List: TStrings): boolean;
+    // Script trigger creation for specified trigger
     function ScriptTrigger(dbIndex: Integer; ATriggerName: string; List: TStrings;
       AsCreate: Boolean = False): Boolean;
     // Used e.g. in scripting foreign keys
