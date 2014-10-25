@@ -139,8 +139,9 @@ begin
   // Enter password if it is not saved
   with fmMain.RegisteredDatabases[FDestIndex] do
   begin
-    // todo: detect embedded - this won't need a password
-    if IBConnection.Password = '' then
+    // If client/server password is empty, get it from user:
+    if (IBConnection.HostName<>'') and
+      (IBConnection.Password = '') then
     begin
       if fmEnterPass.ShowModal = mrOk then
       begin
@@ -258,27 +259,11 @@ procedure TfmImportTable.bbImportClick(Sender: TObject);
 var
   DestColumn: string;
   i: Integer;
-  Statement: string;
-  Values: string;
   SQLTarget: TSQLQuery;
   Num: Integer;
 begin
-  Values:= '';
   if not(assigned(FDestinationQuery)) and (FDestinationQuery.Active=false) then
     exit; //no destination fields
-
-  // Get field names
-  //todo: rewrite using regular select and use auto-generated insert query; just post field contents
-  Statement:= 'insert into '+FDestTable+' (';
-  for i:=0 to FDestinationQuery.FieldCount - 1 do
-  begin
-    Statement:= Statement + UpperCase(FDestinationQuery.Fields[i].FieldName) + ',';
-    Values:= Values + ':' + UpperCase(FDestinationQuery.Fields[i].FieldName) + ',';
-    Next;
-  end;
-  Delete(Statement, Length(Statement), 1);
-  Delete(Values, Length(Values), 1);
-  Statement:= Statement + ') values (' + Values + ')';
 
   // Skip first row if necessary
   if chkSkipFirstRow.Checked then
@@ -314,25 +299,31 @@ begin
     try
       SQLTarget.DataBase:=IBConnection;
       SQLTarget.Transaction:=SQLTrans;
-      SQLTarget.SQL.Text:=Statement;
+      SQLTarget.SQL.Text:='select * from '+FDestTable;
+      SQLTarget.ParseSQL:=true;
 
       // Start import
+      if SQLTrans.Active then
+        SQLTrans.RollBack;
+      SQLTrans.StartTransaction;
+      SQLTarget.Open;
+      Num:=0;
       try
         while FImporter.ReadRow do
         begin
-          for I := 0 to FImporter.MappingCount-1 do
+          SQLTarget.Insert;
+          for I:=0 to FImporter.MappingCount-1 do
           begin
             DestColumn := FImporter.Mapping[I].DestinationField;
             // Note: csv import sees everything as strings so let the db convert if possible
-            SQLTarget.Params.ParamByName(DestColumn).Value:=FImporter.GetData(i);
+            SQLTarget.Fields.FieldByName(DestColumn).AsString:=FImporter.GetData(i);
           end;
-          SQLTarget.ExecSQL;
+          SQLTarget.Post;
           Inc(Num);
-          Next;
         end;
         SQLTrans.Commit;
+        SQLTarget.Close;
         ShowMessage(IntToStr(Num) + ' record(s) have been imported');
-        Close;
       except
         on E: Exception do
         begin
