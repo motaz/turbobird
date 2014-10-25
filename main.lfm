@@ -1,12 +1,12 @@
 object fmMain: TfmMain
-  Left = 244
+  Left = 0
   Height = 640
-  Top = 139
-  Width = 1024
+  Top = 73
+  Width = 1016
   ActiveControl = tvMain
   Caption = 'TurboBird Admin for FireBird'
-  ClientHeight = 617
-  ClientWidth = 1024
+  ClientHeight = 621
+  ClientWidth = 1016
   Color = clWhite
   Font.Name = 'Sans'
   Menu = MainMenu1
@@ -15,10 +15,10 @@ object fmMain: TfmMain
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poScreenCenter
-  LCLVersion = '1.2.4.0'
+  LCLVersion = '1.2.6.0'
   object tvMain: TTreeView
     Left = 0
-    Height = 596
+    Height = 601
     Top = 0
     Width = 360
     Align = alLeft
@@ -38,16 +38,16 @@ object fmMain: TfmMain
   end
   object Splitter1: TSplitter
     Left = 360
-    Height = 596
+    Height = 601
     Top = 0
     Width = 14
     Beveled = True
   end
   object PageControl1: TPageControl
     Left = 377
-    Height = 589
+    Height = 594
     Top = 3
-    Width = 644
+    Width = 636
     ActivePage = TabSheet1
     Align = alClient
     BorderSpacing.Left = 1
@@ -65,8 +65,8 @@ object fmMain: TfmMain
     object TabSheet1: TTabSheet
       BorderWidth = 1
       Caption = 'Main'
-      ClientHeight = 559
-      ClientWidth = 640
+      ClientHeight = 563
+      ClientWidth = 628
       Font.Color = clNavy
       Font.Name = 'Arial'
       ParentFont = False
@@ -506,9 +506,9 @@ object fmMain: TfmMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 21
-    Top = 596
-    Width = 1024
+    Height = 20
+    Top = 601
+    Width = 1016
     Panels = <    
       item
         Width = 250
@@ -521,7 +521,7 @@ object fmMain: TfmMain
   object MainMenu1: TMainMenu
     left = 63
     top = 113
-    object MenuItem1: TMenuItem
+    object mnFile: TMenuItem
       Caption = '&File'
       object mnCreateDB: TMenuItem
         Caption = 'Create new Database'
@@ -540,11 +540,11 @@ object fmMain: TfmMain
         OnClick = mnExitClick
       end
     end
-    object MenuItem5: TMenuItem
+    object mnHelp: TMenuItem
       Caption = 'Help'
-      object MenuItem6: TMenuItem
+      object mnAbout: TMenuItem
         Caption = 'About'
-        OnClick = MenuItem6Click
+        OnClick = mnAboutClick
       end
     end
   end
@@ -2015,7 +2015,7 @@ object fmMain: TfmMain
       }
       OnClick = lmDBInfoClick
     end
-    object MenuItem8: TMenuItem
+    object lmSeparator2: TMenuItem
       Caption = '-'
     end
     object lmEditReg: TMenuItem
@@ -2303,7 +2303,7 @@ object fmMain: TfmMain
       }
       OnClick = lmViewFieldsClick
     end
-    object MenuItem7: TMenuItem
+    object lmSeparator: TMenuItem
       Tag = 1
       Caption = '-'
     end
@@ -2437,6 +2437,11 @@ object fmMain: TfmMain
       Tag = 1
       Caption = 'Drop Table'
       OnClick = lmDropTableClick
+    end
+    object lmImportTable: TMenuItem
+      Tag = 1
+      Caption = 'Import Table'
+      OnClick = lmImportTableClick
     end
     object lmViewGen: TMenuItem
       Tag = 2

@@ -23,7 +23,7 @@ uses
   UserPermissions, TableManage, BackupRestore, CreateUser, ChangePass,
   PermissionManage, SQLHistory, CopyTable, dynlibs, ibase60dyn, dbInfo,
   sysutils, Comparison, Update, topologicalsort, UnitFirebirdServices, 
-  turbocommon, sqldblib;
+  turbocommon, importtable, fileimport, csvdocument, sqldblib;
 
 const
   Major = 1;
@@ -48,15 +48,17 @@ var
   SAbout: TfmAbout;
   ErrorMessage: string;
   IBaseLibraryHandle : TLibHandle;
+  {$IFDEF UNIX}
   SLib: TSQLDBLibraryLoader;
+  {$ENDIF}
 begin
   Application.Initialize;
 
-  // Load library using SQLDBLibraryLoader in Linux
+  // Load library using SQLDBLibraryLoader in Linux, OSX,...
   {$IFDEF UNIX}
   SLib:= TSQLDBLibraryLoader.Create(nil);
   SLib.ConnectionType:= 'Firebird';
-  SLib.LibraryName:= 'libfbclient.so.2';
+  SLib.LibraryName:= 'libfbclient.so.2'; //todo: is this correct for OSX?
   SLib.Enabled:= True;
   {$ENDIF}
 

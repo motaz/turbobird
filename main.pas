@@ -1,5 +1,10 @@
 unit main;
 
+{ Main TurboBird form
+If you want to add popup menus for tables, views etc, please set the Tag
+property of the popup menu to the right value.
+}
+
 {$mode objfpc}{$H+}
 
 interface
@@ -7,7 +12,7 @@ interface
 uses
   Classes, SysUtils, IBConnection, sqldb, sqldblib, memds, FileUtil, LResources,
   Forms, Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
-  ExtCtrls, Buttons, StdCtrls, TableManage, dbugintf, turbocommon;
+  ExtCtrls, Buttons, StdCtrls, TableManage, dbugintf, turbocommon, importtable;
 
 {$i turbocommon.inc}
 
@@ -29,7 +34,8 @@ type
     ImageList1: TImageList;
     MainMenu1: TMainMenu;
     mdsHistory: TMemDataset;
-    MenuItem1: TMenuItem;
+    lmImportTable: TMenuItem;
+    mnFile: TMenuItem;
     lmDisplayView: TMenuItem;
     lmViewTrigger: TMenuItem;
     lmCreateDB: TMenuItem;
@@ -52,11 +58,12 @@ type
     lmGetIncrementGen: TMenuItem;
     lmDropTable: TMenuItem;
     lmRecalculateStatistics: TMenuItem;
+    mnuImport: TMenuItem;
     mnExit: TMenuItem;
     mnCreateDB: TMenuItem;
     mnRegDB: TMenuItem;
-    MenuItem5: TMenuItem;
-    MenuItem6: TMenuItem;
+    mnHelp: TMenuItem;
+    mnAbout: TMenuItem;
     lmEditReg: TMenuItem;
     lmUnregisterDatabase: TMenuItem;
     lmViewFirst1000: TMenuItem;
@@ -87,7 +94,7 @@ type
     lmViewDomain: TMenuItem;
     lmNewDomain: TMenuItem;
     lmNewRole: TMenuItem;
-    MenuItem7: TMenuItem;
+    lmSeparator: TMenuItem;
     lmOpenQuery: TMenuItem;
     lmNewException: TMenuItem;
     lmRefresh: TMenuItem;
@@ -98,7 +105,7 @@ type
     lmPermissions: TMenuItem;
     lmRolePermissions: TMenuItem;
     lmTableManage: TMenuItem;
-    MenuItem8: TMenuItem;
+    lmSeparator2: TMenuItem;
     lmBackup: TMenuItem;
     mnRestore: TMenuItem;
     PageControl1: TPageControl;
@@ -124,6 +131,7 @@ type
     procedure lmDisconnectClick(Sender: TObject);
     procedure lmEditFieldClick(Sender: TObject);
     procedure lmGetIncrementGenClick(Sender: TObject);
+    procedure lmImportTableClick(Sender: TObject);
     // Show all records in table
     procedure lmOpenSystemTableClick(Sender: TObject);
     procedure lmActivateTrigClick(Sender: TObject);
@@ -175,7 +183,7 @@ type
     procedure mnExitClick(Sender: TObject);
     procedure mnCreateDBClick(Sender: TObject);
     procedure mnRegDBClick(Sender: TObject);
-    procedure MenuItem6Click(Sender: TObject);
+    procedure mnAboutClick(Sender: TObject);
     procedure lmEditRegClick(Sender: TObject);
     procedure lmUnregisterDatabaseClick(Sender: TObject);
     procedure lmViewFirst1000Click(Sender: TObject);
@@ -561,6 +569,21 @@ begin
 
     ShowCompleteQueryWindow(dbIndex, 'get increment generator SQL for:' + AGenName,
       'select GEN_ID(' + AGenName + ', 1) from RDB$Database;');
+  end;
+end;
+
+procedure TfmMain.lmImportTableClick(Sender: TObject);
+var
+  MyImportTable: TfmImportTable;
+begin
+  MyImportTable:=TfmImportTable.Create(nil);
+  try
+	  // Pass db index and table name
+	  MyImportTable.Init(PtrInt(tvMain.Selected.Parent.Parent.Data),
+		  tvMain.Selected.Text);
+    MyImportTable.ShowModal;
+  finally
+    MyImportTable.Free;
   end;
 end;
 
@@ -3589,7 +3612,7 @@ end;
 
 (**********  About  ****************)
 
-procedure TfmMain.MenuItem6Click(Sender: TObject);
+procedure TfmMain.mnAboutClick(Sender: TObject);
 begin
   fmAbout:= TfmAbout.Create(nil);
   fmAbout.Init;
@@ -3695,8 +3718,8 @@ begin
   for i:= 0 to Application.ComponentCount - 1 do
     if Application.Components[i] is TfmQueryWindow then
     begin
-       (Application.Components[i] as TfmQueryWindow).lmCloseTabClick(nil);
-       Break;
+      (Application.Components[i] as TfmQueryWindow).lmCloseTabClick(nil);
+      Break;
     end;
 end;
 

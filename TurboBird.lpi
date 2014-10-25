@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="1103"/>
+      <BuildNr Value="1104"/>
       <StringTable ProductVersion="0.9"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -98,7 +98,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="42">
+    <Units Count="45">
       <Unit0>
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -109,6 +109,7 @@
         <ComponentName Value="fmMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="main"/>
       </Unit1>
       <Unit2>
         <Filename Value="createdb.pas"/>
@@ -130,7 +131,6 @@
         <ComponentName Value="fmQueryWindow"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="QueryWindow"/>
       </Unit4>
       <Unit5>
         <Filename Value="viewview.pas"/>
@@ -240,6 +240,7 @@
         <ComponentName Value="dmSysTables"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="SysTables"/>
       </Unit20>
       <Unit21>
         <Filename Value="newconstraint.pas"/>
@@ -321,6 +322,7 @@
         <ComponentName Value="fmCopyTable"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="CopyTable"/>
       </Unit32>
       <Unit33>
         <Filename Value="dbinfo.pas"/>
@@ -370,6 +372,23 @@
         <Filename Value="turbocommon.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit41>
+      <Unit42>
+        <Filename Value="importtable.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmImportTable"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="importtable"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="fileimport.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fileimport"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="csvdocument.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit44>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

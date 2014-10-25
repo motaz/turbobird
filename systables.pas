@@ -32,6 +32,7 @@ type
     // constraint name
     procedure FillCompositeFKConstraints(const TableName: string;
       var ConstraintsArray: TConstraintCounts);
+    // Initialize unit to work with specified database
     procedure Init(dbIndex: Integer);
     // Gets list of object names that have type specified by TVIndex
     // Returns count of objects in Count
@@ -116,6 +117,7 @@ type
     function GetIndexInfo(dbIndex: Integer; ATableName, AIndexName: string;
       var FieldsList: TStringList; var ConstraintName: string; var Unique, Ascending, IsPrimary: Boolean): Boolean;
 
+    // Gets field names for table
     procedure GetTableFields(dbIndex: Integer; ATableName: string; FieldsList: TStringList);
 
     function GetConstraintsOfTable(ATableName: string; var SqlQuery: TSQLQuery;
