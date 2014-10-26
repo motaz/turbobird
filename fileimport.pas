@@ -97,6 +97,9 @@ type
     // if -1 specified: delete entire mapping array
     // Returns true if one or more mappings were deleted
     function DeleteMapping(Item: integer): boolean;
+    // Delete mapping for specified destination field
+    // Returns true if one or more mappings were deleted
+    function DeleteMapping(DestinationField: string): boolean;
     // After calling readrow, getdata returns data in the field mapped to
     // DestinationField or empty if nothing found
     function GetData(DestinationField: string): string;
@@ -222,6 +225,19 @@ begin
     FRowData.Delete(Item);
     // Release last array item
     SetLength(FMapping,High(FMapping));
+    result:=true;
+  end;
+end;
+
+function TFileImport.DeleteMapping(DestinationField: string): boolean;
+var
+  Index: integer;
+begin
+  result:=false;
+  Index:=GetMappingIndex(DestinationField);
+  if Index>-1 then
+  begin
+    result:=DeleteMapping(Index);
   end;
 end;
 

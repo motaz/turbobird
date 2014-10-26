@@ -2440,7 +2440,7 @@ object fmMain: TfmMain
     end
     object lmImportTable: TMenuItem
       Tag = 1
-      Caption = 'Import Table'
+      Caption = 'Import to Table'
       OnClick = lmImportTableClick
     end
     object lmViewGen: TMenuItem

@@ -35,6 +35,8 @@ type
     SourcePanel: TPanel;
     procedure bbImportClick(Sender: TObject);
     procedure bbCloseClick(Sender: TObject);
+    procedure btnAddMappingClick(Sender: TObject);
+    procedure btnDeleteMappingClick(Sender: TObject);
     procedure btnPrepareClick(Sender: TObject);
     procedure btnSourceFileOpenClick(Sender: TObject);
     procedure chkTabDelimiterEditingDone(Sender: TObject);
@@ -188,23 +190,38 @@ begin
     end;
   end;
 
-  MappingGrid.Clear; //remove any existing mapping GUI
-  MappingCount := FImporter.MappingCount;
-  // Required to avoid index out of bounds error in InsertRowWithValues
-  while MappingGrid.Columns.Count<2 do
-    MappingGrid.Columns.Add;
-
-  for i := 0 to MappingCount-1 do
+  MappingCount:=FImporter.MappingCount;
+  MappingGrid.RowCount:=MappingCount;
+  for i:=0 to MappingCount-1 do
   begin
+    MappingGrid.Cells[0,i]:=FImporter.Mapping[i].SourceField;
+    MappingGrid.Cells[1,i]:=FImporter.Mapping[i].DestinationField;
+    {
+    // Grid InsertRowWithValues ssems to fail if there are no columns or rows
+    // even if there are it doesn't always work
     MappingGrid.InsertRowWithValues(0,
       [FImporter.Mapping[i].SourceField,
       FImporter.Mapping[i].DestinationField]);
+    }
   end;
 end;
 
 procedure TfmImportTable.bbCloseClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TfmImportTable.btnAddMappingClick(Sender: TObject);
+begin
+  if FImporter.AddMapping(cbSourceField.Text, cbDestField.Text) then
+    UpdateMappingGrid;
+end;
+
+procedure TfmImportTable.btnDeleteMappingClick(Sender: TObject);
+begin
+  // Delete mapping for selected destination field
+  if FImporter.DeleteMapping(MappingGrid.Cells[1,MappingGrid.Row]) then
+    UpdateMappingGrid;
 end;
 
 procedure TfmImportTable.btnPrepareClick(Sender: TObject);

@@ -276,6 +276,7 @@ object fmImportTable: TfmImportTable
       Top = 12
       Width = 75
       Caption = 'Add'
+      OnClick = btnAddMappingClick
       ParentShowHint = False
       ShowHint = True
       TabOrder = 2
@@ -286,11 +287,14 @@ object fmImportTable: TfmImportTable
       Top = 48
       Width = 490
       AutoFillColumns = True
-      ColCount = 0
+      ColCount = 2
       FixedCols = 0
       FixedRows = 0
-      RowCount = 0
       TabOrder = 3
+      ColWidths = (
+        243
+        243
+      )
     end
     object btnDeleteMapping: TButton
       Left = 512
@@ -299,6 +303,7 @@ object fmImportTable: TfmImportTable
       Top = 88
       Width = 75
       Caption = 'Delete'
+      OnClick = btnDeleteMappingClick
       ParentShowHint = False
       ShowHint = True
       TabOrder = 4
