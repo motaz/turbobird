@@ -10,7 +10,7 @@ object fmDBInfo: TfmDBInfo
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '1.2.0.3'
+  LCLVersion = '1.2.6.0'
   object Label1: TLabel
     Left = 15
     Height = 13
@@ -31,7 +31,7 @@ object fmDBInfo: TfmDBInfo
     ParentFont = False
     ReadOnly = True
     TabOrder = 0
-    Text = 'edName'
+    Text = 'N/A'
   end
   object Label2: TLabel
     Left = 15
@@ -52,7 +52,7 @@ object fmDBInfo: TfmDBInfo
     ParentFont = False
     ReadOnly = True
     TabOrder = 1
-    Text = 'odsVersion'
+    Text = 'N/A'
   end
   object Label3: TLabel
     Left = 15
@@ -73,7 +73,7 @@ object fmDBInfo: TfmDBInfo
     ParentFont = False
     ReadOnly = True
     TabOrder = 2
-    Text = 'odsVersion'
+    Text = 'N/A'
   end
   object Label4: TLabel
     Left = 15
@@ -94,7 +94,7 @@ object fmDBInfo: TfmDBInfo
     ParentFont = False
     ReadOnly = True
     TabOrder = 3
-    Text = 'odsVersion'
+    Text = 'N/A'
   end
   object Label5: TLabel
     Left = 15
@@ -115,7 +115,7 @@ object fmDBInfo: TfmDBInfo
     ParentFont = False
     ReadOnly = True
     TabOrder = 4
-    Text = 'odsVersion'
+    Text = 'N/A'
   end
   object edDBSize: TEdit
     Left = 144
@@ -128,7 +128,7 @@ object fmDBInfo: TfmDBInfo
     ParentFont = False
     ReadOnly = True
     TabOrder = 5
-    Text = 'odsVersion'
+    Text = 'N/A'
   end
   object Label6: TLabel
     Left = 15
@@ -189,7 +189,7 @@ object fmDBInfo: TfmDBInfo
     ParentFont = False
     ReadOnly = True
     TabOrder = 8
-    Text = 'odsVersion'
+    Text = 'N/A'
   end
   object bbRefresh: TBitBtn
     Left = 16
@@ -445,6 +445,6 @@ object fmDBInfo: TfmDBInfo
     ParentFont = False
     ReadOnly = True
     TabOrder = 10
-    Text = 'odsVersion'
+    Text = 'N/A'
   end
 end

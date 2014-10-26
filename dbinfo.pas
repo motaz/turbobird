@@ -113,19 +113,19 @@ begin
       if dbSize > (1024*1024*1024) then
       begin
         dbSize:= ((dbSize / 1024) / 1024) / 1024;
-        AType:= 'Giga bytes';
+        AType:= 'Gigabytes';
       end
       else
       if dbSize > (1024*1024) then
       begin
         dbSize:= ((dbSize / 1024) / 1024);
-        AType:= 'Mega bytes';
+        AType:= 'Megabytes';
       end
       else
       if dbSize > 1024 then
       begin
         dbSize:= (dbSize / 1024);
-        AType:= 'Kilo bytes';
+        AType:= 'Kilobytes';
       end
       else
       begin
