@@ -149,24 +149,26 @@ begin
       begin
         if fmReg.TestConnection(RegRec.DatabaseName, fmEnterPass.edUser.Text, fmEnterPass.edPassword.Text,
           RegRec.Charset) then
+        begin
           with fmMain do
           begin
             RegisteredDatabases[FDestIndex].RegRec.UserName:= fmEnterPass.edUser.Text;
             RegisteredDatabases[FDestIndex].RegRec.Password:= fmEnterPass.edPassword.Text;
             RegisteredDatabases[FDestIndex].RegRec.Role:= fmEnterPass.cbRole.Text;
-          end
-          else
-          begin
-            Exit;
           end;
-      end
+        end
+        else
+        begin
+          exit;
+        end;
+      end;
     end;
-
     if not(assigned(FDestinationQuery)) then
       FDestinationQuery:=TSQLQuery.Create(nil);
     FDestinationQuery.Close;
     FDestinationQuery.DataBase:=IBConnection;
     FDestinationQuery.Transaction:=SQLTrans;
+    FDestinationQuery.ParseSQL; //belts and braces - generate InsertSQL
     FDestinationQuery.SQL.Text:='select * from '+FDestTable;
     FDestinationQuery.Open;
   end;
@@ -177,7 +179,6 @@ var
   i: integer;
   MappingCount: integer;
 begin
-
   // MappingCount will map fields if necessary so we need destination fields
   if FImporter.DestinationFields.Count=0 then
   begin
@@ -276,83 +277,86 @@ procedure TfmImportTable.bbImportClick(Sender: TObject);
 var
   DestColumn: string;
   i: Integer;
-  SQLTarget: TSQLQuery;
   Num: Integer;
 begin
   if not(assigned(FDestinationQuery)) and (FDestinationQuery.Active=false) then
     exit; //no destination fields
 
-  // Skip first row if necessary
-  if chkSkipFirstRow.Checked then
-  begin
-    if not(FImporter.ReadRow) then
-      exit; //error: end of file?
-  end;
-
-  // Enter password if it is not saved... and we're not connected to an embedded
-  // database
-  with fmMain.RegisteredDatabases[FDestIndex] do
-  begin
-    if (IBConnection.HostName<>'') and (IBConnection.Password = '') then
+  Screen.Cursor:=crHourGlass;
+  bbClose.Enabled:=false;
+  bbImport.Enabled:=false;
+  try
+    // Skip first row if necessary
+    if chkSkipFirstRow.Checked then
     begin
-      if fmEnterPass.ShowModal = mrOk then
+      if not(FImporter.ReadRow) then
+        exit; //error: end of file?
+    end;
+
+    // Enter password if it is not saved... and we're not connected to an embedded
+    // database
+    with fmMain.RegisteredDatabases[FDestIndex] do
+    begin
+      if (IBConnection.HostName<>'') and (IBConnection.Password = '') then
       begin
-        if fmReg.TestConnection(RegRec.DatabaseName, fmEnterPass.edUser.Text, fmEnterPass.edPassword.Text,
-          RegRec.Charset) then
-          with fmMain do
+        if fmEnterPass.ShowModal = mrOk then
+        begin
+          if fmReg.TestConnection(RegRec.DatabaseName, fmEnterPass.edUser.Text, fmEnterPass.edPassword.Text,
+            RegRec.Charset) then
           begin
-            RegisteredDatabases[FDestIndex].RegRec.UserName:= fmEnterPass.edUser.Text;
-            RegisteredDatabases[FDestIndex].RegRec.Password:= fmEnterPass.edPassword.Text;
-            RegisteredDatabases[FDestIndex].RegRec.Role:= fmEnterPass.cbRole.Text;
+            with fmMain do
+            begin
+              RegisteredDatabases[FDestIndex].RegRec.UserName:= fmEnterPass.edUser.Text;
+              RegisteredDatabases[FDestIndex].RegRec.Password:= fmEnterPass.edPassword.Text;
+              RegisteredDatabases[FDestIndex].RegRec.Role:= fmEnterPass.cbRole.Text;
+            end
           end
           else
           begin
-            Exit;
+            exit;
           end;
-      end
-    end;
-
-    SQLTarget:=TSQLQuery.Create(nil);
-    try
-      SQLTarget.DataBase:=IBConnection;
-      SQLTarget.Transaction:=SQLTrans;
-      SQLTarget.SQL.Text:='select * from '+FDestTable;
-      SQLTarget.ParseSQL:=true;
+        end;
+      end;
 
       // Start import
       if SQLTrans.Active then
         SQLTrans.RollBack;
       SQLTrans.StartTransaction;
-      SQLTarget.Open;
+      FDestinationQuery.Open;
       Num:=0;
       try
         while FImporter.ReadRow do
         begin
-          SQLTarget.Insert;
+          FDestinationQuery.Insert;
           for I:=0 to FImporter.MappingCount-1 do
           begin
-            DestColumn := FImporter.Mapping[I].DestinationField;
+            DestColumn:=FImporter.Mapping[I].DestinationField;
             // Note: csv import sees everything as strings so let the db convert if possible
-            SQLTarget.Fields.FieldByName(DestColumn).AsString:=FImporter.GetData(i);
+            FDestinationQuery.Fields.FieldByName(DestColumn).AsString:=FImporter.GetData(i);
           end;
-          SQLTarget.Post;
+          FDestinationQuery.Post;
           Inc(Num);
         end;
+        FDestinationQuery.ApplyUpdates;
+        // could be also done after e.g. every 1000 records for
+        // higher performance
         SQLTrans.Commit;
-        SQLTarget.Close;
+        FDestinationQuery.Close;
+        Screen.Cursor:=crDefault; // for message
         ShowMessage(IntToStr(Num) + ' record(s) have been imported');
       except
         on E: Exception do
         begin
-          MessageDlg('Error while copy: ' + e.Message, mtError, [mbOk], 0);
+          MessageDlg('Error while importing: ' + e.Message, mtError, [mbOk], 0);
           SQLTrans.Rollback;
         end;
       end;
-    finally
-      SQLTarget.Free;
     end;
+  finally
+    bbClose.Enabled:=true;
+    bbImport.Enabled:=true;
+    Screen.Cursor:=crDefault;
   end;
-  FDestinationQuery.Close;
 end;
 
 procedure TfmImportTable.Init(DestinationIndex: Integer; DestinationTableName: string);
