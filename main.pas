@@ -28,10 +28,8 @@ type
   { TfmMain }
 
   TfmMain = class(TForm)
-    bbCreateNewDB: TBitBtn;
-    bbRegisterDB: TBitBtn;
-    bbRestoreDB: TBitBtn;
     ImageList1: TImageList;
+    toolbarImages: TImageList;
     MainMenu1: TMainMenu;
     mdsHistory: TMemDataset;
     lmImportTable: TMenuItem;
@@ -114,6 +112,10 @@ type
     SQLQuery1: TSQLQuery;
     StatusBar1: TStatusBar;
     TabSheet1: TTabSheet;
+    ToolBar1: TToolBar;
+    tbtnCreateNewDB: TToolButton;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
     tvMain: TTreeView;
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);

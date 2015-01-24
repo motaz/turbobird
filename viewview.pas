@@ -13,7 +13,7 @@ type
   { TfmViewView }
 
   TfmViewView = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     edName: TEdit;
     Label1: TLabel;
     Label2: TLabel;

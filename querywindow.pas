@@ -56,9 +56,12 @@ type
   { TfmQueryWindow }
 
   TfmQueryWindow = class(TForm)
-    bbClose: TBitBtn;
     cxAutoCommit: TCheckBox;
     FindDialog1: TFindDialog;
+    bbClose: TSpeedButton;
+    FontDialog1: TFontDialog;
+    MenuItem4: TMenuItem;
+    toolbarImages: TImageList;
     imTools: TImageList;
     imTabs: TImageList;
     lmCloseTab: TMenuItem;
@@ -142,6 +145,7 @@ type
     procedure lmUndoClick(Sender: TObject);
     procedure lmFindClick(Sender: TObject);
     procedure lmFindAgainClick(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
     procedure meQueryKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 
     procedure SQLScript1Exception(Sender: TObject; Statement: TStrings;
@@ -2013,6 +2017,12 @@ end;
 procedure TfmQueryWindow.lmFindAgainClick(Sender: TObject);
 begin
   meQuery.SearchReplace(FindDialog1.FindText, '', FOptions);
+end;
+
+procedure TfmQueryWindow.MenuItem4Click(Sender: TObject);
+begin
+    if FontDialog1.Execute then
+       meQuery.Font := FontDialog1.Font;
 end;
 
 
