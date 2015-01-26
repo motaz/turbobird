@@ -10,7 +10,7 @@ This is an enhanced gui fork of the main repo
 
 ## Screenshots:
 
-[Main Window]: https://cloud.githubusercontent.com/assets/536140/5899788/714d1712-a569-11e4-878e-066211bdb876.png
+![Main Window](https://cloud.githubusercontent.com/assets/536140/5899788/714d1712-a569-11e4-878e-066211bdb876.png)
 [Table]: https://cloud.githubusercontent.com/assets/536140/5899791/7a2c37f0-a569-11e4-8d76-86480e1cb335.png
 [View DDL]: https://cloud.githubusercontent.com/assets/536140/5899792/7a5539a2-a569-11e4-95cc-81ed3b38c774.png
 [Database Info]: https://cloud.githubusercontent.com/assets/536140/5899793/7a681a72-a569-11e4-9bc6-d9419f6ec3f0.png
