@@ -1,103 +1,103 @@
 object fmEnterPass: TfmEnterPass
-  Left = 362
-  Height = 236
-  Top = 201
-  Width = 388
+  Left = 505
+  Height = 171
+  Top = 216
+  Width = 377
   ActiveControl = edUser
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
+  BorderStyle = bsSingle
   Caption = 'Connect to Database As'
-  ClientHeight = 236
-  ClientWidth = 388
+  ClientHeight = 171
+  ClientWidth = 377
   OnActivate = FormActivate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.0.4.0'
+  LCLVersion = '1.2.6.0'
   object Label1: TLabel
     Left = 13
-    Height = 18
-    Top = 89
-    Width = 67
+    Height = 16
+    Top = 72
+    Width = 63
     Caption = 'Password'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 13
-    Height = 18
+    Height = 16
     Top = 44
     Width = 32
     Caption = 'User'
     ParentColor = False
   end
   object Label3: TLabel
-    Left = 13
-    Height = 18
-    Top = 139
-    Width = 31
+    Left = 16
+    Height = 16
+    Top = 104
+    Width = 30
     Caption = 'Role'
     ParentColor = False
   end
   object edPassword: TEdit
     Left = 89
-    Height = 27
-    Top = 85
-    Width = 176
+    Height = 24
+    Top = 72
+    Width = 272
     EchoMode = emPassword
     PasswordChar = '*'
     TabOrder = 1
   end
   object BitBtn1: TBitBtn
-    Left = 14
+    Left = 200
     Height = 30
-    Top = 179
+    Top = 136
     Width = 75
     Caption = '&OK'
-    Color = 16249563
+    Color = clForm
     Default = True
     Kind = bkOK
     ModalResult = 1
     TabOrder = 3
   end
   object BitBtn2: TBitBtn
-    Left = 102
+    Left = 279
     Height = 30
-    Top = 180
-    Width = 98
+    Top = 136
+    Width = 82
     Cancel = True
     Caption = 'Cancel'
-    Color = 16249563
+    Color = clForm
     Kind = bkCancel
     ModalResult = 2
     TabOrder = 4
   end
   object edUser: TEdit
     Left = 89
-    Height = 27
+    Height = 24
     Top = 39
-    Width = 176
+    Width = 272
     TabOrder = 0
   end
   object cbRole: TComboBox
     Left = 89
-    Height = 29
-    Top = 133
-    Width = 176
-    ItemHeight = 0
+    Height = 24
+    Top = 104
+    Width = 272
+    ItemHeight = 16
     TabOrder = 2
   end
   object Label4: TLabel
     Left = 13
-    Height = 18
+    Height = 16
     Top = 9
-    Width = 65
+    Width = 61
     Caption = 'Database'
     ParentColor = False
   end
   object laDatabase: TLabel
     Left = 89
-    Height = 18
+    Height = 16
     Top = 9
-    Width = 65
+    Width = 61
     Caption = 'Database'
     Font.Color = clGray
     ParentColor = False

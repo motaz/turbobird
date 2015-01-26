@@ -1,13 +1,14 @@
 object fmViewView: TfmViewView
-  Left = 462
-  Height = 239
-  Top = 219
-  Width = 472
+  Left = 588
+  Height = 333
+  Top = 166
+  Width = 604
   Caption = 'fmViewView'
-  ClientHeight = 239
-  ClientWidth = 472
+  ClientHeight = 333
+  ClientWidth = 604
   KeyPreview = True
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
   LCLVersion = '1.2.6.0'
@@ -15,7 +16,7 @@ object fmViewView: TfmViewView
     Left = 8
     Height = 16
     Top = 16
-    Width = 72
+    Width = 73
     Caption = 'View Name'
     ParentColor = False
   end
@@ -23,22 +24,22 @@ object fmViewView: TfmViewView
     Left = 0
     Height = 16
     Top = 72
-    Width = 472
+    Width = 604
     Align = alBottom
     Caption = 'Body'
     ParentColor = False
   end
   inline seScript: TSynEdit
     Left = 0
-    Height = 151
+    Height = 245
     Top = 88
-    Width = 472
+    Width = 604
     Align = alBottom
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Pitch = fpFixed
-    Font.Quality = fqNonAntialiased
+    Font.Quality = fqAntialiased
     ParentColor = False
     ParentFont = False
     TabOrder = 0
@@ -601,7 +602,7 @@ object fmViewView: TfmViewView
   end
   object edName: TEdit
     Left = 8
-    Height = 20
+    Height = 24
     Top = 40
     Width = 280
     AutoSelect = False
@@ -612,7 +613,7 @@ object fmViewView: TfmViewView
     Text = 'edGenName'
   end
   object bbClose: TSpeedButton
-    Left = 441
+    Left = 573
     Height = 24
     Top = 0
     Width = 27

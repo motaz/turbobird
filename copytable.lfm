@@ -1,34 +1,35 @@
 object fmCopyTable: TfmCopyTable
-  Left = 352
-  Height = 509
-  Top = 207
-  Width = 610
+  Left = 356
+  Height = 480
+  Top = 139
+  Width = 511
   Caption = 'Copy Table'
-  ClientHeight = 509
-  ClientWidth = 610
+  ClientHeight = 480
+  ClientWidth = 511
+  OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.2.2.0'
+  LCLVersion = '1.2.6.0'
   object Label1: TLabel
     Left = 9
-    Height = 13
+    Height = 16
     Top = 19
-    Width = 82
+    Width = 108
     Caption = 'Source Database'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 9
-    Height = 13
-    Top = 56
-    Width = 62
+    Height = 16
+    Top = 40
+    Width = 82
     Caption = 'Soruce Table'
     ParentColor = False
   end
   object laSourceDatabase: TLabel
     Left = 183
-    Height = 13
+    Height = 16
     Top = 16
-    Width = 96
+    Width = 114
     Caption = 'Source Database'
     Font.Style = [fsBold]
     ParentColor = False
@@ -36,62 +37,62 @@ object fmCopyTable: TfmCopyTable
   end
   object Label3: TLabel
     Left = 9
-    Height = 13
-    Top = 91
-    Width = 103
+    Height = 16
+    Top = 72
+    Width = 138
     Caption = 'Destination Database'
     ParentColor = False
   end
   object Label4: TLabel
-    Left = 9
-    Height = 13
-    Top = 152
-    Width = 83
+    Left = 16
+    Height = 16
+    Top = 128
+    Width = 113
     Caption = 'Destination Table'
     ParentColor = False
   end
   object cbSourceTable: TComboBox
     Left = 183
-    Height = 21
-    Top = 46
-    Width = 177
-    ItemHeight = 13
+    Height = 25
+    Top = 40
+    Width = 217
+    ItemHeight = 16
     OnChange = cbSourceTableChange
     Style = csDropDownList
     TabOrder = 0
   end
   object cbDestDatabase: TComboBox
     Left = 183
-    Height = 21
-    Top = 84
+    Height = 25
+    Top = 72
     Width = 217
-    ItemHeight = 13
+    ItemHeight = 16
     OnChange = cbDestDatabaseChange
     Style = csDropDownList
     TabOrder = 1
   end
   object cbDestTable: TComboBox
     Left = 183
-    Height = 21
-    Top = 151
-    Width = 177
-    ItemHeight = 13
+    Height = 25
+    Top = 128
+    Width = 217
+    ItemHeight = 16
     Style = csDropDownList
     TabOrder = 2
   end
   object laDatabase: TLabel
-    Left = 184
-    Height = 13
-    Top = 120
-    Width = 103
+    Left = 188
+    Height = 12
+    Top = 112
+    Width = 109
     Caption = 'Destination Database'
     Font.Height = -11
     ParentColor = False
     ParentFont = False
   end
   object bbCopy: TBitBtn
-    Left = 12
-    Height = 49
+    Left = 16
+    Height = 40
     Top = 440
     Width = 115
     Anchors = [akLeft, akBottom]
@@ -232,8 +233,8 @@ object fmCopyTable: TfmCopyTable
     TabOrder = 3
   end
   object bbClose: TBitBtn
-    Left = 160
-    Height = 49
+    Left = 136
+    Height = 40
     Top = 440
     Width = 114
     Anchors = [akLeft, akBottom]
@@ -245,7 +246,7 @@ object fmCopyTable: TfmCopyTable
   object laDatabase1: TLabel
     Left = 12
     Height = 34
-    Top = 174
+    Top = 152
     Width = 148
     AutoSize = False
     Caption = 'Make sure it already exists with the same structure'
@@ -257,22 +258,22 @@ object fmCopyTable: TfmCopyTable
   end
   object Label5: TLabel
     Left = 9
-    Height = 13
-    Top = 224
-    Width = 170
+    Height = 16
+    Top = 184
+    Width = 227
     Caption = 'select statement from Source Table'
     ParentColor = False
   end
   inline syScript: TSynEdit
-    Left = 8
-    Height = 161
-    Top = 264
-    Width = 593
+    Left = 0
+    Height = 228
+    Top = 208
+    Width = 511
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Pitch = fpFixed
-    Font.Quality = fqNonAntialiased
+    Font.Quality = fqAntialiased
     ParentColor = False
     ParentFont = False
     TabOrder = 5
@@ -926,7 +927,7 @@ object fmCopyTable: TfmCopyTable
     TableNameAttri.Style = [fsBold]
     VariableAttri.FrameEdges = sfeAround
     SQLDialect = sqlSybase
-    left = 460
-    top = 36
+    left = 440
+    top = 264
   end
 end

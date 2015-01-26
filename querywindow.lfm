@@ -1,5 +1,5 @@
 object fmQueryWindow: TfmQueryWindow
-  Left = 409
+  Left = 258
   Height = 601
   Top = 106
   Width = 720
@@ -24,18 +24,20 @@ object fmQueryWindow: TfmQueryWindow
     Top = 0
     Width = 720
     Align = alTop
+    BevelOuter = bvNone
     ClientHeight = 64
     ClientWidth = 720
     Color = clForm
     ParentColor = False
     TabOrder = 1
     object ToolBar1: TToolBar
-      Left = 1
-      Height = 39
+      Left = 0
+      Height = 40
       Top = 24
-      Width = 718
+      Width = 720
       Align = alBottom
       Anchors = [akTop, akLeft, akRight]
+      BorderWidth = 2
       ButtonHeight = 40
       ButtonWidth = 40
       Caption = 'ToolBar1'
@@ -181,9 +183,9 @@ object fmQueryWindow: TfmQueryWindow
       end
       object cxAutoCommit: TCheckBox
         Left = 436
-        Height = 26
+        Height = 21
         Top = 2
-        Width = 113
+        Width = 111
         Caption = 'Auto Commit'
         Checked = True
         State = cbChecked
@@ -191,9 +193,9 @@ object fmQueryWindow: TfmQueryWindow
       end
     end
     object bbClose: TSpeedButton
-      Left = 696
-      Height = 23
-      Top = 1
+      Left = 697
+      Height = 24
+      Top = 0
       Width = 23
       Align = alRight
       Flat = True
@@ -251,14 +253,15 @@ object fmQueryWindow: TfmQueryWindow
     Top = 338
     Width = 720
     Align = alClient
+    BevelOuter = bvNone
     ClientHeight = 263
     ClientWidth = 720
     TabOrder = 3
     object pgOutputPageCtl: TPageControl
-      Left = 1
-      Height = 261
-      Top = 1
-      Width = 718
+      Left = 0
+      Height = 263
+      Top = 0
+      Width = 720
       Align = alClient
       Images = imTabs
       TabOrder = 0
@@ -274,13 +277,12 @@ object fmQueryWindow: TfmQueryWindow
     Font.Height = -16
     Font.Name = 'Courier New'
     Font.Pitch = fpFixed
-    Font.Quality = fqNonAntialiased
+    Font.Quality = fqAntialiased
     ParentColor = False
     ParentFont = False
     PopupMenu = pmMemo
     TabOrder = 0
     OnKeyDown = meQueryKeyDown
-    BorderStyle = bsNone
     Gutter.Color = 16183798
     Gutter.Width = 61
     Gutter.MouseActions = <    
@@ -950,10 +952,6 @@ object fmQueryWindow: TfmQueryWindow
   object pmMemo: TPopupMenu
     left = 105
     top = 173
-    object MenuItem4: TMenuItem
-      Caption = 'Change Font'
-      OnClick = MenuItem4Click
-    end
     object lmUndo: TMenuItem
       Caption = 'Undo'
       OnClick = lmUndoClick

@@ -13,7 +13,7 @@ type
   { TfmViewGen }
 
   TfmViewGen = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     edGenName: TEdit;
     edValue: TEdit;
     Label1: TLabel;

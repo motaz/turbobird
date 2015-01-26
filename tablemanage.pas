@@ -6,14 +6,14 @@ interface
 
 uses
   Classes, SysUtils, sqldb, IBConnection, FileUtil, LResources, Forms, Controls,
-  Graphics, Dialogs, ComCtrls, Grids, Buttons, StdCtrls, CheckLst, LCLType, turbocommon;
+  Graphics, Dialogs, ComCtrls, Grids, Buttons, StdCtrls, CheckLst, LCLType, turbocommon, types;
 
 type
 
   { TfmTableManage }
 
   TfmTableManage = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     bbCreateIndex: TBitBtn;
     bbDrop: TBitBtn;
     bbDropConstraint: TBitBtn;
@@ -37,7 +37,6 @@ type
     bbEditPermission: TBitBtn;
     edDrop: TBitBtn;
     edIndexName: TEdit;
-    GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     ImageList1: TImageList;
     Label1: TLabel;
@@ -84,6 +83,8 @@ type
     procedure sgFieldsDblClick(Sender: TObject);
     procedure sgPermissionsDblClick(Sender: TObject);
     procedure sgTriggersDblClick(Sender: TObject);
+    procedure tsFieldsContextPopup(Sender: TObject; MousePos: TPoint;
+        var Handled: Boolean);
   private
     FDBIndex: Integer;
     FTableName: string;
@@ -148,6 +149,12 @@ procedure TfmTableManage.sgTriggersDblClick(Sender: TObject);
 begin
   // Double clicking allows user to edit trigger
   bbEditTriggerClick(Sender);
+end;
+
+procedure TfmTableManage.tsFieldsContextPopup(Sender: TObject;
+    MousePos: TPoint; var Handled: Boolean);
+begin
+
 end;
 
 

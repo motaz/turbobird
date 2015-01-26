@@ -13,7 +13,7 @@ type
   { TfmUserPermissions }
 
   TfmUserPermissions = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     Label1: TLabel;
     laObject: TLabel;
     StringGrid1: TStringGrid;

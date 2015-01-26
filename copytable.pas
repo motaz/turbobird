@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons, SynEdit, SynHighlighterSQL, sqldb, turbocommon;
+  StdCtrls, Buttons, SynEdit, SynHighlighterSQL, sqldb, turbocommon, IniFiles;
 
 type
 
@@ -32,6 +32,7 @@ type
     procedure bbCloseClick(Sender: TObject);
     procedure cbDestDatabaseChange(Sender: TObject);
     procedure cbSourceTableChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FSourceIndex: Integer;
     { private declarations }
@@ -75,6 +76,19 @@ begin
   end;
   syScript.Lines.Text:= 'select ' + Line;
   syScript.Lines.Add(' from ' + cbSourceTable.Text);
+end;
+
+procedure TfmCopyTable.FormCreate(Sender: TObject);
+var
+   configFile: TIniFile;
+   configFilePath: String;
+begin
+     // Set the editor font from config.ini
+    configFilePath:= ConcatPaths([ExtractFilePath(Application.ExeName), 'config.ini']);
+    configFile:= TIniFile.Create(configFilePath);
+    syScript.Font.Name:=configFile.ReadString('Editor Font', 'font_name', 'Monospace');
+    syScript.Font.Size:=configFile.ReadInteger('Editor Font', 'font_size', 11);
+    configFile.Free;
 end;
 
 procedure TfmCopyTable.bbCloseClick(Sender: TObject);

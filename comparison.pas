@@ -15,7 +15,7 @@ type
   { TfmComparison }
 
   TfmComparison = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     bbStart: TBitBtn;
     bbCancel: TBitBtn;
     cbComparedDatabase: TComboBox;

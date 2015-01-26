@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="1106"/>
+      <BuildNr Value="1107"/>
       <StringTable ProductVersion="0.9"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -149,6 +149,7 @@
         <ComponentName Value="fmViewTrigger"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewTrigger"/>
       </Unit6>
       <Unit7>
         <Filename Value="viewsproc.pas"/>
@@ -156,6 +157,7 @@
         <ComponentName Value="fmViewSProc"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewSProc"/>
       </Unit7>
       <Unit8>
         <Filename Value="viewgen.pas"/>
@@ -163,6 +165,7 @@
         <ComponentName Value="fmViewGen"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewGen"/>
       </Unit8>
       <Unit9>
         <Filename Value="newtable.pas"/>
@@ -170,6 +173,7 @@
         <ComponentName Value="fmNewTable"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="NewTable"/>
       </Unit9>
       <Unit10>
         <Filename Value="newgen.pas"/>
@@ -177,6 +181,7 @@
         <ComponentName Value="fmNewGen"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="NewGen"/>
       </Unit10>
       <Unit11>
         <Filename Value="enterpass.pas"/>
@@ -184,6 +189,7 @@
         <ComponentName Value="fmEnterPass"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="EnterPass"/>
       </Unit11>
       <Unit12>
         <Filename Value="about.pas"/>
@@ -191,12 +197,15 @@
         <ComponentName Value="fmAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="About"/>
       </Unit12>
       <Unit13>
         <Filename Value="createtrigger.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmCreateTrigger"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="CreateTrigger"/>
       </Unit13>
       <Unit14>
         <Filename Value="edittable.pas"/>
@@ -204,12 +213,15 @@
         <ComponentName Value="fmEditTable"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="EditTable"/>
       </Unit14>
       <Unit15>
         <Filename Value="callproc.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmCallProc"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="CallProc"/>
       </Unit15>
       <Unit16>
         <Filename Value="editdatafullrec.pas"/>
@@ -217,6 +229,7 @@
         <ComponentName Value="fmEditDataFullRec"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="EditDataFullRec"/>
       </Unit16>
       <Unit17>
         <Filename Value="udfinfo.pas"/>
@@ -224,6 +237,7 @@
         <ComponentName Value="fmUDFInfo"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="UDFInfo"/>
       </Unit17>
       <Unit18>
         <Filename Value="viewdomain.pas"/>
@@ -231,12 +245,15 @@
         <ComponentName Value="fmViewDomain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewDomain"/>
       </Unit18>
       <Unit19>
         <Filename Value="newdomain.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmNewDomain"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="NewDomain"/>
       </Unit19>
       <Unit20>
         <Filename Value="systables.pas"/>
@@ -250,7 +267,9 @@
         <Filename Value="newconstraint.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmNewConstraint"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="NewConstraint"/>
       </Unit21>
       <Unit22>
         <Filename Value="neweditfield.pas"/>
@@ -258,6 +277,7 @@
         <ComponentName Value="fmNewEditField"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="NewEditField"/>
       </Unit22>
       <Unit23>
         <Filename Value="calen.pas"/>
@@ -270,6 +290,7 @@
       <Unit24>
         <Filename Value="scriptdb.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Scriptdb"/>
       </Unit24>
       <Unit25>
         <Filename Value="userpermissions.pas"/>
@@ -277,6 +298,7 @@
         <ComponentName Value="fmUserPermissions"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="UserPermissions"/>
       </Unit25>
       <Unit26>
         <Filename Value="tablemanage.pas"/>
@@ -284,6 +306,7 @@
         <ComponentName Value="fmTableManage"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="TableManage"/>
       </Unit26>
       <Unit27>
         <Filename Value="backuprestore.pas"/>
@@ -291,6 +314,7 @@
         <ComponentName Value="fmBackupRestore"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="BackupRestore"/>
       </Unit27>
       <Unit28>
         <Filename Value="createuser.pas"/>
@@ -312,6 +336,7 @@
         <ComponentName Value="fmPermissionManage"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="PermissionManage"/>
       </Unit30>
       <Unit31>
         <Filename Value="sqlhistory.pas"/>
@@ -319,6 +344,7 @@
         <ComponentName Value="fmSQLHistory"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="SQLHistory"/>
       </Unit31>
       <Unit32>
         <Filename Value="copytable.pas"/>
@@ -334,6 +360,7 @@
         <ComponentName Value="fmDBInfo"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="dbInfo"/>
       </Unit33>
       <Unit34>
         <Filename Value="comparison.pas"/>
@@ -341,6 +368,7 @@
         <ComponentName Value="fmComparison"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Comparison"/>
       </Unit34>
       <Unit35>
         <Filename Value="procmod.pas"/>
@@ -355,14 +383,17 @@
         <ComponentName Value="fmUpdate"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Update"/>
       </Unit36>
       <Unit37>
         <Filename Value="topologicalsort.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="topologicalsort"/>
       </Unit37>
       <Unit38>
         <Filename Value="unitfirebirdservices.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitFirebirdServices"/>
       </Unit38>
       <Unit39>
         <Filename Value="turbocommon.inc"/>
@@ -375,6 +406,7 @@
       <Unit41>
         <Filename Value="turbocommon.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="turbocommon"/>
       </Unit41>
       <Unit42>
         <Filename Value="importtable.pas"/>

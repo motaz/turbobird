@@ -12,7 +12,8 @@ interface
 uses
   Classes, SysUtils, IBConnection, sqldb, sqldblib, memds, FileUtil, LResources,
   Forms, Controls, Graphics, Dialogs, Menus, ComCtrls, Reg, QueryWindow, Grids,
-  ExtCtrls, Buttons, StdCtrls, TableManage, dbugintf, turbocommon, importtable;
+  ExtCtrls, Buttons, StdCtrls, TableManage, dbugintf, turbocommon, importtable,
+  IniFiles;
 
 {$i turbocommon.inc}
 
@@ -28,7 +29,11 @@ type
   { TfmMain }
 
   TfmMain = class(TForm)
+      editorFontDialog: TFontDialog;
+      Image1: TImage;
     ImageList1: TImageList;
+    mnOptions: TMenuItem;
+    mnEditorFont: TMenuItem;
     toolbarImages: TImageList;
     MainMenu1: TMainMenu;
     mdsHistory: TMemDataset;
@@ -114,8 +119,11 @@ type
     TabSheet1: TTabSheet;
     ToolBar1: TToolBar;
     tbtnCreateNewDB: TToolButton;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
+    tbtnRegDatabase: TToolButton;
+    tbtnRestoreDatabase: TToolButton;
+    tbtnAbout: TToolButton;
+    ToolButton3: TToolButton;
+    tbtnEditorFont: TToolButton;
     tvMain: TTreeView;
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -182,6 +190,7 @@ type
     procedure lmViewUDFClick(Sender: TObject);
     procedure lmDropTableClick(Sender: TObject);
     procedure lmRecalculateStatisticsClick(Sender: TObject);
+    procedure mnEditorFontClick(Sender: TObject);
     procedure mnExitClick(Sender: TObject);
     procedure mnCreateDBClick(Sender: TObject);
     procedure mnRegDBClick(Sender: TObject);
@@ -3588,6 +3597,24 @@ begin
     ShowMessage('Recalculation of index statistics complete.')
   else
     ShowMessage('Error recalculating index statistics: '+Message);
+end;
+
+procedure TfmMain.mnEditorFontClick(Sender: TObject);
+var
+  configFile: TIniFile;
+  configFilePath: String;
+
+begin
+     configFilePath:= ConcatPaths([ExtractFilePath(Application.ExeName), 'config.ini']);
+     configFile:= TIniFile.Create(configFilePath);
+
+     if editorFontDialog.Execute then
+     begin
+        configFile.WriteString('Editor Font', 'font_name', editorFontDialog.Font.Name);
+        configFile.WriteInteger('Editor Font', 'font_size', editorFontDialog.Font.Size);
+
+     end;
+     configFile.Free;
 end;
 
 (********  Create new database  ********)

@@ -13,7 +13,7 @@ type
   { TfmViewDomain }
 
   TfmViewDomain = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     edName: TEdit;
     Label1: TLabel;
     Label3: TLabel;

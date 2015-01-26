@@ -1,44 +1,90 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TfmViewDomain','FORMDATA',[
-  'TPF0'#13'TfmViewDomain'#12'fmViewDomain'#4'Left'#3'J'#1#6'Height'#3#8#1#3'To'
-  +'p'#3#216#0#5'Width'#3'i'#2#7'Caption'#6#12'fmViewDomain'#12'ClientHeight'#3
-  +#8#1#11'ClientWidth'#3'i'#2#10'KeyPreview'#9#7'OnClose'#7#9'FormClose'#9'OnK'
-  +'eyDown'#7#11'FormKeyDown'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6
-  +#7'1.2.2.0'#0#6'TLabel'#6'Label1'#4'Left'#2#11#6'Height'#2#13#3'Top'#2#15#5
-  +'Width'#2'@'#7'Caption'#6#11'Domain name'#11'ParentColor'#8#0#0#6'TLabel'#6
-  +'Label3'#4'Left'#2#11#6'Height'#2#13#3'Top'#2'0'#5'Width'#2'0'#7'Caption'#6#9
-  +'Data type'#11'ParentColor'#8#0#0#6'TLabel'#6'laType'#4'Left'#2'x'#6'Height'
-  +#2#18#3'Top'#2'0'#5'Width'#2'6'#7'Caption'#6#6'laName'#10'Font.Color'#4'))'
-  +#156#0#9'Font.Name'#6#28'courier 10 pitch [bitstream]'#11'ParentColor'#8#10
-  +'ParentFont'#8#0#0#6'TLabel'#6'Label4'#4'Left'#2#11#6'Height'#2#13#3'Top'#2
-  +'P'#5'Width'#2#19#7'Caption'#6#4'Size'#11'ParentColor'#8#0#0#6'TLabel'#6'laS'
-  +'ize'#4'Left'#2'x'#6'Height'#2#18#3'Top'#2'P'#5'Width'#2'+'#7'Caption'#6#6'l'
-  +'aSize'#10'Font.Color'#4'))'#156#0#9'Font.Name'#6#28'courier 10 pitch [bitst'
-  +'ream]'#11'ParentColor'#8#10'ParentFont'#8#0#0#6'TLabel'#6'Label5'#4'Left'#2
-  +#11#6'Height'#2#13#3'Top'#2'p'#5'Width'#2'@'#7'Caption'#6#13'Default Value'
-  +#11'ParentColor'#8#0#0#6'TLabel'#9'laDefault'#4'Left'#2'x'#6'Height'#2#18#3
-  +'Top'#2'p'#5'Width'#2'='#7'Caption'#6#9'laDefault'#10'Font.Color'#4'))'#156#0
-  +#9'Font.Name'#6#28'courier 10 pitch [bitstream]'#11'ParentColor'#8#10'Parent'
-  +'Font'#8#0#0#5'TEdit'#6'edName'#4'Left'#2'x'#6'Height'#2#13#3'Top'#2#16#5'Wi'
-  +'dth'#3'2'#1#10'AutoSelect'#8#11'BorderStyle'#7#6'bsNone'#10'Font.Color'#7#6
-  +'clNavy'#10'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'#2#0#4'Text'#6#9'edGenNam'
-  +'e'#0#0#7'TBitBtn'#7'bbClose'#4'Left'#3'N'#2#6'Height'#2#24#3'Top'#2#0#5'Wid'
-  +'th'#2#27#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#4' X  '#5'Color'#4
-  +#219#242#247#0#10'Font.Style'#11#6'fsBold'#0#7'OnClick'#7#12'bbCloseClick'#10
-  +'ParentFont'#8#8'TabOrder'#2#1#0#0#6'TLabel'#6'Label6'#4'Left'#2#11#6'Height'
-  +#2#13#3'Top'#3#140#0#5'Width'#2'P'#7'Caption'#6#16'Check constraint'#11'Pare'
-  +'ntColor'#8#0#0#6'TLabel'#17'laCheckConstraint'#4'Left'#2'x'#6'Height'#2#18#3
-  +'Top'#3#140#0#5'Width'#3#128#0#7'Caption'#6#17'laCheckConstraint'#10'Font.Co'
-  +'lor'#4'))'#156#0#9'Font.Name'#6#28'courier 10 pitch [bitstream]'#11'ParentC'
-  +'olor'#8#10'ParentFont'#8#0#0#6'TLabel'#6'Label7'#4'Left'#2#11#6'Height'#2#13
-  +#3'Top'#3#176#0#5'Width'#2'B'#7'Caption'#6#13'Character set'#11'ParentColor'
-  +#8#0#0#6'TLabel'#14'laCharacterSet'#4'Left'#2'x'#6'Height'#2#18#3'Top'#3#176
-  +#0#5'Width'#2'i'#7'Caption'#6#14'laCharacterSet'#10'Font.Color'#4'))'#156#0#9
-  +'Font.Name'#6#28'courier 10 pitch [bitstream]'#11'ParentColor'#8#10'ParentFo'
-  +'nt'#8#0#0#6'TLabel'#11'laCollation'#4'Left'#2'x'#6'Height'#2#18#3'Top'#3#216
-  +#0#5'Width'#2'I'#7'Caption'#6#11'laCollation'#10'Font.Color'#4'))'#156#0#9'F'
-  +'ont.Name'#6#28'courier 10 pitch [bitstream]'#11'ParentColor'#8#10'ParentFon'
-  +'t'#8#0#0#6'TLabel'#6'Label8'#4'Left'#2#11#6'Height'#2#13#3'Top'#3#216#0#5'W'
-  +'idth'#2')'#7'Caption'#6#9'Collation'#11'ParentColor'#8#0#0#0
+  'TPF0'#13'TfmViewDomain'#12'fmViewDomain'#4'Left'#3#166#1#6'Height'#3#243#0#3
+  +'Top'#3#205#0#5'Width'#3'U'#2#7'Caption'#6#12'fmViewDomain'#12'ClientHeight'
+  +#3#243#0#11'ClientWidth'#3'U'#2#10'KeyPreview'#9#7'OnClose'#7#9'FormClose'#9
+  +'OnKeyDown'#7#11'FormKeyDown'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'
+  +#6#7'1.2.6.0'#0#6'TLabel'#6'Label1'#4'Left'#2#11#6'Height'#2#16#3'Top'#2#15#5
+  +'Width'#2'Y'#7'Caption'#6#11'Domain name'#11'ParentColor'#8#0#0#6'TLabel'#6
+  +'Label3'#4'Left'#2#11#6'Height'#2#16#3'Top'#2'0'#5'Width'#2'@'#7'Caption'#6#9
+  +'Data type'#11'ParentColor'#8#0#0#6'TLabel'#6'laType'#4'Left'#3#136#0#6'Heig'
+  +'ht'#2#17#3'Top'#2'0'#5'Width'#2'4'#7'Caption'#6#6'laName'#10'Font.Color'#4
+  +'))'#156#0#9'Font.Name'#6#28'courier 10 pitch [bitstream]'#11'ParentColor'#8
+  +#10'ParentFont'#8#0#0#6'TLabel'#6'Label4'#4'Left'#2#11#6'Height'#2#16#3'Top'
+  +#2'P'#5'Width'#2#27#7'Caption'#6#4'Size'#11'ParentColor'#8#0#0#6'TLabel'#6'l'
+  +'aSize'#4'Left'#3#136#0#6'Height'#2#17#3'Top'#2'P'#5'Width'#2'4'#7'Caption'#6
+  +#6'laSize'#10'Font.Color'#4'))'#156#0#9'Font.Name'#6#28'courier 10 pitch [bi'
+  +'tstream]'#11'ParentColor'#8#10'ParentFont'#8#0#0#6'TLabel'#6'Label5'#4'Left'
+  +#2#11#6'Height'#2#16#3'Top'#2'p'#5'Width'#2'Y'#7'Caption'#6#13'Default Value'
+  +#11'ParentColor'#8#0#0#6'TLabel'#9'laDefault'#4'Left'#3#136#0#6'Height'#2#17
+  +#3'Top'#2'p'#5'Width'#2'M'#7'Caption'#6#9'laDefault'#10'Font.Color'#4'))'#156
+  +#0#9'Font.Name'#6#28'courier 10 pitch [bitstream]'#11'ParentColor'#8#10'Pare'
+  +'ntFont'#8#0#0#5'TEdit'#6'edName'#4'Left'#3#136#0#6'Height'#2#26#3'Top'#2#15
+  +#5'Width'#3'2'#1#8'AutoSize'#8#10'AutoSelect'#8#10'Font.Color'#7#6'clNavy'#10
+  +'ParentFont'#8#8'ReadOnly'#9#8'TabOrder'#2#0#4'Text'#6#9'edGenName'#0#0#6'TL'
+  +'abel'#6'Label6'#4'Left'#2#11#6'Height'#2#16#3'Top'#3#140#0#5'Width'#2'k'#7
+  +'Caption'#6#16'Check constraint'#11'ParentColor'#8#0#0#6'TLabel'#17'laCheckC'
+  +'onstraint'#4'Left'#3#136#0#6'Height'#2#17#3'Top'#3#140#0#5'Width'#3#144#0#7
+  +'Caption'#6#17'laCheckConstraint'#10'Font.Color'#4'))'#156#0#9'Font.Name'#6
+  +#28'courier 10 pitch [bitstream]'#11'ParentColor'#8#10'ParentFont'#8#0#0#6'T'
+  +'Label'#6'Label7'#4'Left'#2#11#6'Height'#2#16#3'Top'#3#176#0#5'Width'#2'V'#7
+  +'Caption'#6#13'Character set'#11'ParentColor'#8#0#0#6'TLabel'#14'laCharacter'
+  +'Set'#4'Left'#3#136#0#6'Height'#2#17#3'Top'#3#176#0#5'Width'#2'w'#7'Caption'
+  +#6#14'laCharacterSet'#10'Font.Color'#4'))'#156#0#9'Font.Name'#6#28'courier 1'
+  +'0 pitch [bitstream]'#11'ParentColor'#8#10'ParentFont'#8#0#0#6'TLabel'#11'la'
+  +'Collation'#4'Left'#3#136#0#6'Height'#2#17#3'Top'#3#216#0#5'Width'#2']'#7'Ca'
+  +'ption'#6#11'laCollation'#10'Font.Color'#4'))'#156#0#9'Font.Name'#6#28'couri'
+  +'er 10 pitch [bitstream]'#11'ParentColor'#8#10'ParentFont'#8#0#0#6'TLabel'#6
+  +'Label8'#4'Left'#2#11#6'Height'#2#16#3'Top'#3#216#0#5'Width'#2':'#7'Caption'
+  +#6#9'Collation'#11'ParentColor'#8#0#0#12'TSpeedButton'#7'bbClose'#4'Left'#3
+  +':'#2#6'Height'#2#24#3'Top'#2#0#5'Width'#2#27#7'Anchors'#11#5'akTop'#7'akRig'
+  +'ht'#0#5'Color'#4#219#242#247#0#4'Flat'#9#10'Font.Style'#11#6'fsBold'#0#10'G'
+  +'lyph.Data'#10':'#4#0#0'6'#4#0#0'BM6'#4#0#0#0#0#0#0'6'#0#0#0'('#0#0#0#16#0#0
+  +#0#16#0#0#0#1#0' '#0#0#0#0#0#0#4#0#0'd'#0#0#0'd'#0#0#0#0#0#0#0#0#0#0#0#255
+  +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255
+  +#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255
+  +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255
+  +#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255
+  +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255'&'#255#255
+  +#255'Q'#255#255#255#14#255#255#255#0#255#255#255#0#255#255#255#14#255#255#255
+  +'Q'#255#255#255'&'#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255'('#195#195#195'bAAAn'
+  +#240#240#240'V'#255#255#255#14#255#255#255#14#240#240#240'VAAAn'#195#195#195
+  +'b'#255#255#255'('#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#22#185#185#185'f'#10#10#10#132#0#0#0#135'111w'#240
+  +#240#240'V'#240#240#240'V111w'#0#0#0#135#10#10#10#132#185#185#185'f'#255#255
+  +#255#22#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255
+  +'"'#14#14#14#160#0#0#0#158#0#0#0#145#0#0#0#145'///~///~'#0#0#0#145#0#0#0#145
+  +#0#0#0#158#14#14#14#160#255#255#255'"'#255#255#255#0#255#255#255#0#255#255
+  +#255#0#255#255#255#0#255#255#255#11#183#183#183'.'#4#4#4#171#0#0#0#167#0#0#0
+  +#155#0#0#0#155#0#0#0#155#0#0#0#155#0#0#0#167#5#5#5#170#183#183#183'.'#255#255
+  +#255#11#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#11#184#184#184'2'#29#29#29#165#0#0#0#165#0#0#0#165#0#0#0#165#0#0
+  +#0#165#30#30#30#164#187#187#187'1'#255#255#255#11#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#14#235
+  ,#235#235'X&&&'#146#0#0#0#175#0#0#0#175#0#0#0#175#0#0#0#175'&&&'#146#235#235
+  +#235'X'#255#255#255#14#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255
+  +#0#255#255#255#0#255#255#255#11#235#235#235'X%%%'#153#0#0#0#185#0#0#0#185#0#0
+  +#0#193#0#0#0#193#0#0#0#185#0#0#0#185'%%%'#153#235#235#235'X'#255#255#255#11
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255'"'#31#31
+  +#31#179#0#0#0#196#0#0#0#195#0#0#0#202#4#4#4#190#4#4#4#190#0#0#0#202#0#0#0#195
+  +#0#0#0#196#31#31#31#179#255#255#255'"'#255#255#255#0#255#255#255#0#255#255
+  +#255#0#255#255#255#0#255#255#255#22'999^'#0#0#0#217#0#0#0#212#3#3#3#194#175
+  +#175#175'0'#175#175#175'0'#3#3#3#194#0#0#0#212#0#0#0#217'999^'#255#255#255#22
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255
+  +#255#255#24'666_'#4#4#4#194#172#172#172'1'#255#255#255#11#255#255#255#11#172
+  +#172#172'1'#4#4#4#194'666_'#255#255#255#24#255#255#255#0#255#255#255#0#255
+  +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255
+  +#255#22#255#255#255'"'#255#255#255#11#255#255#255#0#255#255#255#0#255#255#255
+  +#11#255#255#255'#'#255#255#255#22#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255
+  +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255
+  +#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255
+  +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255
+  +#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#7'OnClick'#7#12'bbCloseClick'#10'ParentFont'#8#0#0#0
 ]);
