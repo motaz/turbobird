@@ -1,27 +1,28 @@
+{ This is an automatically generated lazarus resource file }
+
 LazarusResources.Add('TfmEnterPass','FORMDATA',[
-  'TPF0'#12'TfmEnterPass'#11'fmEnterPass'#4'Left'#3'j'#1#6'Height'#3#236#0#3'To'
-  +'p'#3#201#0#5'Width'#3#132#1#13'ActiveControl'#7#6'edUser'#11'BorderIcons'#11
-  +#12'biSystemMenu'#0#11'BorderStyle'#7#8'bsDialog'#7'Caption'#6#22'Connect to'
-  +' Database As'#12'ClientHeight'#3#236#0#11'ClientWidth'#3#132#1#10'OnActivat'
-  +'e'#7#12'FormActivate'#6'OnShow'#7#8'FormShow'#8'Position'#7#14'poScreenCent'
-  +'er'#10'LCLVersion'#6#7'1.0.4.0'#0#6'TLabel'#6'Label1'#4'Left'#2#13#6'Height'
-  +#2#18#3'Top'#2'Y'#5'Width'#2'C'#7'Caption'#6#8'Password'#11'ParentColor'#8#0
-  +#0#6'TLabel'#6'Label2'#4'Left'#2#13#6'Height'#2#18#3'Top'#2','#5'Width'#2' '
-  +#7'Caption'#6#4'User'#11'ParentColor'#8#0#0#6'TLabel'#6'Label3'#4'Left'#2#13
-  +#6'Height'#2#18#3'Top'#3#139#0#5'Width'#2#31#7'Caption'#6#4'Role'#11'ParentC'
-  +'olor'#8#0#0#5'TEdit'#10'edPassword'#4'Left'#2'Y'#6'Height'#2#27#3'Top'#2'U'
-  +#5'Width'#3#176#0#8'EchoMode'#7#10'emPassword'#12'PasswordChar'#6#1'*'#8'Tab'
-  +'Order'#2#1#0#0#7'TBitBtn'#7'BitBtn1'#4'Left'#2#14#6'Height'#2#30#3'Top'#3
-  +#179#0#5'Width'#2'K'#7'Caption'#6#3'&OK'#5'Color'#4#219#242#247#0#7'Default'
-  +#9#4'Kind'#7#4'bkOK'#11'ModalResult'#2#1#8'TabOrder'#2#3#0#0#7'TBitBtn'#7'Bi'
-  +'tBtn2'#4'Left'#2'f'#6'Height'#2#30#3'Top'#3#180#0#5'Width'#2'b'#6'Cancel'#9
-  +#7'Caption'#6#6'Cancel'#5'Color'#4#219#242#247#0#4'Kind'#7#8'bkCancel'#11'Mo'
-  +'dalResult'#2#2#8'TabOrder'#2#4#0#0#5'TEdit'#6'edUser'#4'Left'#2'Y'#6'Height'
-  +#2#27#3'Top'#2''''#5'Width'#3#176#0#8'TabOrder'#2#0#0#0#9'TComboBox'#6'cbRol'
-  +'e'#4'Left'#2'Y'#6'Height'#2#29#3'Top'#3#133#0#5'Width'#3#176#0#10'ItemHeigh'
-  +'t'#2#0#8'TabOrder'#2#2#0#0#6'TLabel'#6'Label4'#4'Left'#2#13#6'Height'#2#18#3
-  +'Top'#2#9#5'Width'#2'A'#7'Caption'#6#8'Database'#11'ParentColor'#8#0#0#6'TLa'
-  +'bel'#10'laDatabase'#4'Left'#2'Y'#6'Height'#2#18#3'Top'#2#9#5'Width'#2'A'#7
-  +'Caption'#6#8'Database'#10'Font.Color'#7#6'clGray'#11'ParentColor'#8#10'Pare'
-  +'ntFont'#8#0#0#0
+  'TPF0'#12'TfmEnterPass'#11'fmEnterPass'#4'Left'#3#249#1#6'Height'#3#171#0#3'T'
+  +'op'#3#216#0#5'Width'#3'y'#1#13'ActiveControl'#7#6'edUser'#11'BorderIcons'#11
+  +#12'biSystemMenu'#0#11'BorderStyle'#7#8'bsSingle'#7'Caption'#6#22'Connect to'
+  +' Database As'#12'ClientHeight'#3#171#0#11'ClientWidth'#3'y'#1#10'OnActivate'
+  +#7#12'FormActivate'#6'OnShow'#7#8'FormShow'#8'Position'#7#14'poScreenCenter'
+  +#10'LCLVersion'#6#7'1.2.6.0'#0#6'TLabel'#6'Label1'#4'Left'#2#13#6'Height'#2
+  +#16#3'Top'#2'H'#5'Width'#2'?'#7'Caption'#6#8'Password'#11'ParentColor'#8#0#0
+  +#6'TLabel'#6'Label2'#4'Left'#2#13#6'Height'#2#16#3'Top'#2','#5'Width'#2' '#7
+  +'Caption'#6#4'User'#11'ParentColor'#8#0#0#6'TLabel'#6'Label3'#4'Left'#2#16#6
+  +'Height'#2#16#3'Top'#2'h'#5'Width'#2#30#7'Caption'#6#4'Role'#11'ParentColor'
+  +#8#0#0#5'TEdit'#10'edPassword'#4'Left'#2'Y'#6'Height'#2#24#3'Top'#2'H'#5'Wid'
+  +'th'#3#16#1#8'EchoMode'#7#10'emPassword'#12'PasswordChar'#6#1'*'#8'TabOrder'
+  +#2#1#0#0#7'TBitBtn'#7'BitBtn1'#4'Left'#3#200#0#6'Height'#2#30#3'Top'#3#136#0
+  +#5'Width'#2'K'#7'Caption'#6#3'&OK'#5'Color'#7#6'clForm'#7'Default'#9#4'Kind'
+  +#7#4'bkOK'#11'ModalResult'#2#1#8'TabOrder'#2#3#0#0#7'TBitBtn'#7'BitBtn2'#4'L'
+  +'eft'#3#23#1#6'Height'#2#30#3'Top'#3#136#0#5'Width'#2'R'#6'Cancel'#9#7'Capti'
+  +'on'#6#6'Cancel'#5'Color'#7#6'clForm'#4'Kind'#7#8'bkCancel'#11'ModalResult'#2
+  +#2#8'TabOrder'#2#4#0#0#5'TEdit'#6'edUser'#4'Left'#2'Y'#6'Height'#2#24#3'Top'
+  +#2''''#5'Width'#3#16#1#8'TabOrder'#2#0#0#0#9'TComboBox'#6'cbRole'#4'Left'#2
+  +'Y'#6'Height'#2#24#3'Top'#2'h'#5'Width'#3#16#1#10'ItemHeight'#2#16#8'TabOrde'
+  +'r'#2#2#0#0#6'TLabel'#6'Label4'#4'Left'#2#13#6'Height'#2#16#3'Top'#2#9#5'Wid'
+  +'th'#2'='#7'Caption'#6#8'Database'#11'ParentColor'#8#0#0#6'TLabel'#10'laData'
+  +'base'#4'Left'#2'Y'#6'Height'#2#16#3'Top'#2#9#5'Width'#2'='#7'Caption'#6#8'D'
+  +'atabase'#10'Font.Color'#7#6'clGray'#11'ParentColor'#8#10'ParentFont'#8#0#0#0
 ]);

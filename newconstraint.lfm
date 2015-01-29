@@ -1,27 +1,28 @@
 object fmNewConstraint: TfmNewConstraint
-  Left = 622
-  Height = 600
-  Top = 256
-  Width = 390
+  Left = 499
+  Height = 536
+  Top = 53
+  Width = 445
   ActiveControl = edNewName
+  BorderStyle = bsSingle
   Caption = 'fmNewConstraint'
-  ClientHeight = 600
-  ClientWidth = 390
+  ClientHeight = 536
+  ClientWidth = 445
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.2.6.0'
   object Label1: TLabel
     Left = 8
-    Height = 18
+    Height = 16
     Top = 15
-    Width = 158
+    Width = 156
     Caption = 'New Constraint on table'
     ParentColor = False
   end
   object laTable: TLabel
     Left = 184
-    Height = 18
+    Height = 16
     Top = 15
-    Width = 55
+    Width = 50
     Caption = 'laTable'
     Font.Style = [fsBold]
     ParentColor = False
@@ -29,96 +30,95 @@ object fmNewConstraint: TfmNewConstraint
   end
   object Label6: TLabel
     Left = 8
-    Height = 18
-    Top = 464
-    Width = 92
+    Height = 16
+    Top = 432
+    Width = 90
     Caption = 'Update action'
     ParentColor = False
   end
   object Label7: TLabel
-    Left = 8
-    Height = 18
-    Top = 503
-    Width = 88
+    Left = 12
+    Height = 16
+    Top = 472
+    Width = 86
     Caption = 'Delete action'
     ParentColor = False
   end
   object GroupBox1: TGroupBox
-    Left = 16
+    Left = 0
     Height = 170
     Top = 40
-    Width = 353
+    Width = 441
     Anchors = [akTop, akLeft, akRight]
     Caption = 'Current table'
-    ClientHeight = 151
-    ClientWidth = 349
+    ClientHeight = 149
+    ClientWidth = 435
     TabOrder = 0
     object Label2: TLabel
-      Left = 10
-      Height = 18
-      Top = 15
-      Width = 140
+      Left = 8
+      Height = 16
+      Top = 8
+      Width = 137
       Caption = 'New constraint name'
       ParentColor = False
     end
     object Label3: TLabel
       Left = 10
-      Height = 18
-      Top = 47
-      Width = 58
+      Height = 16
+      Top = 39
+      Width = 59
       Caption = 'On fields'
       ParentColor = False
     end
     object edNewName: TEdit
-      Left = 166
-      Height = 27
-      Top = 7
-      Width = 137
+      Left = 150
+      Height = 24
+      Top = 8
+      Width = 226
       TabOrder = 0
       Text = 'edNewName'
     end
     object clxOnFields: TCheckListBox
-      Left = 166
+      Left = 150
       Height = 104
       Top = 39
-      Width = 160
+      Width = 282
       ItemHeight = 0
       TabOrder = 1
-      TopIndex = -1
     end
   end
   object GroupBox2: TGroupBox
-    Left = 16
+    Left = 0
     Height = 200
     Top = 224
-    Width = 351
+    Width = 441
     Anchors = [akTop, akLeft, akRight]
     Caption = 'Foreign Table'
-    ClientHeight = 181
-    ClientWidth = 347
+    ClientHeight = 179
+    ClientWidth = 435
     TabOrder = 1
     object Label4: TLabel
       Left = 11
-      Height = 18
+      Height = 16
       Top = 12
-      Width = 76
+      Width = 74
       Caption = 'Table name'
       ParentColor = False
     end
     object Label5: TLabel
       Left = 11
-      Height = 18
+      Height = 16
       Top = 52
-      Width = 58
+      Width = 59
       Caption = 'On fields'
       ParentColor = False
     end
     object cbTables: TComboBox
       Left = 108
-      Height = 31
+      Height = 25
       Top = 7
-      Width = 138
-      ItemHeight = 0
+      Width = 268
+      ItemHeight = 16
       OnChange = cbTablesChange
       Style = csDropDownList
       TabOrder = 0
@@ -126,19 +126,18 @@ object fmNewConstraint: TfmNewConstraint
     object clxForFields: TCheckListBox
       Left = 108
       Height = 125
-      Top = 47
-      Width = 159
+      Top = 48
+      Width = 324
       ItemHeight = 0
       TabOrder = 1
-      TopIndex = -1
     end
   end
   object cbUpdateAction: TComboBox
-    Left = 128
-    Height = 31
-    Top = 456
-    Width = 121
-    ItemHeight = 0
+    Left = 113
+    Height = 25
+    Top = 432
+    Width = 263
+    ItemHeight = 16
     ItemIndex = 0
     Items.Strings = (
       'Restrict'
@@ -152,23 +151,58 @@ object fmNewConstraint: TfmNewConstraint
     Text = 'Restrict'
   end
   object bbScript: TBitBtn
-    Left = 8
+    Left = 344
     Height = 30
-    Top = 560
+    Top = 504
     Width = 92
     Caption = 'Script'
-    Color = 16249563
-    Kind = bkAll
+    Color = clForm
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000064000000640000000000000000000000000000001010
+      100D0000003D0000003F0000003F0000003F0000003F0000003F000000321010
+      1005000000000000000000000000000000000000000000000000000000000000
+      003EFFFFFFFFDCDCDCFFFEFEFEFFFBFBFBFFF7F7F7FFEEEEEEFFDBDBDBFF2525
+      258F0F0F0F070000000000000000000000000000000000000000000000000000
+      0040FFFFFFFFFFFFFFFFF9F9F9FFF8F8F9FFF4F4F5FFEBEBEBFFC6C6C6FEF5F5
+      F5FF2626258E1111110600000000000000000000000000000000000000000000
+      0040FFFFFFFF929292FFFFFFFFFFFAFAFAFFFCFCFCFFD5D5D5FF868686FFFFFF
+      FFFEDBDBDDFF2B2B2C8700000004000000000000000000000000000000000000
+      0040FFFFFFFFFFFFFFFFFBFBFBFFCFCFD0FF868686FF878787FF474747FFFFFF
+      FFFFEEEEEEFECECED0FF49494992000000020000000000000000000000000000
+      0040FFFFFFFF919191FFFFFFFFFF6F6F6EFFC9C9C9FFE4E4E4FF9A9A9AFFFFFF
+      FFFFFFFFFFFFFFFFFFFEE7E7E8FF323232782B2B2B0200000000000000000000
+      0040FFFFFFFFFFFFFFFFFFFFFFFF838383FFCACACAFFAEAEAEFF747474FF5455
+      55FF535353FF6E6E6EFF6B6B6BFEEDEDECFF0000003400000000000000000000
+      0040FFFFFFFF919191FFFFFFFFFF6A6A6AFFD9D9D9FFEDEDEDFFF0EEE9FFE9DD
+      CBFFDBDDDEFFADADADFF636363FFFFFFFFFF0000004C00000000000000001B1D
+      1E4DFFFFFFFFFFFFFFFFFFFFFFFF868687FFE4E6E8FFE8EAEDFFAE6D06FFD2AF
+      7DFFACAFB3FFD7DCE3FFB3B8C0FFFFFFFFFF6265686700000000FFFFFF0CE1C5
+      A0C5CB8B34FFC79145FFC68933FFC3C1C1FFD0AD79FFB8791AFFBF8732FFCDA0
+      5DFFF5FCFFFFBE7711FFCE9241FFD29441FFDBC9B0A300000000FFFFFF12D4B7
+      91C6FFFEFEFFFFFFFFFFD4A667FFE2C49AFFC0832AFFF8FEFFFFF5FAFFFFCD9F
+      5BFFEEDEC7FFC48021FFC9D1DDFFFFFFFFFF2A2B2E5900000000FFFFFF01CEC6
+      BC94DBA766FFC8862DFFD8AE75FFEDDCC3FFD0A468FFB8BABCFFB5B6B6FFD7BA
+      90FFE7CBA6FFC78225FFF9FDFFFFFFFFFFFF0000004D00000000FFFFFF0AE3B9
+      84D9ECCEA8FEFFFFFFFFE9D0AFFFF5ECDFFFCA8830FFFEFFFFFFFFFFFFFFD19B
+      50FFF4E8D8FFCC872DFFF7FCFFFFFFFFFFFF0000004D00000000FFFFFF01D7CA
+      BA9CE0A861FFD5994FFFDCAB6EFFF4F7FCFFE9D2B6FFD19343FFD19341FFE2C2
+      99FFFAFFFFFFD79C4FFFF4F8FFFFFFFFFFFF0000004D00000000000000000000
+      0041FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000004A00000000000000001111
+      110C000000390000003D0000003D0000003D0000003D0000003D0000003D0000
+      003D0000003D0000003D0000003D000000390707070F00000000
+    }
     ModalResult = 1
     OnClick = bbScriptClick
     TabOrder = 3
   end
   object cbDeleteAction: TComboBox
-    Left = 128
-    Height = 31
-    Top = 496
-    Width = 121
-    ItemHeight = 0
+    Left = 113
+    Height = 25
+    Top = 472
+    Width = 265
+    ItemHeight = 16
     ItemIndex = 0
     Items.Strings = (
       'Restrict'

@@ -1,7 +1,7 @@
 object fmEditDataFullRec: TfmEditDataFullRec
-  Left = 532
+  Left = 503
   Height = 300
-  Top = 328
+  Top = 246
   Width = 593
   ActiveControl = bbSave
   Caption = 'Edit Data Full Record'
@@ -9,20 +9,20 @@ object fmEditDataFullRec: TfmEditDataFullRec
   ClientWidth = 593
   OnClose = FormClose
   Position = poScreenCenter
-  LCLVersion = '1.2.2.0'
+  LCLVersion = '1.2.6.0'
   object Label1: TLabel
     Left = 258
-    Height = 13
+    Height = 16
     Top = 27
-    Width = 45
+    Width = 59
     Caption = 'Record #'
     ParentColor = False
   end
   object laPos: TLabel
     Left = 326
-    Height = 13
+    Height = 16
     Top = 27
-    Width = 6
+    Width = 9
     Caption = '0'
     Font.Color = 11610912
     ParentColor = False
@@ -31,7 +31,7 @@ object fmEditDataFullRec: TfmEditDataFullRec
   object DBNavigator1: TDBNavigator
     Left = 8
     Height = 25
-    Top = 21
+    Top = 16
     Width = 241
     BevelOuter = bvNone
     ChildSizing.EnlargeHorizontal = crsScaleChilds

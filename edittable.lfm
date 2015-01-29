@@ -1,49 +1,55 @@
 object fmEditTable: TfmEditTable
-  Left = 602
-  Height = 300
-  Top = 404
-  Width = 568
+  Left = 345
+  Height = 256
+  Top = 170
+  Width = 612
   ActiveControl = Panel1
   Caption = 'fmEditTable'
-  ClientHeight = 300
-  ClientWidth = 568
+  ClientHeight = 256
+  ClientWidth = 612
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.2.2.0'
+  LCLVersion = '1.2.6.0'
   object Panel1: TPanel
     Left = 0
-    Height = 50
+    Height = 32
     Top = 0
-    Width = 568
+    Width = 612
     Align = alTop
-    ClientHeight = 50
-    ClientWidth = 568
+    ClientHeight = 32
+    ClientWidth = 612
     ParentColor = False
     TabOrder = 0
     object Label1: TLabel
-      Left = 258
-      Height = 13
-      Top = 27
-      Width = 45
+      Left = 292
+      Height = 30
+      Top = 1
+      Width = 59
+      Align = alLeft
+      Alignment = taCenter
+      BorderSpacing.Left = 50
       Caption = 'Record #'
       ParentColor = False
     end
     object laPos: TLabel
-      Left = 326
-      Height = 13
-      Top = 27
-      Width = 6
+      Left = 351
+      Height = 30
+      Top = 1
+      Width = 9
+      Align = alLeft
+      Alignment = taCenter
       Caption = '0'
       Font.Color = 11610912
       ParentColor = False
       ParentFont = False
     end
     object DBNavigator1: TDBNavigator
-      Left = 8
-      Height = 25
-      Top = 21
+      Left = 1
+      Height = 30
+      Top = 1
       Width = 241
+      Align = alLeft
       BevelOuter = bvNone
       ChildSizing.EnlargeHorizontal = crsScaleChilds
       ChildSizing.EnlargeVertical = crsScaleChilds
@@ -51,7 +57,7 @@ object fmEditTable: TfmEditTable
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 100
-      ClientHeight = 25
+      ClientHeight = 30
       ClientWidth = 241
       Color = 14539471
       DataSource = Datasource1
@@ -60,20 +66,23 @@ object fmEditTable: TfmEditTable
       TabOrder = 0
     end
     object bbSave: TBitBtn
-      Left = 480
+      Left = 536
       Height = 30
-      Top = 15
+      Top = 1
       Width = 75
+      Align = alRight
       Caption = 'Save'
+      Kind = bkYesToAll
+      ModalResult = 10
       OnClick = bbSaveClick
       TabOrder = 1
     end
   end
   object DBGrid1: TDBGrid
     Left = 0
-    Height = 250
-    Top = 50
-    Width = 568
+    Height = 224
+    Top = 32
+    Width = 612
     Align = alClient
     Color = clWindow
     Columns = <>
@@ -86,15 +95,15 @@ object fmEditTable: TfmEditTable
   end
   object Datasource1: TDataSource
     DataSet = sqEditTable
-    left = 472
-    top = 48
+    left = 408
+    top = 144
   end
   object sqEditTable: TSQLQuery
     FieldDefs = <>
     AutoCalcFields = False
     AfterScroll = sqEditTableAfterScroll
     Params = <>
-    left = 357
-    top = 20
+    left = 288
+    top = 128
   end
 end

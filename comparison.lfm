@@ -1,7 +1,7 @@
 object fmComparison: TfmComparison
   Left = 303
   Height = 628
-  Top = 182
+  Top = 79
   Width = 710
   Caption = 'Database comparison'
   ClientHeight = 628
@@ -12,20 +12,20 @@ object fmComparison: TfmComparison
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '1.2.4.0'
+  LCLVersion = '1.2.6.0'
   object Label1: TLabel
     Left = 15
-    Height = 17
-    Top = 112
-    Width = 174
+    Height = 16
+    Top = 120
+    Width = 165
     Caption = 'Original (target) database'
     ParentColor = False
   end
   object laDatabase: TLabel
     Left = 226
-    Height = 17
-    Top = 112
-    Width = 80
+    Height = 16
+    Top = 120
+    Width = 77
     Caption = 'laDatabase'
     Font.Style = [fsBold]
     ParentColor = False
@@ -33,19 +33,19 @@ object fmComparison: TfmComparison
   end
   object Label2: TLabel
     Left = 16
-    Height = 17
-    Top = 143
-    Width = 195
+    Height = 16
+    Top = 144
+    Width = 183
     Caption = 'Compared (source) database'
     ParentColor = False
   end
   object cbComparedDatabase: TComboBox
     Left = 226
-    Height = 31
+    Height = 25
     Hint = 'All changes from this database to the target database will be listed'
-    Top = 136
+    Top = 144
     Width = 460
-    ItemHeight = 0
+    ItemHeight = 16
     OnChange = cbComparedDatabaseChange
     ParentShowHint = False
     ShowHint = True
@@ -54,16 +54,16 @@ object fmComparison: TfmComparison
   end
   object laComparedDatabase: TLabel
     Left = 226
-    Height = 17
+    Height = 16
     Top = 176
-    Width = 11
+    Width = 12
     Caption = '[]'
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
   end
   object bbStart: TBitBtn
-    Left = 13
+    Left = 5
     Height = 30
     Top = 312
     Width = 154
@@ -109,11 +109,13 @@ object fmComparison: TfmComparison
     TabOrder = 3
   end
   object meLog: TMemo
-    Left = 15
-    Height = 248
+    Left = 5
+    Height = 250
     Top = 352
-    Width = 674
+    Width = 700
+    Align = alBottom
     Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Around = 5
     Font.Name = 'Courier 10 Pitch'
     ParentFont = False
     ReadOnly = True
@@ -122,10 +124,10 @@ object fmComparison: TfmComparison
   end
   object laScript: TLabel
     Cursor = crHandPoint
-    Left = 272
-    Height = 17
-    Top = 325
-    Width = 272
+    Left = 288
+    Height = 16
+    Top = 320
+    Width = 257
     Caption = 'Script differences in compared database'
     Font.Style = [fsUnderline]
     ParentColor = False
@@ -133,60 +135,60 @@ object fmComparison: TfmComparison
     OnClick = laScriptClick
   end
   object GroupBox1: TGroupBox
-    Left = 15
-    Height = 112
-    Top = 192
-    Width = 488
+    Left = 5
+    Height = 109
+    Top = 195
+    Width = 498
     Caption = 'Compared objects'
-    ClientHeight = 93
-    ClientWidth = 484
+    ClientHeight = 88
+    ClientWidth = 492
     TabOrder = 2
     object cxTables: TCheckBox
       Left = 11
-      Height = 24
+      Height = 21
       Top = 4
-      Width = 69
+      Width = 67
       Caption = 'Tables'
       TabOrder = 0
     end
     object cxGenerators: TCheckBox
       Left = 11
-      Height = 24
+      Height = 21
       Top = 32
-      Width = 102
+      Width = 98
       Caption = 'Generators'
       TabOrder = 1
     end
     object cxTriggers: TCheckBox
       Left = 151
-      Height = 24
+      Height = 21
       Top = 4
-      Width = 80
+      Width = 78
       Caption = 'Triggers'
       TabOrder = 2
     end
     object cxViews: TCheckBox
       Left = 151
-      Height = 24
+      Height = 21
       Top = 34
-      Width = 66
+      Width = 64
       Caption = 'Views'
       TabOrder = 3
     end
     object cxStoredProcs: TCheckBox
       Left = 262
-      Height = 24
+      Height = 21
       Top = 4
-      Width = 113
+      Width = 107
       Caption = 'Stored Procs'
       TabOrder = 4
     end
     object cxUDFs: TCheckBox
       Left = 262
-      Height = 24
+      Height = 21
       Hint = 'User Defined Functions'
       Top = 32
-      Width = 61
+      Width = 60
       Caption = 'UDFs'
       ParentShowHint = False
       ShowHint = True
@@ -194,25 +196,25 @@ object fmComparison: TfmComparison
     end
     object cxDomains: TCheckBox
       Left = 390
-      Height = 24
+      Height = 21
       Top = 4
-      Width = 85
+      Width = 82
       Caption = 'Domains'
       TabOrder = 6
     end
     object cxRoles: TCheckBox
       Left = 390
-      Height = 24
+      Height = 21
       Top = 34
-      Width = 63
+      Width = 61
       Caption = 'Roles'
       TabOrder = 7
     end
     object cxExceptions: TCheckBox
       Left = 11
-      Height = 24
+      Height = 21
       Top = 61
-      Width = 100
+      Width = 96
       Caption = 'Exceptions'
       TabOrder = 8
     end
@@ -228,26 +230,13 @@ object fmComparison: TfmComparison
       end>
     SimplePanel = False
   end
-  object bbClose: TBitBtn
-    Left = 676
-    Height = 24
-    Top = 0
-    Width = 27
-    Anchors = [akTop, akRight]
-    Caption = ' X  '
-    Color = 16249563
-    Font.Style = [fsBold]
-    OnClick = bbCloseClick
-    ParentFont = False
-    TabOrder = 5
-    TabStop = False
-  end
   object Label3: TLabel
-    Left = 13
-    Height = 98
+    Left = 5
+    Height = 96
     Top = 8
-    Width = 697
+    Width = 664
     AutoSize = False
+    BorderSpacing.Around = 5
     Caption = 'Database comparison tool compares original database structure to another database structure.'#13#10'It generates a script to make the compared (source) database structure become like the original (target) database.'#13#10'For instance, the original database could be a development database, and compared database is an old version that'#13#10'is deployed at a customer. This tool generates a script to make the customer database structure '#13#10'resemble the development database as much as possible.'
     Color = clCream
     Font.Height = -11
@@ -257,28 +246,28 @@ object fmComparison: TfmComparison
     WordWrap = True
   end
   object GroupBox2: TGroupBox
-    Left = 504
+    Left = 506
     Height = 108
     Top = 195
     Width = 199
     Caption = 'Options'
-    ClientHeight = 89
-    ClientWidth = 195
-    TabOrder = 6
+    ClientHeight = 87
+    ClientWidth = 193
+    TabOrder = 5
     object cxIgnoreLength: TCheckBox
       Left = 11
-      Height = 24
+      Height = 21
       Top = 1
-      Width = 154
+      Width = 150
       Caption = 'Ignore fields length'
       TabOrder = 0
     end
     object cxRemovedObjects: TCheckBox
       Left = 11
-      Height = 24
+      Height = 21
       Hint = 'Check objects present in source but removed in target database'
       Top = 22
-      Width = 182
+      Width = 174
       Caption = 'Check removed objects'
       ParentShowHint = False
       ShowHint = True
@@ -286,7 +275,7 @@ object fmComparison: TfmComparison
     end
   end
   object bbCancel: TBitBtn
-    Left = 176
+    Left = 168
     Height = 30
     Top = 312
     Width = 78
@@ -328,6 +317,54 @@ object fmComparison: TfmComparison
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
     }
     OnClick = bbCancelClick
-    TabOrder = 7
+    TabOrder = 6
+  end
+  object bbClose: TSpeedButton
+    Left = 678
+    Height = 24
+    Top = 0
+    Width = 27
+    Anchors = [akTop, akRight]
+    Color = clForm
+    Flat = True
+    Font.Style = [fsBold]
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF26FFFFFF51FFFFFF0EFFFFFF00FFFFFF00FFFF
+      FF0EFFFFFF51FFFFFF26FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF28C3C3C3624141416EF0F0F056FFFFFF0EFFFFFF0EF0F0
+      F0564141416EC3C3C362FFFFFF28FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF16B9B9B9660A0A0A840000008731313177F0F0F056F0F0F0563131
+      3177000000870A0A0A84B9B9B966FFFFFF16FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF220E0E0EA00000009E00000091000000912F2F2F7E2F2F2F7E0000
+      0091000000910000009E0E0E0EA0FFFFFF22FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF0BB7B7B72E040404AB000000A70000009B0000009B0000009B0000
+      009B000000A7050505AAB7B7B72EFFFFFF0BFFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF0BB8B8B8321D1D1DA5000000A5000000A5000000A50000
+      00A51E1E1EA4BBBBBB31FFFFFF0BFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF0EEBEBEB5826262692000000AF000000AF000000AF0000
+      00AF26262692EBEBEB58FFFFFF0EFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF0BEBEBEB5825252599000000B9000000B9000000C1000000C10000
+      00B9000000B925252599EBEBEB58FFFFFF0BFFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF221F1F1FB3000000C4000000C3000000CA040404BE040404BE0000
+      00CA000000C3000000C41F1F1FB3FFFFFF22FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF163939395E000000D9000000D4030303C2AFAFAF30AFAFAF300303
+      03C2000000D4000000D93939395EFFFFFF16FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF183636365F040404C2ACACAC31FFFFFF0BFFFFFF0BACAC
+      AC31040404C23636365FFFFFFF18FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF16FFFFFF22FFFFFF0BFFFFFF00FFFFFF00FFFF
+      FF0BFFFFFF23FFFFFF16FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+    }
+    OnClick = bbCloseClick
+    ParentFont = False
   end
 end

@@ -1,107 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <ProjectOptions>
+  <ProjectSession>
     <Version Value="9"/>
-    <General>
-      <Flags>
-        <LRSInOutputDirectory Value="False"/>
-      </Flags>
-      <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
-      <Title Value="TurboBird"/>
-      <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
-      <Icon Value="0"/>
-    </General>
-    <VersionInfo>
-      <UseVersionInfo Value="True"/>
-      <AutoIncrementBuild Value="True"/>
-      <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="2"/>
-      <BuildNr Value="1107"/>
-      <StringTable ProductVersion="0.9"/>
-    </VersionInfo>
-    <BuildModes Count="2">
-      <Item1 Name="default" Default="True"/>
-      <Item2 Name="debug">
-        <CompilerOptions>
-          <Version Value="11"/>
-          <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../Synapse/source/lib"/>
-          </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <IncludeAssertionCode Value="True"/>
-            </SyntaxOptions>
-          </Parsing>
-          <CodeGeneration>
-            <Checks>
-              <IOChecks Value="True"/>
-              <RangeChecks Value="True"/>
-              <OverflowChecks Value="True"/>
-              <StackChecks Value="True"/>
-            </Checks>
-            <Optimizations>
-              <OptimizationLevel Value="0"/>
-            </Optimizations>
-          </CodeGeneration>
-          <Linking>
-            <Debugging>
-              <UseHeaptrc Value="True"/>
-            </Debugging>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
-          </Linking>
-          <Other>
-            <CustomOptions Value="-dDEBUG -O-1"/>
-            <CompilerPath Value="$(CompPath)"/>
-          </Other>
-        </CompilerOptions>
-      </Item2>
-    </BuildModes>
-    <PublishOptions>
-      <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
-    </PublishOptions>
-    <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-        <CommandLineParams Value="--debug-log=log.txt"/>
-        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
-      </local>
-    </RunParams>
-    <RequiredPackages Count="6">
-      <Item1>
-        <PackageName Value="laz_synapse"/>
-      </Item1>
-      <Item2>
-        <PackageName Value="MemDSLaz"/>
-      </Item2>
-      <Item3>
-        <PackageName Value="SQLDBLaz"/>
-      </Item3>
-      <Item4>
-        <PackageName Value="SynEdit"/>
-        <MinVersion Major="1" Valid="True"/>
-      </Item4>
-      <Item5>
-        <PackageName Value="FCL"/>
-        <MinVersion Major="1" Valid="True"/>
-      </Item5>
-      <Item6>
-        <PackageName Value="LCL"/>
-      </Item6>
-    </RequiredPackages>
-    <Units Count="45">
+    <Units Count="47">
       <Unit0>
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="22"/>
+        <CursorPos X="2" Y="35"/>
+        <UsageCount Value="110"/>
       </Unit0>
       <Unit1>
         <Filename Value="main.pas"/>
@@ -110,6 +18,14 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="main"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="3599"/>
+        <CursorPos X="45" Y="3611"/>
+        <UsageCount Value="110"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="createdb.pas"/>
@@ -118,6 +34,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CreateDb"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="9" Y="5"/>
+        <UsageCount Value="110"/>
       </Unit2>
       <Unit3>
         <Filename Value="reg.pas"/>
@@ -126,6 +46,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Reg"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="42"/>
+        <CursorPos X="24" Y="49"/>
+        <UsageCount Value="110"/>
       </Unit3>
       <Unit4>
         <Filename Value="querywindow.pas"/>
@@ -134,6 +58,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="QueryWindow"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1412"/>
+        <CursorPos X="59" Y="1421"/>
+        <UsageCount Value="110"/>
       </Unit4>
       <Unit5>
         <Filename Value="viewview.pas"/>
@@ -142,6 +70,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewView"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="40"/>
+        <CursorPos X="1" Y="45"/>
+        <UsageCount Value="110"/>
       </Unit5>
       <Unit6>
         <Filename Value="viewtrigger.pas"/>
@@ -150,6 +82,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewTrigger"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="49"/>
+        <CursorPos X="5" Y="65"/>
+        <UsageCount Value="110"/>
       </Unit6>
       <Unit7>
         <Filename Value="viewsproc.pas"/>
@@ -158,6 +94,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewSProc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="49"/>
+        <CursorPos X="26" Y="49"/>
+        <UsageCount Value="110"/>
       </Unit7>
       <Unit8>
         <Filename Value="viewgen.pas"/>
@@ -166,6 +106,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewGen"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="37"/>
+        <CursorPos X="36" Y="49"/>
+        <UsageCount Value="110"/>
       </Unit8>
       <Unit9>
         <Filename Value="newtable.pas"/>
@@ -174,6 +118,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewTable"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="22" Y="22"/>
+        <UsageCount Value="110"/>
       </Unit9>
       <Unit10>
         <Filename Value="newgen.pas"/>
@@ -182,6 +130,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewGen"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="110"/>
       </Unit10>
       <Unit11>
         <Filename Value="enterpass.pas"/>
@@ -190,6 +142,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EnterPass"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="20" Y="16"/>
+        <UsageCount Value="110"/>
       </Unit11>
       <Unit12>
         <Filename Value="about.pas"/>
@@ -198,6 +154,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="About"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="110"/>
       </Unit12>
       <Unit13>
         <Filename Value="createtrigger.pas"/>
@@ -206,6 +166,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CreateTrigger"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="36" Y="16"/>
+        <UsageCount Value="110"/>
       </Unit13>
       <Unit14>
         <Filename Value="edittable.pas"/>
@@ -214,6 +178,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EditTable"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="29" Y="19"/>
+        <UsageCount Value="110"/>
       </Unit14>
       <Unit15>
         <Filename Value="callproc.pas"/>
@@ -222,6 +190,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CallProc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="41" Y="7"/>
+        <UsageCount Value="110"/>
       </Unit15>
       <Unit16>
         <Filename Value="editdatafullrec.pas"/>
@@ -230,6 +202,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EditDataFullRec"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="23" Y="7"/>
+        <UsageCount Value="110"/>
       </Unit16>
       <Unit17>
         <Filename Value="udfinfo.pas"/>
@@ -238,6 +214,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UDFInfo"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="17" Y="10"/>
+        <UsageCount Value="110"/>
       </Unit17>
       <Unit18>
         <Filename Value="viewdomain.pas"/>
@@ -246,6 +226,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewDomain"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="36" Y="10"/>
+        <UsageCount Value="110"/>
       </Unit18>
       <Unit19>
         <Filename Value="newdomain.pas"/>
@@ -254,6 +238,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewDomain"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="32" Y="6"/>
+        <UsageCount Value="110"/>
       </Unit19>
       <Unit20>
         <Filename Value="systables.pas"/>
@@ -262,6 +250,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="SysTables"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="42" Y="8"/>
+        <UsageCount Value="110"/>
       </Unit20>
       <Unit21>
         <Filename Value="newconstraint.pas"/>
@@ -270,6 +262,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewConstraint"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="45" Y="5"/>
+        <UsageCount Value="110"/>
       </Unit21>
       <Unit22>
         <Filename Value="neweditfield.pas"/>
@@ -278,6 +274,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="NewEditField"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="35"/>
+        <CursorPos X="31" Y="49"/>
+        <UsageCount Value="110"/>
       </Unit22>
       <Unit23>
         <Filename Value="calen.pas"/>
@@ -286,11 +286,19 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Calen"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="23" Y="14"/>
+        <UsageCount Value="110"/>
       </Unit23>
       <Unit24>
         <Filename Value="scriptdb.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Scriptdb"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="791"/>
+        <CursorPos X="34" Y="14"/>
+        <UsageCount Value="110"/>
       </Unit24>
       <Unit25>
         <Filename Value="userpermissions.pas"/>
@@ -299,6 +307,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UserPermissions"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="36" Y="13"/>
+        <UsageCount Value="110"/>
       </Unit25>
       <Unit26>
         <Filename Value="tablemanage.pas"/>
@@ -307,6 +319,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="TableManage"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="154"/>
+        <CursorPos X="41" Y="167"/>
+        <UsageCount Value="110"/>
       </Unit26>
       <Unit27>
         <Filename Value="backuprestore.pas"/>
@@ -315,6 +331,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BackupRestore"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="102"/>
+        <CursorPos X="39" Y="110"/>
+        <UsageCount Value="110"/>
       </Unit27>
       <Unit28>
         <Filename Value="createuser.pas"/>
@@ -322,6 +342,10 @@
         <ComponentName Value="fmCreateUser"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="28" Y="20"/>
+        <UsageCount Value="110"/>
       </Unit28>
       <Unit29>
         <Filename Value="changepass.pas"/>
@@ -329,6 +353,10 @@
         <ComponentName Value="fmChangePass"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="27" Y="15"/>
+        <UsageCount Value="110"/>
       </Unit29>
       <Unit30>
         <Filename Value="permissionmanage.pas"/>
@@ -337,6 +365,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="PermissionManage"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="22" Y="5"/>
+        <UsageCount Value="110"/>
       </Unit30>
       <Unit31>
         <Filename Value="sqlhistory.pas"/>
@@ -345,6 +377,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SQLHistory"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="47" Y="13"/>
+        <UsageCount Value="110"/>
       </Unit31>
       <Unit32>
         <Filename Value="copytable.pas"/>
@@ -353,6 +389,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CopyTable"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="19" Y="11"/>
+        <UsageCount Value="110"/>
       </Unit32>
       <Unit33>
         <Filename Value="dbinfo.pas"/>
@@ -361,6 +401,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="dbInfo"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="40" Y="11"/>
+        <UsageCount Value="110"/>
       </Unit33>
       <Unit34>
         <Filename Value="comparison.pas"/>
@@ -369,6 +413,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Comparison"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="22" Y="7"/>
+        <UsageCount Value="110"/>
       </Unit34>
       <Unit35>
         <Filename Value="procmod.pas"/>
@@ -376,6 +424,7 @@
         <ComponentName Value="fmProcMod"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="110"/>
       </Unit35>
       <Unit36>
         <Filename Value="update.pas"/>
@@ -384,29 +433,47 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Update"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="40" Y="14"/>
+        <UsageCount Value="110"/>
       </Unit36>
       <Unit37>
         <Filename Value="topologicalsort.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="topologicalsort"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="172"/>
+        <CursorPos X="40" Y="7"/>
+        <UsageCount Value="110"/>
       </Unit37>
       <Unit38>
         <Filename Value="unitfirebirdservices.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitFirebirdServices"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="317"/>
+        <CursorPos X="27" Y="7"/>
+        <UsageCount Value="110"/>
       </Unit38>
       <Unit39>
         <Filename Value="turbocommon.inc"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="110"/>
       </Unit39>
       <Unit40>
         <Filename Value="trunksqlscript.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="110"/>
       </Unit40>
       <Unit41>
         <Filename Value="turbocommon.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="turbocommon"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="46" Y="12"/>
+        <UsageCount Value="110"/>
       </Unit41>
       <Unit42>
         <Filename Value="importtable.pas"/>
@@ -415,61 +482,157 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="importtable"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="83"/>
+        <CursorPos X="28" Y="89"/>
+        <UsageCount Value="110"/>
       </Unit42>
       <Unit43>
         <Filename Value="fileimport.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="fileimport"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="498"/>
+        <CursorPos X="31" Y="501"/>
+        <UsageCount Value="110"/>
       </Unit43>
       <Unit44>
         <Filename Value="csvdocument.pas"/>
         <IsPartOfProject Value="True"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="44" Y="15"/>
+        <UsageCount Value="110"/>
       </Unit44>
+      <Unit45>
+        <Filename Value="/usr/lib64/lazarus/components/turbopower_ipro/iphtml.pas"/>
+        <UnitName Value="IpHtml"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="15885"/>
+        <CursorPos X="6" Y="15896"/>
+        <UsageCount Value="2"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="/media/Data/FreePascal/Components/kzdesktop_beta02/kzlazdesktop.pas"/>
+        <ComponentName Value="KZLazDesktopInterface"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="KZLazDesktop"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1522"/>
+        <CursorPos X="27" Y="1534"/>
+        <UsageCount Value="10"/>
+      </Unit46>
     </Units>
-  </ProjectOptions>
-  <CompilerOptions>
-    <Version Value="11"/>
-    <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../Synapse/source/lib"/>
-    </SearchPaths>
-    <CodeGeneration>
-      <SmartLinkUnit Value="True"/>
-      <Optimizations>
-        <OptimizationLevel Value="3"/>
-      </Optimizations>
-      <SmallerCode Value="True"/>
-    </CodeGeneration>
-    <Linking>
-      <Debugging>
-        <GenerateDebugInfo Value="False"/>
-        <StripSymbols Value="True"/>
-      </Debugging>
-      <LinkSmart Value="True"/>
-      <Options>
-        <Win32>
-          <GraphicApplication Value="True"/>
-        </Win32>
-      </Options>
-    </Linking>
-    <Other>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
-  </CompilerOptions>
-  <Debugging>
-    <Exceptions Count="4">
-      <Item1>
-        <Name Value="EAbort"/>
-      </Item1>
-      <Item2>
-        <Name Value="ECodetoolError"/>
-      </Item2>
-      <Item3>
-        <Name Value="EFOpenError"/>
-      </Item3>
-      <Item4>
-        <Name Value="EProcess"/>
-      </Item4>
-    </Exceptions>
-  </Debugging>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <JumpHistory Count="26" HistoryIndex="25">
+      <Position1>
+        <Filename Value="main.pas"/>
+        <Caret Line="2505" Column="41" TopLine="2485"/>
+      </Position1>
+      <Position2>
+        <Filename Value="main.pas"/>
+        <Caret Line="2574" Column="22" TopLine="2555"/>
+      </Position2>
+      <Position3>
+        <Filename Value="main.pas"/>
+        <Caret Line="2677" Column="16" TopLine="2657"/>
+      </Position3>
+      <Position4>
+        <Filename Value="main.pas"/>
+        <Caret Line="2684" Column="18" TopLine="2664"/>
+      </Position4>
+      <Position5>
+        <Filename Value="main.pas"/>
+        <Caret Line="3346" Column="48" TopLine="199"/>
+      </Position5>
+      <Position6>
+        <Filename Value="main.pas"/>
+        <Caret Line="300" Column="18" TopLine="294"/>
+      </Position6>
+      <Position7>
+        <Filename Value="main.pas"/>
+        <Caret Line="301" Column="24" TopLine="296"/>
+      </Position7>
+      <Position8>
+        <Filename Value="main.pas"/>
+        <Caret Line="313" Column="26" TopLine="297"/>
+      </Position8>
+      <Position9>
+        <Filename Value="main.pas"/>
+        <Caret Line="316" Column="28" TopLine="298"/>
+      </Position9>
+      <Position10>
+        <Filename Value="main.pas"/>
+        <Caret Line="322" Column="33" TopLine="309"/>
+      </Position10>
+      <Position11>
+        <Filename Value="main.pas"/>
+        <Caret Line="329" Column="27" TopLine="316"/>
+      </Position11>
+      <Position12>
+        <Filename Value="main.pas"/>
+        <Caret Line="328" Column="27" TopLine="315"/>
+      </Position12>
+      <Position13>
+        <Filename Value="main.pas"/>
+        <Caret Line="300" Column="3" TopLine="298"/>
+      </Position13>
+      <Position14>
+        <Filename Value="main.pas"/>
+        <Caret Line="3599" Column="9" TopLine="3597"/>
+      </Position14>
+      <Position15>
+        <Filename Value="main.pas"/>
+        <Caret Line="3601" Column="46" TopLine="3589"/>
+      </Position15>
+      <Position16>
+        <Filename Value="main.pas"/>
+        <Caret Line="3606" Column="15" TopLine="3589"/>
+      </Position16>
+      <Position17>
+        <Filename Value="main.pas"/>
+        <Caret Line="3613" Column="66" TopLine="3602"/>
+      </Position17>
+      <Position18>
+        <Filename Value="main.pas"/>
+        <Caret Line="3612" Column="44" TopLine="3602"/>
+      </Position18>
+      <Position19>
+        <Filename Value="main.pas"/>
+        <Caret Line="3613" Column="66" TopLine="3602"/>
+      </Position19>
+      <Position20>
+        <Filename Value="main.pas"/>
+        <Caret Line="3612" Column="24" TopLine="3595"/>
+      </Position20>
+      <Position21>
+        <Filename Value="main.pas"/>
+        <Caret Line="3617" Column="51" TopLine="3612"/>
+      </Position21>
+      <Position22>
+        <Filename Value="main.pas"/>
+        <Caret Line="16" Column="10" TopLine="4"/>
+      </Position22>
+      <Position23>
+        <Filename Value="main.pas"/>
+        <Caret Line="3604" Column="26" TopLine="3596"/>
+      </Position23>
+      <Position24>
+        <Filename Value="main.pas"/>
+        <Caret Line="3601" Column="28" TopLine="3597"/>
+      </Position24>
+      <Position25>
+        <Filename Value="main.pas"/>
+        <Caret Line="3600" Column="28" TopLine="3596"/>
+      </Position25>
+      <Position26>
+        <Filename Value="main.pas"/>
+        <Caret Line="3605" Column="17" TopLine="3598"/>
+      </Position26>
+    </JumpHistory>
+  </ProjectSession>
+  <EditorMacros Count="0"/>
 </CONFIG>

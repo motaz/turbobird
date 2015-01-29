@@ -117,8 +117,9 @@ begin
     else
       TargetFile:= TargetFile + '.fbk.zip';
     TargetFile:= formatdatetime('yyyymmdd', Now) + TargetFile;
-    edBackup.Text:= TargetDir +
-      TargetFile;
+   // edBackup.Text:= TargetDir + TargetFile;              // result is ===> /home/username20150125dbname.fbk.zip   (in linux this need root permission)
+    edBackup.Text:=ConcatPaths([TargetDir, TargetFile]);   // result is ===> /home/username/20150125dbname.fbk.zip  (but this is valid with normal user permission)
+
   end;
 end;
 

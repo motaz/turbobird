@@ -9,7 +9,7 @@ uses
   Controls, Graphics, Dialogs, ExtCtrls, PairSplitter, StdCtrls, Buttons,
   DBGrids, Menus, ComCtrls, SynEdit, SynHighlighterSQL, Reg,
   SynEditTypes, SynCompletion, Clipbrd, grids, DbCtrls, types, LCLType,
-  dbugintf, turbocommon, variants, strutils;
+  dbugintf, turbocommon, variants, strutils, IniFiles;
 
 type
 
@@ -56,9 +56,11 @@ type
   { TfmQueryWindow }
 
   TfmQueryWindow = class(TForm)
-    bbClose: TBitBtn;
     cxAutoCommit: TCheckBox;
     FindDialog1: TFindDialog;
+    bbClose: TSpeedButton;
+    FontDialog1: TFontDialog;
+    toolbarImages: TImageList;
     imTools: TImageList;
     imTabs: TImageList;
     lmCloseTab: TMenuItem;
@@ -1662,6 +1664,9 @@ end;
 { Initialize auto-completion text in QueryWindow OnCreate event }
 
 procedure TfmQueryWindow.FormCreate(Sender: TObject);
+var
+   configFile: TIniFile;
+   configFilePath: String;
 begin
   OutputTabsList:= nil;
   {$IFNDEF DEBUG}
@@ -1678,6 +1683,13 @@ begin
   FSQLTrans:= TSQLTransaction.Create(nil);
   SynCompletion1.ItemList.CommaText:= 'create,table,Select,From,INTEGER,FLOAT';
   SortSynCompletion;
+
+  // Set the editor font from config.ini
+  configFilePath:= ConcatPaths([ExtractFilePath(Application.ExeName), 'config.ini']);
+  configFile:= TIniFile.Create(configFilePath);
+  meQuery.Font.Name:=configFile.ReadString('Editor Font', 'font_name', 'Monospace');
+  meQuery.Font.Size:=configFile.ReadInteger('Editor Font', 'font_size', 11);
+  configFile.Free;
 end;
 
 procedure TfmQueryWindow.FormDestroy(Sender: TObject);

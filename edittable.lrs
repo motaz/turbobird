@@ -1,35 +1,38 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TfmEditTable','FORMDATA',[
-  'TPF0'#12'TfmEditTable'#11'fmEditTable'#4'Left'#3'Z'#2#6'Height'#3','#1#3'Top'
-  +#3#148#1#5'Width'#3'8'#2#13'ActiveControl'#7#6'Panel1'#7'Caption'#6#11'fmEdi'
-  +'tTable'#12'ClientHeight'#3','#1#11'ClientWidth'#3'8'#2#7'OnClose'#7#9'FormC'
-  +'lose'#8'OnCreate'#7#10'FormCreate'#8'Position'#7#14'poScreenCenter'#10'LCLV'
-  +'ersion'#6#7'1.2.2.0'#0#6'TPanel'#6'Panel1'#4'Left'#2#0#6'Height'#2'2'#3'Top'
-  +#2#0#5'Width'#3'8'#2#5'Align'#7#5'alTop'#12'ClientHeight'#2'2'#11'ClientWidt'
-  +'h'#3'8'#2#11'ParentColor'#8#8'TabOrder'#2#0#0#6'TLabel'#6'Label1'#4'Left'#3
-  +#2#1#6'Height'#2#13#3'Top'#2#27#5'Width'#2'-'#7'Caption'#6#8'Record #'#11'Pa'
-  +'rentColor'#8#0#0#6'TLabel'#5'laPos'#4'Left'#3'F'#1#6'Height'#2#13#3'Top'#2
-  +#27#5'Width'#2#6#7'Caption'#6#1'0'#10'Font.Color'#4' +'#177#0#11'ParentColor'
-  +#8#10'ParentFont'#8#0#0#12'TDBNavigator'#12'DBNavigator1'#4'Left'#2#8#6'Heig'
-  +'ht'#2#25#3'Top'#2#21#5'Width'#3#241#0#10'BevelOuter'#7#6'bvNone'#29'ChildSi'
-  +'zing.EnlargeHorizontal'#7#14'crsScaleChilds'#27'ChildSizing.EnlargeVertical'
-  +#7#14'crsScaleChilds'#28'ChildSizing.ShrinkHorizontal'#7#14'crsScaleChilds'
-  +#26'ChildSizing.ShrinkVertical'#7#14'crsScaleChilds'#18'ChildSizing.Layout'#7
-  +#29'cclLeftToRightThenTopToBottom'#27'ChildSizing.ControlsPerLine'#2'd'#12'C'
-  +'lientHeight'#2#25#11'ClientWidth'#3#241#0#5'Color'#4#207#218#221#0#10'DataS'
-  +'ource'#7#11'Datasource1'#7'Options'#11#0#11'ParentColor'#8#8'TabOrder'#2#0#0
-  +#0#7'TBitBtn'#6'bbSave'#4'Left'#3#224#1#6'Height'#2#30#3'Top'#2#15#5'Width'#2
-  +'K'#7'Caption'#6#4'Save'#7'OnClick'#7#11'bbSaveClick'#8'TabOrder'#2#1#0#0#0#7
-  +'TDBGrid'#7'DBGrid1'#4'Left'#2#0#6'Height'#3#250#0#3'Top'#2'2'#5'Width'#3'8'
-  +#2#5'Align'#7#8'alClient'#5'Color'#7#8'clWindow'#7'Columns'#14#0#10'DataSour'
-  +'ce'#7#11'Datasource1'#10'FixedColor'#4#207#218#221#0#7'Options'#11#9'dgEdit'
-  +'ing'#8'dgTitles'#11'dgIndicator'#14'dgColumnResize'#12'dgColumnMove'#10'dgC'
-  +'olLines'#10'dgRowLines'#6'dgTabs'#21'dgAlwaysShowSelection'#15'dgConfirmDel'
-  +'ete'#14'dgCancelOnExit'#19'dgHeaderHotTracking'#18'dgHeaderPushedLook'#17'd'
-  +'gAutoSizeColumns'#0#10'Scrollbars'#7#10'ssAutoBoth'#8'TabOrder'#2#1#10'Titl'
-  +'eStyle'#7#8'tsNative'#0#0#11'TDataSource'#11'Datasource1'#7'DataSet'#7#11's'
-  +'qEditTable'#4'left'#3#216#1#3'top'#2'0'#0#0#9'TSQLQuery'#11'sqEditTable'#9
-  +'FieldDefs'#14#0#14'AutoCalcFields'#8#11'AfterScroll'#7#22'sqEditTableAfterS'
-  +'croll'#6'Params'#14#0#4'left'#3'e'#1#3'top'#2#20#0#0#0
+  'TPF0'#12'TfmEditTable'#11'fmEditTable'#4'Left'#3'Y'#1#6'Height'#3#0#1#3'Top'
+  +#3#170#0#5'Width'#3'd'#2#13'ActiveControl'#7#6'Panel1'#7'Caption'#6#11'fmEdi'
+  +'tTable'#12'ClientHeight'#3#0#1#11'ClientWidth'#3'd'#2#7'OnClose'#7#9'FormCl'
+  +'ose'#8'OnCreate'#7#10'FormCreate'#8'Position'#7#14'poScreenCenter'#10'LCLVe'
+  +'rsion'#6#7'1.2.6.0'#0#6'TPanel'#6'Panel1'#4'Left'#2#0#6'Height'#2' '#3'Top'
+  +#2#0#5'Width'#3'd'#2#5'Align'#7#5'alTop'#12'ClientHeight'#2' '#11'ClientWidt'
+  +'h'#3'd'#2#11'ParentColor'#8#8'TabOrder'#2#0#0#6'TLabel'#6'Label1'#4'Left'#3
+  +'$'#1#6'Height'#2#30#3'Top'#2#1#5'Width'#2';'#5'Align'#7#6'alLeft'#9'Alignme'
+  +'nt'#7#8'taCenter'#18'BorderSpacing.Left'#2'2'#7'Caption'#6#8'Record #'#11'P'
+  +'arentColor'#8#0#0#6'TLabel'#5'laPos'#4'Left'#3'_'#1#6'Height'#2#30#3'Top'#2
+  +#1#5'Width'#2#9#5'Align'#7#6'alLeft'#9'Alignment'#7#8'taCenter'#7'Caption'#6
+  +#1'0'#10'Font.Color'#4' +'#177#0#11'ParentColor'#8#10'ParentFont'#8#0#0#12'T'
+  +'DBNavigator'#12'DBNavigator1'#4'Left'#2#1#6'Height'#2#30#3'Top'#2#1#5'Width'
+  +#3#241#0#5'Align'#7#6'alLeft'#10'BevelOuter'#7#6'bvNone'#29'ChildSizing.Enla'
+  +'rgeHorizontal'#7#14'crsScaleChilds'#27'ChildSizing.EnlargeVertical'#7#14'cr'
+  +'sScaleChilds'#28'ChildSizing.ShrinkHorizontal'#7#14'crsScaleChilds'#26'Chil'
+  +'dSizing.ShrinkVertical'#7#14'crsScaleChilds'#18'ChildSizing.Layout'#7#29'cc'
+  +'lLeftToRightThenTopToBottom'#27'ChildSizing.ControlsPerLine'#2'd'#12'Client'
+  +'Height'#2#30#11'ClientWidth'#3#241#0#5'Color'#4#207#218#221#0#10'DataSource'
+  +#7#11'Datasource1'#7'Options'#11#0#11'ParentColor'#8#8'TabOrder'#2#0#0#0#7'T'
+  +'BitBtn'#6'bbSave'#4'Left'#3#24#2#6'Height'#2#30#3'Top'#2#1#5'Width'#2'K'#5
+  +'Align'#7#7'alRight'#7'Caption'#6#4'Save'#4'Kind'#7#10'bkYesToAll'#11'ModalR'
+  +'esult'#2#10#7'OnClick'#7#11'bbSaveClick'#8'TabOrder'#2#1#0#0#0#7'TDBGrid'#7
+  +'DBGrid1'#4'Left'#2#0#6'Height'#3#224#0#3'Top'#2' '#5'Width'#3'd'#2#5'Align'
+  +#7#8'alClient'#5'Color'#7#8'clWindow'#7'Columns'#14#0#10'DataSource'#7#11'Da'
+  +'tasource1'#10'FixedColor'#4#207#218#221#0#7'Options'#11#9'dgEditing'#8'dgTi'
+  +'tles'#11'dgIndicator'#14'dgColumnResize'#12'dgColumnMove'#10'dgColLines'#10
+  +'dgRowLines'#6'dgTabs'#21'dgAlwaysShowSelection'#15'dgConfirmDelete'#14'dgCa'
+  +'ncelOnExit'#19'dgHeaderHotTracking'#18'dgHeaderPushedLook'#17'dgAutoSizeCol'
+  +'umns'#0#10'Scrollbars'#7#10'ssAutoBoth'#8'TabOrder'#2#1#10'TitleStyle'#7#8
+  +'tsNative'#0#0#11'TDataSource'#11'Datasource1'#7'DataSet'#7#11'sqEditTable'#4
+  +'left'#3#152#1#3'top'#3#144#0#0#0#9'TSQLQuery'#11'sqEditTable'#9'FieldDefs'
+  +#14#0#14'AutoCalcFields'#8#11'AfterScroll'#7#22'sqEditTableAfterScroll'#6'Pa'
+  +'rams'#14#0#4'left'#3' '#1#3'top'#3#128#0#0#0#0
 ]);

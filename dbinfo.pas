@@ -13,7 +13,7 @@ type
   { TfmDBInfo }
 
   TfmDBInfo = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     bbRefresh: TBitBtn;
     edCreationDate: TEdit;
     edConnections: TEdit;

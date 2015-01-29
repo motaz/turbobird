@@ -509,8 +509,8 @@ begin
     FreeAndNil(FCSVParser);
   if assigned(FCSVStream) then
     FreeAndNil(FCSVStream);
-  if AValue<>'' then
-    FCSVStream:=TFileStream.Create(FSourceFile,fmOpenRead and fmShareDenyNoneFlags);
+  //if AValue<>'' then
+    //FCSVStream:=TFileStream.Create(FSourceFile,fmOpenRead and fmShareDenyNoneFlags);
   // We do not create the csv parser as we want to do things with the stream first
   FRowCount:=-1; //invalidate cache
   FSourceFields.Clear;

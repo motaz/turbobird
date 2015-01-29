@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Calendar, Buttons;
+  StdCtrls, Calendar, Buttons, ExtCtrls;
 
 type
 
@@ -19,6 +19,7 @@ type
     Calendar1: TCalendar;
     edTime: TEdit;
     Label1: TLabel;
+    Panel1: TPanel;
     procedure bbOkClick(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);

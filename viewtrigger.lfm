@@ -1,53 +1,56 @@
 object fmViewTrigger: TfmViewTrigger
-  Left = 362
-  Height = 300
-  Top = 201
-  Width = 667
+  Left = 507
+  Height = 364
+  Top = 141
+  Width = 678
+  BorderStyle = bsSingle
   Caption = 'fmViewTrigger'
-  ClientHeight = 300
-  ClientWidth = 667
+  ClientHeight = 364
+  ClientWidth = 678
   KeyPreview = True
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '1.2.0.3'
+  LCLVersion = '1.2.6.0'
   object Label1: TLabel
     Left = 11
-    Height = 13
+    Height = 16
     Top = 15
-    Width = 64
+    Width = 87
     Caption = 'Trigger Name'
     ParentColor = False
   end
   object Label2: TLabel
-    Left = 11
-    Height = 13
-    Top = 96
-    Width = 24
+    Left = 0
+    Height = 16
+    Top = 104
+    Width = 678
+    Align = alBottom
     Caption = 'Body'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 11
-    Height = 13
-    Top = 42
-    Width = 43
+    Height = 16
+    Top = 43
+    Width = 58
     Caption = 'On Table'
     ParentColor = False
   end
   object Label4: TLabel
     Left = 397
-    Height = 13
+    Height = 16
     Top = 15
-    Width = 45
+    Width = 60
     Caption = 'On Event'
     ParentColor = False
   end
   object laEvent: TLabel
     Left = 474
-    Height = 13
+    Height = 16
     Top = 15
-    Width = 69
+    Width = 95
     Caption = 'laTriggerName'
     Font.Color = 10234153
     ParentColor = False
@@ -55,17 +58,17 @@ object fmViewTrigger: TfmViewTrigger
   end
   object Label5: TLabel
     Left = 397
-    Height = 13
+    Height = 16
     Top = 43
-    Width = 24
+    Width = 32
     Caption = 'Type'
     ParentColor = False
   end
   object laType: TLabel
     Left = 474
-    Height = 13
+    Height = 16
     Top = 43
-    Width = 69
+    Width = 95
     Caption = 'laTriggerName'
     Font.Color = 10234153
     ParentColor = False
@@ -73,17 +76,17 @@ object fmViewTrigger: TfmViewTrigger
   end
   object Label6: TLabel
     Left = 397
-    Height = 13
+    Height = 16
     Top = 72
-    Width = 38
+    Width = 53
     Caption = 'Enabled'
     ParentColor = False
   end
   object laEnabled: TLabel
     Left = 474
-    Height = 13
+    Height = 16
     Top = 72
-    Width = 69
+    Width = 95
     Caption = 'laTriggerName'
     Font.Color = 10234153
     ParentColor = False
@@ -91,33 +94,34 @@ object fmViewTrigger: TfmViewTrigger
   end
   object Label7: TLabel
     Left = 11
-    Height = 13
+    Height = 16
     Top = 72
-    Width = 37
+    Width = 52
     Caption = 'Position'
     DragCursor = crAppStart
     ParentColor = False
   end
   object laPos: TLabel
     Left = 106
-    Height = 13
+    Height = 16
     Top = 72
-    Width = 69
+    Width = 95
     Caption = 'laTriggerName'
     Font.Color = 10234153
     ParentColor = False
     ParentFont = False
   end
   inline seScript: TSynEdit
-    Left = 11
-    Height = 168
+    Left = 0
+    Height = 244
     Top = 120
-    Width = 635
+    Width = 678
+    Align = alBottom
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Pitch = fpFixed
-    Font.Quality = fqNonAntialiased
+    Font.Quality = fqAntialiased
     ParentColor = False
     ParentFont = False
     TabOrder = 0
@@ -629,6 +633,7 @@ object fmViewTrigger: TfmViewTrigger
         ShiftMask = [ssShift, ssAlt, ssCtrl]
         Command = emcMouseLink
       end>
+    MouseTextActions = <>
     MouseSelActions = <    
       item
         ClickDir = cdDown
@@ -679,11 +684,11 @@ object fmViewTrigger: TfmViewTrigger
   end
   object edName: TEdit
     Left = 106
-    Height = 13
+    Height = 28
     Top = 12
     Width = 262
+    AutoSize = False
     AutoSelect = False
-    BorderStyle = bsNone
     Font.Color = clNavy
     ParentFont = False
     ReadOnly = True
@@ -692,29 +697,64 @@ object fmViewTrigger: TfmViewTrigger
   end
   object edOnTable: TEdit
     Left = 106
-    Height = 13
-    Top = 42
-    Width = 214
+    Height = 28
+    Top = 43
+    Width = 262
+    AutoSize = False
     AutoSelect = False
-    BorderStyle = bsNone
     Font.Color = clNavy
     ParentFont = False
     ReadOnly = True
     TabOrder = 2
     Text = 'edGenName'
   end
-  object bbClose: TBitBtn
-    Left = 638
+  object bbClose: TSpeedButton
+    Left = 649
     Height = 24
     Top = 3
     Width = 27
     Anchors = [akTop, akRight]
-    Caption = ' X  '
-    Color = 16249563
+    Color = clForm
+    Flat = True
     Font.Style = [fsBold]
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF26FFFFFF51FFFFFF0EFFFFFF00FFFFFF00FFFF
+      FF0EFFFFFF51FFFFFF26FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF28C3C3C3624141416EF0F0F056FFFFFF0EFFFFFF0EF0F0
+      F0564141416EC3C3C362FFFFFF28FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF16B9B9B9660A0A0A840000008731313177F0F0F056F0F0F0563131
+      3177000000870A0A0A84B9B9B966FFFFFF16FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF220E0E0EA00000009E00000091000000912F2F2F7E2F2F2F7E0000
+      0091000000910000009E0E0E0EA0FFFFFF22FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF0BB7B7B72E040404AB000000A70000009B0000009B0000009B0000
+      009B000000A7050505AAB7B7B72EFFFFFF0BFFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF0BB8B8B8321D1D1DA5000000A5000000A5000000A50000
+      00A51E1E1EA4BBBBBB31FFFFFF0BFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF0EEBEBEB5826262692000000AF000000AF000000AF0000
+      00AF26262692EBEBEB58FFFFFF0EFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF0BEBEBEB5825252599000000B9000000B9000000C1000000C10000
+      00B9000000B925252599EBEBEB58FFFFFF0BFFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF221F1F1FB3000000C4000000C3000000CA040404BE040404BE0000
+      00CA000000C3000000C41F1F1FB3FFFFFF22FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF163939395E000000D9000000D4030303C2AFAFAF30AFAFAF300303
+      03C2000000D4000000D93939395EFFFFFF16FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF183636365F040404C2ACACAC31FFFFFF0BFFFFFF0BACAC
+      AC31040404C23636365FFFFFFF18FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF16FFFFFF22FFFFFF0BFFFFFF00FFFFFF00FFFF
+      FF0BFFFFFF23FFFFFF16FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+    }
     OnClick = bbCloseClick
     ParentFont = False
-    TabOrder = 3
   end
   object SynSQLSyn1: TSynSQLSyn
     DefaultFilter = 'SQL Files (*.sql)|*.sql'

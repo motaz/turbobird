@@ -14,7 +14,7 @@ type
   { TfmNewTable }
 
   TfmNewTable = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     bbScript: TBitBtn;
     bbCancel: TBitBtn;
     cbPermission: TComboBox;

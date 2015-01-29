@@ -17,7 +17,7 @@ type
     bbApplyTable: TBitBtn;
     bbApplyProc: TBitBtn;
     bbApplyView: TBitBtn;
-    bbClose: TBitBtn;
+    bbClose: TSpeedButton;
     BitBtn1: TBitBtn;
     cbRolesUser: TComboBox;
     cbTables: TComboBox;

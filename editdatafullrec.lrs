@@ -1,25 +1,25 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TfmEditDataFullRec','FORMDATA',[
-  'TPF0'#18'TfmEditDataFullRec'#17'fmEditDataFullRec'#4'Left'#3#20#2#6'Height'#3
-  +','#1#3'Top'#3'H'#1#5'Width'#3'Q'#2#13'ActiveControl'#7#6'bbSave'#7'Caption'
-  +#6#21'Edit Data Full Record'#12'ClientHeight'#3','#1#11'ClientWidth'#3'Q'#2#7
-  +'OnClose'#7#9'FormClose'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'#6#7
-  +'1.2.2.0'#0#6'TLabel'#6'Label1'#4'Left'#3#2#1#6'Height'#2#13#3'Top'#2#27#5'W'
-  +'idth'#2'-'#7'Caption'#6#8'Record #'#11'ParentColor'#8#0#0#6'TLabel'#5'laPos'
-  +#4'Left'#3'F'#1#6'Height'#2#13#3'Top'#2#27#5'Width'#2#6#7'Caption'#6#1'0'#10
-  +'Font.Color'#4' +'#177#0#11'ParentColor'#8#10'ParentFont'#8#0#0#12'TDBNaviga'
-  +'tor'#12'DBNavigator1'#4'Left'#2#8#6'Height'#2#25#3'Top'#2#21#5'Width'#3#241
-  +#0#10'BevelOuter'#7#6'bvNone'#29'ChildSizing.EnlargeHorizontal'#7#14'crsScal'
-  +'eChilds'#27'ChildSizing.EnlargeVertical'#7#14'crsScaleChilds'#28'ChildSizin'
-  +'g.ShrinkHorizontal'#7#14'crsScaleChilds'#26'ChildSizing.ShrinkVertical'#7#14
-  +'crsScaleChilds'#18'ChildSizing.Layout'#7#29'cclLeftToRightThenTopToBottom'
-  +#27'ChildSizing.ControlsPerLine'#2'd'#12'ClientHeight'#2#25#11'ClientWidth'#3
-  +#241#0#10'DataSource'#7#11'Datasource1'#7'Options'#11#0#8'TabOrder'#2#0#0#0#7
-  +'TBitBtn'#6'bbSave'#4'Left'#3#237#1#6'Height'#2#30#3'Top'#2#16#5'Width'#2'K'
-  +#7'Caption'#6#4'Save'#7'OnClick'#7#11'bbSaveClick'#8'TabOrder'#2#1#0#0#11'TD'
-  +'ataSource'#11'Datasource1'#7'DataSet'#7#11'sqEditTable'#4'left'#3#152#1#3't'
-  +'op'#3#128#0#0#0#9'TSQLQuery'#11'sqEditTable'#9'FieldDefs'#14#0#14'AutoCalcF'
-  +'ields'#8#11'AfterScroll'#7#22'sqEditTableAfterScroll'#6'Params'#14#0#4'left'
-  +#3#129#1#3'top'#2'0'#0#0#0
+  'TPF0'#18'TfmEditDataFullRec'#17'fmEditDataFullRec'#4'Left'#3#247#1#6'Height'
+  +#3','#1#3'Top'#3#246#0#5'Width'#3'Q'#2#13'ActiveControl'#7#6'bbSave'#7'Capti'
+  +'on'#6#21'Edit Data Full Record'#12'ClientHeight'#3','#1#11'ClientWidth'#3'Q'
+  +#2#7'OnClose'#7#9'FormClose'#8'Position'#7#14'poScreenCenter'#10'LCLVersion'
+  +#6#7'1.2.6.0'#0#6'TLabel'#6'Label1'#4'Left'#3#2#1#6'Height'#2#16#3'Top'#2#27
+  +#5'Width'#2';'#7'Caption'#6#8'Record #'#11'ParentColor'#8#0#0#6'TLabel'#5'la'
+  +'Pos'#4'Left'#3'F'#1#6'Height'#2#16#3'Top'#2#27#5'Width'#2#9#7'Caption'#6#1
+  +'0'#10'Font.Color'#4' +'#177#0#11'ParentColor'#8#10'ParentFont'#8#0#0#12'TDB'
+  +'Navigator'#12'DBNavigator1'#4'Left'#2#8#6'Height'#2#25#3'Top'#2#16#5'Width'
+  +#3#241#0#10'BevelOuter'#7#6'bvNone'#29'ChildSizing.EnlargeHorizontal'#7#14'c'
+  +'rsScaleChilds'#27'ChildSizing.EnlargeVertical'#7#14'crsScaleChilds'#28'Chil'
+  +'dSizing.ShrinkHorizontal'#7#14'crsScaleChilds'#26'ChildSizing.ShrinkVertica'
+  +'l'#7#14'crsScaleChilds'#18'ChildSizing.Layout'#7#29'cclLeftToRightThenTopTo'
+  +'Bottom'#27'ChildSizing.ControlsPerLine'#2'd'#12'ClientHeight'#2#25#11'Clien'
+  +'tWidth'#3#241#0#10'DataSource'#7#11'Datasource1'#7'Options'#11#0#8'TabOrder'
+  +#2#0#0#0#7'TBitBtn'#6'bbSave'#4'Left'#3#237#1#6'Height'#2#30#3'Top'#2#16#5'W'
+  +'idth'#2'K'#7'Caption'#6#4'Save'#7'OnClick'#7#11'bbSaveClick'#8'TabOrder'#2#1
+  +#0#0#11'TDataSource'#11'Datasource1'#7'DataSet'#7#11'sqEditTable'#4'left'#3
+  +#152#1#3'top'#3#128#0#0#0#9'TSQLQuery'#11'sqEditTable'#9'FieldDefs'#14#0#14
+  +'AutoCalcFields'#8#11'AfterScroll'#7#22'sqEditTableAfterScroll'#6'Params'#14
+  +#0#4'left'#3#129#1#3'top'#2'0'#0#0#0
 ]);

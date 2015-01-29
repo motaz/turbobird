@@ -49,6 +49,7 @@ type
     procedure bbRegClick(Sender: TObject);
     procedure bbTestClick(Sender: TObject);
     procedure btBrowseClick(Sender: TObject);
+
   private
     { private declarations }
     function EditRegisteration(Index: Integer; Title, DatabaseName, UserName, Password, Charset, Role: string;
@@ -103,6 +104,8 @@ begin
   if OpenDialog1.Execute then
     edDatabaseName.Text:= OpenDialog1.FileName;
 end;
+
+
 
 function TfmReg.RegisterDatabase(Title, DatabaseName, UserName, Password, Charset, Role: string; SavePassword: Boolean): Boolean;
 var

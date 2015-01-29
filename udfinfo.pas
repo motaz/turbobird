@@ -13,7 +13,7 @@ type
   { TfmUDFInfo }
 
   TfmUDFInfo = class(TForm)
-    bbClose: TBitBtn;
+      bbClose: TSpeedButton;
     edModule: TEdit;
     edEntry: TEdit;
     edName: TEdit;
