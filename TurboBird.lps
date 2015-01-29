@@ -6,10 +6,13 @@
       <Unit0>
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="22"/>
-        <CursorPos X="2" Y="35"/>
+        <TopLine Value="1"/>
+        <CursorPos X="24" Y="5"/>
         <UsageCount Value="110"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="main.pas"/>
@@ -18,10 +21,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="main"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="3599"/>
+        <TopLine Value="3584"/>
         <CursorPos X="45" Y="3611"/>
         <UsageCount Value="110"/>
         <Loaded Value="True"/>
