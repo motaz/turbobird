@@ -5,16 +5,14 @@ Turbo Bird application is very easy to install and to use.
 TurboBird uses Synapse package for http download.
 http://wiki.freepascal.org/Synapse
 
-This is an enhanced gui fork of the main repo 
 
 # Blue Bits icons
 License: These icons are free to use in any kind of commercial or non-commercial project unlimited times.
 http://www.icojam.com/blog/?p=253
 
 # Oxygen Icon Theme 
-License: GNU Lesser General Public License
-http://www.iconarchive.com/icons/oxygen-icons.org/oxygen/authors.txt
-
+License: GPL
+http://kde-look.org/content/show.php/Oxygen+Icons?content=74184
 
 ## Screenshots:
 Main Window
