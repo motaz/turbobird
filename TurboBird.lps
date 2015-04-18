@@ -7,10 +7,8 @@
         <Filename Value="TurboBird.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="24" Y="5"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="30" Y="5"/>
         <UsageCount Value="110"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -21,9 +19,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="main"/>
-        <EditorIndex Value="0"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="3584"/>
+        <TopLine Value="3611"/>
         <CursorPos X="45" Y="3611"/>
         <UsageCount Value="110"/>
         <Loaded Value="True"/>
@@ -35,9 +31,6 @@
         <ComponentName Value="fmCreateDB"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="CreateDb"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="9" Y="5"/>
         <UsageCount Value="110"/>
       </Unit2>
@@ -47,8 +40,6 @@
         <ComponentName Value="fmReg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Reg"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="42"/>
         <CursorPos X="24" Y="49"/>
         <UsageCount Value="110"/>
@@ -60,10 +51,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="QueryWindow"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="1"/>
         <TopLine Value="1412"/>
         <CursorPos X="59" Y="1421"/>
         <UsageCount Value="110"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="viewview.pas"/>
@@ -71,10 +64,8 @@
         <ComponentName Value="fmViewView"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="ViewView"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="40"/>
-        <CursorPos X="1" Y="45"/>
+        <CursorPos Y="45"/>
         <UsageCount Value="110"/>
       </Unit5>
       <Unit6>
@@ -83,8 +74,6 @@
         <ComponentName Value="fmViewTrigger"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="ViewTrigger"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="49"/>
         <CursorPos X="5" Y="65"/>
         <UsageCount Value="110"/>
@@ -95,8 +84,6 @@
         <ComponentName Value="fmViewSProc"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="ViewSProc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="49"/>
         <CursorPos X="26" Y="49"/>
         <UsageCount Value="110"/>
@@ -107,8 +94,6 @@
         <ComponentName Value="fmViewGen"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="ViewGen"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="37"/>
         <CursorPos X="36" Y="49"/>
         <UsageCount Value="110"/>
@@ -119,9 +104,6 @@
         <ComponentName Value="fmNewTable"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="NewTable"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="22" Y="22"/>
         <UsageCount Value="110"/>
       </Unit9>
@@ -131,10 +113,6 @@
         <ComponentName Value="fmNewGen"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="NewGen"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="110"/>
       </Unit10>
       <Unit11>
@@ -143,9 +121,6 @@
         <ComponentName Value="fmEnterPass"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="EnterPass"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="20" Y="16"/>
         <UsageCount Value="110"/>
       </Unit11>
@@ -155,10 +130,6 @@
         <ComponentName Value="fmAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="About"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="110"/>
       </Unit12>
       <Unit13>
@@ -167,9 +138,6 @@
         <ComponentName Value="fmCreateTrigger"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="CreateTrigger"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="36" Y="16"/>
         <UsageCount Value="110"/>
       </Unit13>
@@ -179,9 +147,6 @@
         <ComponentName Value="fmEditTable"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="EditTable"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="29" Y="19"/>
         <UsageCount Value="110"/>
       </Unit14>
@@ -191,9 +156,6 @@
         <ComponentName Value="fmCallProc"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="CallProc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="41" Y="7"/>
         <UsageCount Value="110"/>
       </Unit15>
@@ -203,9 +165,6 @@
         <ComponentName Value="fmEditDataFullRec"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="EditDataFullRec"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="23" Y="7"/>
         <UsageCount Value="110"/>
       </Unit16>
@@ -215,9 +174,6 @@
         <ComponentName Value="fmUDFInfo"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="UDFInfo"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="17" Y="10"/>
         <UsageCount Value="110"/>
       </Unit17>
@@ -227,9 +183,6 @@
         <ComponentName Value="fmViewDomain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="ViewDomain"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="36" Y="10"/>
         <UsageCount Value="110"/>
       </Unit18>
@@ -239,9 +192,6 @@
         <ComponentName Value="fmNewDomain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="NewDomain"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="32" Y="6"/>
         <UsageCount Value="110"/>
       </Unit19>
@@ -252,10 +202,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="SysTables"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="42" Y="8"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="31" Y="9"/>
         <UsageCount Value="110"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit20>
       <Unit21>
         <Filename Value="newconstraint.pas"/>
@@ -263,9 +214,6 @@
         <ComponentName Value="fmNewConstraint"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="NewConstraint"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="45" Y="5"/>
         <UsageCount Value="110"/>
       </Unit21>
@@ -275,8 +223,6 @@
         <ComponentName Value="fmNewEditField"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="NewEditField"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="35"/>
         <CursorPos X="31" Y="49"/>
         <UsageCount Value="110"/>
@@ -287,18 +233,12 @@
         <ComponentName Value="fmCalen"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Calen"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="23" Y="14"/>
         <UsageCount Value="110"/>
       </Unit23>
       <Unit24>
         <Filename Value="scriptdb.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Scriptdb"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="791"/>
         <CursorPos X="34" Y="14"/>
         <UsageCount Value="110"/>
       </Unit24>
@@ -308,9 +248,6 @@
         <ComponentName Value="fmUserPermissions"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="UserPermissions"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="36" Y="13"/>
         <UsageCount Value="110"/>
       </Unit25>
@@ -320,8 +257,6 @@
         <ComponentName Value="fmTableManage"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="TableManage"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="154"/>
         <CursorPos X="41" Y="167"/>
         <UsageCount Value="110"/>
@@ -332,8 +267,6 @@
         <ComponentName Value="fmBackupRestore"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="BackupRestore"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="102"/>
         <CursorPos X="39" Y="110"/>
         <UsageCount Value="110"/>
@@ -344,8 +277,6 @@
         <ComponentName Value="fmCreateUser"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="28" Y="20"/>
         <UsageCount Value="110"/>
       </Unit28>
@@ -355,8 +286,6 @@
         <ComponentName Value="fmChangePass"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="27" Y="15"/>
         <UsageCount Value="110"/>
       </Unit29>
@@ -366,9 +295,6 @@
         <ComponentName Value="fmPermissionManage"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="PermissionManage"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="22" Y="5"/>
         <UsageCount Value="110"/>
       </Unit30>
@@ -378,9 +304,6 @@
         <ComponentName Value="fmSQLHistory"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="SQLHistory"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="47" Y="13"/>
         <UsageCount Value="110"/>
       </Unit31>
@@ -390,9 +313,6 @@
         <ComponentName Value="fmCopyTable"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="CopyTable"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="19" Y="11"/>
         <UsageCount Value="110"/>
       </Unit32>
@@ -402,9 +322,6 @@
         <ComponentName Value="fmDBInfo"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="dbInfo"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="40" Y="11"/>
         <UsageCount Value="110"/>
       </Unit33>
@@ -414,9 +331,6 @@
         <ComponentName Value="fmComparison"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Comparison"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="22" Y="7"/>
         <UsageCount Value="110"/>
       </Unit34>
@@ -434,17 +348,12 @@
         <ComponentName Value="fmUpdate"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Update"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="40" Y="14"/>
         <UsageCount Value="110"/>
       </Unit36>
       <Unit37>
         <Filename Value="topologicalsort.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="topologicalsort"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="172"/>
         <CursorPos X="40" Y="7"/>
         <UsageCount Value="110"/>
@@ -452,8 +361,6 @@
       <Unit38>
         <Filename Value="unitfirebirdservices.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UnitFirebirdServices"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="317"/>
         <CursorPos X="27" Y="7"/>
         <UsageCount Value="110"/>
@@ -471,9 +378,6 @@
       <Unit41>
         <Filename Value="turbocommon.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="turbocommon"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="46" Y="12"/>
         <UsageCount Value="110"/>
       </Unit41>
@@ -483,8 +387,6 @@
         <ComponentName Value="fmImportTable"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="importtable"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="83"/>
         <CursorPos X="28" Y="89"/>
         <UsageCount Value="110"/>
@@ -492,8 +394,6 @@
       <Unit43>
         <Filename Value="fileimport.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fileimport"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="498"/>
         <CursorPos X="31" Y="501"/>
         <UsageCount Value="110"/>
@@ -501,15 +401,11 @@
       <Unit44>
         <Filename Value="csvdocument.pas"/>
         <IsPartOfProject Value="True"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="44" Y="15"/>
         <UsageCount Value="110"/>
       </Unit44>
       <Unit45>
         <Filename Value="/usr/lib64/lazarus/components/turbopower_ipro/iphtml.pas"/>
-        <UnitName Value="IpHtml"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="15885"/>
         <CursorPos X="6" Y="15896"/>
         <UsageCount Value="2"/>
@@ -519,122 +415,124 @@
         <ComponentName Value="KZLazDesktopInterface"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="KZLazDesktop"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="1522"/>
         <CursorPos X="27" Y="1534"/>
         <UsageCount Value="10"/>
       </Unit46>
     </Units>
-    <General>
-      <ActiveWindowIndexAtStart Value="0"/>
-    </General>
-    <JumpHistory Count="26" HistoryIndex="25">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
         <Filename Value="main.pas"/>
-        <Caret Line="2505" Column="41" TopLine="2485"/>
+        <Caret Line="316" Column="28" TopLine="298"/>
       </Position1>
       <Position2>
         <Filename Value="main.pas"/>
-        <Caret Line="2574" Column="22" TopLine="2555"/>
+        <Caret Line="322" Column="33" TopLine="309"/>
       </Position2>
       <Position3>
         <Filename Value="main.pas"/>
-        <Caret Line="2677" Column="16" TopLine="2657"/>
+        <Caret Line="329" Column="27" TopLine="316"/>
       </Position3>
       <Position4>
         <Filename Value="main.pas"/>
-        <Caret Line="2684" Column="18" TopLine="2664"/>
+        <Caret Line="328" Column="27" TopLine="315"/>
       </Position4>
       <Position5>
         <Filename Value="main.pas"/>
-        <Caret Line="3346" Column="48" TopLine="199"/>
+        <Caret Line="300" Column="3" TopLine="298"/>
       </Position5>
       <Position6>
         <Filename Value="main.pas"/>
-        <Caret Line="300" Column="18" TopLine="294"/>
+        <Caret Line="3599" Column="9" TopLine="3597"/>
       </Position6>
       <Position7>
         <Filename Value="main.pas"/>
-        <Caret Line="301" Column="24" TopLine="296"/>
+        <Caret Line="3601" Column="46" TopLine="3589"/>
       </Position7>
       <Position8>
         <Filename Value="main.pas"/>
-        <Caret Line="313" Column="26" TopLine="297"/>
+        <Caret Line="3606" Column="15" TopLine="3589"/>
       </Position8>
       <Position9>
         <Filename Value="main.pas"/>
-        <Caret Line="316" Column="28" TopLine="298"/>
+        <Caret Line="3613" Column="66" TopLine="3602"/>
       </Position9>
       <Position10>
         <Filename Value="main.pas"/>
-        <Caret Line="322" Column="33" TopLine="309"/>
+        <Caret Line="3612" Column="44" TopLine="3602"/>
       </Position10>
       <Position11>
         <Filename Value="main.pas"/>
-        <Caret Line="329" Column="27" TopLine="316"/>
+        <Caret Line="3613" Column="66" TopLine="3602"/>
       </Position11>
       <Position12>
         <Filename Value="main.pas"/>
-        <Caret Line="328" Column="27" TopLine="315"/>
+        <Caret Line="3612" Column="24" TopLine="3595"/>
       </Position12>
       <Position13>
         <Filename Value="main.pas"/>
-        <Caret Line="300" Column="3" TopLine="298"/>
+        <Caret Line="3617" Column="51" TopLine="3612"/>
       </Position13>
       <Position14>
         <Filename Value="main.pas"/>
-        <Caret Line="3599" Column="9" TopLine="3597"/>
+        <Caret Line="16" Column="10" TopLine="4"/>
       </Position14>
       <Position15>
         <Filename Value="main.pas"/>
-        <Caret Line="3601" Column="46" TopLine="3589"/>
+        <Caret Line="3604" Column="26" TopLine="3596"/>
       </Position15>
       <Position16>
         <Filename Value="main.pas"/>
-        <Caret Line="3606" Column="15" TopLine="3589"/>
+        <Caret Line="3601" Column="28" TopLine="3597"/>
       </Position16>
       <Position17>
         <Filename Value="main.pas"/>
-        <Caret Line="3613" Column="66" TopLine="3602"/>
+        <Caret Line="3600" Column="28" TopLine="3596"/>
       </Position17>
       <Position18>
         <Filename Value="main.pas"/>
-        <Caret Line="3612" Column="44" TopLine="3602"/>
+        <Caret Line="3605" Column="17" TopLine="3598"/>
       </Position18>
       <Position19>
-        <Filename Value="main.pas"/>
-        <Caret Line="3613" Column="66" TopLine="3602"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="216" Column="34" TopLine="195"/>
       </Position19>
       <Position20>
-        <Filename Value="main.pas"/>
-        <Caret Line="3612" Column="24" TopLine="3595"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="252" Column="19" TopLine="215"/>
       </Position20>
       <Position21>
-        <Filename Value="main.pas"/>
-        <Caret Line="3617" Column="51" TopLine="3612"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="258" Column="13" TopLine="221"/>
       </Position21>
       <Position22>
-        <Filename Value="main.pas"/>
-        <Caret Line="16" Column="10" TopLine="4"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="260" Column="19" TopLine="223"/>
       </Position22>
       <Position23>
-        <Filename Value="main.pas"/>
-        <Caret Line="3604" Column="26" TopLine="3596"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="337" Column="40" TopLine="300"/>
       </Position23>
       <Position24>
-        <Filename Value="main.pas"/>
-        <Caret Line="3601" Column="28" TopLine="3597"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="457" Column="79" TopLine="420"/>
       </Position24>
       <Position25>
-        <Filename Value="main.pas"/>
-        <Caret Line="3600" Column="28" TopLine="3596"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="916" Column="29" TopLine="879"/>
       </Position25>
       <Position26>
-        <Filename Value="main.pas"/>
-        <Caret Line="3605" Column="17" TopLine="3598"/>
+        <Filename Value="systables.pas"/>
+        <Caret Line="927" Column="29" TopLine="890"/>
       </Position26>
+      <Position27>
+        <Filename Value="systables.pas"/>
+        <Caret Line="1009" Column="57" TopLine="972"/>
+      </Position27>
+      <Position28>
+        <Filename Value="systables.pas"/>
+        <Caret Line="1059" Column="17" TopLine="1022"/>
+      </Position28>
     </JumpHistory>
   </ProjectSession>
-  <EditorMacros Count="0"/>
 </CONFIG>
