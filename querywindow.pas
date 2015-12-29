@@ -1655,8 +1655,9 @@ begin
     OnCommit:= nil;
   end;
   FIBConnection.Close;
-  OutputTabsList.Free;
+  //   OutputTabsList.Free;  causes exception, still used in RemovePreviousResultTabs
   RemovePreviousResultTabs;
+  OutputTabsList.Free;
   CloseAction:= caFree;
 end;
 
