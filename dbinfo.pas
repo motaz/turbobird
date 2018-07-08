@@ -107,7 +107,7 @@ begin
       edCreationDate.Text:= CreationDate;
       edPageSize.Text:= IntToStr(PageSize);
       edConnections.Text:= IntToStr(ProcessList.Count);
-      dbSize:= Pages * PageSize;
+      dbSize:= Double(Pages) * Double(PageSize);     
 
       // Display database size in readable format
       if dbSize > (1024*1024*1024) then
