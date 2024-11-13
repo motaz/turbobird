@@ -51,8 +51,7 @@ Function Build-Project {
         & git submodule update --recursive --init | Out-Host
         & git submodule update --recursive --remote | Out-Host
         Get-Content -Path 'use\components.txt' | ForEach-Object {
-            If (($_) &&
-                (! (& lazbuild --verbose-pkgsearch $_)) &&
+            If ((! (& lazbuild --verbose-pkgsearch $_)) &&
                 (! (& lazbuild --add-package $_)) &&
                 (! (Test-Path -Path "use\$($_)"))) {
                     $OutFile = Request-File "https://packages.lazarus-ide.org/$($_).zip"
