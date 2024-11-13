@@ -47,9 +47,11 @@ Function Build-Project {
         $env:PATH+=";$($VAR.Path)"
         Get-Command $VAR.Cmd
     }
-    If ( Test-Path -Path 'use\components.txt' ) {
+    If ( Test-Path -Path 'use' ) {
         & git submodule update --recursive --init | Out-Host
         & git submodule update --recursive --remote | Out-Host
+    }
+    If ( Test-Path -Path 'use\components.txt' ) {
         Get-Content -Path 'use\components.txt' | ForEach-Object {
             If ((! (& lazbuild --verbose-pkgsearch $_)) &&
                 (! (& lazbuild --add-package $_)) &&

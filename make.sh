@@ -20,9 +20,11 @@ function priv_lazbuild
                 ;;
         esac
     fi
-    if [[ -f 'use/components.txt' ]]; then
+    if [[ -d 'use' ]]; then
         git submodule update --init --recursive
         git submodule update --recursive --remote
+    fi
+    if [[ -f 'use/components.txt' ]]; then
         while read -r; do
             if [[ -n "${REPLY}" ]] &&
                 ! (lazbuild --verbose-pkgsearch "${REPLY}") &&
